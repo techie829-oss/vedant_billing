@@ -1,0 +1,244 @@
+<template>
+  <div class="min-h-screen bg-gray-50 flex flex-col">
+    <!-- Offline Banner -->
+    <div v-if="!online" class="bg-red-600 text-white text-center py-2 text-sm font-medium sticky top-0 z-50">
+      You are currently offline. Some features may not work.
+    </div>
+    <div v-if="online && syncing"
+      class="bg-yellow-500 text-white text-center py-2 text-sm font-medium sticky top-0 z-50">
+      Syncing offline changes...
+    </div>
+
+    <div class="flex flex-1">
+      <!-- Sidebar -->
+      <aside
+        class="fixed inset-y-0 left-0 bg-white w-64 border-r border-gray-200 z-30 transition-transform duration-300 hidden lg:block">
+        <div class="flex items-center justify-center h-16 border-b border-gray-100">
+          <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
+            <span class="text-indigo-600">Billing</span>Book
+          </h1>
+        </div>
+        <nav class="p-4 space-y-1">
+          <router-link to="/" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            :class="[$route.path === '/' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            Dashboard
+          </router-link>
+
+          <router-link to="/customers"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            :class="[$route.path.startsWith('/customers') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Customers
+          </router-link>
+
+          <router-link to="/products"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            :class="[$route.path.startsWith('/products') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            Products
+          </router-link>
+
+          <div>
+            <button @click="toggleReportsMenu"
+              class="w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors focus:outline-none"
+              :class="[$route.path.startsWith('/reports') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span class="flex-1 text-left">Reports</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 transition-transform duration-200"
+                :class="{ 'rotate-180': showReportsMenu }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div v-if="showReportsMenu" class="pl-12 pr-2 space-y-1 mt-1">
+              <router-link to="/reports/sales" class="block px-3 py-2 rounded-lg text-sm transition-colors"
+                :class="[$route.path.includes('/reports/sales') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50']">
+                Sales
+              </router-link>
+              <router-link to="/reports/outstanding" class="block px-3 py-2 rounded-lg text-sm transition-colors"
+                :class="[$route.path.includes('/reports/outstanding') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50']">
+                Outstanding
+              </router-link>
+              <router-link to="/reports/stock" class="block px-3 py-2 rounded-lg text-sm transition-colors"
+                :class="[$route.path.includes('/reports/stock') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50']">
+                Stock
+              </router-link>
+              <router-link to="/reports/profit-loss" class="block px-3 py-2 rounded-lg text-sm transition-colors"
+                :class="[$route.path.includes('/reports/profit-loss') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50']">
+                Profit & Loss
+              </router-link>
+            </div>
+          </div>
+
+          <router-link to="/invoices"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            :class="[$route.path.startsWith('/invoices') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Invoices
+          </router-link>
+
+          <router-link to="/cashbook"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            :class="[$route.path.startsWith('/cashbook') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Cashbook
+          </router-link>
+
+          <router-link to="/billing"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            :class="[$route.path === '/billing' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            </svg>
+            Billing & Subscription
+          </router-link>
+
+
+          <router-link to="/settings/business"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            :class="[$route.path.startsWith('/settings') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Settings
+          </router-link>
+
+          <router-link v-if="authStore.hasFeature('multi_user')" to="/settings/team"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            :class="[$route.path === '/settings/team' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            Team
+          </router-link>
+
+          <!-- Add more links here -->
+        </nav>
+
+        <div class="absolute bottom-0 w-full p-4 border-t border-gray-100">
+          <div class="px-2 py-2">
+            <div class="flex items-center mb-3">
+              <div
+                class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs">
+                {{ userInitials }}
+              </div>
+              <div class="ml-3">
+                <p class="text-sm font-medium text-gray-700 truncate w-32">{{ authStore.user?.name || 'User' }}</p>
+                <button @click="handleLogout" class="text-xs text-gray-500 hover:text-red-600">Logout</button>
+              </div>
+            </div>
+            <router-link to="/businesses"
+              class="block w-full text-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              Switch Business
+            </router-link>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Mobile Header & Main Content -->
+      <div class="flex-1 flex flex-col lg:ml-64 min-w-0">
+        <!-- Top Header for Mobile/Tablet -->
+        <header class="bg-white shadow-sm lg:hidden h-16 flex items-center px-4 justify-between">
+          <span class="font-bold text-lg text-indigo-600">BillingBook</span>
+          <button class="text-gray-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 sm:p-8 overflow-y-auto">
+          <slot></slot>
+        </main>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { useAuthStore } from '../stores/auth'
+// import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
+// import {
+//   Bars3Icon,
+//   BellIcon,
+//   XMarkIcon,
+//   BriefcaseIcon,
+//   DocumentDuplicateIcon,
+//   UserGroupIcon
+// } from '@heroicons/vue/24/outline'
+
+
+const authStore = useAuthStore()
+
+const showReportsMenu = ref(false)
+const toggleReportsMenu = () => {
+  showReportsMenu.value = !showReportsMenu.value
+}
+
+// offline status
+const online = ref(navigator.onLine)
+const syncing = ref(false)
+const updateOnlineStatus = () => { online.value = navigator.onLine }
+
+const updateSyncStatus = (e: Event) => {
+  syncing.value = e.type === 'sync-start'
+}
+
+onMounted(() => {
+  window.addEventListener('online', updateOnlineStatus)
+  window.addEventListener('offline', updateOnlineStatus)
+  window.addEventListener('sync-start', updateSyncStatus)
+  window.addEventListener('sync-complete', updateSyncStatus)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('online', updateOnlineStatus)
+  window.removeEventListener('offline', updateOnlineStatus)
+  window.removeEventListener('sync-start', updateSyncStatus)
+  window.removeEventListener('sync-complete', updateSyncStatus)
+})
+
+const userInitials = computed(() => {
+  const name = authStore.user?.name || ''
+  return name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()
+})
+
+const handleLogout = () => {
+  authStore.logout()
+}
+</script>

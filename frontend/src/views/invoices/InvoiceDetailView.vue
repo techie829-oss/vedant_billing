@@ -1,0 +1,719 @@
+<template>
+    <AppLayout>
+        <div v-if="loading" class="text-center py-10">
+            <svg class="animate-spin h-8 w-8 text-indigo-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+            </svg>
+        </div>
+
+        <div v-else-if="invoice" class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <!-- Action Bar -->
+            <!-- Back Link -->
+
+
+            <!-- Header Row 1: Title and Back Link -->
+            <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 print:hidden">
+                <div class="flex items-center gap-4">
+                    <router-link to="/invoices"
+                        class="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                    </router-link>
+
+                    <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                        {{ invoice.type === 'credit_note' ? 'Credit Note' : 'Invoice' }} {{ invoice.invoice_number }}
+                        <span :class="getStatusClass(invoice.status)"
+                            class="inline-flex items-center rounded-md px-2.5 py-1 text-sm font-medium ring-1 ring-inset">
+                            {{ capitalize(invoice.status) }}
+                        </span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Header Row 2: Action Buttons -->
+            <div class="mb-8 flex flex-wrap items-center justify-end gap-2 print:hidden">
+                <router-link :to="`/invoices/${invoice.id}/edit`" v-if="invoice.status === 'draft'"
+                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Edit</router-link>
+
+                <!-- Duplicate button -->
+                <button v-if="invoice.status !== 'draft'" @click="duplicateInvoice"
+                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Duplicate
+                </button>
+
+                <button @click="printInvoice"
+                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                    Print
+                </button>
+
+                <button v-if="invoice.status !== 'draft' && invoice.type === 'invoice'" @click="createCreditNote"
+                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-red-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-50 gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                    </svg>
+                    Return / Credit Note
+                </button>
+
+                <button @click="downloadPdf" :disabled="downloading"
+                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 gap-1.5">
+                    <svg v-if="downloading" class="animate-spin h-4 w-4 text-gray-500"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    PDF
+                </button>
+
+                <button @click="sendEmail" :disabled="sendingEmail"
+                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 gap-1.5">
+                    <svg v-if="sendingEmail" class="animate-spin h-4 w-4 text-gray-500"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    Email
+                </button>
+
+                <!-- Remind / Share Button -->
+                <div v-if="invoice.type === 'invoice'" class="relative inline-block text-left">
+                    <button @click="shareMenuOpen = !shareMenuOpen"
+                        class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                        </svg>
+                        Remind
+                    </button>
+                    <div v-if="shareMenuOpen"
+                        class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div class="py-1">
+                            <button @click="shareWhatsApp"
+                                class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                <svg class="h-4 w-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M.057 24l1.687-6.163c-3.104-5.391-.039-12.01 6.163-15.038 6.136-2.992 12.871-.161 14.773 6.126 1.902 6.287-1.127 12.718-7.396 14.623L.057 24z" />
+                                </svg>
+                                WhatsApp
+                            </button>
+                            <button @click="shareSMS"
+                                class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                <svg class="h-4 w-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                                SMS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button v-if="invoice.status === 'draft'" @click="finalize"
+                    class="inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                    Finalize
+                </button>
+                <button
+                    v-if="invoice.status !== 'draft' && invoice.status !== 'paid' && invoice.status !== 'void' && invoice.type === 'invoice'"
+                    @click="showPaymentModal = true"
+                    class="inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                    Record Payment
+                </button>
+            </div>
+
+            <!-- Payment History Section -->
+            <div v-if="invoice.allocations && invoice.allocations.length > 0" class="mb-8 border-b pb-8 print:hidden">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Payment History</h2>
+                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-300">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col"
+                                    class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Date
+                                </th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                    Reference</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Method
+                                </th>
+                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">
+                                    Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                            <tr v-for="alloc in invoice.allocations" :key="alloc.id">
+                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                    {{ alloc.payment.date }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ alloc.payment.reference
+                                    || '-' }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 capitalize">{{
+                                    alloc.payment.method.replace('_', ' ') }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right">₹{{
+                                    (alloc.amount / 100).toFixed(2) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Related Credit Notes Section -->
+            <div v-if="invoice.credit_notes && invoice.credit_notes.length > 0" class="mb-8 border-b pb-8 print:hidden">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Related Credit Notes</h2>
+                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-300">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col"
+                                    class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                                    Number
+                                </th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                    Date
+                                </th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                    Reason
+                                </th>
+                                <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">
+                                    Amount
+                                </th>
+                                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                    <span class="sr-only">View</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                            <tr v-for="cn in invoice.credit_notes" :key="cn.id">
+                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                    {{ cn.invoice_number }}
+                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    {{ cn.date }}
+                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    {{ cn.reason || '-' }}
+                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right">
+                                    ₹{{ Number(cn.grand_total).toFixed(2) }}
+                                </td>
+                                <td
+                                    class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                    <router-link :to="`/credit-notes/${cn.id}`"
+                                        class="text-indigo-600 hover:text-indigo-900">
+                                        View
+                                    </router-link>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Dynamic Layout Render -->
+            <div class="overflow-x-auto pb-8">
+                <component :is="layoutComponent" :invoice="invoice" :taxBreakdown="taxBreakdown" :qrCodeUrl="qrCodeUrl"
+                    class="mx-auto" />
+            </div>
+
+
+
+            <!-- Record Payment Modal -->
+            <div v-if="showPaymentModal" class="relative z-50" aria-labelledby="modal-title" role="dialog"
+                aria-modal="true">
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+                <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                        <div
+                            class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                            <div>
+                                <div
+                                    class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                                    <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 4.5h.75zm0 15a.75.75 0 01.75-.75h-.75V15c.996-.264 2.131.46 2.62.872l1.32.768c.379.22.844.186 1.18-.088l1.753-1.344c.435-.333 1.055-.262 1.465.166l1.786 1.84a1.125 1.125 0 001.62-.005l1.09-1.125c.343-.353.948-.28 1.25.127l.654.887c.184.25.467.397.776.402 1.353.023 2.802-.303 3.93-1.077m0-9.67l-.768-1.554a1.737 1.737 0 00-2.316-.76l-8.08 4.296a1.166 1.166 0 00-.51 1.472l1.309 2.923a.857.857 0 001.5.088l2.97-4.137" />
+                                    </svg>
+                                </div>
+                                <div class="mt-3 text-center sm:mt-5">
+                                    <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Record
+                                        Payment</h3>
+                                    <div class="mt-2">
+                                        <p class="text-sm text-gray-500">Record a payment received for Invoice {{
+                                            invoice?.invoice_number }}.</p>
+                                    </div>
+
+                                    <!-- Form -->
+                                    <div class="mt-4 space-y-4 text-left">
+                                        <div>
+                                            <label class="block text-sm font-medium leading-6 text-gray-900">Amount
+                                                Received (₹)</label>
+                                            <div class="mt-2">
+                                                <input type="number" step="0.01" v-model="paymentForm.amount"
+                                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                    required>
+                                            </div>
+                                            <p class="mt-1 text-xs text-gray-500">Outstanding: ₹{{ outstandingAmount }}
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium leading-6 text-gray-900">Payment
+                                                Date</label>
+                                            <div class="mt-2">
+                                                <input type="date" v-model="paymentForm.date"
+                                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium leading-6 text-gray-900">Payment
+                                                Method</label>
+                                            <div class="mt-2">
+                                                <select v-model="paymentForm.method"
+                                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                                    <option value="cash">Cash</option>
+                                                    <option value="bank_transfer">Bank Transfer</option>
+                                                    <option value="upi">UPI</option>
+                                                    <option value="check">Check</option>
+                                                    <option value="card">Card</option>
+                                                    <option value="other">Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium leading-6 text-gray-900">Reference /
+                                                Notes</label>
+                                            <div class="mt-2">
+                                                <input type="text" v-model="paymentForm.reference"
+                                                    placeholder="e.g. Transaction ID, Check No."
+                                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                                <button type="button" @click="submitPayment" :disabled="submittingPayment"
+                                    class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2 disabled:opacity-50">
+                                    {{ submittingPayment ? 'Saving...' : 'Record Payment' }}
+                                </button>
+                                <button type="button" @click="showPaymentModal = false"
+                                    class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </AppLayout>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import AppLayout from '../../layouts/AppLayout.vue'
+import { useInvoiceStore } from '../../stores/invoice'
+import { storeToRefs } from 'pinia'
+import DefaultLayout from './layouts/DefaultLayout.vue'
+import ProfessionalLayout from './layouts/ProfessionalLayout.vue'
+import GridPremiumLayout from './layouts/GridPremiumLayout.vue'
+import client from '../../api/client'
+
+// @ts-ignore
+import QRCode from 'qrcode'
+// @ts-ignore
+import html2pdf from 'html2pdf.js'
+
+const route = useRoute()
+const router = useRouter()
+const invoiceStore = useInvoiceStore()
+const { currentInvoice: invoice, loading } = storeToRefs(invoiceStore)
+
+const layoutComponent = computed(() => {
+    const layout = invoice.value?.business?.meta?.invoice_layout || 'default'
+    if (layout === 'professional') return ProfessionalLayout
+    if (layout === 'grid_premium') return GridPremiumLayout
+    return DefaultLayout
+})
+
+const taxBreakdown = computed(() => {
+    if (!invoice.value) return { cgst: 0, sgst: 0, igst: 0, taxType: '', posState: '' }
+
+    let cgst = 0
+    let sgst = 0
+    let igst = 0
+
+    const businessState = invoice.value.business?.meta?.state?.toLowerCase()
+    const customer = invoice.value.party
+    const customerState = (customer?.shipping_address?.state || customer?.billing_address?.state || '').toLowerCase()
+
+    const isInterState = businessState && customerState && businessState !== customerState
+    const taxType = isInterState ? 'IGST' : 'CGST+SGST';
+
+    (invoice.value.items || []).forEach((item: any) => {
+        const lineTax = Number(item.tax_amount) || 0
+        if (isInterState) {
+            igst += lineTax
+        } else {
+            cgst += lineTax / 2
+            sgst += lineTax / 2
+        }
+    })
+
+    return {
+        cgst,
+        sgst,
+        igst,
+        taxType,
+        posState: customer?.shipping_address?.state || customer?.billing_address?.state || 'N/A'
+    }
+})
+
+
+
+const showPaymentModal = ref(false)
+const submittingPayment = ref(false)
+const payToday = new Date().toISOString().split('T')[0]
+
+const paymentForm = ref({
+    amount: 0,
+    date: payToday,
+    method: 'bank_transfer',
+    reference: ''
+})
+
+const outstandingAmount = computed(() => {
+    if (!invoice.value) return 0
+    const paidByAllocations = (invoice.value.allocations || []).reduce((sum, a) => sum + a.amount, 0) / 100 // Cents to units
+    // Or use paid_amount from invoice if updated? Let's use allocations sum for now as it's realtime.
+    return (Number(invoice.value.grand_total) - paidByAllocations).toFixed(2)
+})
+
+const submitPayment = async () => {
+    if (!invoice.value) return
+
+    submittingPayment.value = true
+    try {
+        await client.post('/payments', {
+            invoice_id: invoice.value.id,
+            amount: paymentForm.value.amount,
+            date: paymentForm.value.date,
+            method: paymentForm.value.method,
+            reference: paymentForm.value.reference,
+            notes: paymentForm.value.reference // Use reference as notes for simplicity or add notes field
+        })
+
+        // Reload invoice to show updated status/payments
+        await loadInvoice()
+        showPaymentModal.value = false
+
+        // Reset form
+        paymentForm.value = {
+            amount: 0,
+            date: new Date().toISOString().split('T')[0],
+            method: 'bank_transfer',
+            reference: ''
+        }
+    } catch (e: any) {
+        console.error('Payment failed', e)
+        alert(e.response?.data?.message || 'Failed to record payment')
+    } finally {
+        submittingPayment.value = false
+    }
+}
+
+// Watch invoice to pre-fill remaining amount
+watch(() => showPaymentModal.value, (val) => {
+    if (val && invoice.value) {
+        paymentForm.value.amount = Number(outstandingAmount.value)
+    }
+})
+
+const qrCodeUrl = ref('')
+
+const generateQR = async () => {
+    if (!invoice.value?.business?.meta?.upi_id) return
+
+    const upiId = invoice.value.business.meta.upi_id
+    const payName = invoice.value.business.name.replace(/\s/g, '+') // Simple encoding
+    const amount = invoice.value.grand_total
+
+    // Construct UPI URL
+    // Standard: upi://pay?pa=<id>&pn=<name>&am=<amount>&cu=INR
+    const upiUrl = `upi://pay?pa=${upiId}&pn=${payName}&am=${amount}&cu=INR`
+
+    try {
+        qrCodeUrl.value = await QRCode.toDataURL(upiUrl)
+    } catch (err) {
+        console.error('QR Gen Error', err)
+    }
+}
+
+const loadInvoice = async () => {
+    try {
+        await invoiceStore.fetchInvoice(route.params.id as string)
+        if (invoice.value) {
+            await generateQR()
+        }
+    } catch (e) {
+        console.error(e)
+    }
+}
+
+const printInvoice = () => {
+    const url = router.resolve({
+        name: 'invoices.print',
+        params: { id: invoice.value?.id }
+    }).href
+    window.open(url, '_blank')
+}
+
+const finalize = async () => {
+    if (confirm('Are you sure? Once finalized, you cannot edit this invoice.')) {
+        await invoiceStore.finalizeInvoice(invoice.value!.id)
+    }
+}
+
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+
+const getStatusClass = (status: string) => {
+    switch (status) {
+        case 'draft': return 'bg-gray-50 text-gray-600 ring-gray-500/10'
+        case 'sent': return 'bg-blue-50 text-blue-700 ring-blue-700/10'
+        case 'paid': return 'bg-green-50 text-green-700 ring-green-600/20'
+        case 'overdue': return 'bg-red-50 text-red-700 ring-red-600/10'
+        default: return 'bg-gray-50 text-gray-600 ring-gray-500/10'
+    }
+}
+
+const duplicateInvoice = async () => {
+    if (!invoice.value) return
+
+    if (!confirm('This will create a new draft invoice with the same items. Continue?')) {
+        return
+    }
+
+    loading.value = true
+    try {
+        const response = await client.post(`/invoices/${invoice.value.id}/duplicate`)
+        const newInvoice = response.data
+
+        // Navigate to the new draft invoice for editing
+        router.push(`/invoices/${newInvoice.id}/edit`)
+    } catch (e: any) {
+        console.error('Duplicate failed:', e)
+        alert(e.response?.data?.message || 'Failed to duplicate invoice')
+    } finally {
+        loading.value = false
+    }
+}
+
+const createCreditNote = () => {
+    if (!invoice.value) return
+    router.push({ name: 'credit-notes.create', query: { parent_id: invoice.value.id } })
+}
+
+const downloading = ref(false)
+const downloadPdf = async () => {
+    if (!invoice.value) return
+    downloading.value = true
+
+
+    try {
+        const element = document.getElementById('invoice-paper')
+        if (!element) throw new Error('Invoice element not found')
+
+        // Create a clone of the element to modify styles for PDF (remove shadows/rings causing color issues)
+        const clone = element.cloneNode(true) as HTMLElement
+        // Recursive strip function
+        const stripModernEffects = (el: HTMLElement) => {
+            el.classList?.remove('shadow-xl', 'shadow-lg', 'shadow-md', 'shadow-sm', 'shadow', 'ring-1', 'ring-2', 'ring-gray-900/5', 'ring-offset-2');
+            // Also crude check for any class starting with ring- or shadow- if needed, but specific list is safer to avoid breaking layout
+
+            // Strip any opacity modifiers from classes if possible? Hard.
+        }
+
+        stripModernEffects(clone);
+        const descendants = clone.getElementsByTagName('*');
+        for (let i = 0; i < descendants.length; i++) {
+            stripModernEffects(descendants[i] as HTMLElement);
+        }
+
+        // Force exact A4 dimensions with epsilon safety to prevent 2nd empty page
+        clone.style.margin = '0'
+        clone.style.maxWidth = '210mm'
+        clone.style.width = '210mm'
+        clone.style.minHeight = 'unset'
+        clone.style.height = '296mm' // 1mm buffer to ensure it fits on one page
+        clone.style.maxHeight = '296mm'
+        clone.style.overflow = 'hidden'
+
+        // Ensure clone is visible for html2canvas (it needs to be in DOM)
+        // We'll put it in a hidden container off-screen
+        const container = document.createElement('div')
+        container.style.position = 'absolute'
+        container.style.left = '-9999px'
+        container.style.top = '0'
+
+        // Force specific width to match A4 ratio if needed, or rely on existing width
+        // The clone needs to be inserted into the document for html2canvas to render it
+        container.appendChild(clone)
+        document.body.appendChild(container)
+
+        // Configure options for A4 fidelity
+        const opt = {
+            margin: 0,
+            filename: `Invoice-${invoice.value.invoice_number}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 } as const,
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                letterRendering: true
+            },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as 'portrait' | 'landscape' }
+        }
+
+        // Check if library loaded
+        if (typeof html2pdf !== 'function') {
+            throw new Error('PDF library not loaded correctly. Please refresh.')
+        }
+
+        // Generate PDF directly from client side
+        // Use the clone
+        await html2pdf().set(opt).from(clone).save()
+
+        // Cleanup
+        document.body.removeChild(container)
+
+    } catch (e: any) {
+        console.error('Download failed', e)
+        // Show specific error to user for debugging
+        alert(`Failed to generate PDF: ${e.message || e}`)
+    } finally {
+        downloading.value = false
+    }
+}
+
+// Share Logic
+const shareMenuOpen = ref(false)
+
+const getShareText = () => {
+    if (!invoice.value) return ''
+    const businessName = invoice.value.business?.name || 'Us'
+    const invNum = invoice.value.invoice_number
+    const amount = outstandingAmount.value
+    const date = invoice.value.due_date ? `due on ${invoice.value.due_date}` : ''
+
+    return `Hello ${invoice.value.party?.name || 'Customer'},\n\nThis is a gentle reminder from ${businessName}. Your Invoice ${invNum} for ₹${amount} is ${date}.\n\nPlease ensure payment is made at the earliest.\n\nThank you.`
+}
+
+const shareWhatsApp = () => {
+    shareMenuOpen.value = false
+    const phone = invoice.value?.party?.phone
+    if (!phone) {
+        alert('Customer phone number is missing.')
+        return
+    }
+    const text = encodeURIComponent(getShareText())
+    window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${text}`, '_blank')
+}
+
+const shareSMS = () => {
+    shareMenuOpen.value = false
+    const phone = invoice.value?.party?.phone
+    if (!phone) {
+        alert('Customer phone number is missing.')
+        return
+    }
+    const text = encodeURIComponent(getShareText())
+    window.location.href = `sms:${phone.replace(/[^0-9]/g, '')}?body=${text}`
+}
+
+const sendingEmail = ref(false)
+const sendEmail = async () => {
+    if (!invoice.value) return
+    if (!invoice.value.party?.email) {
+        alert('This customer does not have an email address.')
+        return
+    }
+
+    if (!confirm(`Send invoice PDF to ${invoice.value.party.email}?`)) return
+
+    sendingEmail.value = true
+    try {
+        await client.post(`/invoices/${invoice.value.id}/email`)
+        alert('Email sent successfully!')
+    } catch (e: any) {
+        console.error('Email failed', e)
+        alert(e.response?.data?.message || 'Failed to send email')
+    } finally {
+        sendingEmail.value = false
+    }
+}
+
+onMounted(() => {
+    loadInvoice()
+})
+</script>
+
+<style scoped>
+@media print {
+
+    /* Hide layout elements during print */
+    :deep(nav),
+    :deep(header),
+    :deep(aside) {
+        display: none !important;
+    }
+
+    /* Ensure body background is white */
+    :global(body) {
+        background-color: white !important;
+    }
+
+    /* Reset margins for print */
+    :deep(.max-w-7xl),
+    :deep(.max-w-4xl) {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Ensure background colors are printed */
+    :global(body) {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Target the invoice paper explicitly inside dynamic component */
+    :deep(#invoice-paper) {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+}
+</style>

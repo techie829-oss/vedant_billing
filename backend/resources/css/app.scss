@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        /* Professional SaaS Color Palette (Blue/Gray/White) */
+        --color-primary: #2563eb;
+        /* blue-600 */
+        --color-secondary: #475569;
+        /* slate-600 */
+        --color-accent: #0ea5e9;
+        /* sky-500 */
+
+        --color-danger: #ef4444;
+        /* red-500 */
+        --color-success: #22c55e;
+        /* green-500 */
+        --color-warning: #eab308;
+        /* yellow-500 */
+        --color-info: #3b82f6;
+        /* blue-500 */
+
+        --color-background: #f8fafc;
+        /* slate-50 */
+        --color-surface: #ffffff;
+        /* white */
+
+        --color-text: #0f172a;
+        /* slate-900 */
+        --color-text-muted: #64748b;
+        /* slate-500 */
+    }
+
+    /* Dark Mode Theme (Optional) */
+    .dark {
+        --color-primary: #3b82f6;
+        /* blue-500 */
+        --color-background: #0f172a;
+        /* slate-900 */
+        --color-surface: #1e293b;
+        /* slate-800 */
+        --color-text: #f1f5f9;
+        /* slate-100 */
+        --color-text-muted: #94a3b8;
+        /* slate-400 */
+    }
+}
+
+/* Custom Component Classes using SCSS */
+.btn-primary {
+    @apply px-4 py-2 bg-primary text-white rounded-md hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm;
+}
+
+.card {
+    @apply bg-surface shadow-sm border border-gray-200 rounded-lg p-6;
+}
+
+.input-field {
+    @apply w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-text placeholder-text-muted focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 transition-colors;
+}

@@ -1,0 +1,206 @@
+import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
+import ReportsLayout from '../views/reports/ReportsLayout.vue'
+import SalesReportView from '../views/reports/SalesReportView.vue'
+import OutstandingReportView from '../views/reports/OutstandingReportView.vue'
+import StockReportView from '../views/reports/StockReportView.vue'
+
+const router = createRouter({
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes: [
+        {
+            path: '/login',
+            name: 'login',
+            component: () => import('../views/auth/LoginView.vue')
+        },
+        {
+            path: '/businesses',
+            name: 'business-selection',
+            component: () => import('../views/auth/BusinessSelectionView.vue'),
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/',
+            name: 'dashboard',
+            component: () => import('../views/DashboardView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/customers',
+            name: 'customers-list',
+            component: () => import('../views/customers/CustomerListView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/customers/create',
+            name: 'customers.create',
+            component: () => import('../views/customers/CustomerFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/customers/:id/edit',
+            name: 'customers.edit',
+            component: () => import('../views/customers/CustomerFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/reports',
+            name: 'reports',
+            component: ReportsLayout,
+            meta: { requiresAuth: true, requiresBusiness: true },
+            redirect: { name: 'reports.sales' },
+            children: [
+                {
+                    path: 'sales',
+                    name: 'reports.sales',
+                    component: SalesReportView,
+                    meta: { requiresAuth: true, requiresBusiness: true }
+                },
+                {
+                    path: 'outstanding',
+                    name: 'reports.outstanding',
+                    component: OutstandingReportView,
+                    meta: { requiresAuth: true, requiresBusiness: true }
+                },
+                {
+                    path: 'stock',
+                    name: 'reports.stock',
+                    component: StockReportView,
+                    meta: { requiresAuth: true, requiresBusiness: true }
+                },
+                {
+                    path: 'profit-loss',
+                    name: 'profit-loss-report',
+                    component: () => import('../views/reports/ProfitLossView.vue'),
+                    meta: { requiresAuth: true, requiresBusiness: true }
+                }
+            ]
+        },
+        {
+            path: '/products',
+            name: 'products-list',
+            component: () => import('../views/products/ProductListView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/products/create',
+            name: 'products.create',
+            component: () => import('../views/products/ProductFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/products/:id/edit',
+            name: 'products.edit',
+            component: () => import('../views/products/ProductFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/invoices',
+            name: 'invoices',
+            component: () => import('../views/invoices/InvoiceListView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/invoices/create',
+            name: 'invoices.create',
+            component: () => import('../views/invoices/InvoiceFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/invoices/:id',
+            name: 'invoices.show',
+            component: () => import('../views/invoices/InvoiceDetailView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/invoices/:id/print',
+            name: 'invoices.print',
+            component: () => import('../views/invoices/InvoicePrintView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/invoices/:id/edit',
+            name: 'invoices.edit',
+            component: () => import('../views/invoices/InvoiceFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/settings/business',
+            name: 'settings.business',
+            component: () => import('../views/settings/BusinessProfileView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/settings/team',
+            name: 'settings.team',
+            component: () => import('../views/settings/TeamSettingsView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/billing',
+            name: 'billing',
+            component: () => import('../views/BillingView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/cashbook',
+            name: 'cashbook',
+            component: () => import('../views/cashbook/CashbookView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/credit-notes',
+            name: 'credit-notes',
+            component: () => import('../views/invoices/InvoiceListView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/credit-notes/create',
+            name: 'credit-notes.create',
+            component: () => import('../views/credit_notes/CreditNoteFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/credit-notes/:id',
+            name: 'credit-notes.show',
+            component: () => import('../views/invoices/InvoiceDetailView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        }
+    ]
+})
+
+// Navigation Guard
+router.beforeEach((to, _from, next) => {
+    const auth = useAuthStore()
+    const isAuthenticated = auth.isAuthenticated
+    const hasBusiness = auth.hasSelectedBusiness
+
+    if (to.meta.requiresAuth && !isAuthenticated) {
+        // Not logged in, go to login
+        next({ name: 'login' })
+    } else if (isAuthenticated && to.name === 'login') {
+        // Already logged in, go to dashboard (or business selection)
+        if (hasBusiness) {
+            next({ name: 'dashboard' })
+        } else {
+            next({ name: 'business-selection' })
+        }
+    } else if (isAuthenticated && to.meta.requiresBusiness && !hasBusiness) {
+        // Logged in but active business needed
+        next({ name: 'business-selection' })
+    } else if (isAuthenticated && to.name === 'business-selection' && hasBusiness) {
+        // Trying to switch business? For now, if they have one selected, redirect to dashboard.
+        // Or allow it if we want to support switching. Let's allow switching explicitly,
+        // but for now the implementation plan said: "redirect to / if business already selected"
+        // Allow access to business selection page so users can switch
+        next()
+    } else if (isAuthenticated && to.name === 'settings.team' && !auth.hasFeature('multi_user')) {
+        // Feature restricted (e.g. Starter Plan trying to access Team)
+        alert("Upgrade to Pro to access Team Management.") // Optional user feedback
+        next({ name: 'dashboard' })
+    } else {
+        next()
+    }
+})
+
+export default router
