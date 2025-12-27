@@ -323,7 +323,7 @@ import { useCashbookStore } from '../../stores/cashbook'
 import { useExpenseStore } from '../../stores/expense'
 import { storeToRefs } from 'pinia'
 import Modal from '../../components/Modal.vue'
-import axios from 'axios'
+import client from '../../api/client'
 
 const cashbookStore = useCashbookStore()
 const expenseStore = useExpenseStore()
@@ -437,7 +437,7 @@ const handleReceiptScan = async (event: Event) => {
         const formData = new FormData()
         formData.append('receipt', file)
 
-        const response = await axios.post('/api/expenses/scan', formData, {
+        const response = await client.post('/expenses/scan', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         })
 
