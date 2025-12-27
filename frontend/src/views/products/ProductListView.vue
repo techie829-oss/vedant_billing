@@ -152,7 +152,24 @@
                         <div v-if="scanning" class="mt-6 text-center py-10">
                             <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600">
                             </div>
-                            <p class="mt-4 text-sm text-gray-600">Scanning invoice... This may take 10-15 seconds</p>
+                            <p class="mt-4 text-sm font-medium text-gray-900">Processing Invoice...</p>
+                            <p class="mt-2 text-xs text-gray-500">
+                                This usually takes 10-20 seconds<br>
+                                <span class="text-gray-400">Using Tesseract OCR + Llama 3 AI</span>
+                            </p>
+                            <div class="mt-6 max-w-md mx-auto">
+                                <div class="flex items-start space-x-3 text-left">
+                                    <svg class="h-5 w-5 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <div class="text-xs text-gray-600">
+                                        <p class="font-medium">Image uploaded successfully</p>
+                                        <p class="text-gray-400">Background job is processing...</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Error State -->
@@ -250,7 +267,7 @@
                                                         </path>
                                                     </svg>
                                                     {{ processingIds.includes(item.temp_product.id) ? 'Adding...' :
-                                                    'Approve' }}
+                                                        'Approve' }}
                                                 </button>
                                                 <button @click="rejectProduct(item.temp_product.id)"
                                                     :disabled="processingIds.includes(item.temp_product.id)"
@@ -333,28 +350,71 @@ async function scanInvoice(file: File) {
     scanning.value = true
     scanError.value = ''
     scanResult.value = null
+    let processingMessage = 'Uploading invoice...'
 
     const formData = new FormData()
     formData.append('invoice', file)
 
     try {
-        const response = await client.post('/products/scan-invoice', formData, {
+        // Step 1: Upload file (fast)
+        const uploadResponse = await client.post('/products/scan-invoice', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         })
 
-        if (response.data.success) {
-            scanResult.value = response.data.data
-            // Initialize selectedMatch for each item
-            scanResult.value.temp_products.forEach((item: any) => {
-                item.selectedMatch = item.temp_product.matched_product_id || null
-            })
-        } else {
-            scanError.value = response.data.message || 'Scan failed'
+        if (!uploadResponse.data.success) {
+            scanError.value = uploadResponse.data.message || 'Upload failed'
+            return
         }
+
+        const scanId = uploadResponse.data.scan_id
+        processingMessage = 'Processing invoice with OCR and AI... Please wait'
+
+        // Step 2: Poll for status (with timeout after 3 minutes)
+        const maxAttempts = 36 // 36 * 5s = 3 minutes
+        let attempts = 0
+
+        const pollInterval = setInterval(async () => {
+            attempts++
+
+            try {
+                const statusResponse = await client.get(`/invoice-scans/${scanId}`)
+
+                if (statusResponse.data.status === 'success') {
+                    // Processing complete!
+                    clearInterval(pollInterval)
+                    scanning.value = false
+                    scanResult.value = statusResponse.data.data
+
+                    // Initialize selectedMatch for each item
+                    scanResult.value.temp_products.forEach((item: any) => {
+                        item.selectedMatch = item.temp_product.matched_product_id || null
+                    })
+                } else if (statusResponse.data.status === 'failed') {
+                    // Processing failed
+                    clearInterval(pollInterval)
+                    scanning.value = false
+                    scanError.value = statusResponse.data.error || 'Failed to process invoice'
+                } else if (statusResponse.data.status === 'pending') {
+                    // Still processing...
+                    if (attempts >= maxAttempts) {
+                        clearInterval(pollInterval)
+                        scanning.value = false
+                        scanError.value = 'Processing timeout. The scan is still running in background. Please refresh later.'
+                    }
+                }
+            } catch (error: any) {
+                console.error('Polling error:', error)
+                if (attempts >= maxAttempts) {
+                    clearInterval(pollInterval)
+                    scanning.value = false
+                    scanError.value = 'Failed to check scan status'
+                }
+            }
+        }, 5000) // Poll every 5 seconds
+
     } catch (error: any) {
-        scanError.value = error.response?.data?.message || 'Failed to scan invoice'
-    } finally {
         scanning.value = false
+        scanError.value = error.response?.data?.message || 'Failed to upload invoice'
     }
 }
 
