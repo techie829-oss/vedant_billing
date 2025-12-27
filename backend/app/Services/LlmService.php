@@ -29,13 +29,36 @@ class LlmService
         $prompt = <<<EOT
 You are a receipt data extraction assistant.
 Extract the following fields from the raw OCR text below:
-- merchant_name (string)
-- date (YYYY-MM-DD)
-- total_amount (numeric)
-- tax_amount (numeric, optional)
-- category (string, guess based on items e.g., 'Food', 'Travel', 'Office Supplies')
 
-Return ONLY a valid JSON object. Do not include markdown formatting or explanations.
+REQUIRED FIELDS:
+- merchant: The merchant/vendor name (string)
+- amount: The total amount paid (numeric, just the number without currency symbol)
+- date: Transaction date in YYYY-MM-DD format
+- category: MUST be EXACTLY one of these values:
+  * Rent
+  * Food
+  * Travel
+  * Utilities
+  * Salary
+  * Office Supplies
+  * Other
+  
+  Guidelines for category selection:
+  - Restaurants, cafes, food delivery = "Food"
+  - Cabs, flights, hotels = "Travel"
+  - Electricity, water, internet = "Utilities"
+  - Pens, paper, office items = "Office Supplies"
+  - Employee wages = "Salary"
+  - Building/property rent = "Rent"
+  - If unsure, use "Other"
+  
+- notes: Combine merchant name and item details in this format: "[Merchant Name] - [Items/Description]"
+  Example: "Tasty Bites Restaurant - Paneer Tikka, Veg Biryani, Butter Naan, Coke"
+
+OPTIONAL FIELDS:
+- tax: Tax amount if clearly mentioned (numeric)
+
+Return ONLY a valid JSON object with these exact field names. Do not include markdown formatting or explanations.
 
 RAW TEXT:
 {$rawText}
