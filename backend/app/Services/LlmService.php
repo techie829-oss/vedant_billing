@@ -28,11 +28,11 @@ class LlmService
 
         $prompt = <<<EOT
 You are a receipt data extraction assistant.
-Extract the following fields from the raw OCR text below:
+Extract the following fields from the receipt text below:
 
 REQUIRED FIELDS:
 - merchant: The merchant/vendor name (string)
-- amount: The total amount paid (numeric, just the number without currency symbol)
+- amount: The GRAND TOTAL amount paid (numeric, just the number without currency symbol)
 - date: Transaction date in YYYY-MM-DD format
 - category: MUST be EXACTLY one of these values:
   * Rent
@@ -50,10 +50,13 @@ REQUIRED FIELDS:
   - Pens, paper, office items = "Office Supplies"
   - Employee wages = "Salary"
   - Building/property rent = "Rent"
+  - Medical/Doctor = "Other"
+  - Electronics/Shopping = "Other"
   - If unsure, use "Other"
   
-- notes: Combine merchant name and item details in this format: "[Merchant Name] - [Items/Description]"
-  Example: "Tasty Bites Restaurant - Paneer Tikka, Veg Biryani, Butter Naan, Coke"
+- notes: Combine merchant name, amount, and item details in this format: "[Merchant Name] - ₹[Amount] - [Items/Description]"
+  Example: "Tasty Bites Restaurant - ₹1026.60 - Paneer Tikka, Veg Biryani, Butter Naan, Coke"
+  Example: "Shankar Electronics - ₹92400.00 - Laptop, Smart TV, Power Bank"
 
 OPTIONAL FIELDS:
 - tax: Tax amount if clearly mentioned (numeric)
