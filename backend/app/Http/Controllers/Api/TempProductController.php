@@ -50,7 +50,7 @@ class TempProductController extends Controller
             // Update inventory if requested
             if ($validated['update_inventory'] ?? false) {
                 $product = Product::find($validated['product_id']);
-                $product->increment('current_stock', $tempProduct->quantity);
+                $product->increment('current_stock', (float) $tempProduct->quantity);
             }
         });
 
