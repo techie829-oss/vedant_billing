@@ -22,6 +22,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('parties', \App\Http\Controllers\Api\PartyController::class);
     Route::apiResource('products', \App\Http\Controllers\Api\ProductController::class);
     Route::post('products/{product}/adjust-stock', [\App\Http\Controllers\Api\ProductController::class, 'adjustStock']);
+    Route::post('/products/scan-invoice', [\App\Http\Controllers\Api\ProductController::class, 'scanInvoice']);
+
+    // Temp Products (Invoice OCR Review)
+    Route::get('/temp-products', [\App\Http\Controllers\Api\TempProductController::class, 'index']);
+    Route::post('/temp-products/{tempProduct}/match', [\App\Http\Controllers\Api\TempProductController::class, 'match']);
+    Route::post('/temp-products/{tempProduct}/add-new', [\App\Http\Controllers\Api\TempProductController::class, 'addNew']);
+    Route::delete('/temp-products/{tempProduct}', [\App\Http\Controllers\Api\TempProductController::class, 'destroy']);
 
     Route::apiResource('invoices', \App\Http\Controllers\Api\InvoiceController::class);
     Route::post('/invoices/{invoice}/finalize', [\App\Http\Controllers\Api\InvoiceController::class, 'finalize']);

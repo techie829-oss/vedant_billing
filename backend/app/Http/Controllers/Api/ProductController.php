@@ -158,7 +158,7 @@ class ProductController extends Controller
         ]);
 
         return DB::transaction(function () use ($product, $validated) {
-            InventoryTransaction::create([
+            $transaction = InventoryTransaction::create([
                 'product_id' => $product->id,
                 'type' => $validated['type'],
                 'quantity' => $validated['quantity'],
@@ -183,16 +183,43 @@ class ProductController extends Controller
             // Re-save with corrected sign if needed, but for now we just use $qty for increment
             if ($qty != $validated['quantity']) {
                 // Creating log with corrected sign
-                InventoryTransaction::latest()->first()->update(['quantity' => $qty]);
+                $transaction->update(['quantity' => $qty]);
             }
 
             $product->increment('current_stock', $qty);
 
             return response()->json([
-                'message' => 'Stock adjusted successfully.',
-                'current_stock' => $product->refresh()->current_stock
+                'success' => true,
+                'message' => 'Stock adjusted successfully',
+                'transaction' => $transaction,
             ]);
         });
+    }
+
+    /**
+     * Scan a purchase invoice and extract products.
+     */
+    public function scanInvoice(Request $request, \App\Services\InvoiceOcrService $invoiceOcrService)
+    {
+        $request->validate([
+            'invoice' => 'required|image|max:10240', // Max 10MB
+        ]);
+
+        $businessId = $request->header('X-Business-ID');
+
+        try {
+            $result = $invoiceOcrService->scanInvoice($request->file('invoice'), $businessId);
+
+            return response()->json([
+                'success' => true,
+                'data' => $result,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
