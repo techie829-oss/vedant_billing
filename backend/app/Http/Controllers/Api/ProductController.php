@@ -197,7 +197,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Scan a purchase invoice and extract products.
+     * Scan a purchase invoice and extract products (non-blocking with queue).
      */
     public function scanInvoice(Request $request, \App\Services\InvoiceOcrService $invoiceOcrService)
     {
@@ -208,11 +208,16 @@ class ProductController extends Controller
         $businessId = $request->header('X-Business-ID');
 
         try {
-            $result = $invoiceOcrService->scanInvoice($request->file('invoice'), $businessId);
+            // Upload file and create scan record (fast)
+            $scan = $invoiceOcrService->uploadInvoice($request->file('invoice'), $businessId);
+
+            // Dispatch background job to process (slow OCR/LLM work)
+            \App\Jobs\ProcessInvoiceScan::dispatch($scan->id, $businessId);
 
             return response()->json([
                 'success' => true,
-                'data' => $result,
+                'scan_id' => $scan->id,
+                'message' => 'Invoice uploaded. Processing in background...',
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -220,6 +225,52 @@ class ProductController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Get status of an invoice scan.
+     */
+    public function getScanStatus(string $scanId)
+    {
+        $scan = \App\Models\InvoiceScan::with('tempProducts.matchedProduct')->find($scanId);
+
+        if (!$scan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Scan not found',
+            ], 404);
+        }
+
+        // Build response based on status
+        $response = [
+            'success' => true,
+            'status' => $scan->status,
+            'scan_id' => $scan->id,
+        ];
+
+        if ($scan->status === 'success') {
+            // Load temp products with matches
+            $tempProducts = $scan->tempProducts->map(function ($tempProduct) use ($scan) {
+                $matches = (new \App\Services\ProductMatchingService())->findMatches($tempProduct, $scan->business_id);
+
+                return [
+                    'temp_product' => $tempProduct,
+                    'suggested_matches' => $matches,
+                ];
+            });
+
+            $response['data'] = [
+                'scan_id' => $scan->id,
+                'vendor' => $scan->vendor_name,
+                'invoice_no' => $scan->invoice_number,
+                'date' => $scan->invoice_date,
+                'temp_products' => $tempProducts,
+            ];
+        } elseif ($scan->status === 'failed') {
+            $response['error'] = $scan->error_message;
+        }
+
+        return response()->json($response);
     }
 
     /**
