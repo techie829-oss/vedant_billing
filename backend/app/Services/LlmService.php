@@ -28,12 +28,20 @@ class LlmService
 
         $prompt = <<<EOT
 You are a receipt data extraction assistant.
+
+IMPORTANT: If the image contains MULTIPLE RECEIPTS, handle them as follows:
+- merchant: Use "Multiple Receipts" as the merchant name
+- amount: Sum of ALL receipt totals (grand total of everything)
+- date: Use the most recent date from all receipts
+- category: Choose based on the highest value receipt
+- notes: List EACH receipt separately with format: "[Merchant1] - ₹[Amount1] - [Items1]; [Merchant2] - ₹[Amount2] - [Items2]; ..."
+
 Extract the following fields from the receipt text below:
 
 REQUIRED FIELDS:
-- merchant: The merchant/vendor name (string)
-- amount: The GRAND TOTAL amount paid (numeric, just the number without currency symbol)
-- date: Transaction date in YYYY-MM-DD format
+- merchant: The merchant/vendor name (string). Use "Multiple Receipts" if image has multiple receipts.
+- amount: The GRAND TOTAL of ALL receipts combined (numeric, just the number without currency symbol)
+- date: Transaction date in YYYY-MM-DD format (most recent if multiple)
 - category: MUST be EXACTLY one of these values:
   * Rent
   * Food
@@ -52,14 +60,18 @@ REQUIRED FIELDS:
   - Building/property rent = "Rent"
   - Medical/Doctor = "Other"
   - Electronics/Shopping = "Other"
+  - Multiple receipts = choose based on highest amount receipt
   - If unsure, use "Other"
   
-- notes: Combine merchant name, amount, and item details in this format: "[Merchant Name] - ₹[Amount] - [Items/Description]"
-  Example: "Tasty Bites Restaurant - ₹1026.60 - Paneer Tikka, Veg Biryani, Butter Naan, Coke"
-  Example: "Shankar Electronics - ₹92400.00 - Laptop, Smart TV, Power Bank"
+- notes: 
+  * For SINGLE receipt: "[Merchant Name] - ₹[Amount] - [Items/Description]"
+    Example: "Tasty Bites Restaurant - ₹1026.60 - Paneer Tikka, Veg Biryani, Butter Naan, Coke"
+  
+  * For MULTIPLE receipts: List each receipt separately with semicolon separator
+    Example: "Dr. Sanjay Sharma - ₹800.00 - Consultation, Antibiotics, Pain Reliever; Shankar Electronics - ₹92400.00 - Laptop, Smart TV, Power Bank; Abhishek Grocery - ₹570.00 - Rice, Milk, Soap, Biscuits"
 
 OPTIONAL FIELDS:
-- tax: Tax amount if clearly mentioned (numeric)
+- tax: Total tax amount from all receipts (numeric)
 
 Return ONLY a valid JSON object with these exact field names. Do not include markdown formatting or explanations.
 
