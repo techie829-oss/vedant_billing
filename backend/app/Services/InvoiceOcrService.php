@@ -77,11 +77,21 @@ class InvoiceOcrService
                 throw new \Exception("Could not parse invoice data. Please ensure the image is clear and contains product information.");
             }
 
+            $invoiceDate = null;
+            if (!empty($invoiceData['invoice_date'])) {
+                try {
+                    $cleanDate = str_replace(['O', 'o'], '0', $invoiceData['invoice_date']);
+                    $invoiceDate = \Carbon\Carbon::parse($cleanDate)->format('Y-m-d');
+                } catch (\Exception $e) {
+                    Log::warning("Could not parse invoice date: {$invoiceData['invoice_date']}");
+                }
+            }
+
             $scan->update([
                 'llm_response' => $invoiceData,
                 'vendor_name' => $invoiceData['vendor_name'] ?? null,
                 'invoice_number' => $invoiceData['invoice_number'] ?? null,
-                'invoice_date' => $invoiceData['invoice_date'] ?? null,
+                'invoice_date' => $invoiceDate,
                 'products_count' => count($invoiceData['items'] ?? []),
             ]);
 
