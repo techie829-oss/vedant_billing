@@ -65,7 +65,9 @@ RAW TEXT:
 EOT;
 
         try {
-            $response = Http::timeout(60)->post($this->baseUrl, [
+            // Increase timeout for first request (Ollama loads model into memory)
+            // First request: 10-20 seconds, subsequent: 3-8 seconds
+            $response = Http::timeout(120)->post($this->baseUrl, [
                 'model' => $this->model,
                 'prompt' => $prompt,
                 'stream' => false,

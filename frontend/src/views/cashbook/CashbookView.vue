@@ -137,12 +137,6 @@
                             class="hover:bg-gray-50 transition-colors">
                             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-500 sm:pl-6">
                                 {{ formatDate(entry.date) }}
-                                <div class="text-[10px] text-gray-400 font-normal">
-                                    {{ new Date(entry.date).toLocaleTimeString([], {
-                                        hour: '2-digit', minute: '2-digit'
-                                    })
-                                    }}
-                                </div>
                             </td>
                             <td class="px-3 py-4 text-sm text-gray-900">
                                 <div class="font-medium">{{ entry.title || (entry.type === 'IN' ? 'Payment' : 'Expense')
@@ -450,8 +444,8 @@ const handleReceiptScan = async (event: Event) => {
         if (response.data.data.date) {
             form.date = response.data.data.date
         }
-        if (response.data.data.merchant) {
-            form.description = response.data.data.merchant
+        if (response.data.data.notes) {
+            form.description = response.data.data.notes
         }
         if (response.data.data.category) {
             const categories = ['Rent', 'Food', 'Travel', 'Utilities', 'Salary', 'Office Supplies', 'Other']
