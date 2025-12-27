@@ -117,6 +117,10 @@ class ExpenseController extends Controller
             return response()->json(['message' => $result['message']], 500);
         }
 
-        return response()->json($result['data']);
+        // Return in format expected by frontend: { success: true, data: {...} }
+        return response()->json([
+            'success' => true,
+            'data' => $result['data']
+        ]);
     }
 }
