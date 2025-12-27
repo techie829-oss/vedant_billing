@@ -94,6 +94,7 @@ const router = createRouter({
             component: () => import('../views/products/ProductFormView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
         },
+        // Invoices
         {
             path: '/invoices',
             name: 'invoices',
@@ -102,26 +103,76 @@ const router = createRouter({
         },
         {
             path: '/invoices/create',
-            name: 'invoices.create',
+            name: 'invoice-create',
             component: () => import('../views/invoices/InvoiceFormView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
         },
         {
             path: '/invoices/:id',
-            name: 'invoices.show',
+            name: 'invoice-detail',
             component: () => import('../views/invoices/InvoiceDetailView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
         },
         {
-            path: '/invoices/:id/print',
-            name: 'invoices.print',
-            component: () => import('../views/invoices/InvoicePrintView.vue'),
+            path: '/invoices/:id/edit',
+            name: 'invoice-edit',
+            component: () => import('../views/invoices/InvoiceFormView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
         },
         {
-            path: '/invoices/:id/edit',
-            name: 'invoices.edit',
-            component: () => import('../views/invoices/InvoiceFormView.vue'),
+            path: '/invoices/:id/print',
+            name: 'invoice-print',
+            component: () => import('../views/invoices/InvoicePrintView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        // Quotations
+        {
+            path: '/quotations',
+            name: 'quotations',
+            component: () => import('../views/invoices/QuotationListView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/quotations/create',
+            name: 'quotation-create',
+            component: () => import('../views/invoices/QuotationFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/quotations/:id',
+            name: 'quotation-detail',
+            component: () => import('../views/invoices/InvoiceDetailView.vue'), // Reusing Detail View for now
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/quotations/:id/edit',
+            name: 'quotation-edit',
+            component: () => import('../views/invoices/QuotationFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        // Credit Notes
+        {
+            path: '/credit-notes',
+            name: 'credit-notes',
+            component: () => import('../views/invoices/CreditNoteListView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/credit-notes/create',
+            name: 'credit-note-create',
+            component: () => import('../views/invoices/CreditNoteFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/credit-notes/:id',
+            name: 'credit-note-detail',
+            component: () => import('../views/invoices/InvoiceDetailView.vue'), // Reusing Detail View for now
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/credit-notes/:id/edit',
+            name: 'credit-note-edit',
+            component: () => import('../views/invoices/CreditNoteFormView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
         },
         {
@@ -148,24 +199,7 @@ const router = createRouter({
             component: () => import('../views/cashbook/CashbookView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
         },
-        {
-            path: '/credit-notes',
-            name: 'credit-notes',
-            component: () => import('../views/invoices/InvoiceListView.vue'),
-            meta: { requiresAuth: true, requiresBusiness: true }
-        },
-        {
-            path: '/credit-notes/create',
-            name: 'credit-notes.create',
-            component: () => import('../views/credit_notes/CreditNoteFormView.vue'),
-            meta: { requiresAuth: true, requiresBusiness: true }
-        },
-        {
-            path: '/credit-notes/:id',
-            name: 'credit-notes.show',
-            component: () => import('../views/invoices/InvoiceDetailView.vue'),
-            meta: { requiresAuth: true, requiresBusiness: true }
-        }
+
     ]
 })
 

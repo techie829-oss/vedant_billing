@@ -37,7 +37,7 @@ export interface Invoice {
     eway_bill_no?: string
     vehicle_no?: string
     po_number?: string
-    type?: 'invoice' | 'credit_note'
+    type?: 'invoice' | 'credit_note' | 'quote'
     parent_id?: string
     reason?: string
     credit_notes?: Invoice[]; // Related credit notes

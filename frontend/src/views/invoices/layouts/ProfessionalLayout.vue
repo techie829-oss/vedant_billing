@@ -40,7 +40,7 @@
 
             <div class="text-right">
                 <h2 class="text-4xl font-black text-gray-200 uppercase tracking-wide select-none">{{ invoice.type ===
-                    'credit_note' ? 'CREDIT NOTE' : 'INVOICE' }}</h2>
+                    'credit_note' ? 'CREDIT NOTE' : (invoice.type === 'quote' ? 'ESTIMATE' : 'INVOICE') }}</h2>
                 <div class="mt-4 space-y-1">
                     <div class="flex justify-end gap-3 items-center">
                         <span class="text-xs font-bold text-gray-400 uppercase">{{ invoice.type === 'credit_note' ? 'CN'
@@ -216,7 +216,7 @@
                     </div>
 
                     <!-- Payment Details (Simplified) -->
-                    <div v-if="invoice.meta?.display_options?.show_qr_bank_details && invoice.type !== 'credit_note'"
+                    <div v-if="invoice.meta?.display_options?.show_qr_bank_details && invoice.type !== 'credit_note' && (qrCodeUrl || invoice.business?.meta?.upi_id || invoice.business?.bank_name)"
                         class="flex gap-4 items-start pt-2">
                         <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest py-1">Pay To:</h4>
 

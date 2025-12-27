@@ -34,7 +34,8 @@
                         <div class="flex-grow p-4 bg-gray-50 flex flex-col justify-center items-end">
                             <h2
                                 class="text-2xl font-black text-gray-900 uppercase tracking-widest border-b-2 border-gray-900 pb-1 mb-2">
-                                TAX INVOICE</h2>
+                                {{ invoice.type === 'credit_note' ? 'CREDIT NOTE' : (invoice.type === 'quote' ?
+                                    'ESTIMATE' : 'TAX INVOICE') }}</h2>
                             <div class="text-right space-y-1 w-full">
                                 <div class="flex justify-between items-center gap-4">
                                     <span class="text-xs font-bold uppercase text-gray-500">Invoice No</span>
@@ -176,7 +177,7 @@
                                 <td v-if="invoice.meta?.display_options?.show_discount"
                                     class="py-3 px-3 text-right text-red-600 border-r border-gray-800">{{
                                         Number(item.discount) ? '-' +
-                                    Number(item.discount) : '-' }}</td>
+                                            Number(item.discount) : '-' }}</td>
 
                                 <template v-if="invoice.meta?.display_options?.show_gst_breakdown">
                                     <template v-if="taxBreakdown.taxType === 'IGST'">
@@ -221,7 +222,8 @@
 
                         <div class="flex-grow p-4 flex gap-6">
                             <!-- Bank -->
-                            <div v-if="invoice.meta?.display_options?.show_qr_bank_details" class="flex-1">
+                            <div v-if="invoice.meta?.display_options?.show_qr_bank_details && (invoice.business?.bank_name || invoice.business?.account_number || invoice.business?.ifsc_code || invoice.business?.meta?.upi_id)"
+                                class="flex-1">
                                 <h4
                                     class="text-[10px] font-bold uppercase text-gray-500 border-b border-gray-300 pb-1 mb-2">
                                     Bank
@@ -267,7 +269,7 @@
                             <span class="text-xs">Discount</span>
                             <span class="text-sm">-{{formatCurrency(invoice.items.reduce((s: number, i: any) => s +
                                 Number(i.discount
-                                || 0), 0)) }}</span>
+                                    || 0), 0))}}</span>
                         </div>
 
                         <!-- Tax Totals -->

@@ -30,7 +30,8 @@
             <div class="text-right">
                 <span
                     class="inline-block px-3 py-1 bg-gray-100 text-gray-600 rounded text-xs font-bold uppercase tracking-wide mb-2">{{
-                        invoice.type === 'credit_note' ? 'CREDIT NOTE' : 'INVOICE' }}</span>
+                        invoice.type === 'credit_note' ? 'CREDIT NOTE' : (invoice.type === 'quote' ? 'ESTIMATE' : 'INVOICE')
+                    }}</span>
                 <h2 class="text-xl font-mono font-bold text-gray-900">{{ invoice.invoice_number }}</h2>
                 <div class="text-sm text-gray-500 mt-2 space-y-1">
                     <p>Date: <span class="font-medium text-gray-900">{{ formatDate(invoice.date) }}</span></p>
@@ -187,7 +188,8 @@
 
                 <!-- Bank Details -->
                 <!-- Bank & QR Details -->
-                <div v-if="displayOpts.show_qr_bank_details && invoice.type !== 'credit_note'" class="">
+                <div v-if="displayOpts.show_qr_bank_details && invoice.type !== 'credit_note' && (qrCodeUrl || invoice.business?.meta?.upi_id || invoice.business?.bank_name)"
+                    class="">
                     <!-- Removed bg/border/p-4 -->
                     <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Payment Details</h4>
 

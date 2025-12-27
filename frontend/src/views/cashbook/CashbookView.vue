@@ -71,6 +71,43 @@
             </div>
         </div>
 
+        <!-- Filters -->
+        <div class="mb-6 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <h3 class="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+                Filter Transactions
+            </h3>
+            <div class="flex flex-col sm:flex-row items-end gap-4">
+                <div class="w-full sm:w-auto">
+                    <label for="startDate"
+                        class="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Start
+                        Date</label>
+                    <input type="date" id="startDate" v-model="filters.start_date"
+                        class="block w-full rounded-lg border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-gray-50/50">
+                </div>
+                <div class="w-full sm:w-auto">
+                    <label for="endDate"
+                        class="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">End
+                        Date</label>
+                    <input type="date" id="endDate" v-model="filters.end_date"
+                        class="block w-full rounded-lg border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-gray-50/50">
+                </div>
+                <div class="flex gap-2 w-full sm:w-auto pt-2 sm:pt-0">
+                    <button @click="refresh"
+                        class="flex-1 sm:flex-none inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all">
+                        Apply
+                    </button>
+                    <button v-if="filters.start_date || filters.end_date" @click="clearFilters"
+                        class="flex-1 sm:flex-none inline-flex items-center justify-center rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-all">
+                        Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Ledger Table -->
         <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl overflow-hidden">
             <div class="overflow-x-auto">
@@ -109,7 +146,7 @@
                             </td>
                             <td class="px-3 py-4 text-sm text-gray-900">
                                 <div class="font-medium">{{ entry.title || (entry.type === 'IN' ? 'Payment' : 'Expense')
-                                    }}</div>
+                                }}</div>
                                 <div class="text-xs text-gray-500" v-if="entry.description">{{ entry.description }}
                                 </div>
                                 <div class="text-xs text-gray-400 mt-0.5" v-if="entry.payment_method">{{
@@ -261,13 +298,30 @@ const saveExpense = async () => {
     }
 }
 
+const filters = reactive({
+    start_date: '',
+    end_date: ''
+})
+
 const refresh = () => {
-    cashbookStore.fetchCashbook({ page: pagination.value.current_page })
+    cashbookStore.fetchCashbook({
+        page: 1, // Reset to page 1 on filter
+        ...filters
+    })
+}
+
+const clearFilters = () => {
+    filters.start_date = ''
+    filters.end_date = ''
+    refresh()
 }
 
 const changePage = (page: number) => {
     if (page < 1 || page > pagination.value.last_page) return
-    cashbookStore.fetchCashbook({ page })
+    cashbookStore.fetchCashbook({
+        page,
+        ...filters
+    })
 }
 
 const formatDate = (dateString: string) => {

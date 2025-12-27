@@ -1,29 +1,14 @@
 <template>
   <AppLayout>
-    <!-- Header -->
     <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">{{ typeFilter === 'credit_note' ? 'Credit Notes' : 'Invoices' }}
-        </h1>
+        <h1 class="text-2xl font-bold text-gray-900">Invoices</h1>
         <p class="text-sm text-gray-500 mt-1">
-          {{ descriptionText }}
+          Manage your invoices and payments.
         </p>
       </div>
       <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-4">
-        <!-- Filters (moved inline if space permits or kept nearby) -->
         <div class="flex gap-2">
-          <!-- Tabs / Type Switcher -->
-          <div class="flex bg-gray-100 p-0.5 rounded-lg border border-gray-200">
-            <button @click="typeFilter = 'invoice'"
-              :class="[typeFilter === 'invoice' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50', 'px-4 py-2 rounded-md text-sm font-medium transition-all flex-1 text-center whitespace-nowrap']">
-              Invoices
-            </button>
-            <button @click="typeFilter = 'credit_note'"
-              :class="[typeFilter === 'credit_note' ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50', 'px-4 py-2 rounded-md text-sm font-medium transition-all flex-1 text-center whitespace-nowrap']">
-              Credit Notes
-            </button>
-          </div>
-
           <select v-model="statusFilter"
             class="block w-40 rounded-lg border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
             <option value="">All Statuses</option>
@@ -40,7 +25,8 @@
             </svg>
           </button>
         </div>
-        <router-link v-if="typeFilter === 'invoice'" to="/invoices/create"
+
+        <router-link to="/invoices/create"
           class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none transition-colors">
           <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
@@ -48,18 +34,11 @@
           </svg>
           Create Invoice
         </router-link>
-        <router-link v-else to="/credit-notes/create"
-          class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none transition-colors">
-          <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Create Credit Note
-        </router-link>
       </div>
     </div>
 
-    <!-- Table -->
+    <!-- Invoice Stats (Optional, keeping simple for now) -->
+
     <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl overflow-hidden">
       <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-300">
@@ -68,6 +47,7 @@
               <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Number</th>
               <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Customer</th>
               <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Date</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Due Date</th>
               <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
               <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Amount</th>
               <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
@@ -77,21 +57,21 @@
           </thead>
           <tbody class="divide-y divide-gray-200 bg-white">
             <tr v-if="loading && invoices.length === 0">
-              <td colspan="6" class="text-center py-4 text-gray-500">Loading invoices...</td>
+              <td colspan="7" class="text-center py-4 text-gray-500">Loading...</td>
             </tr>
             <tr v-else-if="invoices.length === 0">
-              <td colspan="6" class="text-center py-4 text-gray-500">No invoices found.</td>
+              <td colspan="7" class="text-center py-4 text-gray-500">No invoices found.</td>
             </tr>
             <tr v-for="invoice in invoices" :key="invoice.id">
               <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                <router-link
-                  :to="typeFilter === 'credit_note' ? `/credit-notes/${invoice.id}` : `/invoices/${invoice.id}`"
+                <router-link :to="`/invoices/${invoice.id}`"
                   class="text-indigo-600 hover:text-indigo-900 hover:underline">
                   {{ invoice.invoice_number }}
                 </router-link>
               </td>
               <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ invoice.party?.name || 'Unknown' }}</td>
               <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ formatDate(invoice.date) }}</td>
+              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ formatDate(invoice.due_date) }}</td>
               <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                 <span :class="getStatusClass(invoice.status)"
                   class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset">
@@ -100,9 +80,8 @@
               </td>
               <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">₹{{ invoice.grand_total }}</td>
               <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                <router-link
-                  :to="typeFilter === 'credit_note' ? `/credit-notes/${invoice.id}` : `/invoices/${invoice.id}`"
-                  class="text-gray-600 hover:text-gray-900 mr-4" title="View Invoice">
+                <router-link :to="`/invoices/${invoice.id}`" class="text-gray-600 hover:text-gray-900 mr-4"
+                  title="View">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -142,7 +121,6 @@
       </div>
     </div>
 
-    <!-- Pagination (Simple Previous/Next) -->
     <div v-if="pagination.total > pagination.per_page"
       class="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
       <div class="flex flex-1 justify-between sm:justify-end">
@@ -157,41 +135,49 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import AppLayout from '../../layouts/AppLayout.vue'
+import { useAuthStore } from '../../stores/auth'
 import { useInvoiceStore } from '../../stores/invoice'
 import { storeToRefs } from 'pinia'
 
+// No longer using useRoute since this is dedicated to Invoices
+const authStore = useAuthStore()
 const invoiceStore = useInvoiceStore()
 const { invoices, loading, pagination } = storeToRefs(invoiceStore)
 
 const statusFilter = ref('')
-const typeFilter = ref('invoice')
+const typeFilter = ref('invoice') // Hardcoded, this view is only for Invoices
 
-const descriptionText = computed(() => {
-  return typeFilter.value === 'credit_note'
-    ? 'Manage your sales returns and credit notes.'
-    : 'A list of all invoices including number, customer, date, status, and total amount.'
-})
-
-const fetchParams = computed(() => {
-  const params: any = { page: pagination.value.current_page, type: typeFilter.value }
-  if (statusFilter.value) params.status = statusFilter.value
-  return params
-})
-
-const refresh = () => {
-  invoiceStore.fetchInvoices(fetchParams.value)
+const refresh = async () => {
+  if (!authStore.currentBusinessId) return
+  loading.value = true
+  try {
+    const params: any = {
+      business_id: authStore.currentBusinessId,
+      type: typeFilter.value,
+      page: pagination.value.current_page
+    }
+    if (statusFilter.value) {
+      params.status = statusFilter.value
+    }
+    await invoiceStore.fetchInvoices(params)
+  } catch (e) {
+    console.error('Error fetching invoices:', e)
+  } finally {
+    loading.value = false
+  }
 }
 
 const changePage = (page: number) => {
   if (page < 1 || page > pagination.value.last_page) return
   invoiceStore.pagination.current_page = page
-  invoiceStore.fetchInvoices({ ...fetchParams.value, page })
+  refresh()
 }
 
-watch([statusFilter, typeFilter], () => {
-  invoiceStore.fetchInvoices({ ...fetchParams.value, page: 1 })
+watch([statusFilter, () => authStore.currentBusinessId], () => {
+  invoiceStore.pagination.current_page = 1
+  refresh()
 })
 
 const formatDate = (dateString: string) => {
@@ -212,8 +198,9 @@ const getStatusClass = (status: string) => {
 }
 
 const deleteInv = async (id: string) => {
-  if (confirm('Are you sure you want to delete this invoice?')) {
+  if (confirm(`Are you sure you want to delete this invoice?`)) {
     await invoiceStore.deleteInvoice(id)
+    refresh()
   }
 }
 

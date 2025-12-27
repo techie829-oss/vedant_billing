@@ -18,7 +18,7 @@
             <!-- Header Row 1: Title and Back Link -->
             <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 print:hidden">
                 <div class="flex items-center gap-4">
-                    <router-link to="/invoices"
+                    <router-link :to="backRoute"
                         class="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -28,7 +28,7 @@
                     </router-link>
 
                     <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-3">
-                        {{ invoice.type === 'credit_note' ? 'Credit Note' : 'Invoice' }} {{ invoice.invoice_number }}
+                        {{ typeLabel }} {{ invoice.invoice_number }}
                         <span :class="getStatusClass(invoice.status)"
                             class="inline-flex items-center rounded-md px-2.5 py-1 text-sm font-medium ring-1 ring-inset">
                             {{ capitalize(invoice.status) }}
@@ -39,8 +39,21 @@
 
             <!-- Header Row 2: Action Buttons -->
             <div class="mb-8 flex flex-wrap items-center justify-end gap-2 print:hidden">
-                <router-link :to="`/invoices/${invoice.id}/edit`" v-if="invoice.status === 'draft'"
+                <router-link :to="editRoute" v-if="invoice.status === 'draft'"
                     class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Edit</router-link>
+
+                <!-- Convert to Invoice (Quotes only) -->
+                <button v-if="invoice.type === 'quote'" @click="convertToInvoice" :disabled="converting"
+                    class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 gap-1.5 disabled:opacity-50">
+                    <svg v-if="converting" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    Convert to Invoice
+                </button>
 
                 <!-- Duplicate button -->
                 <button v-if="invoice.status !== 'draft'" @click="duplicateInvoice"
@@ -91,7 +104,7 @@
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                         </path>
                     </svg>
-                    Email
+                    {{ invoice.type === 'quote' ? 'Email Quote' : 'Email Invoice' }}
                 </button>
 
                 <!-- Remind / Share Button -->
@@ -129,7 +142,7 @@
                     </div>
                 </div>
 
-                <button v-if="invoice.status === 'draft'" @click="finalize"
+                <button v-if="invoice.status === 'draft' && invoice.type !== 'quote'" @click="finalize"
                     class="inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
                     Finalize
                 </button>
@@ -350,6 +363,71 @@ const router = useRouter()
 const invoiceStore = useInvoiceStore()
 const { currentInvoice: invoice, loading } = storeToRefs(invoiceStore)
 
+const converting = ref(false)
+
+const backRoute = computed(() => {
+    if (!invoice.value) return '/invoices'
+    if (invoice.value.type === 'quote') return '/quotations'
+    if (invoice.value.type === 'credit_note') return '/credit-notes'
+    return '/invoices'
+})
+
+const editRoute = computed(() => {
+    if (!invoice.value) return ''
+    if (invoice.value.type === 'quote') return `/quotations/${invoice.value.id}/edit`
+    if (invoice.value.type === 'credit_note') return `/credit-notes/${invoice.value.id}/edit`
+    return `/invoices/${invoice.value.id}/edit`
+})
+
+const typeLabel = computed(() => {
+    if (!invoice.value) return 'Invoice'
+    if (invoice.value.type === 'quote') return 'Estimate'
+    if (invoice.value.type === 'credit_note') return 'Credit Note'
+    return 'Invoice'
+})
+
+const convertToInvoice = async () => {
+    if (!invoice.value) return
+    if (!confirm('This will create a new Draft Invoice from this Estimate. Continue?')) return
+
+    converting.value = true
+    try {
+        // Create new invoice payload from quote
+        const payload = {
+            ...invoice.value,
+            id: undefined, // Create new
+            invoice_number: '', // Let backend generate or empty
+            type: 'invoice',
+            status: 'draft',
+            date: new Date().toISOString().split('T')[0],
+            due_date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            meta: {
+                ...invoice.value.meta,
+                converted_from_quote_id: invoice.value.id
+            }
+        }
+
+        // Clean up fields that shouldn't be copied
+        delete (payload as any).created_at
+        delete (payload as any).updated_at
+        delete (payload as any).allocations
+        delete (payload as any).credit_notes
+
+        const newInvoice = await invoiceStore.createInvoice(payload as any)
+
+        // Optionally update quote status to 'accepted'?
+        // For now, just navigate to new invoice
+        router.push(`/invoices/${newInvoice.id}/edit`)
+
+        alert('Estimate converted to Invoice successfully!')
+    } catch (e: any) {
+        console.error('Conversion failed', e)
+        alert(e.response?.data?.message || 'Failed to convert estimate')
+    } finally {
+        converting.value = false
+    }
+}
+
 const layoutComponent = computed(() => {
     const layout = invoice.value?.business?.meta?.invoice_layout || 'default'
     if (layout === 'professional') return ProfessionalLayout
@@ -483,7 +561,7 @@ const loadInvoice = async () => {
 
 const printInvoice = () => {
     const url = router.resolve({
-        name: 'invoices.print',
+        name: 'invoice-print',
         params: { id: invoice.value?.id }
     }).href
     window.open(url, '_blank')

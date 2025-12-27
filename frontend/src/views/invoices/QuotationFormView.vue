@@ -3,7 +3,9 @@
 
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-                {{ isEditMode ? 'Edit Credit Note' : 'Create Credit Note' }}
+                <h2 class="text-2xl font-bold text-gray-900">
+                    {{ isEditMode ? 'Edit Estimate' : 'New Estimate' }}
+                </h2>
             </div>
             <div class="mt-4 flex sm:mt-0 sm:ml-4">
                 <button @click="$router.back()" type="button"
@@ -14,7 +16,7 @@
                 </button>
                 <button @click="save('sent')" :disabled="loading" type="button"
                     class="ml-3 inline-flex items-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                    {{ loading ? 'Saving...' : 'Save & Send' }}
+                    {{ loading ? 'Saving...' : 'Save Estimate' }}
                 </button>
             </div>
         </div>
@@ -28,17 +30,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
-                                <input id="show_eway" type="checkbox"
-                                    v-model="form.meta.display_options.show_eway_details"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_eway" class="font-medium text-gray-900">Show Transport/Order
-                                    Details</label>
-                            </div>
-                        </div>
                         <div class="relative flex items-start">
                             <div class="flex h-6 items-center">
                                 <input id="show_hsn" type="checkbox" v-model="form.meta.display_options.show_hsn"
@@ -71,28 +62,6 @@
                         </div>
                         <div class="relative flex items-start">
                             <div class="flex h-6 items-center">
-                                <input id="show_bank" type="checkbox"
-                                    v-model="form.meta.display_options.show_qr_bank_details"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_bank" class="font-medium text-gray-900">Show Bank Details &
-                                    QR</label>
-                            </div>
-                        </div>
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
-                                <input id="show_shipping" type="checkbox"
-                                    v-model="form.meta.display_options.show_shipping_address"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_shipping" class="font-medium text-gray-900">Show Shipping
-                                    Address</label>
-                            </div>
-                        </div>
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
                                 <input id="show_description" type="checkbox"
                                     v-model="form.meta.display_options.show_description"
                                     class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
@@ -100,43 +69,6 @@
                             <div class="ml-3 text-sm leading-6">
                                 <label for="show_description" class="font-medium text-gray-900">Show
                                     Notes</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Transport Inputs (Conditionally Shown) -->
-                    <div v-if="form.meta.display_options.show_eway_details"
-                        class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-4 border-t border-gray-200 pt-6">
-                        <div class="sm:col-span-1">
-                            <label for="challan_no" class="block text-sm font-medium leading-6 text-gray-900">Challan
-                                No.</label>
-                            <div class="mt-2">
-                                <input type="text" id="challan_no" v-model="form.challan_no"
-                                    class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                            </div>
-                        </div>
-                        <div class="sm:col-span-1">
-                            <label for="eway_bill_no" class="block text-sm font-medium leading-6 text-gray-900">E-Way
-                                Bill No.</label>
-                            <div class="mt-2">
-                                <input type="text" id="eway_bill_no" v-model="form.eway_bill_no"
-                                    class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                            </div>
-                        </div>
-                        <div class="sm:col-span-1">
-                            <label for="vehicle_no" class="block text-sm font-medium leading-6 text-gray-900">Vehicle
-                                No.</label>
-                            <div class="mt-2">
-                                <input type="text" id="vehicle_no" v-model="form.vehicle_no"
-                                    class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                            </div>
-                        </div>
-                        <div class="sm:col-span-1">
-                            <label for="po_number" class="block text-sm font-medium leading-6 text-gray-900">PO
-                                Number</label>
-                            <div class="mt-2">
-                                <input type="text" id="po_number" v-model="form.po_number"
-                                    class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
                         </div>
                     </div>
@@ -171,8 +103,7 @@
                         </div>
 
                         <div class="sm:col-span-3">
-                            <!-- Invoice Number is usually auto-generated by backend, but can be shown if editing -->
-                            <label class="block text-sm font-medium leading-6 text-gray-900">Invoice Number</label>
+                            <label class="block text-sm font-medium leading-6 text-gray-900">Estimate Number</label>
                             <div class="mt-2">
                                 <input type="text" disabled
                                     :value="isEditMode ? form.invoice_number : '(Auto-generated)'"
@@ -181,8 +112,7 @@
                         </div>
 
                         <div class="sm:col-span-3">
-                            <label for="date" class="block text-sm font-medium leading-6 text-gray-900">Invoice
-                                Date</label>
+                            <label for="date" class="block text-sm font-medium leading-6 text-gray-900">Date</label>
                             <div class="mt-2">
                                 <input type="date" id="date" v-model="form.date" required
                                     class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
@@ -190,8 +120,8 @@
                         </div>
 
                         <div class="sm:col-span-3">
-                            <label for="due_date" class="block text-sm font-medium leading-6 text-gray-900">Due
-                                Date</label>
+                            <label for="due_date" class="block text-sm font-medium leading-6 text-gray-900">Valid
+                                Until</label>
                             <div class="mt-2">
                                 <input type="date" id="due_date" v-model="form.due_date" required
                                     class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
@@ -200,8 +130,6 @@
                     </div>
                 </div>
             </div>
-
-
 
             <!-- Billing Addresses -->
             <div v-if="form.party_id" class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -243,51 +171,6 @@
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-medium leading-6 text-gray-900">ZIP</label>
                                 <input type="text" v-model="form.meta.billing_address.zip"
-                                    class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Shipping Address (Conditional) -->
-                <div v-if="form.meta.display_options.show_shipping_address"
-                    class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                    <div class="px-4 py-6 sm:p-8">
-                        <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Shipping Address</h3>
-                        <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-                            <div class="sm:col-span-6">
-                                <label class="block text-sm font-medium leading-6 text-gray-900">Street</label>
-                                <input type="text" v-model="form.meta.shipping_address.street"
-                                    class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-medium leading-6 text-gray-900">City</label>
-                                <input type="text" v-model="form.meta.shipping_address.city"
-                                    class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-medium leading-6 text-gray-900">State</label>
-                                <div class="relative mt-2">
-                                    <select v-model="form.meta.shipping_address.state"
-                                        class="block w-full appearance-none rounded-md border-0 py-2 pl-3.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                        <option value="" disabled>Select State</option>
-                                        <option v-for="state in states" :key="state.code" :value="state.name">
-                                            {{ state.name }} ({{ state.code }})
-                                        </option>
-                                    </select>
-                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                                            aria-hidden="true">
-                                            <path fill-rule="evenodd"
-                                                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-medium leading-6 text-gray-900">ZIP</label>
-                                <input type="text" v-model="form.meta.shipping_address.zip"
                                     class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
                         </div>
@@ -348,7 +231,7 @@
                                         <input type="text" v-model="item.description" placeholder="Notes (optional)"
                                             class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
                                     </td>
-                                    <td v-if="form.meta.display_options.show_hsn" class="px-2 py-1">
+                                    <td class="px-2 py-1">
                                         <input type="text" v-model="item.hsn_code" placeholder="HSN"
                                             class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
                                     </td>
@@ -462,7 +345,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import client from '../../api/client'
 import AppLayout from '../../layouts/AppLayout.vue'
 import { useInvoiceStore, type InvoiceItem } from '../../stores/invoice'
 import { usePartyStore } from '../../stores/party'
@@ -481,33 +363,65 @@ const authStore = useAuthStore()
 const { loading } = storeToRefs(invoiceStore)
 
 const isEditMode = computed(() => route.params.id !== undefined)
-const parentInvoiceId = computed(() => route.query.parent_id as string)
 
 const customers = ref<any[]>([])
 const products = ref<Product[]>([])
 
+const states = [
+    { name: 'Andhra Pradesh', code: '37' },
+    { name: 'Arunachal Pradesh', code: '12' },
+    { name: 'Assam', code: '18' },
+    { name: 'Bihar', code: '10' },
+    { name: 'Chhattisgarh', code: '22' },
+    { name: 'Goa', code: '30' },
+    { name: 'Gujarat', code: '24' },
+    { name: 'Haryana', code: '06' },
+    { name: 'Himachal Pradesh', code: '02' },
+    { name: 'Jharkhand', code: '20' },
+    { name: 'Karnataka', code: '29' },
+    { name: 'Kerala', code: '32' },
+    { name: 'Madhya Pradesh', code: '23' },
+    { name: 'Maharashtra', code: '27' },
+    { name: 'Manipur', code: '14' },
+    { name: 'Meghalaya', code: '17' },
+    { name: 'Mizoram', code: '15' },
+    { name: 'Nagaland', code: '13' },
+    { name: 'Odisha', code: '21' },
+    { name: 'Punjab', code: '03' },
+    { name: 'Rajasthan', code: '08' },
+    { name: 'Sikkim', code: '11' },
+    { name: 'Tamil Nadu', code: '33' },
+    { name: 'Telangana', code: '36' },
+    { name: 'Tripura', code: '16' },
+    { name: 'Uttar Pradesh', code: '09' },
+    { name: 'Uttarakhand', code: '05' },
+    { name: 'West Bengal', code: '19' },
+    { name: 'Andaman and Nicobar Islands', code: '35' },
+    { name: 'Chandigarh', code: '04' },
+    { name: 'Dadra and Nagar Haveli and Daman and Diu', code: '26' },
+    { name: 'Delhi', code: '07' },
+    { name: 'Jammu and Kashmir', code: '01' },
+    { name: 'Ladakh', code: '38' },
+    { name: 'Lakshadweep', code: '31' },
+    { name: 'Puducherry', code: '34' }
+]
+
 const form = ref({
     invoice_number: '',
+    type: 'quote',
     party_id: '',
     date: new Date().toISOString().split('T')[0],
-    due_date: new Date().toISOString().split('T')[0], // Immediate due date for CN defaults
+    due_date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     items: [] as InvoiceItem[],
     notes: '',
     terms: '',
-    reason: '',
-    type: 'credit_note',
-    parent_id: null as string | null,
-    challan_no: '',
-    eway_bill_no: '',
-    vehicle_no: '',
-    po_number: '',
     meta: {
         display_options: {
             show_eway_details: false,
             show_hsn: true,
             show_gst_breakdown: true,
             show_discount: false,
-            show_qr_bank_details: false,
+            show_qr_bank_details: false, // Default false for Quotes
             show_shipping_address: false,
             show_description: true
         },
@@ -526,60 +440,14 @@ const form = ref({
     }
 })
 
-
-
 // Auto-fill address when customer changes
 watch(() => form.value.party_id, (newId) => {
-    // Only auto-fill if not in edit mode (or maybe we should? User might want to reset? Let's stick to only on create or change)
-    // Actually, relying on `isEditMode` logic inside `watch` is complex.
-    // Let's just say: IF the user changes the dropdown, we update.
-    // But on initial load of Edit Mode, we should NOT overwrite if we already have meta.
-
-    // We can check if the change is user-initiated.
-    // Usually watchers fire on value change. 
-    // On load, we set form value, watcher fires.
-
     if (newId) {
         const party = customers.value.find(c => c.id === newId)
         if (party) {
-            // If addresses are empty, fill them. 
-            // Or overwrite? User expects overwrite if they select a customer.
-            // But on Edit Load, we set party_id, so this fires. We must be careful not to overwrite existing Invoice address.
-
-            // Check if we already have populated address in meta (from loadInvoice)
-            // If it's a fresh create (no ID), overwrite.
-            // If it's edit, and party_id matches original, don't overwrite.
-            // Simplified: only overwrite if we don't have existing meaningful data or user interaction?
-            // Safer approach: 
-            // 1. If we are loading an invoice (isEditMode && loadingInvoice), ignore.
-            // 2. If user interaction, overwrite.
-
-            // For now, let's implement a flag or check if meta address is empty.
-            // For now, let's implement a flag or check if meta address is empty.
-
-            // If we are 'loading', we shouldn't overwrite.
-            // We don't have a 'loading' flag exposed for this.
-            // We can check against the invoice data we just loaded.
-
-            // Actually, simplest is: overwrite if (not edit mode) OR (edit mode AND party_id changed from original).
-            // But we don't track original party_id easily here without more state.
-
-            // Let's check if the meta address matches the party address. If not, maybe we keep it?
-            // No, if user switches customer, they want that customer's address.
-
-            // Let's protect "Edit Mode Initial Load" by checking if `form.meta.billing_address` is populated.
-            // But wait, `loadInvoice` runs AFTER `customers` are loaded? 
-            // If `loadInvoice` sets `form.value`, and `party_id` changes, watcher triggers.
-
-            // Correct approach: Pause watcher during load, or use nextTick, or just check empty.
             if (!form.value.meta.billing_address.street || !isEditMode.value) {
                 form.value.meta.billing_address = party.billing_address ? { ...party.billing_address } : { street: '', city: '', state: '', zip: '' }
                 form.value.meta.shipping_address = party.shipping_address ? { ...party.shipping_address } : { street: '', city: '', state: '', zip: '' }
-
-                // Also auto-enable shipping view if shipping address exists
-                if (party.shipping_address?.street || party.shipping_address?.city) {
-                    form.value.meta.display_options.show_shipping_address = true
-                }
             }
         }
     }
@@ -609,10 +477,8 @@ const calculateLineTotal = (item: InvoiceItem) => {
     const discount = Number(item.discount) || 0
     const taxRate = Number(item.tax_rate) || 0
 
-    // Tax is usually exclusive in this simple model, i.e. Price + Tax
-    // Discount is usually applied on unit price * qty
     const sub = (qty * price) - discount
-    const taxable = sub > 0 ? sub : 0 // Prevent negative taxable
+    const taxable = sub > 0 ? sub : 0
     const tax = taxable * (taxRate / 100)
     return taxable + tax
 }
@@ -623,15 +489,9 @@ const totals = computed(() => {
     let sgst = 0
     let igst = 0
 
-    // Determine POS and Business State
     const businessState = authStore.activeBusiness?.meta?.state?.toLowerCase()
     const selectedCustomer = customers.value.find(c => c.id === form.value.party_id)
     const customerState = (selectedCustomer?.shipping_address?.state || selectedCustomer?.billing_address?.state || '').toLowerCase()
-
-    // Default to Intra-State (CGST+SGST) if states match, else Inter-State (IGST)
-    // If no state info, default to IGST to be safe or Intra? Let's assume IGST if different/missing.
-    // Actually safe default is Intra if unknown usually, but logically IGST implies separate region.
-    // If businessState is missing, we can't determine.
 
     const isInterState = businessState && customerState && businessState !== customerState
     const taxType = isInterState ? 'IGST' : 'CGST+SGST'
@@ -693,47 +553,16 @@ const loadProducts = async () => {
 const onProductSelect = (item: InvoiceItem, product: any) => {
     if (product) {
         item.name = product.name
-        item.name = product.name
-        // item.description = product.description || '' // Disabled as per user request (Notes logic)
         item.hsn_code = product.hsn_code || ''
         item.unit_price = Number(product.sale_price) || 0
         item.tax_rate = Number(product.tax_rate) || 0
-
         if (!item.quantity) item.quantity = 1
     }
 }
 
 const loadInvoice = async () => {
-    // Case 1: Creating a Return from an existing Invoice (Parent)
-    if (parentInvoiceId.value && !isEditMode.value) {
-        try {
-            const parent = await invoiceStore.fetchInvoice(parentInvoiceId.value)
-            if (parent) {
-                form.value.parent_id = parent.id
-                form.value.party_id = parent.party_id
-                form.value.items = parent.items.map((i: any) => ({
-                    ...i,
-                    id: undefined, // Clear ID for new rows
-                    quantity: i.quantity, // Default to full return, user can edit
-                    total: 0 // Will recalculate
-                }))
-                // Copy address
-                if (parent.meta) {
-                    if (parent.meta.billing_address) form.value.meta.billing_address = { ...parent.meta.billing_address }
-                    if (parent.meta.shipping_address) form.value.meta.shipping_address = { ...parent.meta.shipping_address }
-                }
-
-                form.value.reason = `Return for Invoice ${parent.invoice_number}`
-            }
-        } catch (e: any) {
-            alert('Failed to load parent invoice')
-        }
-        return
-    }
-
     if (!isEditMode.value) {
-        addItem() // Add one empty row
-        // Auto-fill defaults from Business Profile
+        addItem()
         const business = authStore.activeBusiness
         if (business && business.meta) {
             form.value.notes = business.meta.default_notes || ''
@@ -747,30 +576,23 @@ const loadInvoice = async () => {
         if (invoice) {
             form.value = {
                 invoice_number: invoice.invoice_number,
+                type: 'quote',
                 party_id: invoice.party_id,
                 date: invoice.date ? invoice.date.split('T')[0] : '',
                 due_date: invoice.due_date ? invoice.due_date.split('T')[0] : '',
                 items: invoice.items.map((i: any) => ({
                     ...i,
-                    // Backfill name for legacy custom items
                     name: i.name || (!i.product_id ? i.description : '')
                 })),
                 notes: invoice.notes || '',
                 terms: invoice.terms || '',
-                reason: invoice.reason || '',
-                type: 'credit_note',
-                parent_id: invoice.parent_id || null,
-                challan_no: invoice.challan_no || '',
-                eway_bill_no: invoice.eway_bill_no || '',
-                vehicle_no: invoice.vehicle_no || '',
-                po_number: invoice.po_number || '',
                 meta: {
                     display_options: {
                         show_eway_details: invoice.meta?.display_options?.show_eway_details ?? false,
                         show_hsn: invoice.meta?.display_options?.show_hsn ?? true,
                         show_gst_breakdown: invoice.meta?.display_options?.show_gst_breakdown ?? true,
                         show_discount: invoice.meta?.display_options?.show_discount ?? false,
-                        show_qr_bank_details: invoice.meta?.display_options?.show_qr_bank_details ?? false, // Default false for CN
+                        show_qr_bank_details: invoice.meta?.display_options?.show_qr_bank_details ?? true,
                         show_shipping_address: invoice.meta?.display_options?.show_shipping_address ?? false,
                         show_description: invoice.meta?.display_options?.show_description ?? true
                     },
@@ -779,22 +601,17 @@ const loadInvoice = async () => {
                 }
             }
 
-            // Fallback: If meta addresses are empty (old invoice), populate from Party
             if (!form.value.meta.billing_address?.street && invoice.party?.billing_address) {
                 form.value.meta.billing_address = { ...invoice.party.billing_address }
             }
-            if (!form.value.meta.shipping_address?.street && invoice.party?.shipping_address) {
-                form.value.meta.shipping_address = { ...invoice.party.shipping_address }
-            }
         }
     } catch (e: any) {
-        alert(e.response?.data?.message || 'Failed to load invoice')
-        router.push('/credit-notes')
+        alert(e.response?.data?.message || 'Failed to load estimate')
+        router.push('/quotations')
     }
 }
 
 const save = async (status: 'draft' | 'sent') => {
-    // Validate
     if (!form.value.party_id) {
         alert('Please select a customer')
         return
@@ -804,55 +621,33 @@ const save = async (status: 'draft' | 'sent') => {
         return
     }
 
+    const payload = {
+        ...form.value,
+        status,
+        subtotal: totals.value.subtotal,
+        tax_total: totals.value.cgst + totals.value.sgst + totals.value.igst,
+        grand_total: totals.value.grandTotal,
+        business_id: authStore.currentBusinessId
+    }
+
     try {
-        const payload = {
-            ...form.value,
-            parent_id: form.value.parent_id || undefined,
-            type: 'credit_note' as const,
-            // Calculate item totals explicitly for backend validation consistency
-            items: form.value.items.map(item => {
-                const payloadItem = { ...item }
-                // Ensure name is saved for product items (legacy data fix)
-                if (payloadItem.product_id && !payloadItem.name && products.value.length) {
-                    const product = products.value.find(p => p.id === payloadItem.product_id)
-                    if (product) {
-                        payloadItem.name = product.name
-                    }
-                }
-                return payloadItem
-            })
-        }
-
-        let res;
         if (isEditMode.value) {
-            await invoiceStore.updateInvoice(route.params.id as string, payload)
+            await invoiceStore.updateInvoice(route.params.id as string, payload as any)
+            alert('Estimate updated successfully')
         } else {
-            res = await invoiceStore.createInvoice(payload)
-            if (status === 'sent') {
-                await invoiceStore.finalizeInvoice(res.id)
-            }
+            await invoiceStore.createInvoice(payload as any)
+            alert('Estimate created successfully')
         }
-
-        router.push(parentInvoiceId.value ? `/invoices/${parentInvoiceId.value}` : (res ? `/credit-notes/${res.id}` : '/credit-notes'))
-    } catch (e: any) {
-        console.error('Save failed', e)
-        alert(e.response?.data?.message || 'Failed to save credit note')
+        router.push('/quotations')
+    } catch (e) {
+        console.error(e)
+        alert('Failed to save estimate')
     }
 }
 
-
-const states = ref<{ name: string, code: string }[]>([])
-
-onMounted(async () => {
-    try {
-        const res = await client.get('/gst-states')
-        states.value = res.data
-    } catch (e) {
-        console.error('Failed to load states', e)
-    }
-
-    await loadCustomers()
-    await loadProducts()
-    await loadInvoice()
+onMounted(() => {
+    loadCustomers()
+    loadProducts()
+    loadInvoice()
 })
 </script>

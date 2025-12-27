@@ -4,7 +4,7 @@
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h2 class="text-2xl font-bold text-gray-900">
-                    {{ isEditMode ? 'Edit Invoice' : 'New Invoice' }}
+                    {{ isEditMode ? 'Edit Credit Note' : 'New Credit Note' }}
                 </h2>
             </div>
             <div class="mt-4 flex sm:mt-0 sm:ml-4">
@@ -16,7 +16,7 @@
                 </button>
                 <button @click="save('sent')" :disabled="loading" type="button"
                     class="ml-3 inline-flex items-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                    {{ loading ? 'Saving...' : 'Save Invoice' }}
+                    {{ loading ? 'Saving...' : 'Save Credit Note' }}
                 </button>
             </div>
         </div>
@@ -49,49 +49,6 @@
                                 <label for="show_gst" class="font-medium text-gray-900">Show GST Breakdown</label>
                             </div>
                         </div>
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
-                                <input id="show_discount" type="checkbox"
-                                    v-model="form.meta.display_options.show_discount"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_discount" class="font-medium text-gray-900">Show Discount
-                                    Column</label>
-                            </div>
-                        </div>
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
-                                <input id="show_qr" type="checkbox"
-                                    v-model="form.meta.display_options.show_qr_bank_details"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_qr" class="font-medium text-gray-900">Show Bank/QR Details</label>
-                            </div>
-                        </div>
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
-                                <input id="show_shipping" type="checkbox"
-                                    v-model="form.meta.display_options.show_shipping_address"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_shipping" class="font-medium text-gray-900">Show Shipping
-                                    Address</label>
-                            </div>
-                        </div>
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
-                                <input id="show_description" type="checkbox"
-                                    v-model="form.meta.display_options.show_description"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_description" class="font-medium text-gray-900">Show
-                                    Notes</label>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -120,15 +77,11 @@
                                         </svg>
                                     </div>
                                 </div>
-                                <router-link to="/customers/create"
-                                    class="mt-2 text-sm text-indigo-600 hover:text-indigo-500 block">
-                                    + Add New Customer
-                                </router-link>
                             </div>
                         </div>
 
                         <div class="sm:col-span-3">
-                            <label class="block text-sm font-medium leading-6 text-gray-900">Invoice Number</label>
+                            <label class="block text-sm font-medium leading-6 text-gray-900">Credit Note Number</label>
                             <div class="mt-2">
                                 <input type="text" disabled
                                     :value="isEditMode ? form.invoice_number : '(Auto-generated)'"
@@ -137,19 +90,9 @@
                         </div>
 
                         <div class="sm:col-span-3">
-                            <label for="date" class="block text-sm font-medium leading-6 text-gray-900">Invoice
-                                Date</label>
+                            <label for="date" class="block text-sm font-medium leading-6 text-gray-900">Date</label>
                             <div class="mt-2">
                                 <input type="date" id="date" v-model="form.date" required
-                                    class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                            </div>
-                        </div>
-
-                        <div class="sm:col-span-3">
-                            <label for="due_date" class="block text-sm font-medium leading-6 text-gray-900">Due
-                                Date</label>
-                            <div class="mt-2">
-                                <input type="date" id="due_date" v-model="form.due_date" required
                                     class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
                         </div>
@@ -202,57 +145,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Shipping Address -->
-                <div v-if="form.meta.display_options.show_shipping_address"
-                    class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                    <div class="px-4 py-6 sm:p-8">
-                        <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Shipping Address</h3>
-                        <div class="flex items-center mb-4">
-                            <input id="same_as_billing" type="checkbox"
-                                @change="(e: Event) => { if ((e.target as HTMLInputElement).checked) form.meta.shipping_address = { ...form.meta.billing_address } }"
-                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            <label for="same_as_billing" class="ml-2 text-sm text-gray-600">Same as Billing</label>
-                        </div>
-                        <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-                            <div class="sm:col-span-6">
-                                <label class="block text-sm font-medium leading-6 text-gray-900">Street</label>
-                                <input type="text" v-model="form.meta.shipping_address.street"
-                                    class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-medium leading-6 text-gray-900">City</label>
-                                <input type="text" v-model="form.meta.shipping_address.city"
-                                    class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-medium leading-6 text-gray-900">State</label>
-                                <div class="relative mt-2">
-                                    <select v-model="form.meta.shipping_address.state"
-                                        class="block w-full appearance-none rounded-md border-0 py-2 pl-3.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                        <option value="" disabled>Select State</option>
-                                        <option v-for="state in states" :key="state.code" :value="state.name">
-                                            {{ state.name }} ({{ state.code }})
-                                        </option>
-                                    </select>
-                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                                            aria-hidden="true">
-                                            <path fill-rule="evenodd"
-                                                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-medium leading-6 text-gray-900">ZIP</label>
-                                <input type="text" v-model="form.meta.shipping_address.zip"
-                                    class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Line Items -->
@@ -269,30 +161,24 @@
                                     <th v-if="form.meta.display_options.show_description"
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
                                         Notes</th>
-                                    <th v-if="form.meta.display_options.show_hsn"
+                                    <th
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
-                                        HSN/SAC
-                                    </th>
+                                        HSN/SAC</th>
                                     <th
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
-                                        Qty
-                                    </th>
+                                        Qty</th>
                                     <th
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">
-                                        Price
-                                    </th>
+                                        Price</th>
                                     <th v-if="form.meta.display_options.show_discount"
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
-                                        Discount
-                                    </th>
-                                    <th v-if="form.meta.display_options.show_gst_breakdown"
+                                        Discount</th>
+                                    <th
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
-                                        Tax %
-                                    </th>
+                                        Tax %</th>
                                     <th
                                         class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-28">
-                                        Total
-                                    </th>
+                                        Total</th>
                                     <th
                                         class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-10">
                                     </th>
@@ -314,7 +200,7 @@
                                         <input type="text" v-model="item.description" placeholder="Notes (optional)"
                                             class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
                                     </td>
-                                    <td v-if="form.meta.display_options.show_hsn" class="px-2 py-1">
+                                    <td class="px-2 py-1">
                                         <input type="text" v-model="item.hsn_code" placeholder="HSN"
                                             class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
                                     </td>
@@ -332,7 +218,7 @@
                                         <input type="number" v-model.number="item.discount" min="0" step="0.01"
                                             class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
                                     </td>
-                                    <td v-if="form.meta.display_options.show_gst_breakdown" class="px-2 py-1">
+                                    <td class="px-2 py-1">
                                         <input type="number" v-model.number="item.tax_rate" min="0" step="0.1"
                                             class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
                                     </td>
@@ -491,10 +377,9 @@ const states = [
 
 const form = ref({
     invoice_number: '',
-    type: 'invoice', // Hardcoded
+    type: 'credit_note',
     party_id: '',
     date: new Date().toISOString().split('T')[0],
-    due_date: new Date().toISOString().split('T')[0],
     items: [] as InvoiceItem[],
     notes: '',
     terms: '',
@@ -504,7 +389,7 @@ const form = ref({
             show_hsn: true,
             show_gst_breakdown: true,
             show_discount: false,
-            show_qr_bank_details: false,
+            show_qr_bank_details: false, // Default false for Credit Notes
             show_shipping_address: false,
             show_description: true
         },
@@ -530,6 +415,7 @@ watch(() => form.value.party_id, (newId) => {
         if (party) {
             if (!form.value.meta.billing_address.street || !isEditMode.value) {
                 form.value.meta.billing_address = party.billing_address ? { ...party.billing_address } : { street: '', city: '', state: '', zip: '' }
+                // Credit Notes usually don't need shipping address, but keeping it for consistency if needed
                 form.value.meta.shipping_address = party.shipping_address ? { ...party.shipping_address } : { street: '', city: '', state: '', zip: '' }
             }
         }
@@ -657,15 +543,11 @@ const loadInvoice = async () => {
     try {
         const invoice = await invoiceStore.fetchInvoice(route.params.id as string)
         if (invoice) {
-            // Correct date format for input=date (YYYY-MM-DD)
-            const formatDate = (d: string) => d ? new Date(d).toISOString().split('T')[0] : ''
-
             form.value = {
                 invoice_number: invoice.invoice_number,
-                type: 'invoice',
+                type: 'credit_note',
                 party_id: invoice.party_id,
-                date: formatDate(invoice.date),
-                due_date: formatDate(invoice.due_date),
+                date: invoice.date ? invoice.date.split('T')[0] : '',
                 items: invoice.items.map((i: any) => ({
                     ...i,
                     name: i.name || (!i.product_id ? i.description : '')
@@ -687,17 +569,13 @@ const loadInvoice = async () => {
                 }
             }
 
-            // Populate addresses if missing from invoice meta but present in party
             if (!form.value.meta.billing_address?.street && invoice.party?.billing_address) {
                 form.value.meta.billing_address = { ...invoice.party.billing_address }
             }
-            if (!form.value.meta.shipping_address?.street && invoice.party?.shipping_address) {
-                form.value.meta.shipping_address = { ...invoice.party.shipping_address }
-            }
         }
     } catch (e: any) {
-        alert(e.response?.data?.message || 'Failed to load invoice')
-        router.push('/invoices')
+        alert(e.response?.data?.message || 'Failed to load credit note')
+        router.push('/credit-notes')
     }
 }
 
@@ -723,15 +601,15 @@ const save = async (status: 'draft' | 'sent') => {
     try {
         if (isEditMode.value) {
             await invoiceStore.updateInvoice(route.params.id as string, payload as any)
-            alert('Invoice updated successfully')
+            alert('Credit note updated successfully')
         } else {
             await invoiceStore.createInvoice(payload as any)
-            alert('Invoice created successfully')
+            alert('Credit note created successfully')
         }
-        router.push('/invoices')
+        router.push('/credit-notes')
     } catch (e) {
         console.error(e)
-        alert('Failed to save invoice')
+        alert('Failed to save credit note')
     }
 }
 
