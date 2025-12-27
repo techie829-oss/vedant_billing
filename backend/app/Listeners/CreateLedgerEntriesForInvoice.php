@@ -20,6 +20,10 @@ class CreateLedgerEntriesForInvoice
         $invoice = $event->invoice;
 
         // Prevent duplicate entries if invoice is already finalized
+        if ($invoice->type === 'quote') {
+            return;
+        }
+
         $existingEntry = JournalEntry::where('reference_type', Invoice::class)
             ->where('reference_id', $invoice->id)
             ->exists();

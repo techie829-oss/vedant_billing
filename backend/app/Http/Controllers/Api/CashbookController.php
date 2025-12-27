@@ -21,7 +21,8 @@ class CashbookController extends Controller
         }
 
         // Totals
-        $totalIn = Payment::where('business_id', $businessId)->sum('amount');
+        // Payment amount is in cents, need to divide by 100
+        $totalIn = Payment::where('business_id', $businessId)->sum('amount') / 100;
         $expensesOut = Expense::where('business_id', $businessId)->sum('amount');
         $creditNotesOut = \App\Models\Invoice::where('business_id', $businessId)
             ->where('type', 'credit_note')
@@ -30,6 +31,10 @@ class CashbookController extends Controller
 
         $totalOut = $expensesOut + $creditNotesOut;
         $balance = $totalIn - $totalOut;
+
+        // Debug Logging
+        \Illuminate\Support\Facades\Log::info("Cashbook Request for Business: {$businessId}");
+        \Illuminate\Support\Facades\Log::info("Totals: In={$totalIn}, Out={$totalOut}, Bal={$balance}");
 
         // Union Query for Ledger
         // We select minimal common fields to display in a list
@@ -40,15 +45,15 @@ class CashbookController extends Controller
 
         $incomeQuery = Payment::query()
             ->where('payments.business_id', $businessId)
-            ->join('parties', 'payments.customer_id', '=', 'parties.id')
+            ->leftJoin('parties', 'payments.customer_id', '=', 'parties.id')
             ->select([
                 'payments.id',
                 'payments.date',
-                'payments.amount',
+                DB::raw('payments.amount / 100 as amount'), // Convert cents to units
                 DB::raw("'IN' as type"),
-                'parties.name as title', // Customer Name
+                DB::raw("COALESCE(parties.name, 'Unknown Customer') as title"), // Customer Name
                 'payments.notes as description',
-                'payments.payment_method',
+                'payments.method as payment_method',
                 'payments.created_at'
             ]);
 
@@ -57,7 +62,7 @@ class CashbookController extends Controller
             ->select([
                 'expenses.id',
                 'expenses.date',
-                'expenses.amount',
+                'expenses.amount', // Already in units
                 DB::raw("'OUT' as type"),
                 'expenses.category as title', // Expense Category
                 'expenses.description as description',
@@ -66,41 +71,34 @@ class CashbookController extends Controller
             ]);
 
         $creditNoteQuery = DB::table('invoices')
-            ->join('parties', 'invoices.party_id', '=', 'parties.id')
+            ->leftJoin('parties', 'invoices.party_id', '=', 'parties.id')
             ->where('invoices.business_id', $businessId)
             ->where('invoices.type', 'credit_note')
             ->where('invoices.status', '!=', 'draft') // Only final ones
             ->select([
                 'invoices.id',
                 'invoices.date',
-                'invoices.grand_total as amount',
+                'invoices.grand_total as amount', // Already in units
                 DB::raw("'OUT' as type"),
-                'parties.name as title',
+                DB::raw("COALESCE(parties.name, 'Unknown Party') as title"),
                 DB::raw("CONCAT('Credit Note: ', invoices.invoice_number) as description"),
                 DB::raw("'credit_note' as payment_method"),
                 'invoices.created_at'
             ]);
 
         // Merge queries
-        $query = $incomeQuery->union($expenseQuery)->union($creditNoteQuery);
+        $unionQuery = $incomeQuery->union($expenseQuery)->union($creditNoteQuery);
+
+        // Wrap in a subquery to allow global sorting and filtering on the union result
+        // This handles bindings automatically compared to manual mergeBindings
+        $query = DB::query()->fromSub($unionQuery, 'cashbook');
 
         // Filters
-        if ($request->has('start_date')) {
-            // This is tricky with union, usually applied before union or wrapped.
-            // For simplicity in Laravel, standard Union allows subsequent ordering but where clauses might need to be on parts.
-            // Let's apply basic filters to both parts if possible or wrapper.
-            // wrapper approach:
-            $query = DB::table(DB::raw("({$query->toSql()}) as cashbook"))
-                ->mergeBindings($incomeQuery->getQuery())
-                ->mergeBindings($expenseQuery->getQuery())
-                ->mergeBindings($creditNoteQuery); // bindings needed
-
-            if ($request->has('start_date')) {
-                $query->where('date', '>=', $request->start_date);
-            }
-            if ($request->has('end_date')) {
-                $query->where('date', '<=', $request->end_date);
-            }
+        if ($request->input('start_date')) {
+            $query->where('date', '>=', $request->input('start_date'));
+        }
+        if ($request->input('end_date')) {
+            $query->where('date', '<=', $request->input('end_date'));
         }
 
         // Sorting

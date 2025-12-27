@@ -22,13 +22,13 @@ class ExpenseController extends Controller
         $query = Expense::where('business_id', $businessId);
 
         // Filters
-        if ($request->has('category')) {
+        if ($request->filled('category')) {
             $query->where('category', $request->category);
         }
-        if ($request->has('start_date')) {
+        if ($request->filled('start_date')) {
             $query->where('date', '>=', $request->start_date);
         }
-        if ($request->has('end_date')) {
+        if ($request->filled('end_date')) {
             $query->where('date', '<=', $request->end_date);
         }
 

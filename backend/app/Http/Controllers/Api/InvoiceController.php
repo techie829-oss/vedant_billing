@@ -50,7 +50,7 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'type' => 'nullable|in:invoice,credit_note',
+            'type' => 'nullable|in:invoice,credit_note,quote',
             'parent_id' => 'nullable|exists:invoices,id',
             'reason' => 'nullable|string',
             'party_id' => 'required|exists:parties,id',

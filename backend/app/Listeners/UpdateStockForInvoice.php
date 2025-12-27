@@ -16,6 +16,11 @@ class UpdateStockForInvoice
     {
         $invoice = $event->invoice;
 
+        // Skip stock updates for Quotes/Estimates
+        if ($invoice->type === 'quote') {
+            return;
+        }
+
         // Load items if not loaded
         if (!$invoice->relationLoaded('items')) {
             $invoice->load('items');

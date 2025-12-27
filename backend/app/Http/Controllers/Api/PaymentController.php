@@ -40,8 +40,8 @@ class PaymentController extends Controller
         // Let's check schema: Payment 'amount' is bigInteger (cents).
         // Input 'amount' from frontend is usually decimal (e.g. 100.50).
 
-        // Amount is now directly in main currency (Rupees)
-        $amount = (float) $validated['amount'];
+        // Amount is stored in cents (BigInteger)
+        $amount = (int) round($validated['amount'] * 100);
 
         return DB::transaction(function () use ($validated, $invoice, $amount) {
 
@@ -66,21 +66,21 @@ class PaymentController extends Controller
             ]);
 
             // 3. Update Invoice Status
-            // Re-calculate total paid for this invoice
+            // Re-calculate total paid for this invoice (in Cents)
             $totalPaid = PaymentAllocation::where('invoice_id', $invoice->id)->sum('amount');
 
-            // Fix: grand_total is decimal, so compare directly
-            $grandTotal = $invoice->grand_total;
+            // Fix: grand_total is decimal, convert to cents for comparison
+            $grandTotalCents = (int) round($invoice->grand_total * 100);
 
-            if ($totalPaid >= $grandTotal) {
+            if ($totalPaid >= $grandTotalCents) {
                 $invoice->update([
                     'status' => 'paid',
-                    'paid_amount' => $totalPaid
+                    'paid_amount' => $totalPaid / 100 // Convert cents back to units
                 ]);
             } elseif ($totalPaid > 0) {
                 $invoice->update([
                     'status' => $invoice->status === 'paid' ? 'paid' : 'partial',
-                    'paid_amount' => $totalPaid
+                    'paid_amount' => $totalPaid / 100 // Convert cents back to units
                 ]);
             } else {
                 $invoice->update(['paid_amount' => 0]);
