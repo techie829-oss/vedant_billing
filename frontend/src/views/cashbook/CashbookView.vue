@@ -238,6 +238,69 @@
                             class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>
                     </div>
                 </div>
+
+                <!-- OCR Scan Receipt -->
+                <div class="border-t border-gray-200 pt-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <h4 class="text-sm font-semibold text-gray-900">Scan Receipt</h4>
+                            <p class="text-xs text-gray-500 mt-0.5">Upload to auto-fill</p>
+                        </div>
+                        <button type="button" @click="triggerFileUpload" :disabled="scanning"
+                            class="inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-2.5 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg v-if="!scanning" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+                            </svg>
+                            <svg v-else class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            {{ scanning ? 'Scanning...' : 'Scan' }}
+                        </button>
+                    </div>
+
+                    <input ref="receiptFileInput" type="file" accept="image/*" @change="handleReceiptScan"
+                        class="hidden" />
+
+                    <!-- Success message -->
+                    <div v-if="scanResult" class="rounded-md bg-green-50 p-3">
+                        <div class="flex">
+                            <svg class="h-4 w-4 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <div class="ml-2">
+                                <p class="text-xs font-medium text-green-800">Receipt scanned!</p>
+                                <p class="text-xs text-green-700 mt-0.5">₹{{ scanResult.amount }} • {{
+                                    scanResult.merchant || 'Unknown' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error message -->
+                    <div v-if="scanError" class="rounded-md bg-red-50 p-3">
+                        <div class="flex">
+                            <svg class="h-4 w-4 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <div class="ml-2">
+                                <p class="text-xs font-medium text-red-800">Scan failed</p>
+                                <p class="text-xs text-red-700">{{ scanError }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <template #footer>
@@ -260,6 +323,7 @@ import { useCashbookStore } from '../../stores/cashbook'
 import { useExpenseStore } from '../../stores/expense'
 import { storeToRefs } from 'pinia'
 import Modal from '../../components/Modal.vue'
+import axios from 'axios'
 
 const cashbookStore = useCashbookStore()
 const expenseStore = useExpenseStore()
@@ -273,6 +337,12 @@ const form = reactive({
     description: '',
     payment_method: 'Cash'
 })
+
+// OCR scan state
+const scanning = ref(false)
+const scanResult = ref<any>(null)
+const scanError = ref<string | null>(null)
+const receiptFileInput = ref<HTMLInputElement | null>(null)
 
 const openExpenseModal = () => {
     form.amount = 0
@@ -333,6 +403,75 @@ const abbreviateNumber = (value: number) => {
     return new Intl.NumberFormat('en-IN', {
         maximumSignificantDigits: 10, // Full number roughly or just formatted
     }).format(value);
+}
+
+// OCR functions
+const triggerFileUpload = () => {
+    receiptFileInput.value?.click()
+}
+
+const handleReceiptScan = async (event: Event) => {
+    const target = event.target as HTMLInputElement
+    const file = target.files?.[0]
+
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        scanError.value = 'Please upload an image file'
+        return
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        scanError.value = 'Image size must be less than 5MB'
+        return
+    }
+
+    // Reset state
+    scanError.value = null
+    scanResult.value = null
+    scanning.value = true
+
+    try {
+        const formData = new FormData()
+        formData.append('receipt', file)
+
+        const response = await axios.post('/api/expenses/scan', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        })
+
+        scanResult.value = response.data.data
+
+        // Auto-populate form
+        if (response.data.data.amount) {
+            form.amount = parseFloat(response.data.data.amount)
+        }
+        if (response.data.data.date) {
+            form.date = response.data.data.date
+        }
+        if (response.data.data.merchant) {
+            form.description = response.data.data.merchant
+        }
+        if (response.data.data.category) {
+            const categories = ['Rent', 'Food', 'Travel', 'Utilities', 'Salary', 'Office Supplies', 'Other']
+            const matched = categories.find(c => c.toLowerCase() === response.data.data.category.toLowerCase())
+            if (matched) {
+                form.category = matched
+            }
+        }
+
+        // Reset file input
+        if (receiptFileInput.value) {
+            receiptFileInput.value.value = ''
+        }
+    } catch (error: any) {
+        console.error('Scan error:', error)
+        scanError.value = error.response?.data?.message || 'Failed to scan receipt'
+        scanResult.value = null
+    } finally {
+        scanning.value = false
+    }
 }
 
 onMounted(() => {
