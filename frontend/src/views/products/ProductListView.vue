@@ -130,7 +130,7 @@
                         <div v-if="!scanning && !scanResult" class="mt-6">
                             <input type="file" ref="fileInput" accept="image/*" @change="handleFileSelect"
                                 class="hidden">
-                            <div @click="$refs.fileInput.click()"
+                            <div @click="fileInput?.click()"
                                 class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 cursor-pointer hover:border-indigo-500 transition-colors">
                                 <div class="text-center">
                                     <svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24"
@@ -350,7 +350,6 @@ async function scanInvoice(file: File) {
     scanning.value = true
     scanError.value = ''
     scanResult.value = null
-    let processingMessage = 'Uploading invoice...'
 
     const formData = new FormData()
     formData.append('invoice', file)
@@ -367,7 +366,6 @@ async function scanInvoice(file: File) {
         }
 
         const scanId = uploadResponse.data.scan_id
-        processingMessage = 'Processing invoice with OCR and AI... Please wait'
 
         // Step 2: Poll for status (with timeout after 3 minutes)
         const maxAttempts = 36 // 36 * 5s = 3 minutes

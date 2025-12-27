@@ -274,6 +274,99 @@ class ProductController extends Controller
     }
 
     /**
+     * Get all invoice scans with filters.
+     */
+    public function getAllScans(Request $request)
+    {
+        $businessId = $request->header('X-Business-ID');
+
+        $query = \App\Models\InvoiceScan::where('business_id', $businessId)
+            ->withCount('tempProducts');
+
+        // Filter by status
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by date range
+        if ($request->has('from_date')) {
+            $query->whereDate('created_at', '>=', $request->from_date);
+        }
+        if ($request->has('to_date')) {
+            $query->whereDate('created_at', '<=', $request->to_date);
+        }
+
+        $scans = $query->latest()->paginate($request->per_page ?? 20);
+
+        return response()->json([
+            'success' => true,
+            'data' => $scans,
+        ]);
+    }
+
+    /**
+     * Retry a failed invoice scan.
+     */
+    public function retryScan(string $scanId, \App\Services\InvoiceOcrService $invoiceOcrService)
+    {
+        $scan = \App\Models\InvoiceScan::find($scanId);
+
+        if (!$scan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Scan not found',
+            ], 404);
+        }
+
+        try {
+            // Reset status and dispatch new job
+            $scan->update([
+                'status' => 'pending',
+                'error_message' => null,
+            ]);
+
+            \App\Jobs\ProcessInvoiceScan::dispatch($scan->id, $scan->business_id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Scan retry queued',
+                'scan_id' => $scan->id,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete an invoice scan and its temp products.
+     */
+    public function deleteScan(string $scanId)
+    {
+        $scan = \App\Models\InvoiceScan::find($scanId);
+
+        if (!$scan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Scan not found',
+            ], 404);
+        }
+
+        // Delete temp products first
+        $scan->tempProducts()->delete();
+
+        // Delete the scan
+        $scan->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Scan deleted successfully',
+        ]);
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Product $product)
