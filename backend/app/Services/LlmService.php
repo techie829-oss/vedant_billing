@@ -113,4 +113,107 @@ EOT;
             return [];
         }
     }
+
+    /**
+     * Parse purchase invoice text to extract vendor and product line items.
+     *
+     * @param string $rawText
+     * @return array
+     */
+    public function parseInvoice(string $rawText): array
+    {
+        Log::info("Sending invoice text to Ollama (Length: " . strlen($rawText) . ")");
+
+        $prompt = <<<EOT
+You are a purchase invoice data extraction assistant.
+Extract the following information from the invoice text below:
+
+REQUIRED FIELDS:
+- vendor_name: Vendor/supplier name (string)
+- invoice_number: Invoice number/reference (string)
+- invoice_date: Invoice date in YYYY-MM-DD format
+- items: Array of product line items, each containing:
+  * name: Product name (string)
+  * sku: Product code/SKU if available (string, nullable)
+  * quantity: Quantity ordered (numeric)
+  * unit: Unit of measurement (kg, pcs, box, etc.) (string, nullable)
+  * price: Unit price (numeric)
+  * hsn_code: HSN/SAC code if available (string, nullable)
+  * tax_rate: Tax rate percentage if available (numeric, nullable)
+  * description: Any additional product details (string, nullable)
+
+IMPORTANT:
+- Extract ALL line items from the invoice
+- Price should be unit price, not total
+- Quantity should be numeric (convert "2 pcs" to quantity=2, unit="pcs")
+- If unit not specified, leave as null
+- Return price as decimal number without currency symbols
+
+Example output:
+{
+  "vendor_name": "ABC Suppliers Ltd",
+  "invoice_number": "INV-2025-001",
+  "invoice_date": "2025-12-27",
+  "items": [
+    {
+      "name": "Laptop HP EliteBook 840",
+      "sku": "HP-EB-840",
+      "quantity": 2,
+      "unit": "pcs",
+      "price": 55000.00,
+      "hsn_code": "8471",
+      "tax_rate": 18,
+      "description": "14-inch, i5, 16GB RAM"
+    },
+    {
+      "name": "Wireless Mouse",
+      "sku": "MS-WL-01",
+      "quantity": 5,
+      "unit": "pcs",
+      "price": 450.00,
+      "hsn_code": "8471",
+      "tax_rate": 18,
+      "description": null
+    }
+  ]
+}
+
+Return ONLY a valid JSON object. Do not include markdown formatting or explanations.
+
+INVOICE TEXT:
+{$rawText}
+EOT;
+
+        try {
+            // Increase timeout for invoice parsing (can be longer text)
+            $response = Http::timeout(120)->post($this->baseUrl, [
+                'model' => $this->model,
+                'prompt' => $prompt,
+                'stream' => false,
+                'format' => 'json'
+            ]);
+
+            if ($response->failed()) {
+                throw new \Exception("Ollama API Error: " . $response->body());
+            }
+
+            $json = $response->json();
+            $content = $json['response'] ?? '{}';
+
+            Log::info("Ollama Invoice Response: " . substr($content, 0, 200) . "...");
+
+            $data = json_decode($content, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $cleanContent = preg_replace('/```json|```/', '', $content);
+                $data = json_decode($cleanContent, true);
+            }
+
+            return $data ?? [];
+
+        } catch (\Exception $e) {
+            Log::error("Invoice LLM Extraction Failed: " . $e->getMessage());
+            return [];
+        }
+    }
 }
