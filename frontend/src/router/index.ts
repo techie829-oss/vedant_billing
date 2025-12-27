@@ -73,6 +73,12 @@ const router = createRouter({
                     name: 'profit-loss-report',
                     component: () => import('../views/reports/ProfitLossView.vue'),
                     meta: { requiresAuth: true, requiresBusiness: true }
+                },
+                {
+                    path: 'tax',
+                    name: 'tax-report',
+                    component: () => import('../views/reports/TaxReportView.vue'),
+                    meta: { requiresAuth: true, requiresBusiness: true }
                 }
             ]
         },

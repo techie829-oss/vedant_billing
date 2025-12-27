@@ -28,7 +28,8 @@ class BusinessMemberController extends Controller
      */
     public function index(Request $request, Business $business)
     {
-        Gate::authorize('view', $business);
+        // Limit Team View to Admins/Owners only
+        Gate::authorize('update', $business);
 
         // Use pivot model directly to avoid relation scope issues and ensure soft-deletes are handled if needed (though we restored them)
         // Also simpler to debug.
@@ -183,8 +184,65 @@ class BusinessMemberController extends Controller
             return response()->json(['message' => 'You cannot remove yourself.'], 403);
         }
 
-        $business->users()->detach($user->id);
+        // Explicitly find and soft-delete the pivot record
+        $membership = \App\Models\BusinessUser::where('business_id', $business->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($membership) {
+            $membership->delete(); // Triggers SoftDeletes
+        } else {
+            // Fallback if not found via model but exists via relation check above? 
+            // Should not happen, but safe to detach if needed, or just return.
+            $business->users()->detach($user->id);
+        }
 
         return response()->json(['message' => 'Member removed successfully.']);
+    }
+
+    /**
+     * Reset member password (Admin only).
+     */
+    public function resetPassword(Request $request, Business $business, User $user)
+    {
+        Gate::authorize('update', $business);
+
+        // Safety: Don't allow resetting yourself via this endpoint
+        if ($user->id === auth()->id()) {
+            return response()->json(['message' => 'You cannot reset your own password here.'], 403);
+        }
+
+        // SECURITY CRITICAL: Prevent takeover of multi-business accounts.
+        // SECURITY CHECK:
+        // We only allow resetting password if the current admin "owns" the user's entire scope.
+        // i.e., The user must NOT be a member of any business where the current requester is NOT an admin/owner.
+
+        $targetBusinessIds = $user->businesses()->pluck('businesses.id')->toArray();
+
+        // Get businesses where the current authenticated user has administrative rights
+        $myManagedBusinessIds = auth()->user()->businesses()
+            ->wherePivotIn('role', [\App\Models\BusinessUser::ROLE_OWNER, \App\Models\BusinessUser::ROLE_ADMIN])
+            ->pluck('businesses.id')
+            ->toArray();
+
+        // Find businesses the target user is in, but I do NOT manage
+        $unmanagedBusinesses = array_diff($targetBusinessIds, $myManagedBusinessIds);
+
+        if (count($unmanagedBusinesses) > 0) {
+            return response()->json([
+                'message' => 'Security: This user belongs to other organizations where you do not have access. You cannot reset their password.'
+            ], 403);
+        }
+
+        $newPassword = \Illuminate\Support\Str::random(10);
+        $user->password = \Illuminate\Support\Facades\Hash::make($newPassword);
+        $user->save();
+
+        \Illuminate\Support\Facades\Log::info("Password reset for user {$user->id} by admin " . auth()->id());
+
+        return response()->json([
+            'message' => 'Password reset successfully.',
+            'new_password' => $newPassword
+        ]);
     }
 }

@@ -59,11 +59,11 @@ export interface Invoice {
     business?: any
     allocations?: {
         id: string
-        amount: number // Cents
+        amount: number // Decimal (Rupees)
         payment: {
             id: string
             date: string
-            amount: number // Cents
+            amount: number // Decimal (Rupees)
             method: string
             reference?: string
             notes?: string

@@ -12,13 +12,13 @@
     <div class="flex flex-1">
       <!-- Sidebar -->
       <aside
-        class="fixed inset-y-0 left-0 bg-white w-64 border-r border-gray-200 z-30 transition-transform duration-300 hidden lg:block">
+        class="fixed inset-y-0 left-0 bg-white w-64 border-r border-gray-200 z-30 transition-transform duration-300 hidden lg:flex lg:flex-col">
         <div class="flex items-center justify-center h-16 border-b border-gray-100">
           <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
             <span class="text-indigo-600">Billing</span>Book
           </h1>
         </div>
-        <nav class="p-4 space-y-1">
+        <nav class="p-4 space-y-1 flex-1 overflow-y-auto">
           <router-link to="/" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
             :class="[$route.path === '/' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
@@ -83,6 +83,10 @@
                 :class="[$route.path.includes('/reports/profit-loss') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50']">
                 Profit & Loss
               </router-link>
+              <router-link to="/reports/tax" class="block px-3 py-2 rounded-lg text-sm transition-colors"
+                :class="[$route.path.includes('/reports/tax') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50']">
+                Tax Reports
+              </router-link>
             </div>
           </div>
 
@@ -139,7 +143,7 @@
             </router-link>
           </div>
 
-          <router-link to="/billing"
+          <router-link v-if="canManageBusiness" to="/billing"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
             :class="[$route.path === '/billing' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
@@ -151,7 +155,7 @@
           </router-link>
 
 
-          <router-link to="/settings/business"
+          <router-link v-if="canManageBusiness" to="/settings/business"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
             :class="[$route.path.startsWith('/settings') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
@@ -164,7 +168,7 @@
             Settings
           </router-link>
 
-          <router-link v-if="authStore.hasFeature('multi_user')" to="/settings/team"
+          <router-link v-if="authStore.hasFeature('multi_user') && canManageBusiness" to="/settings/team"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
             :class="[$route.path === '/settings/team' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
@@ -178,7 +182,7 @@
           <!-- Add more links here -->
         </nav>
 
-        <div class="absolute bottom-0 w-full p-4 border-t border-gray-100">
+        <div class="p-4 border-t border-gray-100 shrink-0">
           <div class="px-2 py-2">
             <div class="flex items-center mb-3">
               <div
@@ -267,6 +271,11 @@ onUnmounted(() => {
 const userInitials = computed(() => {
   const name = authStore.user?.name || ''
   return name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()
+})
+
+const canManageBusiness = computed(() => {
+  const role = authStore.activeBusiness?.pivot?.role
+  return role === 'owner' || role === 'admin'
 })
 
 const handleLogout = () => {

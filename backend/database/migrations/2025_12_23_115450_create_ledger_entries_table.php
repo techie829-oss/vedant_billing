@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->foreignUuid('ledger_id')->constrained('ledgers')->restrictOnDelete();
 
             $table->string('type'); // debit, credit
-            $table->bigInteger('amount'); // Stored in cents (always positive)
+            $table->decimal('amount', 15, 2); // Stored in decimal (always positive)
 
             $table->text('description')->nullable(); // Line item description
 

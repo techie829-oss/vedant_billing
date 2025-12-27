@@ -17,7 +17,7 @@ return new class extends Migration {
             // Placeholder: Will be constrained to 'customers' table in Phase 5
             $table->uuid('customer_id')->nullable()->index();
 
-            $table->bigInteger('amount'); // Stored in cents
+            $table->decimal('amount', 15, 2); // Stored as decimal (Rupees)
             $table->string('currency', 3)->default('USD');
 
             $table->date('date')->index();

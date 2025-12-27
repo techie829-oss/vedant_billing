@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('slug')->unique(); // e.g., 'max_invoices', 'api_access'
             $table->string('type')->default('boolean'); // boolean, limit
+            $table->boolean('is_active')->default(true); // Global Kill Switch
             $table->integer('default_limit')->default(0); // 0 = false/none, -1 = unlimited
             $table->text('description')->nullable();
             $table->timestamps();

@@ -88,6 +88,23 @@ export const useTeamStore = defineStore('team', () => {
         }
     }
 
+    const resetPassword = async (userId: string) => {
+        const auth = useAuthStore()
+        if (!auth.activeBusiness) return
+
+        loading.value = true
+        error.value = null
+        try {
+            const res = await client.post(`/businesses/${auth.activeBusiness.id}/members/${userId}/reset-password`)
+            return res.data.new_password as string
+        } catch (e: any) {
+            error.value = e.response?.data?.message || 'Failed to reset password'
+            throw e
+        } finally {
+            loading.value = false
+        }
+    }
+
     return {
         members,
         loading,
@@ -95,6 +112,7 @@ export const useTeamStore = defineStore('team', () => {
         fetchMembers,
         inviteMember,
         updateRole,
-        removeMember
+        removeMember,
+        resetPassword
     }
 })

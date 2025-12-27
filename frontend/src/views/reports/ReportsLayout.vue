@@ -25,6 +25,10 @@
                     :class="[route.path.includes('profit-loss') ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700']">
                     Profit & Loss
                 </router-link>
+                <router-link to="/reports/tax" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
+                    :class="[route.path.includes('tax') ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700']">
+                    Tax Reports (GST)
+                </router-link>
             </nav>
         </div>
 

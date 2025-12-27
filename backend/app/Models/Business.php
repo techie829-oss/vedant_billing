@@ -41,7 +41,7 @@ class Business extends Model
     {
         return $this->belongsToMany(User::class, 'business_users')
             ->using(BusinessUser::class)
-            ->withPivot(['role', 'status', 'joined_at'])
+            ->withPivot(['role', 'status', 'joined_at', 'deleted_at'])
             ->withTimestamps();
     }
 

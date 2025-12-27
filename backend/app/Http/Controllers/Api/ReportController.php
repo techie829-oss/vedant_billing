@@ -22,33 +22,35 @@ class ReportController extends Controller
     {
         $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
         $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
-
-        // Since Ledger is not actively populated in this simplified version,
-        // we calculate P&L based on:
-        // Income = Sum of Invoices (Subtotal or Grand Total based on preference, using Subtotal aka Revenue)
-        // Expenses = Cost of Goods Sold (Sum of Item Qty * Product Purchase Price) + any other direct expenses if we had them.
+        $businessId = $request->header('X-Business-Id');
 
         // 1. Calculate Income (Sales Revenue)
-        // Filter invoices by relevant status
-        $invoices = Invoice::whereBetween('date', [$startDate, $endDate])
-            ->whereIn('status', ['sent', 'paid', 'partial', 'overdue']) // Exclude drafts/cancelled
-            ->with(['items.product']) // Eager load products to get purchase price
+        $invoices = Invoice::where('business_id', $businessId)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->whereIn('status', ['sent', 'paid', 'partial', 'overdue'])
+            ->with(['items.product'])
             ->get();
 
         $totalRevenue = $invoices->sum('subtotal'); // Pre-tax revenue
 
-        // 2. Calculate Expenses (COGS)
+        // 2. Calculate COGS (Direct Expenses)
         $cogs = 0;
         foreach ($invoices as $invoice) {
             foreach ($invoice->items as $item) {
-                // Use current product purchase price as estimate if historical not stored on item
-                // Fallback to 0 if product deleted or price missing
                 $cost = $item->product ? ($item->product->purchase_price * $item->quantity) : 0;
                 $cogs += $cost;
             }
         }
 
-        // Prepare the "Accounts" structure expected by frontend
+        // 3. Calculate Operational Expenses (Indirect Expenses)
+        $expenses = \App\Models\Expense::where('business_id', $businessId)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->select('category', DB::raw('SUM(amount) as total'))
+            ->groupBy('category')
+            ->get();
+
+        $totalOperatingExpenses = $expenses->sum('total');
+
         $incomeAccounts = [
             [
                 'id' => 'sales_revenue',
@@ -56,10 +58,6 @@ class ReportController extends Controller
                 'amount' => $totalRevenue
             ]
         ];
-
-        // If we had other incomes (e.g. shipping fees collected?) we could add them. 
-        // For now, let's assume shipping is part of revenue if it's a line item, 
-        // or we could split it out if we tracked it separately.
 
         $expenseAccounts = [
             [
@@ -69,7 +67,16 @@ class ReportController extends Controller
             ]
         ];
 
-        $netProfit = $totalRevenue - $cogs;
+        foreach ($expenses as $exp) {
+            $expenseAccounts[] = [
+                'id' => 'opex_' . md5($exp->category),
+                'name' => $exp->category,
+                'amount' => (float) $exp->total
+            ];
+        }
+
+        $grossProfit = $totalRevenue - $cogs;
+        $netProfit = $grossProfit - $totalOperatingExpenses;
 
         return response()->json([
             'period' => [
@@ -81,10 +88,56 @@ class ReportController extends Controller
                 'accounts' => $incomeAccounts
             ],
             'expenses' => [
-                'total' => $cogs,
-                'accounts' => $expenseAccounts
+                'total' => $cogs + $totalOperatingExpenses,
+                'accounts' => $expenseAccounts,
+                'cogs' => $cogs,
+                'operating' => $totalOperatingExpenses
             ],
+            'gross_profit' => $grossProfit,
             'net_profit' => $netProfit
+        ]);
+    }
+
+    /**
+     * Tax Summary Report (GST)
+     */
+    public function taxSummary(Request $request)
+    {
+        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
+        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
+        $businessId = $request->header('X-Business-Id');
+
+        $summary = DB::table('invoice_items')
+            ->join('invoices', 'invoice_items.invoice_id', '=', 'invoices.id')
+            ->where('invoices.business_id', $businessId)
+            ->whereBetween('invoices.date', [$startDate, $endDate])
+            ->whereIn('invoices.status', ['sent', 'paid', 'partial', 'overdue'])
+            ->select(
+                'invoice_items.tax_rate',
+                DB::raw('SUM(invoice_items.quantity * invoice_items.unit_price) as taxable_value'),
+                DB::raw('SUM(invoice_items.tax_amount) as total_tax')
+            )
+            ->groupBy('invoice_items.tax_rate')
+            ->orderBy('invoice_items.tax_rate')
+            ->get();
+
+        $data = $summary->map(function ($row) {
+            return [
+                'rate' => $row->tax_rate,
+                'taxable_value' => $row->taxable_value,
+                'total_tax' => $row->total_tax,
+                'cgst_share' => $row->total_tax / 2,
+                'sgst_share' => $row->total_tax / 2,
+            ];
+        });
+
+        return response()->json([
+            'period' => ['start' => $startDate, 'end' => $endDate],
+            'summary' => $data,
+            'totals' => [
+                'taxable' => $data->sum('taxable_value'),
+                'tax' => $data->sum('total_tax')
+            ]
         ]);
     }
     /**

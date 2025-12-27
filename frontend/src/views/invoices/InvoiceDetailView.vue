@@ -181,7 +181,7 @@
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 capitalize">{{
                                     alloc.payment.method.replace('_', ' ') }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right">₹{{
-                                    (alloc.amount / 100).toFixed(2) }}</td>
+                                    Number(alloc.amount).toFixed(2) }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -483,7 +483,7 @@ const paymentForm = ref({
 
 const outstandingAmount = computed(() => {
     if (!invoice.value) return 0
-    const paidByAllocations = (invoice.value.allocations || []).reduce((sum, a) => sum + a.amount, 0) / 100 // Cents to units
+    const paidByAllocations = (invoice.value.allocations || []).reduce((sum, a) => sum + Number(a.amount), 0)
     // Or use paid_amount from invoice if updated? Let's use allocations sum for now as it's realtime.
     return (Number(invoice.value.grand_total) - paidByAllocations).toFixed(2)
 })

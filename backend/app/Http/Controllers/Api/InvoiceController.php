@@ -10,6 +10,7 @@ use App\Events\InvoiceFinalized;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Gate;
 
 class InvoiceController extends Controller
 {
@@ -18,6 +19,8 @@ class InvoiceController extends Controller
      */
     public function index(Request $request)
     {
+        Gate::authorize('viewAny', Invoice::class);
+
         $query = Invoice::query()->with(['party']);
 
         if ($request->has('status')) {
@@ -44,11 +47,10 @@ class InvoiceController extends Controller
     /**
      * Store a newly created resource in storage (Draft).
      */
-    /**
-     * Store a newly created resource in storage (Draft).
-     */
     public function store(Request $request)
     {
+        Gate::authorize('create', Invoice::class);
+
         $validated = $request->validate([
             'type' => 'nullable|in:invoice,credit_note,quote',
             'parent_id' => 'nullable|exists:invoices,id',
@@ -114,6 +116,8 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice)
     {
+        Gate::authorize('view', $invoice);
+
         return response()->json($invoice->load(['items', 'party', 'business', 'allocations.payment', 'parent', 'creditNotes']));
     }
 
@@ -122,6 +126,8 @@ class InvoiceController extends Controller
      */
     public function update(Request $request, Invoice $invoice)
     {
+        Gate::authorize('update', $invoice);
+
         if (!$invoice->isEditable()) {
             return response()->json(['message' => 'Cannot edit a finalized invoice.'], 403);
         }
@@ -281,6 +287,8 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice)
     {
+        Gate::authorize('delete', $invoice);
+
         if (!$invoice->isEditable()) {
             return response()->json(['message' => 'Cannot delete a finalized invoice.'], 403);
         }

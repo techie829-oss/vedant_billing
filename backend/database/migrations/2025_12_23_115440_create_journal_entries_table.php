@@ -16,6 +16,8 @@ return new class extends Migration {
 
             $table->date('date')->index();
             $table->text('description');
+            $table->string('reference_type')->nullable();
+            $table->uuid('reference_id')->nullable();
             $table->string('reference')->nullable()->index(); // e.g. INV-2023-001
             $table->string('status')->default('posted')->index(); // draft, posted, archived
 

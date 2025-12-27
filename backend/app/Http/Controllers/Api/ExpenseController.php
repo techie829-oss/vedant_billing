@@ -101,4 +101,22 @@ class ExpenseController extends Controller
         $expense->delete();
         return response()->noContent();
     }
+    /**
+     * Scan a receipt image and return extracted data.
+     */
+    public function scan(Request $request, \App\Services\ReceiptScanningService $scanner)
+    {
+        $request->validate([
+            'receipt' => 'required|image|max:10240', // Max 10MB
+        ]);
+
+        $file = $request->file('receipt');
+        $result = $scanner->scan($file);
+
+        if ($result['status'] === 'error') {
+            return response()->json(['message' => $result['message']], 500);
+        }
+
+        return response()->json($result['data']);
+    }
 }

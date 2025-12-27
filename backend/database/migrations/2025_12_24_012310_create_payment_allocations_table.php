@@ -19,7 +19,7 @@ return new class extends Migration {
             // Placeholder: Will be constrained to 'invoices' table in Phase 5
             $table->uuid('invoice_id')->nullable()->index();
 
-            $table->bigInteger('amount'); // Amount applied to this invoice
+            $table->decimal('amount', 15, 2); // Amount applied to this invoice (Rupees)
 
             $table->timestamps();
 

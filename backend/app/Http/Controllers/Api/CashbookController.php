@@ -21,8 +21,8 @@ class CashbookController extends Controller
         }
 
         // Totals
-        // Payment amount is in cents, need to divide by 100
-        $totalIn = Payment::where('business_id', $businessId)->sum('amount') / 100;
+        // Payment amount is stored as decimal
+        $totalIn = Payment::where('business_id', $businessId)->sum('amount');
         $expensesOut = Expense::where('business_id', $businessId)->sum('amount');
         $creditNotesOut = \App\Models\Invoice::where('business_id', $businessId)
             ->where('type', 'credit_note')
@@ -49,7 +49,7 @@ class CashbookController extends Controller
             ->select([
                 'payments.id',
                 'payments.date',
-                DB::raw('payments.amount / 100 as amount'), // Convert cents to units
+                'payments.amount', // Already in units (Decimal)
                 DB::raw("'IN' as type"),
                 DB::raw("COALESCE(parties.name, 'Unknown Customer') as title"), // Customer Name
                 'payments.notes as description',

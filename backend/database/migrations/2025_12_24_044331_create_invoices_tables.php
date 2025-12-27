@@ -12,6 +12,8 @@ return new class extends Migration {
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('type')->default('invoice')->index(); // 'invoice', 'credit_note', 'quote'
+            $table->uuid('parent_id')->nullable(); // Link to original invoice
             $table->foreignUuid('business_id')->constrained('businesses')->cascadeOnDelete();
             $table->foreignUuid('party_id')->constrained('parties')->cascadeOnDelete(); // Customer
 
@@ -28,8 +30,15 @@ return new class extends Migration {
 
             $table->text('notes')->nullable();
             $table->text('terms')->nullable();
+            $table->text('reason')->nullable(); // Reason for return
+            $table->string('challan_no')->nullable();
+            $table->string('eway_bill_no')->nullable();
+            $table->string('vehicle_no')->nullable();
+            $table->string('po_number')->nullable();
             $table->jsonb('meta')->nullable(); // For extra fields
 
+            $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
 
@@ -43,9 +52,12 @@ return new class extends Migration {
             $table->foreignUuid('invoice_id')->constrained('invoices')->cascadeOnDelete();
             $table->foreignUuid('product_id')->nullable()->constrained('products')->nullOnDelete();
 
+            $table->string('name')->nullable();
             $table->string('description');
+            $table->string('hsn_code')->nullable();
             $table->decimal('quantity', 15, 2);
             $table->decimal('unit_price', 15, 2);
+            $table->decimal('discount', 15, 2)->default(0);
             $table->decimal('tax_rate', 5, 2)->default(0); // e.g., 18.00 %
             $table->decimal('tax_amount', 15, 2)->default(0);
             $table->decimal('total', 15, 2);

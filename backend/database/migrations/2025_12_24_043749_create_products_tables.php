@@ -16,15 +16,20 @@ return new class extends Migration {
 
             $table->string('name');
             $table->string('sku')->nullable();
+            $table->string('hsn_code')->nullable();
             $table->enum('type', ['goods', 'service'])->default('goods');
 
             $table->decimal('sale_price', 15, 2)->default(0);
             $table->decimal('purchase_price', 15, 2)->nullable();
             $table->decimal('current_stock', 15, 2)->default(0); // Denormalized cache
 
+            $table->text('description')->nullable();
+            $table->decimal('tax_rate', 5, 2)->default(0);
             $table->string('unit')->default('pcs');
             $table->enum('status', ['active', 'inactive'])->default('active');
 
+            $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
 

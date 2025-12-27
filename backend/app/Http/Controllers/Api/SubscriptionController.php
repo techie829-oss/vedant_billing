@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Services\UsageService;
 
+use Illuminate\Support\Facades\Gate;
+
 class SubscriptionController extends Controller
 {
     /**
@@ -25,10 +27,8 @@ class SubscriptionController extends Controller
 
         $business = Business::findOrFail($businessId);
 
-        // Authorization check: User must be owner/admin of business (handled by middleware usually, but good to be safe)
-        if (!$request->user()->businesses->contains($businessId)) {
-            return response()->json(['message' => 'Unauthorized access to business'], 403);
-        }
+        // Limit Billing Access to Admins/Owners
+        Gate::authorize('update', $business);
 
         $subscription = $business->subscriptions()
             ->where(function ($query) {
@@ -67,6 +67,9 @@ class SubscriptionController extends Controller
         }
 
         $business = Business::findOrFail($businessId);
+
+        // Security Check
+        Gate::authorize('update', $business);
 
         // Deactivate current active subscriptions
         $business->subscriptions()->where('status', 'active')->update(['status' => 'canceled', 'canceled_at' => now()]);

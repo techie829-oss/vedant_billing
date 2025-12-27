@@ -50,6 +50,8 @@
                                             <option value="staff">Staff</option>
                                             <option value="accountant">Accountant</option>
                                         </select>
+                                        <button @click="resetMemberPassword(member)"
+                                            class="text-amber-600 hover:text-amber-900 text-sm font-medium">Reset</button>
                                         <button @click="removeMember(member)"
                                             class="text-red-600 hover:text-red-900 text-sm font-medium">Remove</button>
                                     </div>
@@ -229,6 +231,21 @@ const updateRole = async (member: any, event: Event) => {
         await teamStore.updateRole(member.id, newRole)
     } catch (e) {
         alert('Failed to update role')
+    }
+}
+
+const resetMemberPassword = async (member: any) => {
+    if (!confirm(`Are you sure you want to reset the password for ${member.name}? The new password will be shown to you immediately.`)) return
+
+    try {
+        const newPassword = await teamStore.resetPassword(member.id)
+        if (newPassword) {
+            // Show new password in a persistent way (prompt/alert is simplest for MVP)
+            // A prompt allows them to copy it easily.
+            alert(`Password Reset Successful.\n\nNew Password: ${newPassword}\n\nPlease copy this and share it with the user immediately.`);
+        }
+    } catch (e: any) {
+        alert(e.response?.data?.message || 'Failed to reset password')
     }
 }
 

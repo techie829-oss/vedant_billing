@@ -15,7 +15,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('businesses', \App\Http\Controllers\Api\BusinessController::class);
-    Route::apiResource('businesses.members', \App\Http\Controllers\Api\BusinessMemberController::class)->shallow();
+    Route::apiResource('businesses.members', \App\Http\Controllers\Api\BusinessMemberController::class)->parameters(['members' => 'user']);
+    Route::post('/businesses/{business}/members/{user}/reset-password', [\App\Http\Controllers\Api\BusinessMemberController::class, 'resetPassword']);
 
     // Core Business Modules
     Route::apiResource('parties', \App\Http\Controllers\Api\PartyController::class);
@@ -33,8 +34,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Payments
     Route::post('/payments', [\App\Http\Controllers\Api\PaymentController::class, 'store']);
+    Route::post('/expenses/scan', [\App\Http\Controllers\Api\ExpenseController::class, 'scan']);
     Route::apiResource('expenses', \App\Http\Controllers\Api\ExpenseController::class);
     Route::get('/export', [\App\Http\Controllers\Api\ExportController::class, 'download']);
+    Route::get('/export/{type}', [\App\Http\Controllers\Api\ExportController::class, 'export']);
     Route::get('/cashbook', [\App\Http\Controllers\Api\CashbookController::class, 'index']);
 
     // Plans
@@ -53,7 +56,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/outstanding', [\App\Http\Controllers\Api\ReportController::class, 'outstanding']);
         Route::get('/stock', [\App\Http\Controllers\Api\ReportController::class, 'stock']);
         Route::get('/profit-loss', [\App\Http\Controllers\Api\ReportController::class, 'profitLoss']);
+        Route::get('/tax-summary', [\App\Http\Controllers\Api\ReportController::class, 'taxSummary']);
     });
+
+    // Import
+    Route::post('/import/tally', [\App\Http\Controllers\Api\ImportController::class, 'importTallyMasters']);
 
     // Uploads
     Route::post('/upload', [\App\Http\Controllers\Api\UploadController::class, 'store']);

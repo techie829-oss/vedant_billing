@@ -15,7 +15,7 @@ class LedgerEntry extends Model
         'journal_entry_id',
         'ledger_id',
         'type', // debit, credit
-        'amount', // cents
+        'amount', // decimal (Rupees)
         'description',
     ];
 

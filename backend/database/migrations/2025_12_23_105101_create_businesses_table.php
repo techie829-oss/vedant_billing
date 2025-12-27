@@ -15,6 +15,14 @@ return new class extends Migration {
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('status')->default('active');
+            $table->string('mobile')->nullable();
+            $table->text('address')->nullable();
+            $table->string('gstin')->nullable();
+            $table->string('pan')->nullable();
+            $table->string('website')->nullable();
+            $table->string('bank_name')->nullable();
+            $table->string('account_number')->nullable();
+            $table->string('ifsc_code')->nullable();
             $table->jsonb('meta')->nullable();
             $table->timestamps();
             $table->softDeletes();

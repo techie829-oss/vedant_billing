@@ -470,35 +470,138 @@
                         <p class="mt-1 text-sm leading-6 text-gray-600">Export your business data.</p>
                     </div>
 
-                    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-                        <div class="px-4 py-6 sm:p-8">
-                            <div class="max-w-2xl">
-                                <p class="text-sm text-gray-500 mb-4">Download a copy of all your data (Invoices,
-                                    Customers, Products, Expenses) in JSON format.</p>
-                                <button @click="downloadData" :disabled="downloading" type="button"
-                                    class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50">
-                                    <svg v-if="!downloading" class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
-                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                    </svg>
-                                    <svg v-else class="animate-spin -ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
-                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                            stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor"
-                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                        </path>
-                                    </svg>
-                                    {{ downloading ? 'Exporting...' : 'Export Data' }}
-                                </button>
+                    <div class="md:col-span-2 space-y-8">
+                        <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+                            <div class="px-4 py-6 sm:p-8">
+                                <div class="max-w-xl">
+                                    <h3 class="text-sm font-semibold leading-6 text-gray-900">Import Data (Tally XML)
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500">Migrate from Tally. Export your Masters
+                                        (Ledgers &
+                                        Items) as XML and upload here.</p>
+
+                                    <div class="mt-4">
+                                        <div class="flex items-center gap-3">
+                                            <input type="file" ref="fileInput" accept=".xml,.txt"
+                                                @change="handleFileSelect"
+                                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+
+                                            <button @click="uploadTallyXML" :disabled="!selectedFile || importing"
+                                                class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                <span v-if="importing">Importing...</span>
+                                                <span v-else>Import</span>
+                                            </button>
+                                        </div>
+
+                                        <!-- Import Result Stats -->
+                                        <div v-if="importStats" class="mt-4 p-3 bg-gray-50 rounded-md text-xs">
+                                            <h4 class="font-bold text-gray-700 mb-1">Import Results:</h4>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <p><span class="font-medium">Ledgers Created:</span> {{
+                                                    importStats.ledgers_created }}</p>
+                                                <p><span class="font-medium">Ledgers Updated:</span> {{
+                                                    importStats.ledgers_updated }}</p>
+                                                <p><span class="font-medium">Items Created:</span> {{
+                                                    importStats.stock_items_created }}</p>
+                                                <p><span class="font-medium">Items Updated:</span> {{
+                                                    importStats.stock_items_updated }}</p>
+                                            </div>
+                                            <div v-if="importStats.errors && importStats.errors.length > 0"
+                                                class="mt-2 text-red-600">
+                                                <p class="font-bold">Errors ({{ importStats.errors.length }}):</p>
+                                                <ul class="list-disc pl-4 max-h-24 overflow-y-auto">
+                                                    <li v-for="(err, i) in importStats.errors" :key="i">{{ err }}</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+                            <div class="px-4 py-6 sm:p-8">
+                                <div class="max-w-xl">
+                                    <h3 class="text-sm font-semibold leading-6 text-gray-900">Backup Data (CSV)</h3>
+                                    <p class="mt-1 text-sm text-gray-500">Download your data in CSV format for Excel or
+                                        Google Drive backup.</p>
+
+                                    <div class="mt-4 flex flex-col sm:flex-row gap-3">
+                                        <button @click="downloadCsv('invoices')"
+                                            :disabled="downloadingCsv === 'invoices'"
+                                            class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50">
+                                            <svg class="mr-2 h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Invoices.csv
+                                        </button>
+                                        <button @click="downloadCsv('invoice_items')"
+                                            :disabled="downloadingCsv === 'invoice_items'"
+                                            class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50">
+                                            <svg class="mr-2 h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Invoice Items.csv
+                                        </button>
+                                        <button @click="downloadCsv('parties')" :disabled="downloadingCsv === 'parties'"
+                                            class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50">
+                                            <svg class="mr-2 h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Customers.csv
+                                        </button>
+                                        <button @click="downloadCsv('expenses')"
+                                            :disabled="downloadingCsv === 'expenses'"
+                                            class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50">
+                                            <svg class="mr-2 h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Expenses.csv
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <hr class="my-6 border-gray-100" />
+
+                                <div class="max-w-2xl">
+                                    <h3 class="text-sm font-semibold leading-6 text-gray-900">Full System Export (JSON)
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500 mb-4">Download a complete raw data dump for
+                                        migration or deep analysis.</p>
+                                    <button @click="downloadData" :disabled="downloading" type="button"
+                                        class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50">
+                                        <svg v-if="!downloading" class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                        </svg>
+                                        <svg v-else class="animate-spin -ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                            </path>
+                                        </svg>
+                                        {{ downloading ? 'Exporting...' : 'Export JSON Dump' }}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <!-- Layout Preview Modal -->
         <div v-if="showPreviewModal" class="relative z-50" aria-labelledby="modal-title" role="dialog"
@@ -527,7 +630,8 @@
                                 <div class="mb-6">
                                     <h3 class="text-base font-semibold leading-6 text-gray-900 mb-1">Preview Options
                                     </h3>
-                                    <p class="text-xs text-gray-500">Toggle options to see how the invoice adapts.</p>
+                                    <p class="text-xs text-gray-500">Toggle options to see how the invoice adapts.
+                                    </p>
                                 </div>
 
                                 <div class="space-y-4">
@@ -537,7 +641,8 @@
                                                 class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
                                         </div>
                                         <div class="ml-3 text-sm leading-6">
-                                            <label for="prev_hsn" class="font-medium text-gray-900">Show HSN/SAC</label>
+                                            <label for="prev_hsn" class="font-medium text-gray-900">Show
+                                                HSN/SAC</label>
                                         </div>
                                     </div>
 
@@ -596,13 +701,15 @@
                                                 class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
                                         </div>
                                         <div class="ml-3 text-sm leading-6">
-                                            <label for="prev_bank" class="font-medium text-gray-900">Bank & QR</label>
+                                            <label for="prev_bank" class="font-medium text-gray-900">Bank &
+                                                QR</label>
                                         </div>
                                     </div>
 
                                     <!-- GST SCENARIO TOGGLE -->
                                     <div class="pt-4 mt-4 border-t border-gray-200">
-                                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">GST
+                                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
+                                            GST
                                             Scenario</h4>
                                         <div class="space-y-2">
                                             <div class="flex items-center">
@@ -627,8 +734,9 @@
 
                                 <div class="mt-8 pt-6 border-t border-gray-200">
                                     <p class="text-xs text-gray-500 mb-4">You are viewing the <span class="font-bold">
-                                            {{ previewLayout === 'professional' ? 'Professional' : (previewLayout ===
-                                            'grid_premium' ? 'Grid Premium' : 'Default') }}
+                                            {{ previewLayout === 'professional' ? 'Professional' : (previewLayout
+                                                ===
+                                                'grid_premium' ? 'Grid Premium' : 'Default') }}
                                         </span> layout.</p>
                                     <button type="button"
                                         class="w-full rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
@@ -677,6 +785,7 @@ const loading = ref(true)
 const saving = ref(false)
 const uploading = ref(false)
 const downloading = ref(false)
+const downloadingCsv = ref<string | null>(null)
 
 const showPreviewModal = ref(false)
 const previewLayout = ref<'default' | 'professional' | 'grid_premium'>('default')
@@ -928,22 +1037,85 @@ const save = async () => {
     }
 }
 
+// Tally Import Logic
+const selectedFile = ref<File | null>(null)
+const importing = ref(false)
+const importStats = ref<any>(null)
+
+const handleFileSelect = (event: Event) => {
+    const target = event.target as HTMLInputElement
+    if (target.files && target.files.length > 0) {
+        selectedFile.value = target.files[0] as File
+        importStats.value = null // Reset stats
+    }
+}
+
+const uploadTallyXML = async () => {
+    if (!selectedFile.value) return
+
+    importing.value = true
+    importStats.value = null
+
+    const formData = new FormData()
+    formData.append('file', selectedFile.value)
+
+    try {
+        const response = await client.post('/import/tally', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        importStats.value = response.data.stats
+        alert('Import process completed. Check results below.')
+
+        // Refresh business data to reflect potential updates? 
+        // Not strictly necessary as we imported other entities, but good practice if we were viewing them.
+
+    } catch (e: any) {
+        alert('Import failed: ' + (e.response?.data?.message || e.message))
+    } finally {
+        importing.value = false
+        // Clear file input
+        selectedFile.value = null
+        // Note: We can't easily clear the file input DOM element value directly without a ref, 
+        // but the user can see the status map.
+    }
+}
+
 const downloadData = async () => {
     downloading.value = true
     try {
-        const response = await client.get('/export', { responseType: 'blob' })
+        const response = await client.get('/export')
+        const blob = new Blob([JSON.stringify(response.data, null, 2)], { type: 'application/json' })
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', `backup-${new Date().toISOString().split('T')[0]}.json`)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    } catch (e) {
+        alert('Failed to export data')
+    } finally {
+        downloading.value = false
+    }
+}
+
+const downloadCsv = async (type: string) => {
+    downloadingCsv.value = type
+    try {
+        const response = await client.get(`/export/${type}`, { responseType: 'blob' })
         const url = window.URL.createObjectURL(new Blob([response.data]))
         const link = document.createElement('a')
         link.href = url
-        link.setAttribute('download', `billing_book_export_${new Date().toISOString().slice(0, 10)}.json`)
+        link.setAttribute('download', `${type}-${new Date().toISOString().split('T')[0]}.csv`)
         document.body.appendChild(link)
         link.click()
-        link.remove()
+        document.body.removeChild(link)
     } catch (e) {
-        alert('Failed to download data')
-        console.error(e)
+        alert(`Failed to export ${type} CSV`)
     } finally {
-        downloading.value = false
+        downloadingCsv.value = null
     }
 }
 

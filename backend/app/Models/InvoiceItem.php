@@ -20,6 +20,7 @@ class InvoiceItem extends Model
         'quantity',
         'unit_price',
         'tax_rate',
+        'discount',
         'tax_amount',
         'total',
     ];
@@ -27,6 +28,7 @@ class InvoiceItem extends Model
     protected $casts = [
         'quantity' => 'decimal:2',
         'unit_price' => 'decimal:2',
+        'discount' => 'decimal:2',
         'tax_rate' => 'decimal:2',
         'tax_amount' => 'decimal:2',
         'total' => 'decimal:2',

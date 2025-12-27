@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->integer('price')->default(0); // Direct Amount (e.g. INR)
+            $table->decimal('price', 15, 2)->default(0); // Plan price (Rupees)
             $table->string('interval')->default('monthly'); // monthly, yearly
             $table->text('description')->nullable();
             $table->string('status')->default('active');

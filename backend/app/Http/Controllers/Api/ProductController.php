@@ -7,6 +7,7 @@ use App\Models\InventoryTransaction;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
@@ -15,6 +16,8 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        Gate::authorize('viewAny', Product::class);
+
         $query = Product::query();
 
         if ($request->has('type')) {
@@ -39,6 +42,8 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('create', Product::class);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'sku' => 'nullable|string|max:100', // Unique check scoped to tenant ideally, handled by app logic or composite index
@@ -84,6 +89,8 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        Gate::authorize('view', $product);
+
         return response()->json($product->load('transactions'));
     }
 
@@ -92,6 +99,8 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        Gate::authorize('update', $product);
+
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'sku' => 'nullable|string|max:100',
@@ -136,6 +145,8 @@ class ProductController extends Controller
      */
     public function adjustStock(Request $request, Product $product)
     {
+        Gate::authorize('update', $product); // Adjust stock is an update
+
         if ($product->type === 'service') {
             return response()->json(['message' => 'Cannot adjust stock for service products.'], 422);
         }
@@ -189,6 +200,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        Gate::authorize('delete', $product);
+
         $product->delete();
         return response()->noContent();
     }

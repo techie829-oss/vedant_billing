@@ -38,9 +38,6 @@ class PlanController extends Controller
 
         $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
 
-        // Storing as direct INR value as requested
-        // $validated['price'] = (int) ($validated['price'] * 100);
-
         $plan = Plan::create($validated);
 
         // Attach features
@@ -78,9 +75,6 @@ class PlanController extends Controller
         ]);
 
         $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
-
-        // Storing as direct INR value as requested
-        // $validated['price'] = (int) ($validated['price'] * 100);
 
         $plan->update($validated);
 

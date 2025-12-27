@@ -101,7 +101,7 @@
                                 <template v-else-if="invoice.party?.shipping_address">
                                     <p>{{ invoice.party.shipping_address.street }}</p>
                                     <p>{{ invoice.party.shipping_address.city }} {{ invoice.party.shipping_address.zip
-                                        }}</p>
+                                    }}</p>
                                     <p>{{ invoice.party.shipping_address.state }}</p>
                                 </template>
                             </div>
@@ -201,7 +201,7 @@
                                 </template>
 
                                 <td class="py-3 px-3 text-right font-bold border-gray-800">{{ formatCurrency(item.total)
-                                    }}</td>
+                                }}</td>
                             </tr>
                             <!-- Fill Empty Rows to maintain height if needed, OR just let it flow -->
                         </tbody>
@@ -339,7 +339,7 @@ const amountInWords = (num: number) => {
     const a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
     const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
 
-    const sNum = num.toString();
+    const sNum = Math.floor(num).toString();
     if (sNum.length > 9) return 'overflow';
 
     const n = ('000000000' + sNum).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);

@@ -29,19 +29,8 @@ class PaymentController extends Controller
 
         $invoice = Invoice::findOrFail($validated['invoice_id']);
 
-        // Prevent paying more than due? Optional. For now, let's allow overpayment or handle it gracefully.
-        // Actually, let's strictly limit to outstanding amount for Phase 4 to avoid complexity.
-        $paidSoFar = $invoice->allocations()->sum('amount'); // This relationship might not exist yet on Invoice model
-        $outstanding = $invoice->grand_total * 100 - $paidSoFar; // Invoice total is decimal, we need to be careful with cents.
-
-        // Wait, invoice.grand_total is decimal, payment.amount is usually cents in DB but logic here says min:1. 
-        // Let's assume input amount is in major units (Rupees), and we convert to cents for DB.
-
-        // Let's check schema: Payment 'amount' is bigInteger (cents).
-        // Input 'amount' from frontend is usually decimal (e.g. 100.50).
-
-        // Amount is stored in cents (BigInteger)
-        $amount = (int) round($validated['amount'] * 100);
+        // Amount is stored directly (Decimal)
+        $amount = $validated['amount'];
 
         return DB::transaction(function () use ($validated, $invoice, $amount) {
 
@@ -66,21 +55,18 @@ class PaymentController extends Controller
             ]);
 
             // 3. Update Invoice Status
-            // Re-calculate total paid for this invoice (in Cents)
+            // Re-calculate total paid for this invoice
             $totalPaid = PaymentAllocation::where('invoice_id', $invoice->id)->sum('amount');
 
-            // Fix: grand_total is decimal, convert to cents for comparison
-            $grandTotalCents = (int) round($invoice->grand_total * 100);
-
-            if ($totalPaid >= $grandTotalCents) {
+            if ($totalPaid >= $invoice->grand_total) {
                 $invoice->update([
                     'status' => 'paid',
-                    'paid_amount' => $totalPaid / 100 // Convert cents back to units
+                    'paid_amount' => $totalPaid
                 ]);
             } elseif ($totalPaid > 0) {
                 $invoice->update([
                     'status' => $invoice->status === 'paid' ? 'paid' : 'partial',
-                    'paid_amount' => $totalPaid / 100 // Convert cents back to units
+                    'paid_amount' => $totalPaid
                 ]);
             } else {
                 $invoice->update(['paid_amount' => 0]);

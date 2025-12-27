@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->string('receipt_path')->nullable();
             $table->string('payment_method')->nullable();
             $table->string('reference_no')->nullable();
+            $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

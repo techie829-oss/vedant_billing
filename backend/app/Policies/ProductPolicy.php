@@ -2,26 +2,26 @@
 
 namespace App\Policies;
 
-use App\Models\Party;
+use App\Models\Product;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\BusinessUser;
 
-class PartyPolicy
+class ProductPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return true; // Filtered by Global Scope
+        return (bool) $user->currentBusinessId();
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Party $party): bool
+    public function view(User $user, Product $product): bool
     {
-        return $user->currentBusinessId() === $party->business_id;
+        return $user->currentBusinessId() === $product->business_id;
     }
 
     /**
@@ -35,24 +35,26 @@ class PartyPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Party $party): bool
+    public function update(User $user, Product $product): bool
     {
-        return $user->currentBusinessId() === $party->business_id;
+        return $user->currentBusinessId() === $product->business_id;
     }
 
     /**
      * Determine whether the user can delete the model.
+     * RESTRICTED: Owner & Admin ONLY.
      */
-    public function delete(User $user, Party $party): bool
+    public function delete(User $user, Product $product): bool
     {
-        if ($user->currentBusinessId() !== $party->business_id) {
+        if ($user->currentBusinessId() !== $product->business_id) {
             return false;
         }
 
+        // Check Role
         $role = $user->businesses()
             ->where('business_id', $user->currentBusinessId())
             ->value('business_users.role');
 
-        return in_array($role, [\App\Models\BusinessUser::ROLE_OWNER, \App\Models\BusinessUser::ROLE_ADMIN]);
+        return in_array($role, [BusinessUser::ROLE_OWNER, BusinessUser::ROLE_ADMIN]);
     }
 }
