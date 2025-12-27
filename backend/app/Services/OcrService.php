@@ -22,6 +22,15 @@ class OcrService
 
             Log::info("Starting OCR on: {$imagePath}");
 
+            $tesseract = new TesseractOCR($imagePath);
+
+            // Use custom tesseract path from environment if specified
+            // Otherwise defaults to system PATH
+            $tesseractPath = env('TESSERACT_PATH');
+            if ($tesseractPath && file_exists($tesseractPath)) {
+                $tesseract->executable($tesseractPath);
+            }
+
             $text = $tesseract->run();
 
             Log::info("OCR Complete. Length: " . strlen($text));

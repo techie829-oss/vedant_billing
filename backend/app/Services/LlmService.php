@@ -7,8 +7,14 @@ use Illuminate\Support\Facades\Log;
 
 class LlmService
 {
-    protected string $baseUrl = 'http://localhost:11434/api/generate';
+    protected string $baseUrl;
     protected string $model = 'llama3';
+
+    public function __construct()
+    {
+        // Use Ollama API URL from environment, default to localhost
+        $this->baseUrl = env('OLLAMA_API_URL', 'http://localhost:11434') . '/api/generate';
+    }
 
     /**
      * Parse raw receipt text into structured JSON.
