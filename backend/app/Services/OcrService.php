@@ -22,11 +22,6 @@ class OcrService
 
             Log::info("Starting OCR on: {$imagePath}");
 
-            $tesseract = new TesseractOCR($imagePath);
-
-            // Configuration for better accuracy
-            // $tesseract->lang('eng');
-
             $text = $tesseract->run();
 
             Log::info("OCR Complete. Length: " . strlen($text));
