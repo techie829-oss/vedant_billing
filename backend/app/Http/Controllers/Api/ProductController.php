@@ -202,7 +202,7 @@ class ProductController extends Controller
     public function scanInvoice(Request $request, \App\Services\InvoiceOcrService $invoiceOcrService)
     {
         $request->validate([
-            'invoice' => 'required|image|max:10240', // Max 10MB
+            'invoice' => 'required|file|mimes:jpeg,png,jpg,pdf|max:30720', // Max 30MB
         ]);
 
         $businessId = $request->header('X-Business-ID');

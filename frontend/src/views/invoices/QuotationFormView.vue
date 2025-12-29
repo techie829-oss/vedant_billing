@@ -215,7 +215,7 @@
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200">
+                            <tbody id="quotation-items-body" class="divide-y divide-gray-200">
                                 <tr v-for="(item, index) in form.items" :key="index">
                                     <td class="px-2 py-1">
                                         <div class="relative w-full min-w-[12rem]">
@@ -338,12 +338,25 @@
                 </div>
             </div>
 
+            <!-- Bottom Actions -->
+            <div class="mt-6 flex items-center justify-end gap-x-4">
+                <button @click="$router.back()" type="button"
+                    class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
+                <button @click="save('draft')" :disabled="loading" type="button"
+                    class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Save
+                    as Draft</button>
+                <button @click="save('sent')" :disabled="loading" type="button"
+                    class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    {{ loading ? 'Saving...' : 'Save Estimate' }}
+                </button>
+            </div>
+
         </form>
     </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '../../layouts/AppLayout.vue'
 import { useInvoiceStore, type InvoiceItem } from '../../stores/invoice'
@@ -453,7 +466,7 @@ watch(() => form.value.party_id, (newId) => {
     }
 })
 
-const addItem = () => {
+const addItem = async () => {
     form.value.items.push({
         name: '',
         description: '',
@@ -465,6 +478,11 @@ const addItem = () => {
         tax_amount: 0,
         total: 0
     })
+
+    // Auto-focus the new product input
+    await nextTick()
+    const lastInput = document.querySelector('#quotation-items-body tr:last-child input') as HTMLInputElement
+    if (lastInput) lastInput.focus()
 }
 
 const removeItem = (index: number) => {
@@ -649,5 +667,17 @@ onMounted(() => {
     loadCustomers()
     loadProducts()
     loadInvoice()
+    window.addEventListener('keydown', handleKeydown)
 })
+
+onUnmounted(() => {
+    window.removeEventListener('keydown', handleKeydown)
+})
+
+function handleKeydown(e: KeyboardEvent) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault()
+        save('sent') // Default to Save Estimate
+    }
+}
 </script>

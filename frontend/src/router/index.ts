@@ -106,6 +106,12 @@ const router = createRouter({
             component: () => import('../views/invoices/InvoiceScansView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
         },
+        {
+            path: '/invoice-scans/:id',
+            name: 'invoice-scan-details',
+            component: () => import('../views/invoices/InvoiceScanDetailView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
         // Invoices
         {
             path: '/invoices',

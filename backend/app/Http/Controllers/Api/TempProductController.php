@@ -79,12 +79,12 @@ class TempProductController extends Controller
                 'name' => $tempProduct->name,
                 'sku' => $tempProduct->sku,
                 'purchase_price' => $tempProduct->price,
-                'selling_price' => $tempProduct->price, // Default to purchase price
+                'sale_price' => $tempProduct->price, // Default to purchase price
                 'current_stock' => ($validated['update_inventory'] ?? false) ? $tempProduct->quantity : 0,
-                'unit' => $tempProduct->unit,
+                'unit' => $tempProduct->unit ?? 'pcs',
                 'description' => $tempProduct->description,
                 'hsn_code' => $tempProduct->hsn_code,
-                'tax_rate' => $tempProduct->tax_rate,
+                'tax_rate' => $tempProduct->tax_rate ?? 0,
             ]);
 
             // Update temp product

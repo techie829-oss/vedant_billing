@@ -169,15 +169,25 @@
         </div>
 
         <div v-if="isEditing" class="mt-6 flex justify-end">
+            <button type="button" @click="saveProduct" :disabled="loading"
+                class="mr-3 inline-flex items-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50">
+                {{ loading ? 'Saving...' : 'Save Product' }}
+            </button>
             <button type="button" @click="deleteProduct"
                 class="text-sm font-semibold text-red-600 hover:text-red-500">Delete Product</button>
+        </div>
+        <div v-else class="mt-6 flex justify-end">
+            <button type="button" @click="saveProduct" :disabled="loading"
+                class="inline-flex items-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50">
+                {{ loading ? 'Saving...' : 'Save Product' }}
+            </button>
         </div>
 
     </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductStore, type Product } from '../../stores/product'
 import AppLayout from '../../layouts/AppLayout.vue'
@@ -204,6 +214,7 @@ const form = ref<Partial<Product>>({
 })
 
 onMounted(async () => {
+    window.addEventListener('keydown', handleKeydown)
     if (isEditing.value) {
         loading.value = true
         try {
@@ -224,6 +235,17 @@ onMounted(async () => {
         }
     }
 })
+
+onUnmounted(() => {
+    window.removeEventListener('keydown', handleKeydown)
+})
+
+function handleKeydown(e: KeyboardEvent) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault()
+        saveProduct()
+    }
+}
 
 const saveProduct = async () => {
     if (!form.value.name) return alert('Name is required')

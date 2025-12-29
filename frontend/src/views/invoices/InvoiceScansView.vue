@@ -2,8 +2,8 @@
     <AppLayout>
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Invoice Scans</h1>
-                <p class="text-sm text-gray-500 mt-1">View and manage all scanned purchase invoices</p>
+                <h1 class="text-2xl font-bold text-gray-900">Product Catalog Scans</h1>
+                <p class="text-sm text-gray-500 mt-1">View and manage all scanned product catalogs and price lists</p>
             </div>
             <div class="mt-4 sm:mt-0 flex space-x-3">
                 <button @click="showUploadModal = true"
@@ -12,7 +12,7 @@
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    Scan New Invoice
+                    Scan New Catalog
                 </button>
             </div>
         </div>
@@ -97,24 +97,24 @@
         <div class="bg-white shadow rounded-lg p-4 mb-6">
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Status</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                     <select v-model="filters.status" @change="fetchScans"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        <option value="">All</option>
+                        class="block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition-colors">
+                        <option value="">All Scans</option>
                         <option value="pending">Processing</option>
                         <option value="success">Successful</option>
                         <option value="failed">Failed</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">From Date</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
                     <input type="date" v-model="filters.from_date" @change="fetchScans"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        class="block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition-colors text-gray-600">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">To Date</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
                     <input type="date" v-model="filters.to_date" @change="fetchScans"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        class="block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition-colors text-gray-600">
                 </div>
             </div>
         </div>
@@ -132,11 +132,11 @@
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 <h3 class="mt-2 text-sm font-medium text-gray-900">No scans found</h3>
-                <p class="mt-1 text-sm text-gray-500">Get started by scanning your first invoice.</p>
+                <p class="mt-1 text-sm text-gray-500">Get started by scanning your first catalog or price list.</p>
                 <div class="mt-6">
                     <button @click="showUploadModal = true"
                         class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                        Scan Invoice
+                        Scan Catalog
                     </button>
                 </div>
             </div>
@@ -155,13 +155,13 @@
                                         'bg-red-50 text-red-700 ring-red-600/20': scan.status === 'failed'
                                     }">
                                     {{ scan.status === 'success' ? 'Completed' : scan.status === 'pending' ?
-                                    'Processing' : 'Failed' }}
+                                        'Processing' : 'Failed' }}
                                 </span>
                                 <p class="text-sm font-medium text-gray-900">
                                     {{ scan.vendor_name || 'Unknown Vendor' }}
                                 </p>
                                 <p class="text-sm text-gray-500">
-                                    Invoice: {{ scan.invoice_number || '-' }}
+                                    Ref: {{ scan.invoice_number || '-' }}
                                 </p>
                             </div>
                             <div class="mt-2 flex items-center text-sm text-gray-500 space-x-4">
@@ -201,8 +201,8 @@
                     <div
                         class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                         <div>
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">Scan Purchase Invoice</h3>
-                            <p class="mt-1 text-sm text-gray-500">Upload an invoice image to extract products</p>
+                            <h3 class="text-lg font-semibold leading-6 text-gray-900">Scan Product Catalog</h3>
+                            <p class="mt-1 text-sm text-gray-500">Upload a catalog or list page to extract products</p>
                         </div>
 
                         <div v-if="!uploading" class="mt-6">

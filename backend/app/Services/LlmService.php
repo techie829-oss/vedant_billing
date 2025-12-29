@@ -186,7 +186,7 @@ EOT;
 
         try {
             // Increase timeout for invoice parsing (can be longer text)
-            $response = Http::timeout(120)->post($this->baseUrl, [
+            $response = Http::timeout(1800)->post($this->baseUrl, [
                 'model' => $this->model,
                 'prompt' => $prompt,
                 'stream' => false,

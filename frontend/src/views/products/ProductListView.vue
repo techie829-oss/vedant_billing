@@ -6,7 +6,7 @@
                 <p class="text-sm text-gray-500 mt-1">Manage your products, services, prices and stock.</p>
             </div>
             <div class="mt-4 sm:mt-0 flex space-x-3">
-                <button @click="showScanModal = true"
+                <router-link to="/invoice-scans"
                     class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition-colors relative">
                     <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -15,11 +15,11 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    Scan Invoice
+                    Catalog Scans
                     <span v-if="pendingCount > 0"
                         class="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">{{
                             pendingCount }}</span>
-                </button>
+                </router-link>
                 <router-link to="/products/create"
                     class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none transition-colors">
                     <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -128,8 +128,8 @@
 
                         <!-- File Upload -->
                         <div v-if="!scanning && !scanResult" class="mt-6">
-                            <input type="file" ref="fileInput" accept="image/*" @change="handleFileSelect"
-                                class="hidden">
+                            <input type="file" ref="fileInput" accept="image/*,application/pdf"
+                                @change="handleFileSelect" class="hidden">
                             <div @click="fileInput?.click()"
                                 class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 cursor-pointer hover:border-indigo-500 transition-colors">
                                 <div class="text-center">

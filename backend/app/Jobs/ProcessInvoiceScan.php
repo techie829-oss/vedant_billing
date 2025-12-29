@@ -15,7 +15,7 @@ class ProcessInvoiceScan implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $timeout = 180; // 3 minutes max
+    public $timeout = 1800; // 30 minutes max
 
     /**
      * Create a new job instance.
@@ -23,7 +23,8 @@ class ProcessInvoiceScan implements ShouldQueue
     public function __construct(
         public string $scanId,
         public string $businessId
-    ) {}
+    ) {
+    }
 
     /**
      * Execute the job.
@@ -31,7 +32,7 @@ class ProcessInvoiceScan implements ShouldQueue
     public function handle(InvoiceOcrService $invoiceOcrService): void
     {
         $scan = InvoiceScan::find($this->scanId);
-        
+
         if (!$scan) {
             Log::error("InvoiceScan not found: {$this->scanId}");
             return;
@@ -40,15 +41,15 @@ class ProcessInvoiceScan implements ShouldQueue
         try {
             // Process the already uploaded file
             $result = $invoiceOcrService->processExistingScan($scan, $this->businessId);
-            
+
             $scan->update([
                 'status' => 'success',
                 'products_count' => count($result['temp_products'] ?? []),
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error("Invoice scan job failed: " . $e->getMessage());
-            
+
             $scan->update([
                 'status' => 'failed',
                 'error_message' => $e->getMessage(),
