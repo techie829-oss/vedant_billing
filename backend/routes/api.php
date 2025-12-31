@@ -75,6 +75,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Import
     Route::post('/import/tally', [\App\Http\Controllers\Api\ImportController::class, 'importTallyMasters']);
 
+
     // Uploads
     Route::post('/upload', [\App\Http\Controllers\Api\UploadController::class, 'store']);
+
+    // Quick Notes
+    Route::apiResource('quick-notes', \App\Http\Controllers\Api\QuickNoteController::class);
 });

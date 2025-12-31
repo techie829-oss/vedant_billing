@@ -112,6 +112,12 @@ const router = createRouter({
             component: () => import('../views/invoices/InvoiceScanDetailView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
         },
+        {
+            path: '/quick-note',
+            name: 'quick-note',
+            component: () => import('../views/quick-note/QuickNoteView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
         // Invoices
         {
             path: '/invoices',

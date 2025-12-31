@@ -83,6 +83,17 @@
                         </div>
                         <div class="relative flex items-start">
                             <div class="flex h-6 items-center">
+                                <input id="show_transport" type="checkbox"
+                                    v-model="form.meta.display_options.show_transport_details"
+                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                            </div>
+                            <div class="ml-3 text-sm leading-6">
+                                <label for="show_transport" class="font-medium text-gray-900">Show Transport/Order
+                                    Details</label>
+                            </div>
+                        </div>
+                        <div class="relative flex items-start">
+                            <div class="flex h-6 items-center">
                                 <input id="show_description" type="checkbox"
                                     v-model="form.meta.display_options.show_description"
                                     class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
@@ -250,6 +261,36 @@
                                 <input type="text" v-model="form.meta.shipping_address.zip"
                                     class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transport / Order Details -->
+            <div v-if="form.meta.display_options.show_transport_details"
+                class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+                <div class="px-4 py-6 sm:p-8">
+                    <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Transport / Order Details</h3>
+                    <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+                        <div>
+                            <label class="block text-sm font-medium leading-6 text-gray-900">Challan No.</label>
+                            <input type="text" v-model="form.challan_no"
+                                class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium leading-6 text-gray-900">Vehicle No.</label>
+                            <input type="text" v-model="form.vehicle_no"
+                                class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium leading-6 text-gray-900">E-Way Bill No.</label>
+                            <input type="text" v-model="form.eway_bill_no"
+                                class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium leading-6 text-gray-900">PO Number</label>
+                            <input type="text" v-model="form.po_number"
+                                class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                         </div>
                     </div>
                 </div>
@@ -511,9 +552,13 @@ const form = ref({
     items: [] as InvoiceItem[],
     notes: '',
     terms: '',
+    challan_no: '',
+    vehicle_no: '',
+    eway_bill_no: '',
+    po_number: '',
     meta: {
         display_options: {
-            show_eway_details: false,
+            show_transport_details: false,
             show_hsn: true,
             show_gst_breakdown: true,
             show_discount: false,
@@ -662,6 +707,31 @@ const onProductSelect = (item: InvoiceItem, product: any) => {
 }
 
 const loadInvoice = async () => {
+    // Check for Quick Note transfer
+    if (route.query.from_quick_note) {
+        const pending = localStorage.getItem('pending_invoice_items')
+        if (pending) {
+            try {
+                const data = JSON.parse(pending)
+                if (data.items && Array.isArray(data.items)) {
+                    form.value.items = data.items
+                }
+                // Cleanup
+                localStorage.removeItem('pending_invoice_items')
+            } catch (e) {
+                console.error("Failed to parse pending items", e)
+            }
+        }
+
+        // Also load default business settings
+        const business = authStore.activeBusiness
+        if (business && business.meta) {
+            form.value.notes = business.meta.default_notes || ''
+            form.value.terms = business.meta.default_terms || ''
+        }
+        return
+    }
+
     if (!isEditMode.value) {
         addItem()
         const business = authStore.activeBusiness
@@ -690,9 +760,14 @@ const loadInvoice = async () => {
                 })),
                 notes: invoice.notes || '',
                 terms: invoice.terms || '',
+                challan_no: invoice.challan_no || '',
+                vehicle_no: invoice.vehicle_no || '',
+                eway_bill_no: invoice.eway_bill_no || '',
+                po_number: invoice.po_number || '',
                 meta: {
                     display_options: {
-                        show_eway_details: invoice.meta?.display_options?.show_eway_details ?? false,
+                        show_transport_details: invoice.meta?.display_options?.show_transport_details ??
+                            (!!invoice.challan_no || !!invoice.vehicle_no || !!invoice.eway_bill_no || !!invoice.po_number),
                         show_hsn: invoice.meta?.display_options?.show_hsn ?? true,
                         show_gst_breakdown: invoice.meta?.display_options?.show_gst_breakdown ?? true,
                         show_discount: invoice.meta?.display_options?.show_discount ?? false,
