@@ -10,21 +10,27 @@
                     </div>
                 </div>
                 <!-- Date Filters -->
-                <div class="flex items-center gap-2">
-                    <input type="date" v-model="filters.start_date"
-                        class="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                    <span class="text-gray-500">-</span>
-                    <input type="date" v-model="filters.end_date"
-                        class="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                    <button @click="fetchReport"
-                        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                        Apply
-                    </button>
-                    <!-- Download/Print -->
-                    <button @click="downloadCSV"
-                        class="ml-2 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                        Export CSV
-                    </button>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-2 w-full sm:w-auto">
+                    <div class="grid grid-cols-2 gap-2 w-full sm:w-auto">
+                        <input type="date" v-model="filters.start_date"
+                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        <div class="sm:hidden flex items-center justify-center text-gray-400 text-xs">to</div>
+                        <!-- Hidden on desktop, shows "to" between inputs on mobile grid if we want, or just hide separator -->
+                        <input type="date" v-model="filters.end_date"
+                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
+                        <button @click="fetchReport"
+                            class="w-full sm:w-auto rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                            Apply
+                        </button>
+                        <!-- Download/Print -->
+                        <button @click="downloadCSV"
+                            class="w-full sm:w-auto ml-0 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                            Export CSV
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -36,7 +42,48 @@
             </div>
 
             <div v-else-if="reportData" class="flow-root">
-                <div class="overflow-x-auto">
+                <!-- Mobile Card List -->
+                <div class="sm:hidden space-y-4 px-4 pb-4">
+                    <div v-for="row in reportData.summary" :key="row.rate"
+                        class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <div class="flex justify-between items-center mb-3">
+                            <span
+                                class="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">GST
+                                @ {{ Number(row.rate) }}%</span>
+                            <span class="text-sm font-bold text-gray-900">{{ formatCurrency(row.total_tax) }}</span>
+                        </div>
+                        <div class="bg-gray-50 rounded p-3 text-sm space-y-1">
+                            <div class="flex justify-between text-gray-600">
+                                <span>Taxable Amount:</span>
+                                <span class="font-medium text-gray-900">{{ formatCurrency(row.taxable_value) }}</span>
+                            </div>
+                            <div class="border-t border-gray-200 my-1"></div>
+                            <div class="flex justify-between text-gray-500 text-xs">
+                                <span>CGST:</span>
+                                <span>{{ formatCurrency(row.cgst_share) }}</span>
+                            </div>
+                            <div class="flex justify-between text-gray-500 text-xs">
+                                <span>SGST:</span>
+                                <span>{{ formatCurrency(row.sgst_share) }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Card -->
+                    <div class="bg-indigo-900 text-white rounded-lg p-4 shadow-md">
+                        <div class="flex justify-between items-center text-sm font-medium opacity-90 mb-2">
+                            <span>Total Taxable</span>
+                            <span>{{ formatCurrency(reportData.totals.taxable) }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-lg font-bold">
+                            <span>Total Tax Output</span>
+                            <span>{{ formatCurrency(reportData.totals.tax) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop Table -->
+                <div class="hidden sm:block overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-300">
                         <thead class="bg-gray-50">
                             <tr>

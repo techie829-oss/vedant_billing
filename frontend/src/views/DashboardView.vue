@@ -19,6 +19,21 @@
 
     <!-- Quick Actions -->
     <div class="mb-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+      <!-- Highlighted Feature: Fast Note -->
+      <router-link to="/quick-note"
+        class="flex flex-col items-center justify-center p-4 bg-yellow-50 rounded-xl shadow-sm border border-yellow-200 hover:shadow-md hover:bg-yellow-100 transition-all group cursor-pointer relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-8 h-8 bg-yellow-200 rotate-45 transform translate-x-4 -translate-y-4">
+        </div>
+        <div
+          class="h-10 w-10 rounded-full bg-yellow-200 text-yellow-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+          </svg>
+        </div>
+        <span class="text-sm font-bold text-yellow-900">Fast Note</span>
+      </router-link>
+
       <router-link to="/invoices/create"
         class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-100 transition-all group cursor-pointer">
         <div
@@ -30,6 +45,31 @@
         </div>
         <span class="text-sm font-medium text-gray-900">Create Invoice</span>
       </router-link>
+
+      <router-link to="/quotations/create"
+        class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-teal-100 transition-all group cursor-pointer">
+        <div
+          class="h-10 w-10 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
+        </div>
+        <span class="text-sm font-medium text-gray-900">Estimate</span>
+      </router-link>
+
+      <router-link to="/expenses/create"
+        class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-red-100 transition-all group cursor-pointer">
+        <div
+          class="h-10 w-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <span class="text-sm font-medium text-gray-900">Add Expense</span>
+      </router-link>
+
       <router-link to="/customers"
         class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-green-100 transition-all group cursor-pointer">
         <div
@@ -52,6 +92,31 @@
         </div>
         <span class="text-sm font-medium text-gray-900">Add Product</span>
       </router-link>
+
+      <router-link to="/credit-notes"
+        class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all group cursor-pointer">
+        <div
+          class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l2.333-1.75L10 21l2.333-1.75L15 21l1.667-1.75L19 21z" />
+          </svg>
+        </div>
+        <span class="text-sm font-medium text-gray-900">Credit Note</span>
+      </router-link>
+
+      <router-link to="/cashbook"
+        class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-emerald-100 transition-all group cursor-pointer">
+        <div
+          class="h-10 w-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <span class="text-sm font-medium text-gray-900">Cashbook</span>
+      </router-link>
+
       <router-link to="/reports"
         class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-100 transition-all group cursor-pointer">
         <div

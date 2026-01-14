@@ -22,6 +22,9 @@ export interface ParsedItem {
     is_valid: boolean;
     is_percentage?: boolean;
     percentage_val?: number;
+    is_chained_math?: boolean;
+    chained_op?: '*' | '/';
+    chained_val?: number;
 }
 
 export function parseLine(input: string): ParsedItem {
@@ -126,31 +129,68 @@ export function parseLine(input: string): ParsedItem {
     const signedMatch = trimmed.match(signedRegex);
     if (signedMatch) {
         const sign = signedMatch[1] === '-' ? -1 : 1;
-        const amount = parseFloat(signedMatch[2]);
+        const amount = parseFloat(signedMatch[2] || '0');
         const text = (signedMatch[4] || '').trim();
 
         return {
             raw: input,
             qty: 1,
             price: amount,
-            name: text || (sign === -1 ? 'Deduction' : 'Addition'),
+            name: text, // No default name, cleaner UI
             total: amount * sign,
             is_valid: true
         };
     }
 
-    // Pattern 1: Explicit Math "5 * 500" or "500 / 5"
+    // Pattern 0.5: Bare Number (e.g. "500")
+    // Treated as Price/Amount with 1 Qty
+    const numberRegex = /^(\d+(\.\d+)?)$/;
+    const numberMatch = trimmed.match(numberRegex);
+    if (numberMatch) {
+        return {
+            raw: input,
+            qty: 1,
+            price: parseFloat(numberMatch[1] || '0'),
+            name: '',
+            total: parseFloat(numberMatch[1] || '0'),
+            is_valid: true
+        };
+    }
+
+    // Pattern Chained Math: "* 2" or "/ 2"
+    // Regex: Starts with * or /, then Number
+    const chainedMatch = trimmed.match(/^([*x\/])\s*(\d+(\.\d+)?)$/i);
+    if (chainedMatch) {
+        let op = chainedMatch[1] || '*';
+        if (op.toLowerCase() === 'x') op = '*';
+        const val = parseFloat(chainedMatch[2] || '1');
+
+        return {
+            raw: input,
+            qty: 1,
+            name: `${op === '*' ? 'Multiply by' : 'Divide by'} ${val}`,
+            price: 0,
+            total: 0,
+            is_valid: true,
+            is_chained_math: true,
+            chained_op: op as '*' | '/',
+            chained_val: val
+        };
+    }
+
+    // Pattern 1: Explicit Math at Start "5 * 500" or "500 / 5"
     // Checks for a format like "NUMBER operator NUMBER" with optional text
     const mathRegex = /^(\d+(\.\d+)?)\s*([*x\/])\s*(\d+(\.\d+)?)\s*(.*)$/i;
     const mathMatch = trimmed.match(mathRegex);
     if (mathMatch) {
         const num1 = parseFloat(mathMatch[1] || '0');
-        const operator = mathMatch[3];
+        const operator = mathMatch[3] || '*';
+        let op = operator.toLowerCase() === 'x' ? '*' : operator;
         const num2 = parseFloat(mathMatch[4] || '0');
         const restText = (mathMatch[6] || '').trim();
 
         let total = 0;
-        if (operator === '/' && num2 !== 0) {
+        if (op === '/' && num2 !== 0) {
             total = num1 / num2;
         } else {
             total = num1 * num2;
@@ -160,8 +200,27 @@ export function parseLine(input: string): ParsedItem {
             raw: input,
             qty: num1,
             price: num2,
-            name: restText || (operator === '/' ? 'Division' : 'Multiplication'),
+            name: restText || (op === '/' ? 'Division' : 'Multiplication'),
             total: total,
+            is_valid: true
+        };
+    }
+
+    // Pattern 1.5: Text then Math (e.g. "1mm 20 x 1474" or "Wire 5 * 50")
+    // Regex: Text, then Number, then Op, then Number
+    const textMathRegex = /^(.*?)\s+(\d+(\.\d+)?)\s*([*x])\s*(\d+(\.\d+)?)$/i;
+    const textMathMatch = trimmed.match(textMathRegex);
+    if (textMathMatch) {
+        const text = (textMathMatch[1] || '').trim();
+        const qty = parseFloat(textMathMatch[2] || '0');
+        const price = parseFloat(textMathMatch[5] || '0');
+
+        return {
+            raw: input,
+            qty: qty,
+            price: price,
+            name: text,
+            total: qty * price,
             is_valid: true
         };
     }

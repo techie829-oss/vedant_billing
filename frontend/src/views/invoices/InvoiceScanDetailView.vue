@@ -26,7 +26,7 @@
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Extracted Products</h3>
 
                 <div class="space-y-6">
-                    <div v-for="(item, index) in scanData.temp_products" :key="item.temp_product.id"
+                    <div v-for="item in scanData.temp_products" :key="item.temp_product.id"
                         class="border rounded-lg p-4 bg-gray-50">
                         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                             <!-- Scanned Data -->
@@ -118,12 +118,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import AppLayout from '../../layouts/AppLayout.vue'
 import client from '../../api/client'
 
 const route = useRoute()
-const router = useRouter()
 const scanId = route.params.id as string
 
 const loading = ref(true)

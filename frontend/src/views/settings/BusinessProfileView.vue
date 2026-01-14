@@ -458,6 +458,42 @@
                                         Preview Layout
                                     </button>
                                 </div>
+
+                                <!-- Classic Grid Layout Card -->
+                                <div class="relative border-2 rounded-xl p-4 cursor-pointer transition-all hover:border-gray-300"
+                                    :class="form.meta.invoice_layout === 'classic' ? 'border-indigo-600 ring-1 ring-indigo-600 bg-indigo-50/10' : 'border-gray-200'"
+                                    @click="form.meta.invoice_layout = 'classic'">
+
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex items-center gap-2">
+                                            <div class="h-4 w-4 rounded-full border flex items-center justify-center bg-white"
+                                                :class="form.meta.invoice_layout === 'classic' ? 'border-indigo-600' : 'border-gray-300'">
+                                                <div v-if="form.meta.invoice_layout === 'classic'"
+                                                    class="h-2 w-2 rounded-full bg-indigo-600"></div>
+                                            </div>
+                                            <span class="font-bold text-gray-900 text-sm">Classic Grid (Tax
+                                                Invoice)</span>
+                                        </div>
+                                        <span
+                                            class="text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full">New</span>
+                                    </div>
+                                    <div
+                                        class="space-y-2 opacity-50 pointer-events-none select-none border border-black p-1">
+                                        <!-- Grid Simulation -->
+                                        <div class="border-b border-black pb-1 mb-1 text-[8px] font-bold text-center">
+                                            TAX INVOICE</div>
+                                        <div class="grid grid-cols-2 gap-0 border-b border-black">
+                                            <div class="h-4 border-r border-black bg-gray-100"></div>
+                                            <div class="h-4 bg-gray-50"></div>
+                                        </div>
+                                        <div class="grid grid-cols-4 gap-0 mt-1 h-6 bg-gray-50 border border-black">
+                                        </div>
+                                    </div>
+                                    <button type="button" @click.stop="openPreview('classic')"
+                                        class="mt-4 w-full py-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">
+                                        Preview Layout
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -779,6 +815,7 @@ import { fetchPincodeDetails } from '../../services/PincodeService'
 import DefaultLayout from '../invoices/layouts/DefaultLayout.vue'
 import ProfessionalLayout from '../invoices/layouts/ProfessionalLayout.vue'
 import GridPremiumLayout from '../invoices/layouts/GridPremiumLayout.vue'
+import ClassicGridLayout from '../invoices/layouts/ClassicGridLayout.vue'
 
 const authStore = useAuthStore()
 const loading = ref(true)
@@ -788,7 +825,7 @@ const downloading = ref(false)
 const downloadingCsv = ref<string | null>(null)
 
 const showPreviewModal = ref(false)
-const previewLayout = ref<'default' | 'professional' | 'grid_premium'>('default')
+const previewLayout = ref<'default' | 'professional' | 'grid_premium' | 'classic'>('default')
 
 // Enterprise Logic
 const isEnterprise = computed(() => {
@@ -799,6 +836,7 @@ const isEnterprise = computed(() => {
 const previewComponent = computed(() => {
     if (previewLayout.value === 'professional') return ProfessionalLayout
     if (previewLayout.value === 'grid_premium') return GridPremiumLayout
+    if (previewLayout.value === 'classic') return ClassicGridLayout
     return DefaultLayout
 })
 
@@ -812,7 +850,7 @@ const previewControls = ref({
     gst_scenario: 'inter' as 'inter' | 'intra' // Default to Inter-State (IGST) as requested
 })
 
-const openPreview = (layout: 'default' | 'professional' | 'grid_premium') => {
+const openPreview = (layout: 'default' | 'professional' | 'grid_premium' | 'classic') => {
     previewLayout.value = layout
     // Initialize preview controls
     previewControls.value = {
@@ -922,7 +960,7 @@ const form = ref({
         default_terms: '',
         account_holder_name: '',
         show_bank_details: false,
-        invoice_layout: 'default' as 'default' | 'professional' | 'grid_premium'
+        invoice_layout: 'default' as 'default' | 'professional' | 'grid_premium' | 'classic'
     }
 })
 
@@ -1025,8 +1063,15 @@ const save = async () => {
     try {
         const businessId = authStore.activeBusiness?.id;
         const response = await client.put(`/businesses/${businessId}`, form.value);
-        // Update store with new details (including meta)
-        authStore.setActiveBusiness(response.data);
+
+        // Preserve pivot data from current business before updating
+        const currentPivot = authStore.activeBusiness?.pivot;
+        const updatedBusiness = {
+            ...response.data,
+            pivot: currentPivot || response.data.pivot // Preserve existing pivot or use response pivot
+        };
+
+        authStore.setActiveBusiness(updatedBusiness);
 
         // Should trigger a refresh or toast notification
         alert('Settings saved successfully!');

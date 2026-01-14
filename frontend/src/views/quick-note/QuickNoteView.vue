@@ -1,9 +1,10 @@
 <template>
     <AppLayout>
-        <div class="h-[calc(100vh-2rem)] flex flex-col items-center justify-center p-2 sm:p-6 bg-[#e8eaed] font-sans">
+        <div
+            class="min-h-full sm:h-[calc(100vh-2rem)] flex flex-col items-center justify-center p-2 sm:p-6 bg-[#e8eaed] font-sans">
 
             <!-- The Paper Note Card -->
-            <div class="bg-white w-full max-w-lg shadow-2xl rounded-lg flex flex-col relative overflow-hidden h-full max-h-[800px] transition-all"
+            <div class="bg-white w-full max-w-lg shadow-xl sm:shadow-2xl rounded-lg flex flex-col relative overflow-hidden h-[85dvh] sm:h-full sm:max-h-[800px] transition-all"
                 id="receipt-card">
 
                 <!-- Paper Header -->
@@ -16,7 +17,7 @@
                                 <span>{{ currentDate }}</span>
                                 <span class="w-1 h-1 rounded-full bg-gray-300"></span>
                                 <span class="uppercase tracking-wider">Note #{{ Math.floor(Math.random() * 1000) + 4000
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
 
@@ -67,12 +68,42 @@
                                         }}</span>
                                 </template>
                                 <template v-else>
-                                    <span v-if="item.total < 0" class="text-red-500 font-bold mr-2 text-lg">−</span>
-                                    <span v-else-if="index > 0" class="text-green-500 font-bold mr-2 text-lg">+</span>
-                                    <span class="font-medium text-gray-900">{{ formatCurrency(Math.abs(item.total))
-                                        }}</span>
-                                    <span v-if="item.name" class="ml-2 text-xs text-gray-400 italic truncate">- {{
-                                        item.name }}</span>
+                                    <!-- Chained Math Display (Calculator Tape Style) -->
+                                    <template v-if="item.is_chained_math">
+                                        <div class="flex items-center text-gray-800 font-bold">
+                                            <span class="text-xl mr-2 text-indigo-600">{{ item.chained_op === '*' ? '×'
+                                                : '÷'
+                                            }}</span>
+                                            <span class="text-lg">{{ item.chained_val }}</span>
+                                        </div>
+                                    </template>
+
+                                    <!-- Standard Entry -->
+                                    <template v-else>
+                                        <div class="flex items-center">
+                                            <span v-if="item.total < 0"
+                                                class="text-red-500 font-bold mr-2 text-lg">−</span>
+                                            <span v-else-if="index > 0"
+                                                class="text-green-500 font-bold mr-2 text-lg">+</span>
+
+                                            <div class="flex flex-col">
+                                                <span class="font-medium text-gray-900">{{
+                                                    formatCurrency(Math.abs(item.total)) }}</span>
+                                                <!-- Show breakdown if Qty > 1 or it has a name -->
+                                                <div v-if="item.name || item.qty > 1"
+                                                    class="text-xs text-gray-400 font-medium flex items-center gap-1">
+                                                    <span v-if="item.name" class="italic text-gray-500">{{ item.name
+                                                        }}</span>
+                                                    <span v-if="item.name && item.qty > 1"
+                                                        class="text-gray-300">•</span>
+                                                    <span v-if="item.qty > 1 || item.price !== item.total"
+                                                        class="font-mono text-gray-400">
+                                                        {{ item.qty }} × {{ item.price }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
                                 </template>
                             </div>
 
@@ -81,7 +112,7 @@
                                 <span v-if="mode === 'order_receipt'" class="text-gray-900">{{
                                     formatCurrency(item.total) }}</span>
                                 <span v-else class="text-gray-500">{{ formatCurrency(runningTotals[index] || 0)
-                                    }}</span>
+                                }}</span>
 
                                 <button @click.stop="removeItem(index)"
                                     class="absolute -right-5 top-1/2 -translate-y-1/2 p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -102,23 +133,23 @@
 
                             <!-- Hisab Operator Toggles (Inline) -->
                             <div v-if="mode === 'hisab'"
-                                class="flex items-center mr-3 bg-white rounded-md shadow-sm border border-gray-200">
+                                class="flex items-center gap-0.5 mr-3 bg-white p-0.5 rounded-md shadow-sm border border-gray-200 shrink-0">
                                 <button v-for="op in ['+', '-', '*', '/']" :key="op"
-                                    @click="selectedOperator = op; focusInput()" :class="['w-6 h-6 flex items-center justify-center text-xs font-bold transition-colors',
+                                    @click="selectedOperator = op; focusInput()" :class="['w-7 h-7 flex items-center justify-center text-sm font-bold transition-all rounded',
                                         selectedOperator === op
-                                            ? 'bg-indigo-600 text-white'
-                                            : 'text-gray-400 hover:text-indigo-600']">
+                                            ? 'bg-indigo-600 text-white shadow-sm'
+                                            : 'text-gray-400 hover:text-indigo-600 hover:bg-gray-50']">
                                     {{ op === '*' ? '×' : op === '/' ? '÷' : op === '-' ? '−' : '+' }}
                                 </button>
                             </div>
 
-                            <form @submit.prevent="addItem" class="flex-1 flex items-center relative">
+                            <form @submit.prevent="addItem" class="flex-1 flex items-center relative min-w-0">
                                 <input ref="inputRef" type="text" v-model="inputLine"
-                                    :placeholder="mode === 'hisab' ? 'Enter amount...' : 'Write item (e.g. 2 Fan 1500)...'"
-                                    class="flex-1 bg-transparent border-none p-0 text-sm font-mono text-gray-900 placeholder:text-gray-400 focus:ring-0"
-                                    autocomplete="off">
+                                    :placeholder="mode === 'hisab' ? 'Enter amount...' : 'Write item...'"
+                                    class="flex-1 bg-transparent border-none p-0 text-base sm:text-sm font-mono text-gray-900 placeholder:text-gray-400 focus:ring-0 min-w-0"
+                                    autocomplete="off" enterkeyhint="next">
                                 <button type="submit" v-if="inputLine"
-                                    class="text-indigo-600 hover:text-indigo-700 ml-2">
+                                    class="text-indigo-600 hover:text-indigo-700 ml-2 shrink-0">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                                         class="w-5 h-5">
                                         <path fill-rule="evenodd"
@@ -278,16 +309,19 @@ const addItem = () => {
     // '*' or '/': If user types "5 500", treat as "5 * 500" or "5 / 500"
 
     if (mode.value === 'hisab') {
+        const isSimpleNumber = /^(\d+(\.\d+)?)$/.test(rawInput);
+
         if (selectedOperator.value === '-') {
             // If it doesn't start with - or +, prepend -
             if (!/^[+-]/.test(rawInput)) {
                 rawInput = `- ${rawInput}`
             }
         } else if (selectedOperator.value === '*' || selectedOperator.value === '/') {
-            // If input is like "number space number", replace space with operator
-            // e.g. "5 500" -> "5 * 500"
-            // But exclude if it already has explicit math
-            if (!/[*x\/]/.test(rawInput) && /^\d+(\.\d+)?\s+\d+(\.\d+)?/.test(rawInput)) {
+            if (isSimpleNumber) {
+                // Case 1: "2" -> "* 2" (Chained Math)
+                rawInput = `${selectedOperator.value} ${rawInput}`
+            } else if (!/[*x\/]/.test(rawInput) && /^\d+(\.\d+)?\s+\d+(\.\d+)?/.test(rawInput)) {
+                // Case 2: "5 500" -> "5 * 500" (Explicit Math)
                 rawInput = rawInput.replace(/\s+/, ` ${selectedOperator.value} `)
             }
         }
@@ -314,6 +348,29 @@ const addItem = () => {
         }
     }
 
+    // Handle Chained Math (* 2, / 2) relative to current Grand Total
+    if (parsed.is_chained_math && parsed.chained_val !== undefined) {
+        const currentTotal = grandTotal.value;
+        let diff = 0;
+
+        if (parsed.chained_op === '*') {
+            // Target = Current * Val.  Diff = Target - Current = Current * (Val - 1)
+            // Example: 100 * 2 = 200. Diff = 100.
+            diff = currentTotal * (parsed.chained_val - 1);
+            parsed.name = `× ${parsed.chained_val}`;
+        } else if (parsed.chained_op === '/') {
+            // Target = Current / Val. Diff = Target - Current = Current * (1/Val - 1)
+            if (parsed.chained_val !== 0) {
+                const target = currentTotal / parsed.chained_val;
+                diff = target - currentTotal;
+                parsed.name = `÷ ${parsed.chained_val}`;
+            }
+        }
+
+        parsed.price = Math.abs(diff);
+        parsed.total = diff;
+    }
+
     items.value.push(parsed)
     inputLine.value = ''
 
@@ -321,6 +378,7 @@ const addItem = () => {
     nextTick(() => {
         const paper = document.getElementById('receipt-paper')?.parentElement
         if (paper) paper.scrollTop = paper.scrollHeight
+        focusInput()
     })
 }
 
@@ -408,6 +466,7 @@ const saveToBackend = async () => {
     }
 }
 
+// @ts-ignore
 const downloadImage = () => {
     // Placeholder: In a real app, use html2canvas or similar.
     alert("In a full implementation, this button would generate a PNG image of the note above to share on WhatsApp.")

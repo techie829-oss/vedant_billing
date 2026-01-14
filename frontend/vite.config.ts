@@ -31,4 +31,13 @@ export default defineConfig({
       }
     })
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://billingbook.test',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
 })

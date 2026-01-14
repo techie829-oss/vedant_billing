@@ -301,7 +301,7 @@
                 <div class="px-4 py-6 sm:p-8">
                     <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Items</h3>
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200" style="min-width: 800px;">
                             <thead>
                                 <tr>
                                     <th

@@ -15,11 +15,12 @@ class BusinessController extends Controller
     public function index(Request $request)
     {
         $businesses = $request->user()->businesses()
+            ->withPivot(['role', 'status', 'joined_at'])
             ->with([
-                'subscriptions' => function ($q) {
-                    $q->with('plan.features')->latest()->limit(1);
-                }
-            ])
+                    'subscriptions' => function ($q) {
+                        $q->with('plan.features')->latest()->limit(1);
+                    }
+                ])
             ->get();
 
         return response()->json($businesses);

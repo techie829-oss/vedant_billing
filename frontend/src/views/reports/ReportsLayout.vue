@@ -5,8 +5,8 @@
         </div>
 
         <!-- Tabs -->
-        <div class="border-b border-gray-200 mb-8">
-            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+        <div class="border-b border-gray-200 mb-8 overflow-x-auto">
+            <nav class="-mb-px flex space-x-8 min-w-max pb-1" aria-label="Tabs">
                 <router-link to="/reports/sales" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
                     :class="[route.path.includes('sales') ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700']">
                     Sales Report

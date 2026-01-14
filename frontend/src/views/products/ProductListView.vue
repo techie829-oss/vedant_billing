@@ -5,9 +5,9 @@
                 <h1 class="text-2xl font-bold text-gray-900">Products & Services</h1>
                 <p class="text-sm text-gray-500 mt-1">Manage your products, services, prices and stock.</p>
             </div>
-            <div class="mt-4 sm:mt-0 flex space-x-3">
+            <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3">
                 <router-link to="/invoice-scans"
-                    class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition-colors relative">
+                    class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-3 sm:py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition-colors relative">
                     <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -18,10 +18,10 @@
                     Catalog Scans
                     <span v-if="pendingCount > 0"
                         class="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">{{
-                            pendingCount }}</span>
+                        pendingCount }}</span>
                 </router-link>
                 <router-link to="/products/create"
-                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none transition-colors">
+                    class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-3 sm:py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none transition-colors">
                     <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -32,7 +32,61 @@
         </div>
 
         <div class="mt-8 flow-root">
-            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <!-- Mobile Card List -->
+            <div class="sm:hidden divide-y divide-gray-100 bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+                <div v-if="loading" class="p-4 text-center text-sm text-gray-500">Loading products...</div>
+                <div v-else-if="products.length === 0" class="p-4 text-center text-sm text-gray-500">No products found.
+                    Add one to get started.</div>
+                <div v-for="product in products" :key="product.id"
+                    class="p-3 hover:bg-gray-50 flex flex-col gap-2 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <div class="pr-2">
+                            <div class="font-bold text-gray-900 text-sm truncate max-w-[200px]">{{ product.name }}</div>
+                            <div class="flex items-center gap-1 mt-0.5">
+                                <span
+                                    class="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-medium ring-1 ring-inset"
+                                    :class="product.type === 'goods' ? 'bg-blue-50 text-blue-700 ring-blue-700/10' : 'bg-purple-50 text-purple-700 ring-purple-700/10'">
+                                    {{ product.type }}
+                                </span>
+                                <span class="text-[10px] text-gray-400" v-if="product.hsn_code">HSN: {{ product.hsn_code
+                                }}</span>
+                            </div>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <div class="font-bold text-gray-900 text-sm">₹{{ Number(product.sale_price).toFixed(2) }}
+                            </div>
+                            <div class="text-[10px] text-gray-500 mt-0.5">
+                                <span v-if="product.type === 'goods' && product.current_stock !== undefined">
+                                    <span
+                                        :class="Number(product.current_stock) > 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'">
+                                        {{ Number(product.current_stock) }}
+                                    </span>
+                                    {{ product.unit }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-1.5 border-t border-gray-100 mt-1">
+                        <span
+                            class="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-medium ring-1 ring-inset capitalize"
+                            :class="product.status === 'active' ? 'bg-green-50 text-green-700 ring-green-600/20' : 'bg-red-50 text-red-700 ring-red-600/10'">
+                            {{ product.status }}
+                        </span>
+                        <router-link :to="`/products/${product.id}/edit`"
+                            class="text-xs font-medium text-indigo-600 hover:text-indigo-900 flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Edit
+                        </router-link>
+                    </div>
+                </div>
+            </div>
+
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 hidden sm:block">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                     <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
                         <table class="min-w-full divide-y divide-gray-300">
@@ -208,7 +262,8 @@
                                 </div>
                             </div>
 
-                            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+                            <div
+                                class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-300">
                                     <thead class="bg-gray-50">
                                         <tr>
