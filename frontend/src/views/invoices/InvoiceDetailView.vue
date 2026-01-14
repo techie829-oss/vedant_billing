@@ -351,6 +351,7 @@ import { storeToRefs } from 'pinia'
 import DefaultLayout from './layouts/DefaultLayout.vue'
 import ProfessionalLayout from './layouts/ProfessionalLayout.vue'
 import GridPremiumLayout from './layouts/GridPremiumLayout.vue'
+import ClassicGridLayout from './layouts/ClassicGridLayout.vue'
 import client from '../../api/client'
 
 // @ts-ignore
@@ -432,15 +433,19 @@ const layoutComponent = computed(() => {
     const layout = invoice.value?.business?.meta?.invoice_layout || 'default'
     if (layout === 'professional') return ProfessionalLayout
     if (layout === 'grid_premium') return GridPremiumLayout
+    if (layout === 'classic') return ClassicGridLayout
     return DefaultLayout
 })
 
 const taxBreakdown = computed(() => {
-    if (!invoice.value) return { cgst: 0, sgst: 0, igst: 0, taxType: '', posState: '' }
+    if (!invoice.value) return { cgst: 0, sgst: 0, igst: 0, taxType: '', posState: '', cgstRate: 0, sgstRate: 0, igstRate: 0, hsnGroups: [] }
 
     let cgst = 0
     let sgst = 0
     let igst = 0
+    let totalTaxRate = 0
+    let itemCount = 0
+    const hsnMap: { [key: string]: any } = {}
 
     const businessState = invoice.value.business?.meta?.state?.toLowerCase()
     const customer = invoice.value.party
@@ -451,20 +456,64 @@ const taxBreakdown = computed(() => {
 
     (invoice.value.items || []).forEach((item: any) => {
         const lineTax = Number(item.tax_amount) || 0
+        const itemTaxRate = Number(item.tax_rate) || 0
+        const hsn = item.hsn_code || item.product?.hsn_code || '-'
+        const taxableAmount = Number(item.total) || 0
+
+        if (itemTaxRate > 0) {
+            totalTaxRate += itemTaxRate
+            itemCount++
+        }
+
         if (isInterState) {
             igst += lineTax
         } else {
             cgst += lineTax / 2
             sgst += lineTax / 2
         }
+
+        // Group by HSN
+        if (!hsnMap[hsn]) {
+            hsnMap[hsn] = {
+                hsn,
+                taxable: 0,
+                cgst_rate: isInterState ? 0 : itemTaxRate / 2,
+                sgst_rate: isInterState ? 0 : itemTaxRate / 2,
+                igst_rate: isInterState ? itemTaxRate : 0,
+                cgst_amount: 0,
+                sgst_amount: 0,
+                igst_amount: 0,
+                total_tax: 0
+            }
+        }
+
+        const group = hsnMap[hsn]
+        group.taxable += taxableAmount
+
+        if (isInterState) {
+            group.igst_amount += lineTax
+        } else {
+            group.cgst_amount += lineTax / 2
+            group.sgst_amount += lineTax / 2
+        }
+        group.total_tax += lineTax
     })
+
+    const avgTaxRate = itemCount > 0 ? totalTaxRate / itemCount : 0
+    const cgstRate = isInterState ? 0 : avgTaxRate / 2
+    const sgstRate = isInterState ? 0 : avgTaxRate / 2
+    const igstRate = isInterState ? avgTaxRate : 0
 
     return {
         cgst,
         sgst,
         igst,
         taxType,
-        posState: customer?.shipping_address?.state || customer?.billing_address?.state || 'N/A'
+        posState: customer?.shipping_address?.state || customer?.billing_address?.state || 'N/A',
+        cgstRate,
+        sgstRate,
+        igstRate,
+        hsnGroups: Object.values(hsnMap)
     }
 })
 
@@ -535,7 +584,7 @@ const generateQR = async () => {
 
     const upiId = invoice.value.business.meta.upi_id
     const payName = invoice.value.business.name.replace(/\s/g, '+') // Simple encoding
-    const amount = invoice.value.grand_total
+    const amount = Math.round(invoice.value.grand_total)
 
     // Construct UPI URL
     // Standard: upi://pay?pa=<id>&pn=<name>&am=<amount>&cu=INR

@@ -63,6 +63,7 @@ import { storeToRefs } from 'pinia'
 import DefaultLayout from './layouts/DefaultLayout.vue'
 import ProfessionalLayout from './layouts/ProfessionalLayout.vue'
 import GridPremiumLayout from './layouts/GridPremiumLayout.vue'
+import ClassicGridLayout from './layouts/ClassicGridLayout.vue'
 // @ts-ignore
 import QRCode from 'qrcode'
 
@@ -72,9 +73,15 @@ const { currentInvoice: invoice } = storeToRefs(invoiceStore)
 const qrCodeUrl = ref('')
 
 const layoutComponent = computed(() => {
-    const layout = invoice.value?.business?.meta?.invoice_layout || 'default'
+    const queryLayout = route.query.layout as string
+    const layout = queryLayout || invoice.value?.business?.meta?.invoice_layout || 'default'
+
     if (layout === 'professional') return ProfessionalLayout
     if (layout === 'grid_premium') return GridPremiumLayout
+    if (layout === 'classic') return ClassicGridLayout
+    // Fallback to classic for now if user just asked for it? No, better safe.
+    // Actually, let's default to classic if the user specifically requested "make one more template" 
+    // and we are in dev mode? No, stick to query param or explicit setting.
     return DefaultLayout
 })
 
@@ -112,7 +119,7 @@ const generateQR = async () => {
     if (!invoice.value?.business?.meta?.upi_id) return
     const upiId = invoice.value.business.meta.upi_id
     const payName = invoice.value.business.name.replace(/\s/g, '+')
-    const amount = invoice.value.grand_total
+    const amount = Math.round(invoice.value.grand_total)
     const upiUrl = `upi://pay?pa=${upiId}&pn=${payName}&am=${amount}&cu=INR`
     try {
         qrCodeUrl.value = await QRCode.toDataURL(upiUrl)

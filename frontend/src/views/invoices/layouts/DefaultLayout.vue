@@ -18,76 +18,111 @@
                             <h1 class="text-xl font-bold tracking-tight text-gray-900">{{ invoice.business?.name }}</h1>
                             <div class="mt-1 text-xs text-gray-500 space-y-0.5">
                                 <p class="whitespace-pre-line">{{ invoice.business?.address }}</p>
+                                <p v-if="invoice.business?.state || invoice.business?.meta?.state">
+                                    {{ invoice.business?.meta?.city || invoice.business?.city }}, {{
+                                        invoice.business?.meta?.state || invoice.business?.state }} - {{
+                                        invoice.business?.meta?.zip || invoice.business?.zip || invoice.business?.pincode ||
+                                        invoice.business?.meta?.pincode }}
+                                </p>
                             </div>
                         </div>
                     </div>
                     <div class="text-right">
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{{ invoice.type ===
+                            'quote' ? 'ESTIMATE' : 'TAX INVOICE' }}</p>
                         <h2 class="text-lg font-mono font-bold text-gray-900">{{ invoice.invoice_number }}</h2>
                         <div class="text-xs text-gray-500 mt-1 space-y-0.5">
                             <p>Date: <span class="font-medium text-gray-900">{{ formatDate(invoice.date) }}</span></p>
                             <p v-if="invoice.type !== 'credit_note'">Due: <span class="font-medium text-gray-900">{{
                                 formatDate(invoice.due_date) }}</span></p>
-                            <!-- Page Indicator -->
-                            <p class="text-[10px] text-gray-400 mt-1">Page {{ pageIndex + 1 }} of {{ pages.length }}</p>
+                            <!-- Page Indicator (Only if multiple) -->
+                            <p v-if="pages.length > 1" class="text-[10px] text-gray-400 mt-1">Page {{ pageIndex + 1 }}
+                                of {{ pages.length }}</p>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Page Content (Grows to fill space) -->
+            </div> <!-- Page Content (Grows to fill space) -->
             <div class="flex-grow flex flex-col px-[10mm] py-2 relative">
 
                 <!-- Page 1 Only: Addresses & Metadata -->
+                <!-- Page 1 Only: Addresses & Metadata -->
                 <div v-if="pageIndex === 0" class="mb-4">
-                    <div class="grid grid-cols-2 gap-8 py-4 text-sm">
+                    <div :class="headerGridClass" class="grid gap-4 py-4 text-sm">
                         <!-- Bill To -->
                         <div>
-                            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Bill To</h3>
+                            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Bill To
+                            </h3>
                             <p class="font-bold text-gray-900">{{ invoice.party?.name }}</p>
                             <div class="text-gray-600 text-xs mt-1 leading-relaxed">
                                 <!-- Prioritize Snapshot Address -->
                                 <template v-if="safeMeta.billing_address?.street || safeMeta.billing_address?.city">
                                     <p>{{ safeMeta.billing_address.street }}</p>
-                                    <p>{{ safeMeta.billing_address.city }} {{ safeMeta.billing_address.state }} - {{
-                                        safeMeta.billing_address.zip }}</p>
+                                    <p>
+                                        {{ safeMeta.billing_address.city }}
+                                        <span v-if="safeMeta.billing_address.state">, {{
+                                            safeMeta.billing_address.state }}</span>
+                                        <span v-if="safeMeta.billing_address.zip || safeMeta.billing_address.pincode"> -
+                                            {{ safeMeta.billing_address.zip || safeMeta.billing_address.pincode
+                                            }}</span>
+                                    </p>
                                 </template>
                                 <template v-else>
                                     <p>{{ invoice.party?.billing_address?.street }}</p>
-                                    <p>{{ invoice.party?.billing_address?.city }} {{
-                                        invoice.party?.billing_address?.state }} - {{
-                                            invoice.party?.billing_address?.zip }}</p>
+                                    <p>
+                                        {{ invoice.party?.billing_address?.city }}
+                                        <span v-if="invoice.party?.billing_address?.state">, {{
+                                            invoice.party.billing_address.state }}</span>
+                                        <span
+                                            v-if="invoice.party?.billing_address?.zip || invoice.party?.billing_address?.pincode">
+                                            - {{
+                                                invoice.party.billing_address.zip || invoice.party.billing_address.pincode
+                                            }}</span>
+                                    </p>
                                 </template>
-                                <p v-if="invoice.party?.gstin" class="mt-1 font-medium">GSTIN: {{ invoice.party.gstin }}
+                                <p v-if="invoice.party?.gstin" class="mt-1 font-medium">GSTIN: {{
+                                    invoice.party.gstin }}
                                 </p>
                             </div>
                         </div>
 
                         <!-- Ship To (Conditional) -->
                         <div v-if="shouldShowShipping">
-                            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Ship To</h3>
+                            <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Ship To
+                            </h3>
                             <p class="font-bold text-gray-900">{{ invoice.party?.name }}</p>
                             <div class="text-gray-600 text-xs mt-1 leading-relaxed">
                                 <template v-if="safeMeta.shipping_address?.street || safeMeta.shipping_address?.city">
                                     <p>{{ safeMeta.shipping_address.street }}</p>
-                                    <p>{{ safeMeta.shipping_address.city }} {{ safeMeta.shipping_address.state }} - {{
-                                        safeMeta.shipping_address.zip }}</p>
+                                    <p>{{ safeMeta.shipping_address.city }} {{ safeMeta.shipping_address.state }} -
+                                        {{
+                                            safeMeta.shipping_address.zip || safeMeta.shipping_address.pincode }}</p>
                                 </template>
                                 <template v-else>
                                     <p>{{ invoice.party?.shipping_address?.street }}</p>
                                     <p>{{ invoice.party?.shipping_address?.city }} {{
                                         invoice.party?.shipping_address?.state }} - {{
-                                            invoice.party?.shipping_address?.zip }}</p>
+                                            invoice.party?.shipping_address?.zip || invoice.party?.shipping_address?.pincode
+                                        }}</p>
                                 </template>
                             </div>
+
+
                         </div>
 
-                        <!-- Transport Details (If Shipping hidden or as extra info) -->
-                        <div v-else-if="displayOpts.show_eway_details" class="text-xs text-gray-500">
+                        <!-- Transport Details -->
+                        <div v-if="displayOpts.show_eway_details" class="text-xs text-gray-500">
                             <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Transport
                                 Details</h3>
-                            <p v-if="invoice.eway_bill_no">E-Way: {{ invoice.eway_bill_no }}</p>
-                            <p v-if="invoice.vehicle_no">Vehicle: {{ invoice.vehicle_no }}</p>
-                            <p v-if="invoice.po_number">PO No: {{ invoice.po_number }}</p>
+                            <div class="space-y-1">
+                                <p><span class="w-16 inline-block font-medium">E-Way No:</span> {{ invoice.eway_bill_no
+                                    || '-' }}
+                                </p>
+                                <p><span class="w-16 inline-block font-medium">Vehicle:</span> {{ invoice.vehicle_no ||
+                                    '-' }}
+                                </p>
+                                <p><span class="w-16 inline-block font-medium">PO No:</span> {{ invoice.po_number ||
+                                    '-' }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -118,14 +153,17 @@
                                 <td class="py-2 align-top">
                                     <p class="font-bold text-gray-900">{{ item.name }}</p>
                                     <p v-if="item.description && displayOpts.show_description"
-                                        class="text-[9px] text-gray-500 whitespace-pre-line mt-0.5">{{ item.description
+                                        class="text-[9px] text-gray-500 whitespace-pre-line mt-0.5">{{
+                                            item.description
                                         }}</p>
                                 </td>
-                                <td v-if="displayOpts.show_hsn" class="py-2 text-gray-500 align-top">{{ item.hsn_code ||
+                                <td v-if="displayOpts.show_hsn" class="py-2 text-gray-500 align-top">{{
+                                    item.hsn_code ||
                                     '-' }}</td>
                                 <td class="py-2 text-right text-gray-600 align-top">{{ Number(item.quantity) }}</td>
-                                <td class="py-2 text-right text-gray-600 align-top">{{ formatCurrency(item.unit_price)
-                                    }}</td>
+                                <td class="py-2 text-right text-gray-600 align-top">{{
+                                    formatCurrency(item.unit_price)
+                                }}</td>
                                 <td v-if="displayOpts.show_discount" class="py-2 text-right text-gray-600 align-top">{{
                                     Number(item.discount) ? formatCurrency(item.discount) : '-' }}</td>
                                 <td v-if="displayOpts.show_gst_breakdown"
@@ -147,36 +185,49 @@
                         <div>
                             <p class="text-[10px] font-bold text-gray-400 uppercase">Amount in Words</p>
                             <p class="text-xs font-bold text-gray-900 capitalize mt-1">{{
-                                amountInWords(invoice.grand_total) }} Only</p>
+                                amountInWords(finalTotals.rounded) }} Only</p>
 
                             <!-- Bank Details -->
-                            <div v-if="displayOpts.show_qr_bank_details" class="mt-4 text-xs text-gray-600">
-                                <p class="font-bold mb-1">Payment Details:</p>
-                                <div class="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5">
-                                    <template v-if="invoice.business?.bank_name">
-                                        <span class="text-gray-500">Bank:</span> <span>{{ invoice.business.bank_name
+                            <!-- Bank Details and QR Code Side-by-Side -->
+                            <div v-if="displayOpts.show_qr_bank_details" class="mt-4 flex gap-4">
+                                <!-- Bank Details -->
+                                <div class="text-xs text-gray-600 flex-grow">
+                                    <p class="font-bold mb-1">Payment Details:</p>
+                                    <div class="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5">
+                                        <template v-if="invoice.business?.bank_name">
+                                            <span class="text-gray-500">Bank:</span> <span>{{ invoice.business.bank_name
                                             }}</span>
-                                    </template>
-                                    <template v-if="invoice.business?.account_number">
-                                        <span class="text-gray-500">A/c:</span> <span>{{ invoice.business.account_number
+                                        </template>
+                                        <template v-if="invoice.business?.account_number">
+                                            <span class="text-gray-500">A/c:</span> <span>{{
+                                                invoice.business.account_number
                                             }}</span>
-                                    </template>
-                                    <template v-if="invoice.business?.ifsc_code">
-                                        <span class="text-gray-500">IFSC:</span> <span>{{ invoice.business.ifsc_code
+                                        </template>
+                                        <template v-if="invoice.business?.ifsc_code">
+                                            <span class="text-gray-500">IFSC:</span> <span>{{ invoice.business.ifsc_code
                                             }}</span>
-                                    </template>
-                                    <template v-if="invoice.business?.meta?.upi_id">
-                                        <span class="text-gray-500">UPI:</span> <span>{{ invoice.business.meta.upi_id
+                                        </template>
+                                        <template v-if="invoice.business?.meta?.upi_id">
+                                            <span class="text-gray-500">UPI:</span> <span>{{
+                                                invoice.business.meta.upi_id
                                             }}</span>
-                                    </template>
+                                        </template>
+                                    </div>
+                                </div>
+                                <!-- QR Code -->
+                                <div v-if="qrCodeUrl" class="shrink-0">
+                                    <img :src="qrCodeUrl"
+                                        class="h-24 w-24 object-contain border border-gray-100 p-1 bg-white" />
                                 </div>
                             </div>
 
-                            <!-- Notes -->
-                            <div v-if="invoice.notes" class="mt-4">
-                                <p class="text-[10px] font-bold text-gray-400 uppercase">Notes</p>
-                                <p class="text-[10px] text-gray-500 whitespace-pre-line mt-1">{{ invoice.notes }}</p>
+                            <!-- Terms and Conditions -->
+                            <div v-if="invoice.terms" class="mt-4">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">Terms & Conditions</p>
+                                <p class="text-[10px] text-gray-500 whitespace-pre-line mt-1">{{ invoice.terms }}</p>
                             </div>
+
+
                         </div>
 
                         <div class="text-right text-sm space-y-1">
@@ -196,9 +247,20 @@
                                     formatCurrency(taxBreakdown.sgst) }}</span></div>
                             </template>
 
+                            <div v-if="finalTotals.roundOff !== 0" class="flex justify-between text-gray-600 text-xs">
+                                <span>Round Off:</span>
+                                <span>{{ formatCurrency(finalTotals.roundOff) }}</span>
+                            </div>
+
                             <div class="flex justify-between font-bold text-lg border-t border-gray-100 pt-2 mt-2">
                                 <span>Total:</span>
-                                <span>{{ formatCurrency(invoice.grand_total) }}</span>
+                                <span>{{ formatCurrency(finalTotals.rounded) }}</span>
+                            </div>
+
+                            <!-- Notes (Right Side) -->
+                            <div v-if="invoice.notes" class="mt-8 pt-4 border-t border-gray-100 text-left">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">Notes</p>
+                                <p class="text-[10px] text-gray-500 whitespace-pre-line mt-1">{{ invoice.notes }}</p>
                             </div>
                         </div>
                     </div>
@@ -210,12 +272,14 @@
                         <div>
                             <p class="text-[10px] font-bold text-gray-400 uppercase">Amount in Words</p>
                             <p class="text-xs font-bold text-gray-900 capitalize mt-1">{{
-                                amountInWords(invoice.grand_total) }} Only</p>
-                            <!-- Notes Repeat -->
-                            <div v-if="invoice.notes" class="mt-4">
-                                <p class="text-[10px] font-bold text-gray-400 uppercase">Notes</p>
-                                <p class="text-[10px] text-gray-500 whitespace-pre-line mt-1">{{ invoice.notes }}</p>
+                                amountInWords(finalTotals.rounded) }} Only</p>
+
+                            <!-- Terms and Conditions -->
+                            <div v-if="invoice.terms" class="mt-4">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">Terms & Conditions</p>
+                                <p class="text-[10px] text-gray-500 whitespace-pre-line mt-1">{{ invoice.terms }}</p>
                             </div>
+
                         </div>
                         <div class="text-right text-sm space-y-1">
                             <div class="flex justify-between"><span>Subtotal:</span> <span>{{
@@ -234,9 +298,20 @@
                                     formatCurrency(taxBreakdown.sgst) }}</span></div>
                             </template>
 
+                            <div v-if="finalTotals.roundOff !== 0" class="flex justify-between text-gray-600 text-xs">
+                                <span>Round Off:</span>
+                                <span>{{ formatCurrency(finalTotals.roundOff) }}</span>
+                            </div>
+
                             <div class="flex justify-between font-bold text-lg border-t border-gray-100 pt-2 mt-2">
                                 <span>Total:</span>
-                                <span>{{ formatCurrency(invoice.grand_total) }}</span>
+                                <span>{{ formatCurrency(finalTotals.rounded) }}</span>
+                            </div>
+
+                            <!-- Notes (Right Side) -->
+                            <div v-if="invoice.notes" class="mt-8 pt-4 border-t border-gray-100 text-left">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">Notes</p>
+                                <p class="text-[10px] text-gray-500 whitespace-pre-line mt-1">{{ invoice.notes }}</p>
                             </div>
                         </div>
                     </div>
@@ -262,7 +337,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useAuthStore } from '../../../stores/auth';
 
 const props = defineProps<{
     invoice: any,
@@ -270,16 +344,14 @@ const props = defineProps<{
     qrCodeUrl: string
 }>()
 
-const MAX_ITEMS_FIRST = 12; // Fewer items on first page due to addresses
+const MAX_ITEMS_FIRST = 15; // Items that fit on first page with addresses and totals
 const MAX_ITEMS_STD = 20;   // More items on subsequent pages
-const TOTALS_SPACE_ITEMS = 6; // Equivalent items of space needed for Totals
-
-const authStore = useAuthStore()
+const TOTALS_SPACE_ITEMS = 5; // Reserve space for totals section
 const safeMeta = computed(() => props.invoice.meta || {})
 const displayOpts = computed(() => {
     const opts = safeMeta.value.display_options || {}
     return {
-        show_eway_details: opts.show_eway_details ?? false,
+        show_eway_details: opts.show_transport_details ?? opts.show_eway_details ?? false,
         show_hsn: opts.show_hsn ?? true,
         show_gst_breakdown: opts.show_gst_breakdown ?? true,
         show_discount: opts.show_discount ?? false,
@@ -289,8 +361,32 @@ const displayOpts = computed(() => {
     }
 })
 
+const finalTotals = computed(() => {
+    const total = Number(props.invoice.grand_total) || 0;
+    const rounded = Math.round(total);
+    const roundOff = Number((rounded - total).toFixed(2));
+    return {
+        total,
+        rounded,
+        roundOff
+    };
+});
+
 const shouldShowShipping = computed(() => {
     return displayOpts.value.show_shipping_address && props.invoice.party?.shipping_address?.street
+});
+
+const headerGridClass = computed(() => {
+    let cols = 1; // Bill To is always there
+    if (shouldShowShipping.value) cols++;
+    if (displayOpts.value.show_eway_details) cols++;
+
+    // If we have 3 columns, use grid-cols-3
+    // If we have 2 columns, use grid-cols-2
+    // If 1 (unlikely to look good but safe), grid-cols-1
+    if (cols === 3) return 'grid-cols-3';
+    if (cols === 2) return 'grid-cols-2';
+    return 'grid-cols-1';
 });
 
 const pages = computed(() => {
