@@ -1,0 +1,79 @@
+services:
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: vedant-backend
+    container_name: vedant_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - vedant_network
+    depends_on:
+      - postgres
+      - redis
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: vedant-frontend
+    container_name: vedant_frontend
+    restart: unless-stopped
+    volumes:
+      # Mount dist to a shared volume so Nginx can see it? 
+      # Or just use Nginx inside this container? 
+      # Better architecture: The 'web' service (nginx) mounts the built assets from this container using a volume.
+      - frontend_assets:/usr/share/nginx/html
+    networks:
+      - vedant_network
+
+  web:
+    image: nginx:alpine
+    container_name: vedant_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      # - "443:443" # Uncomment for SSL
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./backend:/var/www/backend 
+      - frontend_assets:/var/www/frontend # Map the shared volume
+    networks:
+      - vedant_network
+    depends_on:
+      - app
+      - frontend
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: vedant_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-billing_book}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - vedant_network
+
+  redis:
+    image: redis:alpine
+    container_name: vedant_redis
+    restart: unless-stopped
+    networks:
+      - vedant_network
+
+networks:
+  vedant_network:
+    driver: bridge
+
+volumes:
+  db_data:
+  frontend_assets:

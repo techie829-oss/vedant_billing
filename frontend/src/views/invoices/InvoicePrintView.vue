@@ -134,7 +134,7 @@ const debugMsg = ref('')
 const printInvoice = () => {
     status.value = 'Printing...'
     try {
-        // Set logical title for print (replaces "Billing Book" in browser header)
+        // Set logical title for print (replaces "Vedant Billing" in browser header)
         const originalTitle = document.title
         document.title = invoice.value?.invoice_number || 'Invoice'
 

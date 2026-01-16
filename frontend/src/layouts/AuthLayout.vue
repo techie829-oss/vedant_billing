@@ -17,7 +17,7 @@
     <div class="sm:mx-auto sm:w-full sm:max-w-md relative z-10 w-full px-4 sm:px-0">
       <div class="text-center mb-6">
         <h2 class="text-center text-3xl font-extrabold text-gray-900 tracking-tight">
-          <span class="text-indigo-600">Billing</span>Book
+          <span class="text-indigo-600">Vedant</span>Billing
         </h2>
         <h2 class="mt-2 text-center text-xl font-medium text-gray-600">
           <slot name="title">Sign in to your account</slot>

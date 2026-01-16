@@ -69,7 +69,7 @@
                 </div>
                 <div class="flex items-center space-x-4">
                     <!-- PWA Login Link -->
-                    <a href="http://app.billingbook.local:5173/login"
+                    <a href="{{ env('WEB_URL') . '/login' }}"
                         class="text-sm font-medium text-gray-700 hover:text-gray-900">Login</a>
 
                     <a href="{{ route('register') }}"
@@ -176,7 +176,8 @@
                 <!-- Feature 2 -->
                 <div
                     class="p-8 rounded-2xl bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300">
-                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600 mb-6">
+                    <div
+                        class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600 mb-6">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
@@ -221,53 +222,66 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
                 @foreach ($plans as $plan)
-                <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-8 border flex flex-col {{ $plan->slug === 'pro' ? 'border-2 border-blue-600 relative overflow-hidden' : 'border-gray-100' }}">
-                    @if($plan->slug === 'pro')
-                    <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">POPULAR</div>
-                    @endif
-                    
-                    <h3 class="text-lg font-medium text-gray-900">{{ $plan->name }}</h3>
-                    <p class="mt-4 text-sm text-gray-500">{{ $plan->description }}</p>
-                    <p class="mt-8">
-                        <span class="text-4xl font-extrabold text-gray-900">
-                            {{ $plan->price > 0 ? '₹'.number_format($plan->price) : 'Free' }}
-                        </span>
-                        @if($plan->price > 0)
-                        <span class="text-base font-medium text-gray-500">/{{ $plan->interval === 'yearly' ? 'yr' : 'mo' }}</span>
+                    <div
+                        class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-8 border flex flex-col {{ $plan->slug === 'pro' ? 'border-2 border-blue-600 relative overflow-hidden' : 'border-gray-100' }}">
+                        @if ($plan->slug === 'pro')
+                            <div
+                                class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                                POPULAR</div>
                         @endif
-                    </p>
-                    
-                    <ul class="mt-8 space-y-4 flex-1">
-                        @foreach($plan->features as $feature)
-                        <li class="flex items-start text-sm text-gray-600">
-                            @if($feature->type === 'boolean' && $feature->pivot->limit === 0)
-                                <svg class="w-5 h-5 text-gray-400 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            @else
-                                <svg class="w-5 h-5 text-green-500 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            @endif
-                            
-                            <span>
-                                {{ $feature->name }}: 
-                                <strong class="text-gray-900">
-                                    @if($feature->type === 'boolean')
-                                        {{ $feature->pivot->limit === 1 ? 'Yes' : 'No' }}
-                                    @else
-                                        @if($feature->pivot->limit < 0)
-                                            Unlimited
-                                        @else
-                                            {{ $feature->pivot->limit }}
-                                        @endif
-                                    @endif
-                                </strong>
+
+                        <h3 class="text-lg font-medium text-gray-900">{{ $plan->name }}</h3>
+                        <p class="mt-4 text-sm text-gray-500">{{ $plan->description }}</p>
+                        <p class="mt-8">
+                            <span class="text-4xl font-extrabold text-gray-900">
+                                {{ $plan->price > 0 ? '₹' . number_format($plan->price) : 'Free' }}
                             </span>
-                        </li>
-                        @endforeach
-                    </ul>
-                    
-                    <a href="{{ route('register') }}?plan={{ $plan->slug }}" class="mt-8 block w-full py-3 px-6 rounded-xl text-center font-medium transition {{ $plan->slug === 'pro' ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/30' : 'border border-blue-600 text-blue-600 hover:bg-blue-50' }}">
-                        {{ $plan->price === 0 ? 'Get Started' : 'Start Free Trial' }}
-                    </a>
-                </div>
+                            @if ($plan->price > 0)
+                                <span
+                                    class="text-base font-medium text-gray-500">/{{ $plan->interval === 'yearly' ? 'yr' : 'mo' }}</span>
+                            @endif
+                        </p>
+
+                        <ul class="mt-8 space-y-4 flex-1">
+                            @foreach ($plan->features as $feature)
+                                <li class="flex items-start text-sm text-gray-600">
+                                    @if ($feature->type === 'boolean' && $feature->pivot->limit === 0)
+                                        <svg class="w-5 h-5 text-gray-400 mr-2 shrink-0" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-5 h-5 text-green-500 mr-2 shrink-0" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    @endif
+
+                                    <span>
+                                        {{ $feature->name }}:
+                                        <strong class="text-gray-900">
+                                            @if ($feature->type === 'boolean')
+                                                {{ $feature->pivot->limit === 1 ? 'Yes' : 'No' }}
+                                            @else
+                                                @if ($feature->pivot->limit < 0)
+                                                    Unlimited
+                                                @else
+                                                    {{ $feature->pivot->limit }}
+                                                @endif
+                                            @endif
+                                        </strong>
+                                    </span>
+                                </li>
+                            @endforeach
+                        </ul>
+
+                        <a href="{{ route('register') }}?plan={{ $plan->slug }}"
+                            class="mt-8 block w-full py-3 px-6 rounded-xl text-center font-medium transition {{ $plan->slug === 'pro' ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/30' : 'border border-blue-600 text-blue-600 hover:bg-blue-50' }}">
+                            {{ $plan->price === 0 ? 'Get Started' : 'Start Free Trial' }}
+                        </a>
+                    </div>
                 @endforeach
             </div>
         </div>
@@ -280,23 +294,27 @@
                 <h2 class="text-3xl font-extrabold text-gray-900">Frequently Asked Questions</h2>
                 <p class="mt-4 text-gray-500">Everything you need to know about BillingBook.</p>
             </div>
-            
+
             <div class="space-y-8">
                 <div>
                     <h3 class="text-lg font-medium text-gray-900">Can I switch plans later?</h3>
-                    <p class="mt-2 text-gray-500">Yes, you can upgrade or downgrade your plan at any time from your dashboard. Changes take effect immediately.</p>
+                    <p class="mt-2 text-gray-500">Yes, you can upgrade or downgrade your plan at any time from your
+                        dashboard. Changes take effect immediately.</p>
                 </div>
                 <div>
                     <h3 class="text-lg font-medium text-gray-900">Is my data secure?</h3>
-                    <p class="mt-2 text-gray-500">Absolutely. We use industry-standard encryption to protect your data. Your financial information is our top priority.</p>
+                    <p class="mt-2 text-gray-500">Absolutely. We use industry-standard encryption to protect your data.
+                        Your financial information is our top priority.</p>
                 </div>
                 <div>
                     <h3 class="text-lg font-medium text-gray-900">Do you offer a free trial?</h3>
-                    <p class="mt-2 text-gray-500">Yes! The Starter plan is completely free forever. For paid plans, we offer a 14-day risk-free trial.</p>
+                    <p class="mt-2 text-gray-500">Yes! The Starter plan is completely free forever. For paid plans, we
+                        offer a 14-day risk-free trial.</p>
                 </div>
                 <div>
                     <h3 class="text-lg font-medium text-gray-900">What payment methods do you accept?</h3>
-                    <p class="mt-2 text-gray-500">We accept major credit cards, debit cards, and UPI payments for Indian customers.</p>
+                    <p class="mt-2 text-gray-500">We accept major credit cards, debit cards, and UPI payments for
+                        Indian customers.</p>
                 </div>
             </div>
         </div>

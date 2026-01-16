@@ -163,7 +163,7 @@
                                 <td class="py-2 text-right text-gray-600 align-top">{{ Number(item.quantity) }}</td>
                                 <td class="py-2 text-right text-gray-600 align-top">{{
                                     formatCurrency(item.unit_price)
-                                }}</td>
+                                    }}</td>
                                 <td v-if="displayOpts.show_discount" class="py-2 text-right text-gray-600 align-top">{{
                                     Number(item.discount) ? formatCurrency(item.discount) : '-' }}</td>
                                 <td v-if="displayOpts.show_gst_breakdown"
@@ -196,21 +196,21 @@
                                     <div class="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5">
                                         <template v-if="invoice.business?.bank_name">
                                             <span class="text-gray-500">Bank:</span> <span>{{ invoice.business.bank_name
-                                            }}</span>
+                                                }}</span>
                                         </template>
                                         <template v-if="invoice.business?.account_number">
                                             <span class="text-gray-500">A/c:</span> <span>{{
                                                 invoice.business.account_number
-                                            }}</span>
+                                                }}</span>
                                         </template>
                                         <template v-if="invoice.business?.ifsc_code">
                                             <span class="text-gray-500">IFSC:</span> <span>{{ invoice.business.ifsc_code
-                                            }}</span>
+                                                }}</span>
                                         </template>
                                         <template v-if="invoice.business?.meta?.upi_id">
                                             <span class="text-gray-500">UPI:</span> <span>{{
                                                 invoice.business.meta.upi_id
-                                            }}</span>
+                                                }}</span>
                                         </template>
                                     </div>
                                 </div>
@@ -322,7 +322,7 @@
             <!-- FOOTER (Fixed Height) -->
             <div class="h-[30mm] px-[10mm] pb-[10mm] shrink-0 border-t border-gray-100 flex items-end justify-between">
                 <div class="text-[10px] text-gray-400">
-                    Powered by <span class="font-bold text-gray-900">BillingBook</span>
+                    Powered by <span class="font-bold text-gray-900">Vedant Billing</span>
                 </div>
                 <div class="text-right">
                     <p

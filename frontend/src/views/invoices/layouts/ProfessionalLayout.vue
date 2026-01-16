@@ -197,7 +197,7 @@
                         </template>
 
                         <td class="py-3 px-1 text-right font-bold text-gray-900 align-top">{{ formatCurrency(item.total)
-                        }}</td>
+                            }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -302,7 +302,7 @@
                         <div class="flex justify-between items-center pt-2">
                             <span class="font-bold text-gray-900 text-lg">Total</span>
                             <span class="font-bold text-gray-900 text-lg">{{ formatCurrency(invoice.grand_total)
-                            }}</span>
+                                }}</span>
                         </div>
                     </div>
 
@@ -318,7 +318,7 @@
         <!-- Mandatory Branding -->
         <div v-if="shouldShowBranding" class="mt-auto pt-4 pb-2 text-center opacity-70">
             <span class="text-[10px] text-gray-400 font-medium uppercase tracking-widest">Powered directly by <span
-                    class="text-gray-600 font-bold">BillingBook</span></span>
+                    class="text-gray-600 font-bold">Vedant Billing</span></span>
         </div>
     </div>
 </template>
