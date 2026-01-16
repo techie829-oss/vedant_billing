@@ -1,41 +1,72 @@
 FROM php:8.2-fpm
 
-# Install system dependencies
+# ===============================
+# System dependencies
+# ===============================
 RUN apt-get update && apt-get install -y \
     git \
     curl \
+    unzip \
+    zip \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    zip \
-    unzip \
     libpq-dev \
     libicu-dev \
     tesseract-ocr \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd intl
+# ===============================
+# PHP extensions
+# ===============================
+RUN docker-php-ext-install \
+    pdo_pgsql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    intl
 
-# Install Redis extension
-RUN pecl install redis && docker-php-ext-enable redis
+# ===============================
+# Redis PHP extension
+# ===============================
+RUN pecl install redis \
+    && docker-php-ext-enable redis
 
-# Get latest Composer
+# ===============================
+# Composer
+# ===============================
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
+# ===============================
+# App directory
+# ===============================
 WORKDIR /var/www
 
-# Copy code (ensure .dockerignore handles excluding vendor/node_modules if needed, but for now we copy and install)
+# ===============================
+# Copy application code
+# ===============================
 COPY . .
 
-# Install dependencies (Optimize for production)
-RUN composer install --no-interaction --optimize-autoloader --no-dev
+# ===============================
+# Install Laravel dependencies
+# ===============================
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --prefer-dist \
+    --optimize-autoloader
 
-# Set permissions
+# ===============================
+# Permissions (Laravel)
+# ===============================
 RUN chown -R www-data:www-data /var/www \
-    && chmod -R 775 /var/www/storage \
-    && chmod -R 775 /var/www/bootstrap/cache
+    && chmod -R 775 storage bootstrap/cache
 
+# ===============================
+# PHP-FPM
+# ===============================
 EXPOSE 9000
 CMD ["php-fpm"]
