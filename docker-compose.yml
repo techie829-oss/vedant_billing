@@ -10,7 +10,6 @@ services:
     restart: unless-stopped
     working_dir: /var/www
     volumes:
-      - ./backend:/var/www
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     extra_hosts:
       - "host.docker.internal:host-gateway"
