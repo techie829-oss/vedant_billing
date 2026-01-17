@@ -11,6 +11,7 @@ services:
     env_file:
       - ./backend/.env
     volumes:
+      - ./backend:/var/www
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     extra_hosts:
       - "host.docker.internal:host-gateway"
