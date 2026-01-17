@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.billingbook.app',
+  appId: 'com.vedantbilling.app',
   appName: 'Billing Book',
   webDir: 'dist'
 };

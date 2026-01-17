@@ -1,4 +1,4 @@
-package com.billingbook.app;
+package com.vedantbilling.app;
 
 import com.getcapacitor.BridgeActivity;
 

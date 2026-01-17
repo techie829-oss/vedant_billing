@@ -18,7 +18,7 @@ class ExactInvoiceSeeder extends Seeder
 
         // Step 1: Create User
         $user = User::firstOrCreate(
-            ['email' => 'chitra@example.com'],
+            ['email' => 'admin@rschitra.com'],
             [
                 'name' => 'R/S Chitra Enterprises',
                 'password' => bcrypt('password123')
@@ -30,11 +30,11 @@ class ExactInvoiceSeeder extends Seeder
         $business = Business::firstOrCreate(
             ['name' => 'R/S CHITRA ENTERPRISES'],
             [
-                'address' => "Kewalpurwa Nagar\nCity : Lakhimpur, Uttar Pradesh - 262728",
+                'address' => "Kewal Purwa Nakaha\nCity : Lakhimpur, Uttar Pradesh - 262728",
                 'gstin' => '09CUVPM6712J1ZV',
                 'pan' => 'CUVPM6712J',
                 'mobile' => '6386040903',
-                'website' => '',
+                'website' => 'https://rschitra.com',
                 'bank_name' => 'STATE BANK OF INDIA',
                 'account_number' => '42755113672',
                 'ifsc_code' => 'SBIN0018929',

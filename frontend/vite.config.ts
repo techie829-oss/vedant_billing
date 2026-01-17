@@ -34,7 +34,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://billingbook.test',
+        target: 'http://vedantbilling.test',
         changeOrigin: true,
         secure: false,
       }
