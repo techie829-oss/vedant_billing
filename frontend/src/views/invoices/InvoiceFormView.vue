@@ -24,12 +24,12 @@
         <form @submit.prevent="save('draft')" class="space-y-6">
             <!-- Display Options -->
             <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                <div class="px-4 py-6 sm:p-8">
+                <div class="p-3 sm:p-8">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-base font-semibold leading-7 text-gray-900">Display Options</h3>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                    <div class="grid grid-cols-1 gap-3 mb-4 sm:grid-cols-2 md:grid-cols-3 sm:gap-4 sm:mb-6">
                         <div class="relative flex items-start">
                             <div class="flex h-6 items-center">
                                 <input id="show_hsn" type="checkbox" v-model="form.meta.display_options.show_hsn"
@@ -109,9 +109,9 @@
 
             <!-- Customer & Dates -->
             <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                <div class="px-4 py-6 sm:p-8">
-                    <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                        <div class="sm:col-span-3">
+                <div class="p-3 sm:p-8">
+                    <div class="grid max-w-2xl grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-6 sm:gap-x-6 sm:gap-y-8">
+                        <div class="col-span-2 sm:col-span-3">
                             <label for="customer"
                                 class="block text-sm font-medium leading-6 text-gray-900">Customer</label>
                             <div class="mt-2">
@@ -138,16 +138,15 @@
                             </div>
                         </div>
 
-                        <div class="sm:col-span-3">
+                        <div class="col-span-2 sm:col-span-3">
                             <label class="block text-sm font-medium leading-6 text-gray-900">Invoice Number</label>
                             <div class="mt-2">
-                                <input type="text" disabled
-                                    :value="isEditMode ? form.invoice_number : '(Auto-generated)'"
-                                    class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-500 bg-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6" />
+                                <input type="text" v-model="form.invoice_number" placeholder="(Auto-generated)"
+                                    class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
                         </div>
 
-                        <div class="sm:col-span-3">
+                        <div class="col-span-1 sm:col-span-3">
                             <label for="date" class="block text-sm font-medium leading-6 text-gray-900">Invoice
                                 Date</label>
                             <div class="mt-2">
@@ -156,7 +155,7 @@
                             </div>
                         </div>
 
-                        <div class="sm:col-span-3">
+                        <div class="col-span-1 sm:col-span-3">
                             <label for="due_date" class="block text-sm font-medium leading-6 text-gray-900">Due
                                 Date</label>
                             <div class="mt-2">
@@ -172,20 +171,20 @@
             <div v-if="form.party_id" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Billing Address -->
                 <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                    <div class="px-4 py-6 sm:p-8">
+                    <div class="p-3 sm:p-8">
                         <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Billing Address</h3>
-                        <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-                            <div class="sm:col-span-6">
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-6 sm:gap-x-6 sm:gap-y-4">
+                            <div class="col-span-2 sm:col-span-6">
                                 <label class="block text-sm font-medium leading-6 text-gray-900">Street</label>
                                 <input type="text" v-model="form.meta.billing_address.street"
                                     class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
-                            <div class="sm:col-span-2">
+                            <div class="col-span-1 sm:col-span-2">
                                 <label class="block text-sm font-medium leading-6 text-gray-900">City</label>
                                 <input type="text" v-model="form.meta.billing_address.city"
                                     class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
-                            <div class="sm:col-span-2">
+                            <div class="col-span-1 sm:col-span-2">
                                 <label class="block text-sm font-medium leading-6 text-gray-900">State</label>
                                 <div class="relative mt-2">
                                     <select v-model="form.meta.billing_address.state"
@@ -205,7 +204,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="sm:col-span-2">
+                            <div class="col-span-1 sm:col-span-2">
                                 <label class="block text-sm font-medium leading-6 text-gray-900">ZIP</label>
                                 <input type="text" v-model="form.meta.billing_address.zip"
                                     class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
@@ -217,7 +216,7 @@
                 <!-- Shipping Address -->
                 <div v-if="form.meta.display_options.show_shipping_address"
                     class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                    <div class="px-4 py-6 sm:p-8">
+                    <div class="p-3 sm:p-8">
                         <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Shipping Address</h3>
                         <div class="flex items-center mb-4">
                             <input id="same_as_billing" type="checkbox"
@@ -225,18 +224,18 @@
                                 class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
                             <label for="same_as_billing" class="ml-2 text-sm text-gray-600">Same as Billing</label>
                         </div>
-                        <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-                            <div class="sm:col-span-6">
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-6 sm:gap-x-6 sm:gap-y-4">
+                            <div class="col-span-2 sm:col-span-6">
                                 <label class="block text-sm font-medium leading-6 text-gray-900">Street</label>
                                 <input type="text" v-model="form.meta.shipping_address.street"
                                     class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
-                            <div class="sm:col-span-2">
+                            <div class="col-span-1 sm:col-span-2">
                                 <label class="block text-sm font-medium leading-6 text-gray-900">City</label>
                                 <input type="text" v-model="form.meta.shipping_address.city"
                                     class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
-                            <div class="sm:col-span-2">
+                            <div class="col-span-1 sm:col-span-2">
                                 <label class="block text-sm font-medium leading-6 text-gray-900">State</label>
                                 <div class="relative mt-2">
                                     <select v-model="form.meta.shipping_address.state"
@@ -256,7 +255,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="sm:col-span-2">
+                            <div class="col-span-1 sm:col-span-2">
                                 <label class="block text-sm font-medium leading-6 text-gray-900">ZIP</label>
                                 <input type="text" v-model="form.meta.shipping_address.zip"
                                     class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
@@ -269,9 +268,9 @@
             <!-- Transport / Order Details -->
             <div v-if="form.meta.display_options.show_transport_details"
                 class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                <div class="px-4 py-6 sm:p-8">
+                <div class="p-3 sm:p-8">
                     <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Transport / Order Details</h3>
-                    <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-4">
                         <div>
                             <label class="block text-sm font-medium leading-6 text-gray-900">Challan No.</label>
                             <input type="text" v-model="form.challan_no"
@@ -378,7 +377,7 @@
                     </div>
 
                     <!-- Desktop View: Table -->
-                    <div class="hidden sm:block overflow-x-auto">
+                    <div class="hidden sm:block">
                         <table class="min-w-full divide-y divide-gray-200" style="min-width: 800px;">
                             <thead>
                                 <tr>
@@ -401,8 +400,12 @@
                                         Price
                                     </th>
                                     <th v-if="form.meta.display_options.show_discount"
+                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
+                                        Disc %
+                                    </th>
+                                    <th v-if="form.meta.display_options.show_discount"
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
-                                        Discount
+                                        Sell Price
                                     </th>
                                     <th v-if="form.meta.display_options.show_gst_breakdown"
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
@@ -419,7 +422,7 @@
                             </thead>
                             <tbody id="invoice-items-body" class="divide-y divide-gray-200">
                                 <tr v-for="(item, index) in form.items" :key="index">
-                                    <td class="px-2 py-1">
+                                    <td class="px-1 py-1">
                                         <div class="relative w-full min-w-[12rem]">
                                             <ProductAutocomplete :items="products"
                                                 :model-value="item.product_id ?? null"
@@ -429,31 +432,42 @@
                                                 @change="(val: string) => { item.name = val; item.product_id = null; }" />
                                         </div>
                                     </td>
-                                    <td v-if="form.meta.display_options.show_description" class="px-2 py-1">
-                                        <input type="text" v-model="item.description" placeholder="Notes (optional)"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
+                                    <td v-if="form.meta.display_options.show_description" class="px-1 py-1">
+                                        <input type="text" v-model="item.description" placeholder="Notes"
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
                                     </td>
-                                    <td v-if="form.meta.display_options.show_hsn" class="px-2 py-1">
+                                    <td v-if="form.meta.display_options.show_hsn" class="px-1 py-1">
                                         <input type="text" v-model="item.hsn_code" placeholder="HSN"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
                                     </td>
-                                    <td class="px-2 py-1">
+                                    <td class="px-1 py-1">
                                         <input type="number" v-model.number="item.quantity" min="0.01" step="0.01"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6"
+                                            @input="calculateDiscountAmount(item)"
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6"
                                             required />
                                     </td>
-                                    <td class="px-2 py-1">
+                                    <td class="px-1 py-1">
                                         <input type="number" v-model.number="item.unit_price" min="0" step="0.01"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6"
+                                            @input="calculateDiscountAmount(item)"
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6"
                                             required />
                                     </td>
-                                    <td v-if="form.meta.display_options.show_discount" class="px-2 py-1">
-                                        <input type="number" v-model.number="item.discount" min="0" step="0.01"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
+                                    <td v-if="form.meta.display_options.show_discount" class="px-1 py-1">
+                                        <!-- Discount Percent Input -->
+                                        <input type="number" v-model.number="item.discount_percent" min="0" max="100"
+                                            step="0.1" @input="calculateDiscountAmount(item)"
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
                                     </td>
-                                    <td v-if="form.meta.display_options.show_gst_breakdown" class="px-2 py-1">
+                                    <td v-if="form.meta.display_options.show_discount" class="px-1 py-1">
+                                        <!-- Calculated Sell Price Display -->
+                                        <input type="text"
+                                            :value="formatCurrency((item.unit_price * (1 - (item.discount_percent || 0) / 100)))"
+                                            disabled
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-500 bg-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 text-xs leading-6 text-right" />
+                                    </td>
+                                    <td v-if="form.meta.display_options.show_gst_breakdown" class="px-1 py-1">
                                         <input type="number" v-model.number="item.tax_rate" min="0" step="0.1"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
                                     </td>
                                     <td
                                         class="px-2 py-1 text-right text-sm text-gray-900 font-medium whitespace-nowrap">
@@ -519,8 +533,8 @@
 
             <!-- Notes & Terms -->
             <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                <div class="px-4 py-6 sm:p-8">
-                    <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
+                <div class="p-3 sm:p-8">
+                    <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 sm:gap-y-8">
                         <div>
                             <label for="notes" class="block text-sm font-medium leading-6 text-gray-900">Notes</label>
                             <div class="mt-2">
@@ -627,7 +641,7 @@ const form = ref({
     party_id: '',
     date: new Date().toISOString().split('T')[0],
     due_date: new Date().toISOString().split('T')[0],
-    items: [] as InvoiceItem[],
+    items: [] as (InvoiceItem & { discount_percent?: number })[],
     notes: '',
     terms: '',
     challan_no: '',
@@ -680,6 +694,7 @@ const addItem = async () => {
         quantity: 1,
         unit_price: 0,
         discount: 0,
+        discount_percent: 0,
         tax_rate: 0,
         tax_amount: 0,
         total: 0
@@ -698,13 +713,34 @@ const removeItem = (index: number) => {
 const calculateLineTotal = (item: InvoiceItem) => {
     const qty = Number(item.quantity) || 0
     const price = Number(item.unit_price) || 0
-    const discount = Number(item.discount) || 0
+    // Only apply discount if the option is enabled
+    const discount = form.value.meta.display_options.show_discount ? (Number(item.discount) || 0) : 0
     const taxRate = Number(item.tax_rate) || 0
 
     const sub = (qty * price) - discount
     const taxable = sub > 0 ? sub : 0
     const tax = taxable * (taxRate / 100)
     return taxable + tax
+}
+
+const calculateDiscountAmount = (item: InvoiceItem & { discount_percent?: number }) => {
+    // If discount percent is provided, calculate discount amount
+    // Discount Amount = (Quantity * Unit Price * Percent) / 100
+    // This is Total Discount for the line
+    const qty = Number(item.quantity) || 0
+    const price = Number(item.unit_price) || 0
+    const percent = Number(item.discount_percent) || 0
+
+    if (percent > 0) {
+        item.discount = (qty * price * percent) / 100
+    } else {
+        // If percent is 0, we might want to keep manual discount? 
+        // For now, let's assume if percent is touched, it drives discount.
+        // But what if user edits discount amount directly? 
+        // We should probably allow both. But for this specific task "MRP - Disc% -> Sell Price", 
+        // percent is the driver.
+        item.discount = 0
+    }
 }
 
 const totals = computed(() => {
@@ -724,7 +760,8 @@ const totals = computed(() => {
     form.value.items.forEach(item => {
         const qty = Number(item.quantity) || 0
         const price = Number(item.unit_price) || 0
-        const discount = Number(item.discount) || 0
+        // Only apply discount if the option is enabled
+        const discount = form.value.meta.display_options.show_discount ? (Number(item.discount) || 0) : 0
         const taxRate = Number(item.tax_rate) || 0
 
         const lineSub = (qty * price) - discount
@@ -834,7 +871,9 @@ const loadInvoice = async () => {
                 due_date: formatDate(invoice.due_date),
                 items: invoice.items.map((i: any) => ({
                     ...i,
-                    name: i.name || (!i.product_id ? i.description : '')
+                    name: i.name || (!i.product_id ? i.description : ''),
+                    // Back-calculate percent if missing but discount exists
+                    discount_percent: i.discount && i.unit_price && i.quantity ? ((i.discount / (i.quantity * i.unit_price)) * 100) : 0
                 })),
                 notes: invoice.notes || '',
                 terms: invoice.terms || '',
