@@ -20,8 +20,8 @@
                         <div class="p-1.5 border-r border-black flex flex-col justify-between">
                             <div>
                                 <h1 class="font-bold text-sm uppercase">{{ invoice.business?.name }}</h1>
-                                <p class="text-[10px] mt-0.5">{{ invoice.business?.meta?.address_line_1 || 'Kewalpurwa Nagar' }}</p>
-                                <p class="text-[10px]">City : {{ invoice.business?.meta?.city || 'Lakhimpur' }}</p>
+                                <p class="text-[10px] mt-0.5">{{ invoice.business?.meta?.address_line_1 || '' }}</p>
+                                <p class="text-[10px]">City : {{ invoice.business?.meta?.city || '' }}</p>
                                 <p class="text-[10px]">Pincode : {{ invoice.business?.meta?.pincode ||
                                     invoice.business?.zip || '-' }}</p>
                                 <p class="text-[10px] font-bold mt-1">GSTIN/UIN: {{ invoice.business?.gstin }}</p>
@@ -99,7 +99,7 @@
                                 <div class="p-1">
                                     <span class="block text-[10px] font-bold">Destination</span>
                                     <span>{{ invoice.meta?.destination || invoice.party?.shipping_address?.city || ''
-                                    }}</span>
+                                        }}</span>
                                 </div>
                             </div>
                             <!-- Row 7: Terms of Delivery (Full Width) -->
@@ -215,8 +215,8 @@
                     <template v-if="page.isLastPage">
                         <div class="p-1 px-2 border-b border-black">
                             <span class="font-bold text-[10px]">Amount Chargeable (in words):</span>
-                            <span class="capitalize font-bold ml-2">Indian Rupees {{ amountInWords(invoice.grand_total)
-                                }} Only</span>
+                            <span class="capitalize font-bold ml-2">Indian Rupees {{ amountInWords(finalTotals.rounded)
+                            }} Only</span>
                         </div>
 
                         <!-- Tax Summary Table -->
@@ -255,6 +255,11 @@
                             <!-- Total Summary Row -->
                             <div class="py-1 font-bold">Total</div>
                             <div class="py-1 font-bold">{{ formatNumber(invoice.subtotal) }}</div>
+                            <!-- Discount Row -->
+                            <template v-if="displayOpts.show_discount && totalDiscount > 0">
+                                <div class="py-1 font-bold">Discount</div>
+                                <div class="py-1 font-bold text-red-600">-{{ formatNumber(totalDiscount) }}</div>
+                            </template>
                             <div class="py-1 grid grid-cols-2 divide-x divide-black">
                                 <div>-
                                 </div>
@@ -267,6 +272,18 @@
                             </div>
                             <div class="py-1 font-bold">{{ formatNumber(taxBreakdown.cgst + taxBreakdown.sgst +
                                 taxBreakdown.igst) }}</div>
+                            <!-- Round Off -->
+                            <div v-if="finalTotals.roundOff !== 0"
+                                class="col-span-5 border-t border-black py-1 text-right pr-2 grid grid-cols-2">
+                                <span class="font-normal justify-self-end mr-2">Round Off</span>
+                                <span class="font-bold text-right">{{ formatNumber(finalTotals.roundOff) }}</span>
+                            </div>
+                            <!-- Grand Total -->
+                            <div
+                                class="col-span-5 border-t border-black py-1 text-right pr-2 grid grid-cols-2 font-bold text-lg">
+                                <span class="uppercase justify-self-end mr-2">Grand Total</span>
+                                <span class="text-right">{{ formatNumber(finalTotals.rounded) }}</span>
+                            </div>
                         </div>
 
                         <!-- Bank & Signatures -->
@@ -317,6 +334,23 @@ const props = defineProps<{
     qrCodeUrl: string
 }>()
 
+const finalTotals = computed(() => {
+    const total = Number(props.invoice.grand_total) || 0;
+    const rounded = Math.round(total);
+    const roundOff = Number((rounded - total).toFixed(2));
+    return {
+        total,
+        rounded,
+        roundOff
+    };
+});
+
+const totalDiscount = computed(() => {
+    return (props.invoice.items || []).reduce((acc: number, item: any) => acc + (Number(item.discount) || 0), 0);
+});
+
+
+
 const MAX_ITEMS_FIRST = 12; // Items fit on first page
 const MAX_ITEMS_STD = 18;   // Items fit on subsequent pages
 const TOTALS_SPACE_ITEMS = 6;
@@ -329,7 +363,8 @@ const displayOpts = computed(() => {
         show_qr_bank_details: opts.show_qr_bank_details ?? true, // Default true for Classic Grid
         show_hsn: opts.show_hsn ?? true,
         show_gst_breakdown: opts.show_gst_breakdown ?? true,
-        show_ship_to: opts.show_ship_to ?? true // Default true - show consignee section
+        show_ship_to: opts.show_ship_to ?? true, // Default true - show consignee section
+        show_discount: opts.show_discount ?? false
     }
 })
 

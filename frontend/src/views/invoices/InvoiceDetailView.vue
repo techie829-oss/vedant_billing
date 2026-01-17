@@ -38,13 +38,14 @@
             </div>
 
             <!-- Header Row 2: Action Buttons -->
-            <div class="mb-8 flex flex-wrap items-center justify-end gap-2 print:hidden">
+            <div
+                class="mb-8 flex items-center gap-2 print:hidden overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible sm:flex-wrap sm:justify-end scrollbar-hide">
                 <router-link :to="editRoute" v-if="invoice.status === 'draft'"
-                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Edit</router-link>
+                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 whitespace-nowrap">Edit</router-link>
 
                 <!-- Convert to Invoice (Quotes only) -->
                 <button v-if="invoice.type === 'quote'" @click="convertToInvoice" :disabled="converting"
-                    class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 gap-1.5 disabled:opacity-50">
+                    class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 gap-1.5 disabled:opacity-50 whitespace-nowrap">
                     <svg v-if="converting" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
                         </circle>
@@ -57,7 +58,7 @@
 
                 <!-- Duplicate button -->
                 <button v-if="invoice.status !== 'draft'" @click="duplicateInvoice"
-                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 gap-1.5">
+                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 gap-1.5 whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -72,7 +73,7 @@
                 </button>
 
                 <button v-if="invoice.status !== 'draft' && invoice.type === 'invoice'" @click="createCreditNote"
-                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-red-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-50 gap-1.5">
+                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-red-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-50 gap-1.5 whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -82,7 +83,7 @@
                 </button>
 
                 <button @click="downloadPdf" :disabled="downloading"
-                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 gap-1.5">
+                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 gap-1.5 whitespace-nowrap">
                     <svg v-if="downloading" class="animate-spin h-4 w-4 text-gray-500"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
@@ -95,7 +96,7 @@
                 </button>
 
                 <button @click="sendEmail" :disabled="sendingEmail"
-                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 gap-1.5">
+                    class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 gap-1.5 whitespace-nowrap">
                     <svg v-if="sendingEmail" class="animate-spin h-4 w-4 text-gray-500"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
@@ -110,7 +111,7 @@
                 <!-- Remind / Share Button -->
                 <div v-if="invoice.type === 'invoice'" class="relative inline-block text-left">
                     <button @click="shareMenuOpen = !shareMenuOpen"
-                        class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 gap-1.5">
+                        class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 gap-1.5 whitespace-nowrap">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -143,13 +144,13 @@
                 </div>
 
                 <button v-if="invoice.status === 'draft' && invoice.type !== 'quote'" @click="finalize"
-                    class="inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                    class="inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 whitespace-nowrap">
                     Finalize
                 </button>
                 <button
                     v-if="invoice.status !== 'draft' && invoice.status !== 'paid' && invoice.status !== 'void' && invoice.type === 'invoice'"
                     @click="showPaymentModal = true"
-                    class="inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                    class="inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 whitespace-nowrap">
                     Record Payment
                 </button>
             </div>
@@ -241,9 +242,16 @@
             </div>
 
             <!-- Dynamic Layout Render -->
-            <div class="overflow-x-auto pb-8">
-                <component :is="layoutComponent" :invoice="invoice" :taxBreakdown="taxBreakdown" :qrCodeUrl="qrCodeUrl"
-                    class="mx-auto" />
+            <!-- Dynamic Layout Render -->
+            <div ref="containerRef" class="w-full flex justify-center pb-8 overflow-hidden bg-gray-100/50 pt-4">
+                <div :style="{ height: scaledHeight + 'px', width: scaledWidth + 'px' }"
+                    class="relative transition-all duration-200">
+                    <div ref="contentRef" class="origin-top-left absolute top-0 left-0 bg-white shadow-lg"
+                        :style="{ transform: `scale(${scale})`, width: '210mm', minHeight: '297mm' }">
+                        <component :is="layoutComponent" :invoice="invoice" :taxBreakdown="taxBreakdown"
+                            :qrCodeUrl="qrCodeUrl" class="box-border" />
+                    </div>
+                </div>
             </div>
 
 
@@ -343,7 +351,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '../../layouts/AppLayout.vue'
 import { useInvoiceStore } from '../../stores/invoice'
@@ -365,10 +373,60 @@ const invoiceStore = useInvoiceStore()
 const { currentInvoice: invoice, loading } = storeToRefs(invoiceStore)
 
 const converting = ref(false)
+const containerRef = ref<HTMLElement | null>(null)
+const contentRef = ref<HTMLElement | null>(null)
+const scale = ref(1)
+const scaledHeight = ref(1123) // Default A4 px height
+const scaledWidth = ref(794) // Default A4 px width
+
+const updateScale = () => {
+    if (!containerRef.value || !contentRef.value) return
+    const padding = 24 // px (horiz padding)
+    const availableWidth = Math.min(window.innerWidth - padding, containerRef.value.clientWidth)
+
+    // A4 width in px (210mm approx 794px)
+    const contentOriginalWidth = 794
+
+    // Calculate Scale
+    const newScale = availableWidth < contentOriginalWidth ? availableWidth / contentOriginalWidth : 1
+    scale.value = newScale
+
+    // Update dimensions
+    // We strictly use the contentRef scrollHeight to determine actual height needed
+    const originalHeight = contentRef.value.scrollHeight || 1123
+    scaledHeight.value = originalHeight * newScale
+    scaledWidth.value = contentOriginalWidth * newScale
+}
+
+let resizeObserver: ResizeObserver | null = null
+
+onMounted(() => {
+    window.addEventListener('resize', updateScale)
+    // Initial calls
+    setTimeout(updateScale, 100)
+    setTimeout(updateScale, 500)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateScale)
+    if (resizeObserver) resizeObserver.disconnect()
+})
+
+// Watch for contentRef to appear (after loading)
+watch(contentRef, (el) => {
+    if (el) {
+        if (resizeObserver) resizeObserver.disconnect()
+        resizeObserver = new ResizeObserver(() => {
+            updateScale()
+        })
+        resizeObserver.observe(el)
+        // Trigger immediate update
+        updateScale()
+    }
+})
 
 const backRoute = computed(() => {
     if (!invoice.value) return '/invoices'
-    if (invoice.value.type === 'quote') return '/quotations'
     if (invoice.value.type === 'credit_note') return '/credit-notes'
     return '/invoices'
 })

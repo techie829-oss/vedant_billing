@@ -217,7 +217,7 @@
                             Amount in Words
                         </div>
                         <div class="p-3 border-b border-gray-800 font-bold text-sm text-gray-900 capitalize">
-                            {{ amountInWords(invoice.grand_total) }} Only
+                            {{ amountInWords(finalTotals.rounded) }} Only
                         </div>
 
                         <div class="flex-grow p-4 flex gap-6">
@@ -264,12 +264,10 @@
                             <span class="text-xs text-gray-600">Subtotal</span>
                             <span class="text-sm font-bold">{{ formatCurrency(invoice.subtotal) }}</span>
                         </div>
-                        <div v-if="invoice.meta?.display_options?.show_discount && invoice.items.some((i: any) => i.discount > 0)"
+                        <div v-if="invoice.meta?.display_options?.show_discount && totalDiscount > 0"
                             class="flex justify-between items-center p-2 border-b border-gray-300 text-red-600">
                             <span class="text-xs">Discount</span>
-                            <span class="text-sm">-{{formatCurrency(invoice.items.reduce((s: number, i: any) => s +
-                                Number(i.discount
-                                    || 0), 0))}}</span>
+                            <span class="text-sm">-{{ formatCurrency(totalDiscount) }}</span>
                         </div>
 
                         <!-- Tax Totals -->
@@ -292,9 +290,16 @@
                             </template>
                         </template>
 
+                        <template v-if="finalTotals.roundOff !== 0">
+                            <div class="flex justify-between items-center p-2 border-b border-gray-300">
+                                <span class="text-xs text-gray-600">Round Off</span>
+                                <span class="text-sm">{{ formatCurrency(finalTotals.roundOff) }}</span>
+                            </div>
+                        </template>
+
                         <div class="flex justify-between items-center p-3 bg-gray-800 text-white mt-auto">
                             <span class="font-bold uppercase">Total</span>
-                            <span class="font-bold text-xl">{{ formatCurrency(invoice.grand_total) }}</span>
+                            <span class="font-bold text-xl">{{ formatCurrency(finalTotals.rounded) }}</span>
                         </div>
 
                         <div class="h-24 border-t border-gray-300 p-2 flex flex-col justify-end text-center">
@@ -314,11 +319,28 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+
 const props = defineProps<{
     invoice: any
     taxBreakdown: { cgst: number, sgst: number, igst: number, taxType: string, posState: string },
     qrCodeUrl?: string
 }>()
+
+const finalTotals = computed(() => {
+    const total = Number(props.invoice.grand_total) || 0;
+    const rounded = Math.round(total);
+    const roundOff = Number((rounded - total).toFixed(2));
+    return {
+        total,
+        rounded,
+        roundOff
+    };
+});
+
+const totalDiscount = computed(() => {
+    return (props.invoice.items || []).reduce((acc: number, item: any) => acc + (Number(item.discount) || 0), 0);
+});
 
 const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-IN', {

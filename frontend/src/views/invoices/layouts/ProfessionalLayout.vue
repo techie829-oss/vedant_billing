@@ -197,7 +197,7 @@
                         </template>
 
                         <td class="py-3 px-1 text-right font-bold text-gray-900 align-top">{{ formatCurrency(item.total)
-                            }}</td>
+                        }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -211,7 +211,7 @@
                     <!-- Amount Words -->
                     <div class="border-l-2 border-gray-300 pl-3">
                         <p class="text-[10px] text-gray-500 uppercase font-bold">Amount In Words</p>
-                        <p class="text-sm font-bold text-gray-900 capitalize">{{ amountInWords(invoice.grand_total) }}
+                        <p class="text-sm font-bold text-gray-900 capitalize">{{ amountInWords(finalTotals.rounded) }}
                             Only</p>
                     </div>
 
@@ -269,12 +269,10 @@
                             <span>Subtotal</span>
                             <span>{{ formatCurrency(invoice.subtotal) }}</span>
                         </div>
-                        <div v-if="invoice.meta?.display_options?.show_discount && invoice.items.some((i: any) => i.discount > 0)"
+                        <div v-if="invoice.meta?.display_options?.show_discount && totalDiscount > 0"
                             class="flex justify-between text-red-500">
                             <span>Discount</span>
-                            <span>-{{formatCurrency(invoice.items.reduce((s: number, i: any) => s + Number(i.discount
-                                || 0),
-                                0))}}</span>
+                            <span>-{{ formatCurrency(totalDiscount) }}</span>
                         </div>
 
                         <!-- Tax Breakdown -->
@@ -298,11 +296,17 @@
                             </template>
                         </div>
 
+                        <!-- Round Off -->
+                        <div v-if="finalTotals.roundOff !== 0" class="flex justify-between text-gray-500">
+                            <span>Round Off</span>
+                            <span>{{ formatCurrency(finalTotals.roundOff) }}</span>
+                        </div>
+
                         <!-- Grand Total -->
                         <div class="flex justify-between items-center pt-2">
                             <span class="font-bold text-gray-900 text-lg">Total</span>
-                            <span class="font-bold text-gray-900 text-lg">{{ formatCurrency(invoice.grand_total)
-                                }}</span>
+                            <span class="font-bold text-gray-900 text-lg">{{ formatCurrency(finalTotals.rounded)
+                            }}</span>
                         </div>
                     </div>
 
@@ -332,6 +336,21 @@ const props = defineProps<{
     taxBreakdown: any,
     qrCodeUrl: string
 }>()
+
+const finalTotals = computed(() => {
+    const total = Number(props.invoice.grand_total) || 0;
+    const rounded = Math.round(total);
+    const roundOff = Number((rounded - total).toFixed(2));
+    return {
+        total,
+        rounded,
+        roundOff
+    };
+});
+
+const totalDiscount = computed(() => {
+    return (props.invoice.items || []).reduce((acc: number, item: any) => acc + (Number(item.discount) || 0), 0);
+});
 
 const authStore = useAuthStore()
 const shouldShowBranding = computed(() => {

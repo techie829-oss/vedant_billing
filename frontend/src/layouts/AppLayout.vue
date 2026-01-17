@@ -18,9 +18,9 @@
           class="fixed inset-y-0 left-0 z-40 flex w-full max-w-xs flex-col bg-white pb-4 shadow-xl transition transform duration-300 ease-in-out"
           :class="mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'">
           <div class="flex items-center justify-between px-4 pt-5 pb-2">
-            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
+            <router-link to="/" class="text-2xl font-bold text-gray-900 tracking-tight">
               <span class="text-indigo-600">Vedant</span>Billing
-            </h1>
+            </router-link>
             <button type="button"
               class="-mr-2 inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
               @click="mobileMenuOpen = false">
@@ -129,9 +129,9 @@
       <aside
         class="fixed inset-y-0 left-0 bg-white w-64 border-r border-gray-200 z-30 transition-transform duration-300 hidden lg:flex lg:flex-col">
         <div class="flex items-center justify-center h-16 border-b border-gray-100">
-          <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
+          <router-link to="/" class="text-2xl font-bold text-gray-900 tracking-tight">
             <span class="text-indigo-600">Vedant</span>Billing
-          </h1>
+          </router-link>
         </div>
         <nav class="p-4 space-y-1 flex-1 overflow-y-auto">
           <router-link to="/" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
@@ -334,7 +334,7 @@
         <header
           class="bg-white/80 backdrop-blur-md border-b border-gray-200 lg:hidden h-14 flex items-center px-4 justify-between sticky top-0 z-20">
           <div class="flex items-center gap-2">
-            <span class="font-bold text-lg text-indigo-600 tracking-tight">VedantBilling</span>
+            <router-link to="/" class="font-bold text-lg text-indigo-600 tracking-tight">VedantBilling</router-link>
             <span v-if="!online"
               class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-500">OFFLINE</span>
           </div>
