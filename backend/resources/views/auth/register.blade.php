@@ -17,8 +17,9 @@
             Create your account
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600">
-            Or <a href="http://app.billingbook.local:5173/login"
-                class="font-medium text-blue-600 hover:text-blue-500">sign in to your dashboard</a>
+            Or <a href="{{ env('WEB_URL') . '/login' }}" class="font-medium text-blue-600 hover:text-blue-500">sign in
+                to your
+                dashboard</a>
         </p>
     </div>
 
