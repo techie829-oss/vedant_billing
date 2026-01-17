@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             PlanSeeder::class,
             GstStateSeeder::class, // Ensure GST states are seeded
-            ChartOfAccountsSeeder::class, // Ensure Chart of Accounts is seeded
+            //ChartOfAccountsSeeder::class, // Ensure Chart of Accounts is seeded
             //BusinessSeeder::class,
         ]);
     }
