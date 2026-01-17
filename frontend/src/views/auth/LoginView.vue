@@ -66,7 +66,7 @@
     <template #footer>
       <p class="text-center text-sm text-gray-600">
         Or
-        <a href="https://vedantbilling.com/register" class="font-medium text-indigo-600 hover:text-indigo-500">
+        <a :href="registerUrl" class="font-medium text-indigo-600 hover:text-indigo-500">
           register a new account
         </a>
         on our main site.
@@ -86,6 +86,7 @@ const authStore = useAuthStore()
 
 const email = ref('')
 const password = ref('')
+const registerUrl = import.meta.env.VITE_REG_URL || 'https://vedantbilling.com/register'
 
 const handleLogin = async () => {
   const success = await authStore.login({
