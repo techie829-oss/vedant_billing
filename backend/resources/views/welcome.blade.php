@@ -69,7 +69,7 @@
                 </div>
                 <div class="flex items-center space-x-4">
                     <!-- PWA Login Link -->
-                    <a href="{{ env('WEB_URL') . '/login' }}"
+                    <a href="{{ rtrim(env('WEB_URL'), '/') . '/login' }}"
                         class="text-sm font-medium text-gray-700 hover:text-gray-900">Login</a>
 
                     <a href="{{ route('register') }}"
