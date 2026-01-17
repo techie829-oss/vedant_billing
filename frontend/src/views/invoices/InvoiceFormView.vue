@@ -383,7 +383,7 @@
                             <thead>
                                 <tr>
                                     <th
-                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-40">
+                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Product</th>
                                     <th v-if="form.meta.display_options.show_description"
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
