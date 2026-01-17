@@ -128,17 +128,12 @@
                 <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
                 <div class="w-3 h-3 rounded-full bg-green-500"></div>
             </div>
-            <!-- Placeholder for Actual App Screenshot -->
+            <!-- App Screenshot -->
             <div
-                class="bg-gray-800 rounded-lg aspect-video w-full flex items-center justify-center text-gray-500 border border-gray-700/50">
-                <div class="text-center">
-                    <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                        </path>
-                    </svg>
-                    <span class="text-lg">Dashboard Interface Preview</span>
+                class="bg-gray-800 rounded-lg aspect-video w-full overflow-hidden border border-gray-700/50 relative group">
+                <img src="{{ asset('images/VedantBilling.png') }}" alt="VedantBilling Dashboard"
+                    class="w-full h-full object-cover object-top transition duration-500 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent pointer-events-none">
                 </div>
             </div>
         </div>
