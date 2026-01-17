@@ -66,7 +66,7 @@
     <template #footer>
       <p class="text-center text-sm text-gray-600">
         Or
-        <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
+        <a href="https://vedantbilling.com/register" class="font-medium text-indigo-600 hover:text-indigo-500">
           register a new account
         </a>
         on our main site.
