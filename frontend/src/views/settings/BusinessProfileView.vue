@@ -153,13 +153,7 @@
                                     <label for="state"
                                         class="block text-sm font-medium leading-6 text-gray-900">State</label>
                                     <div class="mt-2">
-                                        <select name="state" id="state" v-model="form.meta.state"
-                                            class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                            <option value="" disabled>Select State</option>
-                                            <option v-for="state in states" :key="state.code" :value="state.name">
-                                                {{ state.name }} ({{ state.code }})
-                                            </option>
-                                        </select>
+                                        <StateSelect v-model="form.meta.state" />
                                     </div>
                                 </div>
 
@@ -809,7 +803,10 @@ import { ref, onMounted, watch, computed } from 'vue'
 import AppLayout from '../../layouts/AppLayout.vue'
 import client from '../../api/client'
 import { useAuthStore } from '../../stores/auth'
+import { useGeneralStore } from '../../stores/general'
+import { storeToRefs } from 'pinia'
 import { fetchPincodeDetails } from '../../services/PincodeService'
+import StateSelect from '../../components/StateSelect.vue'
 
 // Layouts for Preview
 import DefaultLayout from '../invoices/layouts/DefaultLayout.vue'
@@ -818,6 +815,9 @@ import GridPremiumLayout from '../invoices/layouts/GridPremiumLayout.vue'
 import ClassicGridLayout from '../invoices/layouts/ClassicGridLayout.vue'
 
 const authStore = useAuthStore()
+const generalStore = useGeneralStore()
+const { states } = storeToRefs(generalStore)
+
 const loading = ref(true)
 const saving = ref(false)
 const uploading = ref(false)
@@ -964,17 +964,9 @@ const form = ref({
     }
 })
 
-const states = ref<{ name: string, code: string }[]>([])
-
 const fetchBusiness = async () => {
     try {
-        // Fetch states first
-        try {
-            const statesRes = await client.get('/gst-states')
-            states.value = statesRes.data
-        } catch (e) {
-            console.error('Failed to load states', e)
-        }
+        generalStore.fetchStates()
 
         // Assuming current business is selected and available
         const businessId = authStore.activeBusiness?.id;

@@ -141,8 +141,9 @@
                                 <th class="py-2 w-auto">Item</th>
                                 <th v-if="displayOpts.show_hsn" class="py-2 w-16">HSN</th>
                                 <th class="py-2 text-right w-16">Qty</th>
-                                <th class="py-2 text-right w-20">Rate</th>
+                                <th class="py-2 text-right w-20">MRP</th>
                                 <th v-if="displayOpts.show_discount" class="py-2 text-right w-16">Disc</th>
+                                <th class="py-2 text-right w-20">Sell Price</th>
                                 <th v-if="displayOpts.show_gst_breakdown" class="py-2 text-right w-20">Tax</th>
                                 <th class="py-2 text-right pr-2 w-24">Amount</th>
                             </tr>
@@ -163,9 +164,14 @@
                                 <td class="py-2 text-right text-gray-600 align-top">{{ Number(item.quantity) }}</td>
                                 <td class="py-2 text-right text-gray-600 align-top">{{
                                     formatCurrency(item.unit_price)
-                                    }}</td>
+                                }}</td>
                                 <td v-if="displayOpts.show_discount" class="py-2 text-right text-gray-600 align-top">{{
                                     Number(item.discount) ? formatCurrency(item.discount) : '-' }}</td>
+                                <td class="py-2 text-right text-gray-600 align-top">
+                                    {{ formatCurrency(item.quantity ? (item.unit_price - (item.discount /
+                                        item.quantity)) :
+                                    item.unit_price) }}
+                                </td>
                                 <td v-if="displayOpts.show_gst_breakdown"
                                     class="py-2 text-right text-gray-600 align-top">
                                     {{ formatCurrency(item.tax_amount) }} <span
@@ -196,21 +202,21 @@
                                     <div class="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5">
                                         <template v-if="invoice.business?.bank_name">
                                             <span class="text-gray-500">Bank:</span> <span>{{ invoice.business.bank_name
-                                                }}</span>
+                                            }}</span>
                                         </template>
                                         <template v-if="invoice.business?.account_number">
                                             <span class="text-gray-500">A/c:</span> <span>{{
                                                 invoice.business.account_number
-                                                }}</span>
+                                            }}</span>
                                         </template>
                                         <template v-if="invoice.business?.ifsc_code">
                                             <span class="text-gray-500">IFSC:</span> <span>{{ invoice.business.ifsc_code
-                                                }}</span>
+                                            }}</span>
                                         </template>
                                         <template v-if="invoice.business?.meta?.upi_id">
                                             <span class="text-gray-500">UPI:</span> <span>{{
                                                 invoice.business.meta.upi_id
-                                                }}</span>
+                                            }}</span>
                                         </template>
                                     </div>
                                 </div>

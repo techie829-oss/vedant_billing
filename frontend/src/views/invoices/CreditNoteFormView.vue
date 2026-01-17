@@ -83,9 +83,8 @@
                         <div class="sm:col-span-3">
                             <label class="block text-sm font-medium leading-6 text-gray-900">Credit Note Number</label>
                             <div class="mt-2">
-                                <input type="text" disabled
-                                    :value="isEditMode ? form.invoice_number : '(Auto-generated)'"
-                                    class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-500 bg-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6" />
+                                <input type="text" v-model="form.invoice_number" placeholder="(Auto-generated)"
+                                    class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
                         </div>
 
@@ -120,21 +119,7 @@
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-medium leading-6 text-gray-900">State</label>
                                 <div class="relative mt-2">
-                                    <select v-model="form.meta.billing_address.state"
-                                        class="block w-full appearance-none rounded-md border-0 py-2 pl-3.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                        <option value="" disabled>Select State</option>
-                                        <option v-for="state in states" :key="state.code" :value="state.name">
-                                            {{ state.name }} ({{ state.code }})
-                                        </option>
-                                    </select>
-                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                                            aria-hidden="true">
-                                            <path fill-rule="evenodd"
-                                                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
+                                    <StateSelect v-model="form.meta.billing_address.state" />
                                 </div>
                             </div>
                             <div class="sm:col-span-2">
@@ -156,12 +141,12 @@
                             <thead>
                                 <tr>
                                     <th
-                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-40">
+                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Product</th>
                                     <th v-if="form.meta.display_options.show_description"
-                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
                                         Notes</th>
-                                    <th
+                                    <th v-if="form.meta.display_options.show_hsn"
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                                         HSN/SAC</th>
                                     <th
@@ -169,10 +154,14 @@
                                         Qty</th>
                                     <th
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">
-                                        Price</th>
+                                        MRP</th>
+                                    <th v-if="form.meta.display_options.show_discount"
+                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
+                                        Disc %</th>
                                     <th v-if="form.meta.display_options.show_discount"
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
-                                        Discount</th>
+                                        Sell Price
+                                    </th>
                                     <th
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
                                         Tax %</th>
@@ -186,7 +175,7 @@
                             </thead>
                             <tbody class="divide-y divide-gray-200">
                                 <tr v-for="(item, index) in form.items" :key="index">
-                                    <td class="px-2 py-1">
+                                    <td class="px-1 py-1">
                                         <div class="relative w-full min-w-[12rem]">
                                             <ProductAutocomplete :items="products"
                                                 :model-value="item.product_id ?? null"
@@ -196,31 +185,41 @@
                                                 @change="(val: string) => { item.name = val; item.product_id = null; }" />
                                         </div>
                                     </td>
-                                    <td v-if="form.meta.display_options.show_description" class="px-2 py-1">
-                                        <input type="text" v-model="item.description" placeholder="Notes (optional)"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
+                                    <td v-if="form.meta.display_options.show_description" class="px-1 py-1">
+                                        <input type="text" v-model="item.description" placeholder="Notes"
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
                                     </td>
-                                    <td class="px-2 py-1">
+                                    <td class="px-1 py-1">
                                         <input type="text" v-model="item.hsn_code" placeholder="HSN"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
                                     </td>
-                                    <td class="px-2 py-1">
+                                    <td class="px-1 py-1">
                                         <input type="number" v-model.number="item.quantity" min="0.01" step="0.01"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6"
+                                            @input="calculateDiscountAmount(item)"
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6"
                                             required />
                                     </td>
-                                    <td class="px-2 py-1">
+                                    <td class="px-1 py-1">
                                         <input type="number" v-model.number="item.unit_price" min="0" step="0.01"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6"
+                                            @input="calculateDiscountAmount(item)"
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6"
                                             required />
                                     </td>
-                                    <td v-if="form.meta.display_options.show_discount" class="px-2 py-1">
-                                        <input type="number" v-model.number="item.discount" min="0" step="0.01"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
+                                    <td v-if="form.meta.display_options.show_discount" class="px-1 py-1">
+                                        <input type="number" v-model.number="item.discount_percent" min="0" max="100"
+                                            step="0.1" @input="calculateDiscountAmount(item)"
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
                                     </td>
-                                    <td class="px-2 py-1">
+                                    <td v-if="form.meta.display_options.show_discount" class="px-1 py-1">
+                                        <!-- Calculated Sell Price Display -->
+                                        <input type="text"
+                                            :value="formatCurrency((item.unit_price * (1 - (item.discount_percent || 0) / 100)))"
+                                            disabled
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-500 bg-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 text-xs leading-6 text-right" />
+                                    </td>
+                                    <td class="px-1 py-1">
                                         <input type="number" v-model.number="item.tax_rate" min="0" step="0.1"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6" />
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
                                     </td>
                                     <td
                                         class="px-2 py-1 text-right text-sm text-gray-900 font-medium whitespace-nowrap">
@@ -320,6 +319,7 @@ import { usePartyStore } from '../../stores/party'
 import { useProductStore, type Product } from '../../stores/product'
 import { useAuthStore } from '../../stores/auth'
 import { storeToRefs } from 'pinia'
+import StateSelect from '../../components/StateSelect.vue'
 import ProductAutocomplete from '../../components/ProductAutocomplete.vue'
 
 const router = useRouter()
@@ -336,51 +336,12 @@ const isEditMode = computed(() => route.params.id !== undefined)
 const customers = ref<any[]>([])
 const products = ref<Product[]>([])
 
-const states = [
-    { name: 'Andhra Pradesh', code: '37' },
-    { name: 'Arunachal Pradesh', code: '12' },
-    { name: 'Assam', code: '18' },
-    { name: 'Bihar', code: '10' },
-    { name: 'Chhattisgarh', code: '22' },
-    { name: 'Goa', code: '30' },
-    { name: 'Gujarat', code: '24' },
-    { name: 'Haryana', code: '06' },
-    { name: 'Himachal Pradesh', code: '02' },
-    { name: 'Jharkhand', code: '20' },
-    { name: 'Karnataka', code: '29' },
-    { name: 'Kerala', code: '32' },
-    { name: 'Madhya Pradesh', code: '23' },
-    { name: 'Maharashtra', code: '27' },
-    { name: 'Manipur', code: '14' },
-    { name: 'Meghalaya', code: '17' },
-    { name: 'Mizoram', code: '15' },
-    { name: 'Nagaland', code: '13' },
-    { name: 'Odisha', code: '21' },
-    { name: 'Punjab', code: '03' },
-    { name: 'Rajasthan', code: '08' },
-    { name: 'Sikkim', code: '11' },
-    { name: 'Tamil Nadu', code: '33' },
-    { name: 'Telangana', code: '36' },
-    { name: 'Tripura', code: '16' },
-    { name: 'Uttar Pradesh', code: '09' },
-    { name: 'Uttarakhand', code: '05' },
-    { name: 'West Bengal', code: '19' },
-    { name: 'Andaman and Nicobar Islands', code: '35' },
-    { name: 'Chandigarh', code: '04' },
-    { name: 'Dadra and Nagar Haveli and Daman and Diu', code: '26' },
-    { name: 'Delhi', code: '07' },
-    { name: 'Jammu and Kashmir', code: '01' },
-    { name: 'Ladakh', code: '38' },
-    { name: 'Lakshadweep', code: '31' },
-    { name: 'Puducherry', code: '34' }
-]
-
 const form = ref({
     invoice_number: '',
     type: 'credit_note',
     party_id: '',
     date: new Date().toISOString().split('T')[0],
-    items: [] as InvoiceItem[],
+    items: [] as (InvoiceItem & { discount_percent?: number })[],
     notes: '',
     terms: '',
     meta: {
@@ -430,6 +391,7 @@ const addItem = () => {
         quantity: 1,
         unit_price: 0,
         discount: 0,
+        discount_percent: 0,
         tax_rate: 0,
         tax_amount: 0,
         total: 0
@@ -443,13 +405,26 @@ const removeItem = (index: number) => {
 const calculateLineTotal = (item: InvoiceItem) => {
     const qty = Number(item.quantity) || 0
     const price = Number(item.unit_price) || 0
-    const discount = Number(item.discount) || 0
+    // Only apply discount if the option is enabled
+    const discount = form.value.meta.display_options.show_discount ? (Number(item.discount) || 0) : 0
     const taxRate = Number(item.tax_rate) || 0
 
     const sub = (qty * price) - discount
     const taxable = sub > 0 ? sub : 0
     const tax = taxable * (taxRate / 100)
     return taxable + tax
+}
+
+const calculateDiscountAmount = (item: InvoiceItem & { discount_percent?: number }) => {
+    const qty = Number(item.quantity) || 0
+    const price = Number(item.unit_price) || 0
+    const percent = Number(item.discount_percent) || 0
+
+    if (percent > 0) {
+        item.discount = (qty * price * percent) / 100
+    } else {
+        item.discount = 0
+    }
 }
 
 const totals = computed(() => {
@@ -469,7 +444,8 @@ const totals = computed(() => {
     form.value.items.forEach(item => {
         const qty = Number(item.quantity) || 0
         const price = Number(item.unit_price) || 0
-        const discount = Number(item.discount) || 0
+        // Only apply discount if the option is enabled
+        const discount = form.value.meta.display_options.show_discount ? (Number(item.discount) || 0) : 0
         const taxRate = Number(item.tax_rate) || 0
 
         const lineSub = (qty * price) - discount
@@ -550,7 +526,9 @@ const loadInvoice = async () => {
                 date: invoice.date ? invoice.date.split('T')[0] : '',
                 items: invoice.items.map((i: any) => ({
                     ...i,
-                    name: i.name || (!i.product_id ? i.description : '')
+                    name: i.name || (!i.product_id ? i.description : ''),
+                    // Back-calculate percent if missing but discount exists
+                    discount_percent: i.discount && i.unit_price && i.quantity ? ((i.discount / (i.quantity * i.unit_price)) * 100) : 0
                 })),
                 notes: invoice.notes || '',
                 terms: invoice.terms || '',

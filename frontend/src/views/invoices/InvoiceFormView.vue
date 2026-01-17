@@ -187,21 +187,7 @@
                             <div class="col-span-1 sm:col-span-2">
                                 <label class="block text-sm font-medium leading-6 text-gray-900">State</label>
                                 <div class="relative mt-2">
-                                    <select v-model="form.meta.billing_address.state"
-                                        class="block w-full appearance-none rounded-md border-0 py-2 pl-3.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                        <option value="" disabled>Select State</option>
-                                        <option v-for="state in states" :key="state.code" :value="state.name">
-                                            {{ state.name }} ({{ state.code }})
-                                        </option>
-                                    </select>
-                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                                            aria-hidden="true">
-                                            <path fill-rule="evenodd"
-                                                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
+                                    <StateSelect v-model="form.meta.billing_address.state" />
                                 </div>
                             </div>
                             <div class="col-span-1 sm:col-span-2">
@@ -238,21 +224,7 @@
                             <div class="col-span-1 sm:col-span-2">
                                 <label class="block text-sm font-medium leading-6 text-gray-900">State</label>
                                 <div class="relative mt-2">
-                                    <select v-model="form.meta.shipping_address.state"
-                                        class="block w-full appearance-none rounded-md border-0 py-2 pl-3.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                        <option value="" disabled>Select State</option>
-                                        <option v-for="state in states" :key="state.code" :value="state.name">
-                                            {{ state.name }} ({{ state.code }})
-                                        </option>
-                                    </select>
-                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                                            aria-hidden="true">
-                                            <path fill-rule="evenodd"
-                                                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
+                                    <StateSelect v-model="form.meta.shipping_address.state" />
                                 </div>
                             </div>
                             <div class="col-span-1 sm:col-span-2">
@@ -385,7 +357,7 @@
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Product</th>
                                     <th v-if="form.meta.display_options.show_description"
-                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
                                         Notes</th>
                                     <th v-if="form.meta.display_options.show_hsn"
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
@@ -580,6 +552,7 @@ import { usePartyStore } from '../../stores/party'
 import { useProductStore, type Product } from '../../stores/product'
 import { useAuthStore } from '../../stores/auth'
 import { storeToRefs } from 'pinia'
+import StateSelect from '../../components/StateSelect.vue'
 import ProductAutocomplete from '../../components/ProductAutocomplete.vue'
 
 const router = useRouter()
@@ -595,45 +568,6 @@ const isEditMode = computed(() => route.params.id !== undefined)
 
 const customers = ref<any[]>([])
 const products = ref<Product[]>([])
-
-const states = [
-    { name: 'Andhra Pradesh', code: '37' },
-    { name: 'Arunachal Pradesh', code: '12' },
-    { name: 'Assam', code: '18' },
-    { name: 'Bihar', code: '10' },
-    { name: 'Chhattisgarh', code: '22' },
-    { name: 'Goa', code: '30' },
-    { name: 'Gujarat', code: '24' },
-    { name: 'Haryana', code: '06' },
-    { name: 'Himachal Pradesh', code: '02' },
-    { name: 'Jharkhand', code: '20' },
-    { name: 'Karnataka', code: '29' },
-    { name: 'Kerala', code: '32' },
-    { name: 'Madhya Pradesh', code: '23' },
-    { name: 'Maharashtra', code: '27' },
-    { name: 'Manipur', code: '14' },
-    { name: 'Meghalaya', code: '17' },
-    { name: 'Mizoram', code: '15' },
-    { name: 'Nagaland', code: '13' },
-    { name: 'Odisha', code: '21' },
-    { name: 'Punjab', code: '03' },
-    { name: 'Rajasthan', code: '08' },
-    { name: 'Sikkim', code: '11' },
-    { name: 'Tamil Nadu', code: '33' },
-    { name: 'Telangana', code: '36' },
-    { name: 'Tripura', code: '16' },
-    { name: 'Uttar Pradesh', code: '09' },
-    { name: 'Uttarakhand', code: '05' },
-    { name: 'West Bengal', code: '19' },
-    { name: 'Andaman and Nicobar Islands', code: '35' },
-    { name: 'Chandigarh', code: '04' },
-    { name: 'Dadra and Nagar Haveli and Daman and Diu', code: '26' },
-    { name: 'Delhi', code: '07' },
-    { name: 'Jammu and Kashmir', code: '01' },
-    { name: 'Ladakh', code: '38' },
-    { name: 'Lakshadweep', code: '31' },
-    { name: 'Puducherry', code: '34' }
-]
 
 const form = ref({
     invoice_number: '',

@@ -304,14 +304,15 @@
         <thead>
             <tr>
                 <th style="width: 5%; padding-left: 8px;">#</th>
-                <th style="width: 40%;">Item</th>
+                <th style="width: 35%;">Item</th>
                 <th style="width: 10%;">HSN</th>
                 <th class="text-right" style="width: 10%;">Qty</th>
-                <th class="text-right" style="width: 12%;">Rate</th>
+                <th class="text-right" style="width: 10%;">MRP</th>
+                <th class="text-right" style="width: 10%;">Sell Price</th>
                 @if ($invoice->items->sum('discount') > 0)
                     <th class="text-right" style="width: 10%;">Disc</th>
                 @endif
-                <th class="text-right" style="width: 15%; padding-right: 8px;">Amount</th>
+                <th class="text-right" style="width: 10%; padding-right: 8px;">Amount</th>
             </tr>
         </thead>
         <tbody>
@@ -322,6 +323,13 @@
                     <td class="text-gray-500">{{ $item->hsn_code ?? '-' }}</td>
                     <td class="text-right text-gray-500">{{ $item->quantity + 0 }}</td>
                     <td class="text-right text-gray-500">{{ number_format($item->unit_price, 2) }}</td>
+                    @php
+                        $sellPrice =
+                            $item->quantity > 0
+                                ? $item->unit_price - $item->discount / $item->quantity
+                                : $item->unit_price;
+                    @endphp
+                    <td class="text-right text-gray-500">{{ number_format($sellPrice, 2) }}</td>
                     @if ($invoice->items->sum('discount') > 0)
                         <td class="text-right text-gray-500">
                             {{ $item->discount > 0 ? number_format($item->discount, 2) : '-' }}</td>

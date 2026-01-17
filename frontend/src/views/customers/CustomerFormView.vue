@@ -128,13 +128,7 @@
                 <div class="sm:col-span-2">
                   <label for="state" class="block text-sm font-medium leading-6 text-gray-900">State</label>
                   <div class="mt-2">
-                    <select name="state" id="state" v-model="form.billing_address.state"
-                      class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                      <option value="" disabled>Select State</option>
-                      <option v-for="state in states" :key="state.code" :value="state.name">
-                        {{ state.name }} ({{ state.code }})
-                      </option>
-                    </select>
+                    <StateSelect v-model="form.billing_address.state" />
                   </div>
                 </div>
 
@@ -185,13 +179,7 @@
                 <div class="sm:col-span-2">
                   <label for="shipping_state" class="block text-sm font-medium leading-6 text-gray-900">State</label>
                   <div class="mt-2">
-                    <select name="shipping_state" id="shipping_state" v-model="form.shipping_address.state"
-                      class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                      <option value="" disabled>Select State</option>
-                      <option v-for="state in states" :key="state.code" :value="state.name">
-                        {{ state.name }} ({{ state.code }})
-                      </option>
-                    </select>
+                    <StateSelect v-model="form.shipping_address.state" />
                   </div>
                 </div>
 
@@ -285,13 +273,18 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePartyStore } from '../../stores/party'
+import { useGeneralStore } from '../../stores/general'
+import { storeToRefs } from 'pinia'
 import client from '../../api/client'
 import AppLayout from '../../layouts/AppLayout.vue'
 import { fetchPincodeDetails } from '../../services/PincodeService'
+import StateSelect from '../../components/StateSelect.vue'
 
 const router = useRouter()
 const route = useRoute()
 const partyStore = usePartyStore()
+const generalStore = useGeneralStore()
+const { states } = storeToRefs(generalStore)
 
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -330,15 +323,8 @@ const headerDescription = computed(() => {
     : 'Create a new customer profile for invoicing and billing.'
 })
 
-const states = ref<{ name: string, code: string }[]>([])
-
 onMounted(async () => {
-  try {
-    const res = await client.get('/gst-states')
-    states.value = res.data
-  } catch (e) {
-    console.error('Failed to load states', e)
-  }
+  generalStore.fetchStates()
 
   if (isEditMode.value) {
     loading.value = true
