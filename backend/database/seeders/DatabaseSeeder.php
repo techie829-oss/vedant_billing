@@ -14,11 +14,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            AdminUserSeeder::class,
             PlanSeeder::class,
-            GstStateSeeder::class, // Ensure GST states are seeded
-            //ChartOfAccountsSeeder::class, // Ensure Chart of Accounts is seeded
-            //BusinessSeeder::class,
+            GstStateSeeder::class,
+            ExactInvoiceSeeder::class, // Creates User ("admin@rschitra.com") and Business ("R/S CHITRA...")
+            ChartOfAccountsSeeder::class, // Needs Business to exist
         ]);
     }
 }
