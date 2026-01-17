@@ -13,7 +13,7 @@ export default defineConfig({
       },
       manifest: {
         name: 'Billing Book',
-        short_name: 'BillingBook',
+        short_name: 'VedantBilling',
         description: 'Professional Billing & Accounting App',
         theme_color: '#4f46e5',
         icons: [

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# BillingBook - Linux OCR & AI Stack Installer
+# VedantBilling - Linux OCR & AI Stack Installer
 # Supports Ubuntu/Debian
 
-echo "🚀 Starting BillingBook OCR Setup for Linux..."
+echo "🚀 Starting VedantBilling OCR Setup for Linux..."
 
 # 1. Update Packages
 echo "🔄 Updating package list..."
@@ -44,7 +44,7 @@ RESPONSE=$(curl -s -X POST http://localhost:11434/api/generate -d '{
 
 if [[ $RESPONSE == *"response"* ]]; then
     echo "✅ Setup Complete! Ollama is responding."
-    echo "🎉 You can now proceed with BillingBook configuration."
+    echo "🎉 You can now proceed with VedantBilling configuration."
 else
     echo "⚠️  Ollama might not be running. Start it with 'ollama serve' in a separate terminal."
 fi

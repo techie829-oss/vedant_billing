@@ -19,7 +19,7 @@ class BusinessSeeder extends Seeder
     {
         // 1. Create a Test User (Owner)
         $user = User::firstOrCreate(
-            ['email' => 'test@billingbook.com'],
+            ['email' => 'test@vedantbilling.com'],
             [
                 'name' => 'John Doe',
                 'password' => Hash::make('password'),
@@ -115,7 +115,7 @@ class BusinessSeeder extends Seeder
             }
         }
 
-        $this->command->info('✅ Test User Created: test@billingbook.com / password');
+        $this->command->info('✅ Test User Created: test@vedantbilling.com / password');
         $this->command->info('✅ Business Created: Acme Corp');
     }
 }

@@ -36,7 +36,7 @@ export class BillingDatabase extends Dexie {
     syncQueue!: Table<SyncJob>;
 
     constructor() {
-        super('BillingBookDB');
+        super('VedantBillingDB');
         this.version(2).stores({
             invoices: 'id, invoice_number, date, customer_id, status', // id is primary key (UUID)
             customers: 'id, name, email',

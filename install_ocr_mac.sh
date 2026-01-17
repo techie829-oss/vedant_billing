@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# BillingBook - Mac OCR & AI Stack Installer
+# VedantBilling - Mac OCR & AI Stack Installer
 # Requires Homebrew
 
-echo "🚀 Starting BillingBook OCR Setup for Mac..."
+echo "🚀 Starting VedantBilling OCR Setup for Mac..."
 
 # Check for Homebrew
 if ! command -v brew &> /dev/null; then
@@ -53,7 +53,7 @@ RESPONSE=$(curl -s -X POST http://localhost:11434/api/generate -d '{
 
 if [[ $RESPONSE == *"response"* ]]; then
     echo "✅ Setup Complete! Ollama is responding."
-    echo "🎉 You can now proceed with BillingBook configuration."
+    echo "🎉 You can now proceed with VedantBilling configuration."
 else
     echo "⚠️  Ollama might not be running. Try running 'ollama serve' manually."
 fi

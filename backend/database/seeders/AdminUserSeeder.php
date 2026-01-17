@@ -14,7 +14,7 @@ class AdminUserSeeder extends Seeder
     {
         // 1. Create Base User
         $user = User::firstOrCreate(
-            ['email' => 'admin@billingbook.com'],
+            ['email' => 'admin@vedantbilling.com'],
             [
                 'name' => 'Super Admin',
                 'password' => Hash::make('password'),
@@ -30,6 +30,6 @@ class AdminUserSeeder extends Seeder
             ]
         );
 
-        $this->command->info('✅ Admin User Created: admin@billingbook.com / password');
+        $this->command->info('✅ Admin User Created: admin@vedantbilling.com / password');
     }
 }

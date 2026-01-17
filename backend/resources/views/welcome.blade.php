@@ -7,15 +7,15 @@
 
     <!-- SEO Meta Tags -->
     <meta name="description"
-        content="BillingBook is the all-in-one invoicing and inventory management solution for growing businesses. Create professional invoices, track stock, and manage payments effortlessly.">
+        content="VedantBilling is the all-in-one invoicing and inventory management solution for growing businesses. Create professional invoices, track stock, and manage payments effortlessly.">
     <meta name="keywords"
-        content="invoicing software, inventory management, billing system, small business accounting, gst billing, billingbook">
-    <meta name="author" content="BillingBook">
+        content="invoicing software, inventory management, billing system, small business accounting, gst billing, vedantbilling">
+    <meta name="author" content="VedantBilling">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:title" content="BillingBook - Smart Invoicing & Inventory for Growing Businesses">
+    <meta property="og:title" content="VedantBilling - Smart Invoicing & Inventory for Growing Businesses">
     <meta property="og:description"
         content="Manage invoices, track inventory, and handle accounting with a platform designed for modern businesses. Fast, secure, and intuitive.">
     <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
@@ -23,12 +23,12 @@
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ url('/') }}">
-    <meta property="twitter:title" content="BillingBook - Smart Invoicing & Inventory for Growing Businesses">
+    <meta property="twitter:title" content="VedantBilling - Smart Invoicing & Inventory for Growing Businesses">
     <meta property="twitter:description"
         content="Manage invoices, track inventory, and handle accounting with a platform designed for modern businesses. Fast, secure, and intuitive.">
     <meta property="twitter:image" content="{{ asset('images/og-image.jpg') }}">
 
-    <title>BillingBook - Smart Invoicing & Inventory for Growing Businesses</title>
+    <title>VedantBilling - Smart Invoicing & Inventory for Growing Businesses</title>
 
     <!-- Styles & Scripts -->
     @vite(['resources/css/app.scss', 'resources/js/app.js'])
@@ -56,7 +56,7 @@
                             class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
                             B</div>
                         <span
-                            class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">BillingBook</span>
+                            class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">VedantBilling</span>
                     </a>
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
@@ -292,7 +292,7 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-3xl font-extrabold text-gray-900">Frequently Asked Questions</h2>
-                <p class="mt-4 text-gray-500">Everything you need to know about BillingBook.</p>
+                <p class="mt-4 text-gray-500">Everything you need to know about VedantBilling.</p>
             </div>
 
             <div class="space-y-8">
@@ -325,7 +325,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="col-span-1 md:col-span-1">
-                    <span class="text-2xl font-bold text-white">BillingBook</span>
+                    <span class="text-2xl font-bold text-white">VedantBilling</span>
                     <p class="mt-4 text-gray-400 text-sm">Empowering growing businesses with smart financial tools.</p>
                 </div>
                 <div>
@@ -354,7 +354,7 @@
                 </div>
             </div>
             <div class="mt-12 border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
-                &copy; {{ date('Y') }} BillingBook Inc. All rights reserved.
+                &copy; {{ date('Y') }} VedantBilling Inc. All rights reserved.
             </div>
         </div>
     </footer>
