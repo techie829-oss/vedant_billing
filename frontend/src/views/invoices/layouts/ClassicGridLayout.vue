@@ -99,7 +99,7 @@
                                 <div class="p-1">
                                     <span class="block text-[10px] font-bold">Destination</span>
                                     <span>{{ invoice.meta?.destination || invoice.party?.shipping_address?.city || ''
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                             <!-- Row 7: Terms of Delivery (Full Width) -->
@@ -216,7 +216,7 @@
                         <div class="p-1 px-2 border-b border-black">
                             <span class="font-bold text-[10px]">Amount Chargeable (in words):</span>
                             <span class="capitalize font-bold ml-2">Indian Rupees {{ amountInWords(finalTotals.rounded)
-                            }} Only</span>
+                                }} Only</span>
                         </div>
 
                         <!-- Tax Summary Table -->
@@ -446,26 +446,5 @@ const amountInWords = (num: number) => {
     width: 210mm;
     height: 297mm;
     overflow: hidden;
-}
-
-@media print {
-    .print-layout-container {
-        padding: 0;
-        margin: 0;
-        background: white;
-    }
-
-    .a4-page {
-        margin: 0;
-        box-shadow: none;
-        border: none;
-        break-after: page;
-        page-break-after: always;
-    }
-
-    .a4-page:last-child {
-        break-after: auto;
-        page-break-after: auto;
-    }
 }
 </style>

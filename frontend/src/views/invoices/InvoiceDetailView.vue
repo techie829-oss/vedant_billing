@@ -119,6 +119,7 @@
                         </svg>
                         Remind
                     </button>
+                    <!-- Share Menu Dropdown -->
                     <div v-if="shareMenuOpen"
                         class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div class="py-1">
@@ -243,10 +244,12 @@
 
             <!-- Dynamic Layout Render -->
             <!-- Dynamic Layout Render -->
-            <div ref="containerRef" class="w-full flex justify-center pb-8 overflow-hidden bg-gray-100/50 pt-4">
+            <div ref="containerRef"
+                class="invoice-container w-full flex justify-center pb-8 overflow-hidden bg-gray-100/50 pt-4">
                 <div :style="{ height: scaledHeight + 'px', width: scaledWidth + 'px' }"
-                    class="relative transition-all duration-200">
-                    <div ref="contentRef" class="origin-top-left absolute top-0 left-0 bg-white shadow-lg"
+                    class="invoice-scale-wrapper relative transition-all duration-200">
+                    <div ref="contentRef"
+                        class="invoice-content-wrapper origin-top-left absolute top-0 left-0 bg-white shadow-lg flex flex-col items-center"
                         :style="{ transform: `scale(${scale})`, width: '210mm', minHeight: '297mm' }">
                         <component :is="layoutComponent" :invoice="invoice" :taxBreakdown="taxBreakdown"
                             :qrCodeUrl="qrCodeUrl" class="box-border" />
@@ -667,11 +670,41 @@ const loadInvoice = async () => {
 }
 
 const printInvoice = () => {
-    const url = router.resolve({
-        name: 'invoice-print',
-        params: { id: invoice.value?.id }
-    }).href
-    window.open(url, '_blank')
+    // 1. Create or get print container
+    let printContainer = document.getElementById('print-container')
+    if (!printContainer) {
+        printContainer = document.createElement('div')
+        printContainer.id = 'print-container'
+        document.body.appendChild(printContainer)
+    }
+
+    // 2. Clone content
+    if (contentRef.value) {
+        printContainer.innerHTML = '' // Clear previous
+        // Deep clone the invoice content
+        const clone = contentRef.value.cloneNode(true) as HTMLElement
+
+        // Remove any utility classes that might conflict or use specific classes for print
+        // For now, we trust the clone. We might need to ensure the clone loses 'transform' if set inline.
+        clone.style.transform = 'none'
+        clone.style.width = '100%'
+        clone.style.height = 'auto'
+        clone.style.minHeight = '0'
+        clone.style.boxShadow = 'none'
+        clone.style.margin = '0'
+        clone.style.position = 'static'
+        clone.style.overflow = 'visible'
+
+        printContainer.appendChild(clone)
+    }
+
+    // 3. Print
+    window.print()
+
+    // 4. Cleanup (Delay to ensure print dialog captures it, though window.print blocks in some browsers, in others it doesn't)
+    // Actually, keeping it hidden in DOM is fine, but clearing it after might be safer to save memory.
+    // cleanup happens on next print or we can leave it.
+    // We will leave it for stability.
 }
 
 const finalize = async () => {
@@ -724,19 +757,21 @@ const downloadPdf = async () => {
     if (!invoice.value) return
     downloading.value = true
 
-
     try {
-        const element = document.getElementById('invoice-paper')
-        if (!element) throw new Error('Invoice element not found')
+        // Use the content reference instead of querying by ID, as not all layouts use #invoice-paper
+        if (!contentRef.value) throw new Error('Invoice content not found')
 
-        // Create a clone of the element to modify styles for PDF (remove shadows/rings causing color issues)
-        const clone = element.cloneNode(true) as HTMLElement
-        // Recursive strip function
+        // We want the 'inner' component root, usually the first child of the wrapper
+        // The wrapper is contentRef. The component is inside.
+        // Actually, contentRef IS the wrapper. Clone the wrapper's content (the component).
+        // Let's just clone the wrapper's first child to get the Layout Component directly.
+        const sourceElement = contentRef.value.firstElementChild as HTMLElement
+        if (!sourceElement) throw new Error('Invoice layout element not found')
+
+        // Create a clone
+        const clone = sourceElement.cloneNode(true) as HTMLElement
         const stripModernEffects = (el: HTMLElement) => {
             el.classList?.remove('shadow-xl', 'shadow-lg', 'shadow-md', 'shadow-sm', 'shadow', 'ring-1', 'ring-2', 'ring-gray-900/5', 'ring-offset-2');
-            // Also crude check for any class starting with ring- or shadow- if needed, but specific list is safer to avoid breaking layout
-
-            // Strip any opacity modifiers from classes if possible? Hard.
         }
 
         stripModernEffects(clone);
@@ -745,56 +780,65 @@ const downloadPdf = async () => {
             stripModernEffects(descendants[i] as HTMLElement);
         }
 
-        // Force exact A4 dimensions with epsilon safety to prevent 2nd empty page
+        // Reset styles for the clone to be "PDF ready"
         clone.style.margin = '0'
+        clone.style.padding = '0' // REMOVE Padding (caused the extra white/gray space)
+        clone.style.background = 'white' // Ensure white background
         clone.style.maxWidth = '210mm'
         clone.style.width = '210mm'
-        clone.style.minHeight = 'unset'
-        clone.style.height = '296mm' // 1mm buffer to ensure it fits on one page
-        clone.style.maxHeight = '296mm'
-        clone.style.overflow = 'hidden'
+        // Allow auto height to support multi-page layouts (Default, Classic)
+        clone.style.height = 'auto'
+        clone.style.minHeight = '296mm' // At least one page
+        clone.style.maxHeight = 'none'
+        clone.style.overflow = 'visible' // Show all content
+        clone.style.transform = 'none'
 
-        // Ensure clone is visible for html2canvas (it needs to be in DOM)
-        // We'll put it in a hidden container off-screen
+        // Wrap in a temporary container
         const container = document.createElement('div')
-        container.style.position = 'absolute'
-        container.style.left = '-9999px'
+        container.style.position = 'fixed'
+        container.style.left = '0'
         container.style.top = '0'
+        container.style.zIndex = '-9999'
+        container.style.width = '210mm'
+        container.style.padding = '0'
+        container.style.margin = '0'
+        container.style.background = 'white'
 
-        // Force specific width to match A4 ratio if needed, or rely on existing width
-        // The clone needs to be inserted into the document for html2canvas to render it
         container.appendChild(clone)
         document.body.appendChild(container)
 
-        // Configure options for A4 fidelity
+        // Ensure we are at the top to prevent scroll offset bugs
+        window.scrollTo(0, 0)
+
+        // Configure options
         const opt = {
-            margin: 0,
+            margin: 0, // Top, Left, Bottom, Right
             filename: `Invoice-${invoice.value.invoice_number}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 } as const,
+            image: { type: 'jpeg', quality: 0.98 },
             html2canvas: {
                 scale: 2,
                 useCORS: true,
                 logging: false,
-                letterRendering: true
+                letterRendering: true,
+                scrollY: 0,
+                x: 0,
+                y: 0,
+                width: 794, // Force A4 width in px (approx 794px at 96dpi)
+                windowWidth: 794 // Match window width to content width
             },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as 'portrait' | 'landscape' }
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }
 
-        // Check if library loaded
         if (typeof html2pdf !== 'function') {
             throw new Error('PDF library not loaded correctly. Please refresh.')
         }
 
-        // Generate PDF directly from client side
-        // Use the clone
         await html2pdf().set(opt).from(clone).save()
 
-        // Cleanup
         document.body.removeChild(container)
 
     } catch (e: any) {
         console.error('Download failed', e)
-        // Show specific error to user for debugging
         alert(`Failed to generate PDF: ${e.message || e}`)
     } finally {
         downloading.value = false
@@ -864,41 +908,44 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* GLOBAL PRINT RESET */
 @media print {
 
-    /* Hide layout elements during print */
-    :deep(nav),
-    :deep(header),
-    :deep(aside) {
+    /* GLOBAL PRINT RESET */
+    :global(body > *:not(#print-container)) {
         display: none !important;
     }
 
-    /* Ensure body background is white */
-    :global(body) {
-        background-color: white !important;
+    /* PRINT CONTAINER STYLES */
+    :global(#print-container) {
+        display: block !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background: white;
+        z-index: 9999;
     }
 
-    /* Reset margins for print */
-    :deep(.max-w-7xl),
-    :deep(.max-w-4xl) {
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    /* Ensure background colors are printed */
-    :global(body) {
+    /* Ensure styles inside print container are standard */
+    :global(#print-container *) {
+        visibility: visible !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
-    /* Target the invoice paper explicitly inside dynamic component */
-    :deep(#invoice-paper) {
+    /* Specific resets for the cloned nodes */
+    :global(#print-container #invoice-paper),
+    :global(#print-container .a4-page) {
+        width: 210mm !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
         box-shadow: none !important;
         border: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        width: 100% !important;
+        page-break-after: avoid !important;
+        break-inside: avoid !important;
     }
 }
 </style>

@@ -397,30 +397,3 @@ const amountInWords = (num: number) => {
     return inWords(Math.floor(num));
 }
 </script>
-
-<style scoped>
-@media print {
-    @page {
-        size: A4;
-        margin: 0;
-    }
-
-    body {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
-    #invoice-paper {
-        box-shadow: none;
-        margin: 0;
-        width: 210mm;
-        height: 297mm;
-        /* Force single page fit strategy */
-        max-height: 297mm;
-        overflow: hidden;
-        transform: scale(0.96);
-        /* Slight shrink to ensure margins don't trigger overflow */
-        transform-origin: top center;
-    }
-}
-</style>
