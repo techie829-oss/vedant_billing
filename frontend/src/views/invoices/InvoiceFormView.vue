@@ -300,7 +300,85 @@
             <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
                 <div class="px-4 py-6 sm:p-8">
                     <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Items</h3>
-                    <div class="overflow-x-auto">
+                    <!-- Mobile View: Stacked Cards -->
+                    <div class="block sm:hidden space-y-4">
+                        <div v-for="(item, index) in form.items" :key="index"
+                            class="bg-gray-50 rounded-lg p-4 border border-gray-200 relative">
+
+                            <!-- Delete Button (Top Right) -->
+                            <button @click="removeItem(index)" type="button"
+                                class="absolute top-2 right-2 text-red-600 hover:text-red-900 p-1">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+
+                            <div class="space-y-3">
+                                <!-- Row 1: Product -->
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Product</label>
+                                    <ProductAutocomplete :items="products" :model-value="item.product_id ?? null"
+                                        :initial-display="item.name || (item.product_id && products.find(p => p.id === item.product_id)?.name) || ''"
+                                        @update:model-value="(val: any) => item.product_id = val"
+                                        @select="(prod: any) => onProductSelect(item, prod)"
+                                        @change="(val: string) => { item.name = val; item.product_id = null; }" />
+                                </div>
+
+                                <!-- Row 2: Notes (Optional) -->
+                                <div v-if="form.meta.display_options.show_description">
+                                    <input type="text" v-model="item.description" placeholder="Notes"
+                                        class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm" />
+                                </div>
+
+                                <!-- Row 3: HSN, Qty, Price -->
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div v-if="form.meta.display_options.show_hsn">
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">HSN</label>
+                                        <input type="text" v-model="item.hsn_code"
+                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Qty</label>
+                                        <input type="number" v-model.number="item.quantity" min="0.01" step="0.01"
+                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Price</label>
+                                        <input type="number" v-model.number="item.unit_price" min="0" step="0.01"
+                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm" />
+                                    </div>
+                                </div>
+
+                                <!-- Row 4: Discount, Tax, Total -->
+                                <div class="grid grid-cols-3 gap-2 items-center">
+                                    <div v-if="form.meta.display_options.show_discount">
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Disc</label>
+                                        <input type="number" v-model.number="item.discount" min="0" step="0.01"
+                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm" />
+                                    </div>
+                                    <div v-if="form.meta.display_options.show_gst_breakdown">
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Tax %</label>
+                                        <input type="number" v-model.number="item.tax_rate" min="0" step="0.1"
+                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm" />
+                                    </div>
+                                    <div class="col-span-1 text-right">
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Total</label>
+                                        <span class="text-sm font-bold text-gray-900">{{
+                                            formatCurrency(calculateLineTotal(item)) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button @click="addItem" type="button"
+                            class="w-full py-2 flex items-center justify-center rounded-md border-2 border-dashed border-indigo-300 text-sm font-medium text-indigo-600 hover:border-indigo-400 hover:text-indigo-500">
+                            + Add Item
+                        </button>
+                    </div>
+
+                    <!-- Desktop View: Table -->
+                    <div class="hidden sm:block overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200" style="min-width: 800px;">
                             <thead>
                                 <tr>
