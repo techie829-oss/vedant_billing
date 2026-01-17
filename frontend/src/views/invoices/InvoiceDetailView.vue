@@ -749,7 +749,7 @@ const duplicateInvoice = async () => {
 
 const createCreditNote = () => {
     if (!invoice.value) return
-    router.push({ name: 'credit-notes.create', query: { parent_id: invoice.value.id } })
+    router.push({ name: 'credit-note-create', query: { parent_id: invoice.value.id } })
 }
 
 const downloading = ref(false)
@@ -912,6 +912,11 @@ onMounted(() => {
 @media print {
 
     /* GLOBAL PRINT RESET */
+    @page {
+        margin: 0;
+        size: A4;
+    }
+
     :global(body > *:not(#print-container)) {
         display: none !important;
     }
