@@ -96,7 +96,7 @@
                                 </div>
                             </div>
                             <!-- Generic message if unlimited -->
-                            <div v-if="currentSubscription.plan.features.every((f: any) => f.pivot.limit < 0)"
+                            <div v-if="currentSubscription.plan.features && currentSubscription.plan.features.every((f: any) => f.pivot.limit < 0)"
                                 class="text-sm text-green-600 flex items-center">
                                 <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
