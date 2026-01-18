@@ -290,15 +290,26 @@ const getUsage = (featureSlug: string) => {
 const subscribe = async (planId: string) => {
     // 1. Check if business has billing address
     const business = authStore.activeBusiness
+    console.log('Subscribe Check - Business:', business);
     if (!business) return
 
     // Check for required billing fields: Address, City, State, Pincode
+    // Robust check: Handle empty array [] from PHP for meta JSON column
+    const meta = (business.meta && typeof business.meta === 'object' && !Array.isArray(business.meta)) ? business.meta : {};
+
     const hasAddress = business.address &&
-        business.meta?.city &&
-        business.meta?.state &&
-        business.meta?.pincode
+        meta.city &&
+        meta.state &&
+        meta.pincode
+
+    console.log('Subscribe Check - hasAddress (Robust):', hasAddress, {
+        address: business.address,
+        metaraw: business.meta,
+        city: meta.city
+    });
 
     if (!hasAddress) {
+        console.log('Address missing, opening modal to fix.');
         targetPlanId.value = planId
         showAddressModal.value = true
         return
@@ -314,7 +325,7 @@ const subscribe = async (planId: string) => {
         currentSubscription.value = response.data
         alert('Plan switched successfully!')
     } catch (err: any) {
-        console.error(err)
+        console.error('Subscription error:', err)
         alert('Failed to switch plan. Please try again.')
     } finally {
         processing.value = false
@@ -323,14 +334,15 @@ const subscribe = async (planId: string) => {
 }
 
 const handleAddressSaved = async () => {
+    console.log('Address Saved. Retrying subscription...');
     showAddressModal.value = false
-    // Refresh business data implies auth store is updated (which we did in component)
-    // But we might want to ensure we have the absolute latest?
-    // Actually the component updated the auth store.
+
+    // Log new state
+    console.log('Active Business after save:', authStore.activeBusiness);
 
     if (targetPlanId.value) {
         // Retry subscription flow
-        subscribe(targetPlanId.value)
+        await subscribe(targetPlanId.value)
     }
 }
 
