@@ -69,10 +69,10 @@
                 </div>
                 <div class="flex items-center space-x-4">
                     <!-- PWA Login Link -->
-                    <a href="{{ rtrim(env('WEB_URL'), '/') . '/login' }}"
+                    <a href="{{ rtrim(env('WEB_URL', 'https://app.vedantbilling.com'), '/') . '/login' }}"
                         class="text-sm font-medium text-gray-700 hover:text-gray-900">Login</a>
 
-                    <a href="{{ route('register') }}"
+                    <a href="{{ rtrim(env('WEB_URL', 'https://app.vedantbilling.com'), '/') . '/register' }}"
                         class="px-5 py-2.5 rounded-full bg-blue-600 text-white text-sm font-medium shadow-lg shadow-blue-600/30 hover:bg-blue-700 hover:shadow-blue-600/40 transition-all transform hover:-translate-y-0.5">
                         Get Started
                     </a>
@@ -93,7 +93,7 @@
                 Fast, secure, and intuitive.
             </p>
             <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="{{ route('register') }}"
+                <a href="{{ rtrim(env('WEB_URL', 'https://app.vedantbilling.com'), '/') . '/register' }}"
                     class="px-8 py-4 rounded-full bg-blue-600 text-white text-lg font-semibold shadow-xl shadow-blue-600/20 hover:bg-blue-700 hover:shadow-blue-600/40 transition-all transform hover:-translate-y-1">
                     Start Your Free Trial
                 </a>
@@ -272,7 +272,7 @@
                             @endforeach
                         </ul>
 
-                        <a href="{{ route('register') }}?plan={{ $plan->slug }}"
+                        <a href="{{ rtrim(env('WEB_URL', 'https://app.vedantbilling.com'), '/') . '/register?plan=' . $plan->slug }}"
                             class="mt-8 block w-full py-3 px-6 rounded-xl text-center font-medium transition {{ $plan->slug === 'pro' ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/30' : 'border border-blue-600 text-blue-600 hover:bg-blue-50' }}">
                             {{ $plan->price === 0 ? 'Get Started' : 'Start Free Trial' }}
                         </a>

@@ -63,12 +63,75 @@
       </div>
     </form>
 
+    <div class="mt-6">
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-white text-gray-500">Or continue with</span>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <a :href="googleAuthUrl"
+          class="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors duration-200">
+          <span class="sr-only">Sign in with Google</span>
+          <svg class="h-5 w-5" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
+          </svg>
+          <span class="ml-2">Google</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Registration Popup/Modal -->
+    <div v-if="showRegistrationModal" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title"
+      role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div
+          class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+          <div>
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100">
+              <svg class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+              </svg>
+            </div>
+            <div class="mt-3 text-center sm:mt-5">
+              <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Account Not Found</h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">
+                  We couldn't find an account associated with that Google email. Please register on our onboarding
+                  portal
+                  first.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 sm:mt-6">
+            <router-link to="/register"
+              class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
+              Go to Registration
+            </router-link>
+            <button type="button" @click="showRegistrationModal = false"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <template #footer>
       <p class="text-center text-sm text-gray-600">
         Or
-        <a :href="registerUrl" class="font-medium text-indigo-600 hover:text-indigo-500">
+        <router-link to="/register" class="font-medium text-indigo-600 hover:text-indigo-500">
           register a new account
-        </a>
+        </router-link>
         on our main site.
       </p>
     </template>
@@ -76,17 +139,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
 import AuthLayout from '../../layouts/AuthLayout.vue'
+import client from '../../api/client'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
 const email = ref('')
 const password = ref('')
 const registerUrl = import.meta.env.VITE_REG_URL || 'https://vedantbilling.com/register'
+const googleAuthUrl = `${client.defaults.baseURL}/auth/google/redirect`
+
+const showRegistrationModal = ref(false)
+
+onMounted(() => {
+  if (route.query.error === 'not_registered') {
+    showRegistrationModal.value = true
+  }
+})
 
 const handleLogin = async () => {
   const success = await authStore.login({

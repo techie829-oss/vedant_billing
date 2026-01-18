@@ -5,7 +5,15 @@ use Illuminate\Support\Facades\Route;
 
 // Public Auth Routes
 Route::post('/login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
-Route::post('/register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
+Route::post('/register', [\App\Http\Controllers\Api\AuthController::class, 'register'])->middleware('throttle:6,1');
+
+// Social Login
+Route::get('auth/google/redirect', [\App\Http\Controllers\Api\AuthController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [\App\Http\Controllers\Api\AuthController::class, 'handleGoogleCallback']);
+
+// Email Verification
+Route::get('/email/verify/{id}/{hash}', [\App\Http\Controllers\Api\AuthController::class, 'verifyEmail'])->middleware(['assigned_signed', 'throttle:6,1'])->name('verification.verify');
+Route::post('/email/resend', [\App\Http\Controllers\Api\AuthController::class, 'resendVerificationEmail'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [\App\Http\Controllers\Api\AuthController::class, 'logout']);
@@ -58,7 +66,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Subscriptions
     Route::get('/subscriptions', [\App\Http\Controllers\Api\SubscriptionController::class, 'index']);
+    Route::get('/subscriptions/history', [\App\Http\Controllers\Api\SubscriptionController::class, 'history']);
     Route::post('/subscriptions', [\App\Http\Controllers\Api\SubscriptionController::class, 'store']);
+    // Payment Verification Step (We need to add this to the controller)
+    Route::post('/subscriptions/verify-payment', [\App\Http\Controllers\Api\SubscriptionController::class, 'verifyPayment']);
+    Route::post('/subscriptions/initiate-payment', [\App\Http\Controllers\Api\SubscriptionController::class, 'initiatePayment']);
+
+    // Webhook
+    Route::post('/webhooks/razorpay', [\App\Http\Controllers\Api\WebhookController::class, 'handle']);
 
     // Dashboard
     Route::get('/dashboard', [\App\Http\Controllers\Api\DashboardController::class, 'index']);
@@ -81,4 +96,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Quick Notes
     Route::apiResource('quick-notes', \App\Http\Controllers\Api\QuickNoteController::class);
+
+    // SaaS Subscriptions
+    Route::get('/subscriptions', [\App\Http\Controllers\Api\SubscriptionController::class, 'index']);
+    Route::post('/subscriptions', [\App\Http\Controllers\Api\SubscriptionController::class, 'store']);
+    // Payment Verification Step (We need to add this to the controller)
+    Route::post('/subscriptions/verify-payment', [\App\Http\Controllers\Api\SubscriptionController::class, 'verifyPayment']);
+    Route::post('/subscriptions/initiate-payment', [\App\Http\Controllers\Api\SubscriptionController::class, 'initiatePayment']);
 });

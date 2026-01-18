@@ -65,6 +65,29 @@ export const useAuthStore = defineStore('auth', {
             }
         },
 
+        async register(userData: any) {
+            this.isLoading = true
+            this.error = null
+            try {
+                const response = await client.post('/register', userData)
+                this.token = response.data.token
+                this.user = response.data.user
+
+                localStorage.setItem('token', this.token!)
+                localStorage.setItem('user', JSON.stringify(this.user))
+
+                // Fetch businesses (likely empty, but good practice)
+                await this.fetchBusinesses()
+
+                return true
+            } catch (err: any) {
+                this.error = err.response?.data?.message || 'Registration failed'
+                return false
+            } finally {
+                this.isLoading = false
+            }
+        },
+
         async fetchBusinesses() {
             try {
                 const response = await client.get('/businesses')

@@ -19,4 +19,14 @@ class LandingController extends Controller
 
         return view('welcome', compact('plans'));
     }
+
+    public function privacy()
+    {
+        return view('web.privacy');
+    }
+
+    public function terms()
+    {
+        return view('web.terms');
+    }
 }

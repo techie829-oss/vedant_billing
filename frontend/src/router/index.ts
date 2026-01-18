@@ -11,7 +11,38 @@ const router = createRouter({
         {
             path: '/login',
             name: 'login',
-            component: () => import('../views/auth/LoginView.vue')
+            component: () => import('../views/auth/LoginView.vue'),
+            meta: { guest: true }
+        },
+        {
+            path: '/register',
+            name: 'register',
+            component: () => import('../views/auth/RegisterView.vue'),
+            meta: { guest: true }
+        },
+        {
+            path: '/google-callback',
+            name: 'google-callback',
+            component: () => import('../views/auth/GoogleCallbackView.vue'),
+            meta: { guest: true }
+        },
+        {
+            path: '/verify-email',
+            name: 'verify-email',
+            component: () => import('../views/auth/VerifyEmailView.vue'),
+            meta: { auth: true } // User is logged in but unverified
+        },
+        {
+            path: '/email-verified',
+            name: 'email-verified',
+            component: () => import('../views/auth/EmailVerifiedView.vue'),
+            meta: { auth: true }
+        },
+        {
+            path: '/forgot-password',
+            name: 'dashboard',
+            component: () => import('../views/DashboardView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
         },
         {
             path: '/businesses',
@@ -203,6 +234,12 @@ const router = createRouter({
             path: '/settings/business',
             name: 'settings.business',
             component: () => import('../views/settings/BusinessProfileView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/settings/billing',
+            name: 'settings-billing',
+            component: () => import('../views/settings/PricingView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
         },
         {
