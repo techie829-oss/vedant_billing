@@ -183,8 +183,7 @@
                                 <span class="ml-1 text-gray-500">/{{ plan.interval }}</span>
                             </div>
 
-                            <p class="mt-4 text-sm text-gray-500">{{ plan.description || 'Perfect for growing
-                                businesses.' }}</p>
+                            <p class="mt-4 text-sm text-gray-500">{{ getPlanDescription(plan) }}</p>
 
                             <ul class="mt-6 space-y-4">
                                 <li v-for="feature in plan.features" :key="feature.id" class="flex items-start">
@@ -301,6 +300,10 @@ const subscribe = async (planId: string) => {
 
 const scrollToPlans = () => {
     document.getElementById('available-plans')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+const getPlanDescription = (plan: any) => {
+    return plan.description || 'Perfect for growing businesses.'
 }
 
 onMounted(() => {
