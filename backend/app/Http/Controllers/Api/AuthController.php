@@ -30,16 +30,17 @@ class AuthController extends Controller
             $frontendUrl = rtrim(config('app.frontend_url'), '/');
 
             if (!$user) {
-                // User does not exist -> Redirect to Register with pre-filled data
-                $query = http_build_query([
+                // User does not exist -> Auto-register
+                $user = User::create([
                     'name' => $googleUser->getName(),
                     'email' => $googleUser->getEmail(),
-                    'error' => 'not_registered'
+                    'password' => \Illuminate\Support\Facades\Hash::make(\Illuminate\Support\Str::random(16)),
                 ]);
-                return redirect("{$frontendUrl}/register?{$query}");
+                $user->markEmailAsVerified(); // Trust Google verification
+                event(new \Illuminate\Auth\Events\Registered($user));
             }
 
-            // User exists -> Generate Token
+            // User exists or just created -> Generate Token
             $token = $user->createToken('auth_token')->plainTextToken;
 
             // Redirect to Frontend Callback with Token
