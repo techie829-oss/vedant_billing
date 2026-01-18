@@ -30,8 +30,13 @@ class AuthController extends Controller
             $frontendUrl = rtrim(config('app.frontend_url'), '/');
 
             if (!$user) {
-                // User does not exist -> Redirect to Login with error
-                return redirect("{$frontendUrl}/login?error=not_registered");
+                // User does not exist -> Redirect to Register with pre-filled data
+                $query = http_build_query([
+                    'name' => $googleUser->getName(),
+                    'email' => $googleUser->getEmail(),
+                    'error' => 'not_registered'
+                ]);
+                return redirect("{$frontendUrl}/register?{$query}");
             }
 
             // User exists -> Generate Token

@@ -127,8 +127,12 @@ const password = ref('')
 const password_confirmation = ref('')
 const googleAuthUrl = `${client.defaults.baseURL}/auth/google/redirect`
 
-// Load reCAPTCHA script
+// Load reCAPTCHA script and pre-fill data
 onMounted(() => {
+    const route = useRouter().currentRoute.value
+    if (route.query.email) email.value = route.query.email as string
+    if (route.query.name) name.value = route.query.name as string
+
     const script = document.createElement('script')
     script.src = `https://www.google.com/recaptcha/api.js?render=${import.meta.env.VITE_RECAPTCHA_SITE_KEY}`
     document.head.appendChild(script)
