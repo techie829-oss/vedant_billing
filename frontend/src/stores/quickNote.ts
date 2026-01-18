@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import client from '../api/client'
 import type { ParsedItem } from '../utils/smartParser'
 
 export interface QuickNote {
@@ -22,7 +22,7 @@ export const useQuickNoteStore = defineStore('quickNote', {
         async fetchNotes() {
             this.loading = true
             try {
-                const response = await axios.get('/api/quick-notes')
+                const response = await client.get('/quick-notes')
                 this.notes = response.data.data
             } catch (error) {
                 console.error('Failed to fetch notes', error)
@@ -33,7 +33,7 @@ export const useQuickNoteStore = defineStore('quickNote', {
         async saveNote(note: Partial<QuickNote>) {
             this.loading = true
             try {
-                const response = await axios.post('/api/quick-notes', note)
+                const response = await client.post('/quick-notes', note)
                 this.notes.unshift(response.data)
                 return response.data
             } catch (error) {
@@ -45,7 +45,7 @@ export const useQuickNoteStore = defineStore('quickNote', {
         },
         async deleteNote(id: string) {
             try {
-                await axios.delete(`/api/quick-notes/${id}`)
+                await client.delete(`/quick-notes/${id}`)
                 this.notes = this.notes.filter(n => n.id !== id)
             } catch (error) {
                 console.error('Failed to delete note', error)

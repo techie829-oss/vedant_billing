@@ -17,7 +17,7 @@
                                 <span>{{ currentDate }}</span>
                                 <span class="w-1 h-1 rounded-full bg-gray-300"></span>
                                 <span class="uppercase tracking-wider">Note #{{ Math.floor(Math.random() * 1000) + 4000
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
 
@@ -73,7 +73,7 @@
                                         <div class="flex items-center text-gray-800 font-bold">
                                             <span class="text-xl mr-2 text-indigo-600">{{ item.chained_op === '*' ? '×'
                                                 : '÷'
-                                            }}</span>
+                                                }}</span>
                                             <span class="text-lg">{{ item.chained_val }}</span>
                                         </div>
                                     </template>
@@ -93,7 +93,7 @@
                                                 <div v-if="item.name || item.qty > 1"
                                                     class="text-xs text-gray-400 font-medium flex items-center gap-1">
                                                     <span v-if="item.name" class="italic text-gray-500">{{ item.name
-                                                        }}</span>
+                                                    }}</span>
                                                     <span v-if="item.name && item.qty > 1"
                                                         class="text-gray-300">•</span>
                                                     <span v-if="item.qty > 1 || item.price !== item.total"
@@ -112,7 +112,7 @@
                                 <span v-if="mode === 'order_receipt'" class="text-gray-900">{{
                                     formatCurrency(item.total) }}</span>
                                 <span v-else class="text-gray-500">{{ formatCurrency(runningTotals[index] || 0)
-                                }}</span>
+                                    }}</span>
 
                                 <button @click.stop="removeItem(index)"
                                     class="absolute -right-5 top-1/2 -translate-y-1/2 p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -245,20 +245,23 @@ import AppLayout from '../../layouts/AppLayout.vue'
 import { parseLine, type ParsedItem } from '../../utils/smartParser'
 import { useAuthStore } from '../../stores/auth'
 import { useRouter } from 'vue-router'
-import { useQuickNoteStore } from '../../stores/quickNote'
+import { useQuickNoteStore, type QuickNote } from '../../stores/quickNote'
 import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const quickNoteStore = useQuickNoteStore()
 
-const { loading } = storeToRefs(quickNoteStore)
+const { loading, notes } = storeToRefs(quickNoteStore)
 
 const mode = ref<'order_receipt' | 'hisab'>('order_receipt')
 const inputLine = ref('')
 const selectedOperator = ref('+') // Default operator
 const orderItems = ref<ParsedItem[]>([])
 const hisabItems = ref<ParsedItem[]>([])
+// History State
+const showHistory = ref(false)
+
 const items = computed({
     get: () => mode.value === 'order_receipt' ? orderItems.value : hisabItems.value,
     set: (val) => {
@@ -447,10 +450,6 @@ const convertToInvoice = () => {
     router.push({ name: 'invoice-create', query: { from_quick_note: 'true' } })
 }
 
-
-
-
-
 const saveToBackend = async () => {
     if (items.value.length === 0) return
 
@@ -461,9 +460,28 @@ const saveToBackend = async () => {
             total_amount: grandTotal.value
         })
         alert('Note saved successfully!')
+        // Refresh list
+        quickNoteStore.fetchNotes()
     } catch (e) {
         alert('Failed to save note. Please ensure you are online.')
     }
+}
+
+// History Actions
+const loadNote = (note: QuickNote) => {
+    if (items.value.length > 0) {
+        if (!confirm('Current note will be cleared. Load saved note?')) return
+    }
+    mode.value = note.type
+    // Deep copy content to avoid reference issues
+    // Ensure content is parsed correctly if backend sends plain object
+    items.value = JSON.parse(JSON.stringify(note.content))
+    showHistory.value = false
+}
+
+const deleteNote = async (id: string) => {
+    if (!confirm('Delete this saved note?')) return
+    await quickNoteStore.deleteNote(id)
 }
 
 // @ts-ignore
@@ -474,6 +492,7 @@ const downloadImage = () => {
 
 onMounted(() => {
     if (inputRef.value) inputRef.value.focus()
+    quickNoteStore.fetchNotes()
 })
 
 </script>
