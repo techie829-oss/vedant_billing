@@ -82,9 +82,18 @@ const createBusiness = async () => {
         const res = await client.post('/businesses', form)
         const newBusiness = res.data
 
-        // Refresh businesses in store and set active
+        // Refresh businesses in store
         await authStore.fetchBusinesses()
-        authStore.setActiveBusiness(newBusiness)
+
+        // Find the full business object with pivot data from the store
+        const fullBusiness = authStore.userBusinesses.find((b: any) => b.id === newBusiness.id)
+
+        if (fullBusiness) {
+            authStore.setActiveBusiness(fullBusiness)
+        } else {
+            // Fallback
+            authStore.setActiveBusiness(newBusiness)
+        }
 
         // Redirect to Dashboard
         router.push('/')
