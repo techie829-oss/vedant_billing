@@ -17,10 +17,10 @@ class BusinessController extends Controller
         $businesses = $request->user()->businesses()
             ->withPivot(['role', 'status', 'joined_at'])
             ->with([
-                    'subscriptions' => function ($q) {
-                        $q->with('plan.features')->latest()->limit(1);
-                    }
-                ])
+                'subscriptions' => function ($q) {
+                    $q->with('plan.features')->latest()->limit(1);
+                }
+            ])
             ->get();
 
         return response()->json($businesses);
@@ -92,5 +92,36 @@ class BusinessController extends Controller
         $business->update($validated);
 
         return response()->json($business);
+    }
+
+    /**
+     * Update invoice display preferences
+     */
+    public function updateInvoicePreferences(Request $request, Business $business)
+    {
+        // Check authorization
+        if (!$business->users()->where('user_id', Auth::id())->exists()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'show_hsn_sac' => 'boolean',
+            'show_gst_breakdown' => 'boolean',
+            'show_bank_qr' => 'boolean',
+            'show_notes' => 'boolean',
+            'show_shipping_address' => 'boolean',
+            'show_discount_column' => 'boolean',
+            'show_transport_details' => 'boolean',
+        ]);
+
+        $currentMeta = $business->meta ?? [];
+        $currentMeta['invoice_display_preferences'] = $validated;
+
+        $business->update(['meta' => $currentMeta]);
+
+        return response()->json([
+            'message' => 'Preferences updated successfully',
+            'preferences' => $validated
+        ]);
     }
 }

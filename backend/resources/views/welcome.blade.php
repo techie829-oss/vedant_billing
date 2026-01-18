@@ -326,25 +326,27 @@
                 <div>
                     <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Product</h4>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-white">Features</a></li>
-                        <li><a href="#" class="hover:text-white">Pricing</a></li>
-                        <li><a href="#" class="hover:text-white">Intergations</a></li>
+                        <li><a href="{{ route('home') }}#features" class="hover:text-white">Features</a></li>
+                        <li><a href="{{ route('home') }}#pricing" class="hover:text-white">Pricing</a></li>
+                        <li><a href="{{ config('app.frontend_url') }}/login" class="hover:text-white">Login</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Resources</h4>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-white">Blog</a></li>
-                        <li><a href="#" class="hover:text-white">Help Center</a></li>
-                        <li><a href="#" class="hover:text-white">Guides</a></li>
+                        <li><a href="{{ config('app.frontend_url') }}/register" class="hover:text-white">Get
+                                Started</a></li>
+                        <li><a href="{{ config('app.frontend_url') }}/dashboard"
+                                class="hover:text-white">Dashboard</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-white">Support</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Legal</h4>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-white">Privacy</a></li>
-                        <li><a href="#" class="hover:text-white">Terms</a></li>
-                        <li><a href="#" class="hover:text-white">Security</a></li>
+                        <li><a href="{{ route('privacy') }}" class="hover:text-white">Privacy</a></li>
+                        <li><a href="{{ route('terms') }}" class="hover:text-white">Terms</a></li>
+                        <li><a href="{{ route('home') }}" class="hover:text-white">Security</a></li>
                     </ul>
                 </div>
             </div>

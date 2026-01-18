@@ -25,6 +25,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('businesses', \App\Http\Controllers\Api\BusinessController::class);
     Route::apiResource('businesses.members', \App\Http\Controllers\Api\BusinessMemberController::class)->parameters(['members' => 'user']);
     Route::post('/businesses/{business}/members/{user}/reset-password', [\App\Http\Controllers\Api\BusinessMemberController::class, 'resetPassword']);
+    Route::post('/businesses/{business}/invoice-preferences', [\App\Http\Controllers\Api\BusinessController::class, 'updateInvoicePreferences']);
+
 
     // Core Business Modules
     Route::apiResource('parties', \App\Http\Controllers\Api\PartyController::class);

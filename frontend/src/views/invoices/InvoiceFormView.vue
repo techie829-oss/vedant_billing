@@ -24,84 +24,122 @@
         <form @submit.prevent="save('draft')" class="space-y-6">
             <!-- Display Options -->
             <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                <div class="p-3 sm:p-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-base font-semibold leading-7 text-gray-900">Display Options</h3>
-                    </div>
+                <div class="p-3 sm:p-6">
+                    <button type="button" @click="showDisplayOptions = !showDisplayOptions"
+                        class="flex w-full items-center justify-between text-left">
+                        <div>
+                            <h3 class="text-base font-semibold leading-7 text-gray-900">Display Options</h3>
+                            <p class="mt-1 text-sm text-gray-500">
+                                {{ getActiveOptionsCount() }} options active
+                            </p>
+                        </div>
+                        <svg class="h-5 w-5 text-gray-400 transition-transform"
+                            :class="{ 'rotate-180': showDisplayOptions }" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
 
-                    <div class="grid grid-cols-1 gap-3 mb-4 sm:grid-cols-2 md:grid-cols-3 sm:gap-4 sm:mb-6">
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
-                                <input id="show_hsn" type="checkbox" v-model="form.meta.display_options.show_hsn"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                    <div v-show="showDisplayOptions" class="mt-4 space-y-4">
+                        <!-- Quick Presets -->
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" @click="applyPreset('simple')"
+                                class="px-3 py-1.5 text-xs font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200">
+                                Simple Invoice
+                            </button>
+                            <button type="button" @click="applyPreset('gst')"
+                                class="px-3 py-1.5 text-xs font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200">
+                                GST Invoice
+                            </button>
+                            <button type="button" @click="applyPreset('full')"
+                                class="px-3 py-1.5 text-xs font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200">
+                                Full Details
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 sm:gap-4">
+                            <div class="relative flex items-start">
+                                <div class="flex h-6 items-center">
+                                    <input id="show_hsn" type="checkbox" v-model="form.meta.display_options.show_hsn"
+                                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                </div>
+                                <div class="ml-3 text-sm leading-6">
+                                    <label for="show_hsn" class="font-medium text-gray-900">Show HSN/SAC Column</label>
+                                </div>
                             </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_hsn" class="font-medium text-gray-900">Show HSN/SAC Column</label>
+                            <div class="relative flex items-start">
+                                <div class="flex h-6 items-center">
+                                    <input id="show_gst" type="checkbox"
+                                        v-model="form.meta.display_options.show_gst_breakdown"
+                                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                </div>
+                                <div class="ml-3 text-sm leading-6">
+                                    <label for="show_gst" class="font-medium text-gray-900">Show GST Breakdown</label>
+                                </div>
+                            </div>
+                            <div class="relative flex items-start">
+                                <div class="flex h-6 items-center">
+                                    <input id="show_discount" type="checkbox"
+                                        v-model="form.meta.display_options.show_discount"
+                                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                </div>
+                                <div class="ml-3 text-sm leading-6">
+                                    <label for="show_discount" class="font-medium text-gray-900">Show Discount
+                                        Column</label>
+                                </div>
+                            </div>
+                            <div class="relative flex items-start">
+                                <div class="flex h-6 items-center">
+                                    <input id="show_qr" type="checkbox"
+                                        v-model="form.meta.display_options.show_qr_bank_details"
+                                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                </div>
+                                <div class="ml-3 text-sm leading-6">
+                                    <label for="show_qr" class="font-medium text-gray-900">Show Bank/QR Details</label>
+                                </div>
+                            </div>
+                            <div class="relative flex items-start">
+                                <div class="flex h-6 items-center">
+                                    <input id="show_shipping" type="checkbox"
+                                        v-model="form.meta.display_options.show_shipping_address"
+                                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                </div>
+                                <div class="ml-3 text-sm leading-6">
+                                    <label for="show_shipping" class="font-medium text-gray-900">Show Shipping
+                                        Address</label>
+                                </div>
+                            </div>
+                            <div class="relative flex items-start">
+                                <div class="flex h-6 items-center">
+                                    <input id="show_transport" type="checkbox"
+                                        v-model="form.meta.display_options.show_transport_details"
+                                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                </div>
+                                <div class="ml-3 text-sm leading-6">
+                                    <label for="show_transport" class="font-medium text-gray-900">Show Transport/Order
+                                        Details</label>
+                                </div>
+                            </div>
+                            <div class="relative flex items-start">
+                                <div class="flex h-6 items-center">
+                                    <input id="show_description" type="checkbox"
+                                        v-model="form.meta.display_options.show_description"
+                                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                </div>
+                                <div class="ml-3 text-sm leading-6">
+                                    <label for="show_description" class="font-medium text-gray-900">Show
+                                        Notes</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
-                                <input id="show_gst" type="checkbox"
-                                    v-model="form.meta.display_options.show_gst_breakdown"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_gst" class="font-medium text-gray-900">Show GST Breakdown</label>
-                            </div>
-                        </div>
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
-                                <input id="show_discount" type="checkbox"
-                                    v-model="form.meta.display_options.show_discount"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_discount" class="font-medium text-gray-900">Show Discount
-                                    Column</label>
-                            </div>
-                        </div>
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
-                                <input id="show_qr" type="checkbox"
-                                    v-model="form.meta.display_options.show_qr_bank_details"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_qr" class="font-medium text-gray-900">Show Bank/QR Details</label>
-                            </div>
-                        </div>
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
-                                <input id="show_shipping" type="checkbox"
-                                    v-model="form.meta.display_options.show_shipping_address"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_shipping" class="font-medium text-gray-900">Show Shipping
-                                    Address</label>
-                            </div>
-                        </div>
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
-                                <input id="show_transport" type="checkbox"
-                                    v-model="form.meta.display_options.show_transport_details"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_transport" class="font-medium text-gray-900">Show Transport/Order
-                                    Details</label>
-                            </div>
-                        </div>
-                        <div class="relative flex items-start">
-                            <div class="flex h-6 items-center">
-                                <input id="show_description" type="checkbox"
-                                    v-model="form.meta.display_options.show_description"
-                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            </div>
-                            <div class="ml-3 text-sm leading-6">
-                                <label for="show_description" class="font-medium text-gray-900">Show
-                                    Notes</label>
-                            </div>
+
+                        <!-- Remember Settings Toggle -->
+                        <div class="border-t pt-4 flex items-center">
+                            <input id="remember_settings" type="checkbox" v-model="rememberSettings"
+                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                            <label for="remember_settings" class="ml-2 text-sm font-medium text-gray-700">
+                                Remember these settings for future invoices
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -554,6 +592,7 @@ import { useAuthStore } from '../../stores/auth'
 import { storeToRefs } from 'pinia'
 import StateSelect from '../../components/StateSelect.vue'
 import ProductAutocomplete from '../../components/ProductAutocomplete.vue'
+import client from '../../api/client'
 
 const router = useRouter()
 const route = useRoute()
@@ -568,6 +607,10 @@ const isEditMode = computed(() => route.params.id !== undefined)
 
 const customers = ref<any[]>([])
 const products = ref<Product[]>([])
+
+// Display Options State
+const showDisplayOptions = ref(false)
+const rememberSettings = ref(false)
 
 const form = ref({
     invoice_number: '',
@@ -606,6 +649,50 @@ const form = ref({
         }
     }
 })
+
+// Helper Methods for Display Options
+const getActiveOptionsCount = () => {
+    const opts = form.value.meta.display_options
+    return Object.values(opts).filter(v => v === true).length
+}
+
+const applyPreset = (preset: string) => {
+    switch (preset) {
+        case 'simple':
+            form.value.meta.display_options = {
+                show_transport_details: false,
+                show_hsn: false,
+                show_gst_breakdown: false,
+                show_discount: false,
+                show_qr_bank_details: false,
+                show_shipping_address: false,
+                show_description: true
+            }
+            break
+        case 'gst':
+            form.value.meta.display_options = {
+                show_transport_details: false,
+                show_hsn: true,
+                show_gst_breakdown: true,
+                show_discount: false,
+                show_qr_bank_details: true,
+                show_shipping_address: false,
+                show_description: true
+            }
+            break
+        case 'full':
+            form.value.meta.display_options = {
+                show_transport_details: true,
+                show_hsn: true,
+                show_gst_breakdown: true,
+                show_discount: true,
+                show_qr_bank_details: true,
+                show_shipping_address: true,
+                show_description: true
+            }
+            break
+    }
+}
 
 // Auto-fill address when customer changes
 watch(() => form.value.party_id, (newId) => {
@@ -787,6 +874,34 @@ const loadInvoice = async () => {
         if (business && business.meta) {
             form.value.notes = business.meta.default_notes || ''
             form.value.terms = business.meta.default_terms || ''
+
+            // Load saved display preferences or apply smart defaults
+            if (business.meta.invoice_display_preferences) {
+                form.value.meta.display_options = {
+                    show_transport_details: business.meta.invoice_display_preferences.show_transport_details ?? false,
+                    show_hsn: business.meta.invoice_display_preferences.show_hsn_sac ?? true,
+                    show_gst_breakdown: business.meta.invoice_display_preferences.show_gst_breakdown ?? true,
+                    show_discount: business.meta.invoice_display_preferences.show_discount_column ?? false,
+                    show_qr_bank_details: business.meta.invoice_display_preferences.show_bank_qr ?? false,
+                    show_shipping_address: business.meta.invoice_display_preferences.show_shipping_address ?? false,
+                    show_description: business.meta.invoice_display_preferences.show_notes ?? true
+                }
+                rememberSettings.value = true
+            } else {
+                // Smart defaults based on business profile
+                const hasGST = !!business.gstin
+                const hasBankDetails = !!business.bank_name
+
+                form.value.meta.display_options = {
+                    show_transport_details: false,
+                    show_hsn: hasGST,
+                    show_gst_breakdown: hasGST,
+                    show_discount: false,
+                    show_qr_bank_details: hasBankDetails,
+                    show_shipping_address: false,
+                    show_description: true
+                }
+            }
         }
         return
     }
@@ -878,6 +993,33 @@ const save = async (status: 'draft' | 'sent') => {
         alert('Failed to save invoice')
     }
 }
+
+// Save preferences when Remember Settings is checked and options change
+const savePreferences = async () => {
+    const business = authStore.activeBusiness
+    if (!business || !rememberSettings.value) return
+
+    try {
+        await client.post(`/businesses/${business.id}/invoice-preferences`, {
+            show_hsn_sac: form.value.meta.display_options.show_hsn,
+            show_gst_breakdown: form.value.meta.display_options.show_gst_breakdown,
+            show_bank_qr: form.value.meta.display_options.show_qr_bank_details,
+            show_notes: form.value.meta.display_options.show_description,
+            show_shipping_address: form.value.meta.display_options.show_shipping_address,
+            show_discount_column: form.value.meta.display_options.show_discount,
+            show_transport_details: form.value.meta.display_options.show_transport_details
+        })
+    } catch (e) {
+        console.error('Failed to save invoice preferences:', e)
+    }
+}
+
+// Watch for changes in display options when Remember is checked
+watch(() => form.value.meta.display_options, () => {
+    if (rememberSettings.value) {
+        savePreferences()
+    }
+}, { deep: true })
 
 onMounted(() => {
     loadCustomers()
