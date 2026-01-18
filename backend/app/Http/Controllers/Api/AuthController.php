@@ -27,7 +27,7 @@ class AuthController extends Controller
 
             $user = User::where('email', $googleUser->getEmail())->first();
 
-            $frontendUrl = config('app.frontend_url');
+            $frontendUrl = rtrim(config('app.frontend_url'), '/');
 
             if (!$user) {
                 // User does not exist -> Redirect to Login with error
@@ -42,7 +42,7 @@ class AuthController extends Controller
 
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Google Login Error: ' . $e->getMessage());
-            $frontendUrl = config('app.frontend_url');
+            $frontendUrl = rtrim(config('app.frontend_url'), '/');
             return redirect("{$frontendUrl}/login?error=google_failed");
         }
     }
@@ -136,15 +136,17 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid verification link'], 403);
         }
 
+        $frontendUrl = rtrim(config('app.frontend_url'), '/');
+
         if ($user->hasVerifiedEmail()) {
-            return redirect(config('app.frontend_url') . '/email-verified');
+            return redirect($frontendUrl . '/email-verified');
         }
 
         if ($user->markEmailAsVerified()) {
             event(new \Illuminate\Auth\Events\Verified($user));
         }
 
-        return redirect(config('app.frontend_url') . '/email-verified');
+        return redirect($frontendUrl . '/email-verified');
     }
 
     public function resendVerificationEmail(Request $request)
