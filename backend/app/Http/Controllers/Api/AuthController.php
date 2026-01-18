@@ -27,7 +27,7 @@ class AuthController extends Controller
 
             $user = User::where('email', $googleUser->getEmail())->first();
 
-            $frontendUrl = config('app.frontend_url', 'http://localhost:5173');
+            $frontendUrl = config('app.frontend_url');
 
             if (!$user) {
                 // User does not exist -> Redirect to Login with error
@@ -42,7 +42,7 @@ class AuthController extends Controller
 
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Google Login Error: ' . $e->getMessage());
-            $frontendUrl = config('app.frontend_url', 'http://localhost:5173');
+            $frontendUrl = config('app.frontend_url');
             return redirect("{$frontendUrl}/login?error=google_failed");
         }
     }
