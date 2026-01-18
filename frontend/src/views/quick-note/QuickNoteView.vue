@@ -32,7 +32,20 @@
                                 Hisab
                             </button>
                         </div>
+
+                        <!-- History Toggle -->
+                        <button @click="showHistory = !showHistory"
+                            class="ml-2 p-1 text-gray-400 hover:text-indigo-600 transition-colors"
+                            title="View Saved Notes">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                class="w-5 h-5">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </button>
                     </div>
+
 
                     <!-- Column Headers -->
                     <div class="flex text-[10px] uppercase tracking-widest text-gray-400 font-bold font-mono">
@@ -93,7 +106,7 @@
                                                 <div v-if="item.name || item.qty > 1"
                                                     class="text-xs text-gray-400 font-medium flex items-center gap-1">
                                                     <span v-if="item.name" class="italic text-gray-500">{{ item.name
-                                                    }}</span>
+                                                        }}</span>
                                                     <span v-if="item.name && item.qty > 1"
                                                         class="text-gray-300">•</span>
                                                     <span v-if="item.qty > 1 || item.price !== item.total"
@@ -191,6 +204,59 @@
                 </div>
 
             </div>
+
+            <!-- History Drawer (Left Side) -->
+            <transition name="slide">
+                <div v-if="showHistory"
+                    class="fixed inset-y-0 left-0 z-50 w-80 bg-white shadow-2xl flex flex-col font-sans">
+                    <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                        <h2 class="font-bold text-gray-800">Saved Notes</h2>
+                        <button @click="showHistory = false" class="text-gray-400 hover:text-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                class="w-5 h-5">
+                                <path
+                                    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 space-y-3">
+                        <div v-if="loading" class="text-center py-4 text-gray-400 text-sm">Loading...</div>
+                        <div v-else-if="notes.length === 0" class="text-center py-8 text-gray-400 text-sm">
+                            No saved notes yet.
+                        </div>
+                        <div v-for="note in notes" :key="note.id"
+                            class="group relative bg-white border border-gray-200 rounded-lg p-3 hover:border-indigo-300 hover:shadow-sm transition-all cursor-pointer"
+                            @click="loadNote(note)">
+                            <div class="flex justify-between items-start mb-2">
+                                <span
+                                    class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-gray-100 text-gray-600">
+                                    {{ note.type === 'order_receipt' ? 'Order' : 'Hisab' }}
+                                </span>
+                                <span class="text-xs text-gray-400">{{ new Date(note.created_at).toLocaleDateString()
+                                    }}</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 text-sm mb-1 line-clamp-1">{{ note.title }}</h3>
+                            <div class="flex justify-between items-end">
+                                <span class="font-mono font-bold text-indigo-600">{{
+                                    formatCurrency(Number(note.total_amount))
+                                    }}</span>
+                                <button @click.stop="deleteNote(note.id)"
+                                    class="text-gray-300 hover:text-red-500 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                        class="w-4 h-4">
+                                        <path fill-rule="evenodd"
+                                            d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+
+            <!-- Overlay for history -->
+            <div v-if="showHistory" class="fixed inset-0 bg-black/20 z-40" @click="showHistory = false"></div>
 
             <!-- Edit Modal Overlay (Darker) -->
             <div v-if="editingIndex !== null"

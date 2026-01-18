@@ -814,7 +814,7 @@ const downloadPdf = async () => {
         const opt = {
             margin: 0, // Top, Left, Bottom, Right
             filename: `Invoice-${invoice.value.invoice_number}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
+            image: { type: 'jpeg', quality: 0.98 } as const,
             html2canvas: {
                 scale: 2,
                 useCORS: true,
@@ -826,7 +826,7 @@ const downloadPdf = async () => {
                 width: 794, // Force A4 width in px (approx 794px at 96dpi)
                 windowWidth: 794 // Match window width to content width
             },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as 'portrait' | 'landscape' }
         }
 
         if (typeof html2pdf !== 'function') {
