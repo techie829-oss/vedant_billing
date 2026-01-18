@@ -104,6 +104,18 @@ export const useAuthStore = defineStore('auth', {
             }
         },
 
+        async fetchUser() {
+            try {
+                const response = await client.get('/user')
+                this.user = response.data
+                localStorage.setItem('user', JSON.stringify(this.user))
+                return this.user
+            } catch (err) {
+                console.error('Failed to fetch user', err)
+                throw err
+            }
+        },
+
         setActiveBusiness(business: any) {
             this.activeBusiness = business
             localStorage.setItem('activeBusiness', JSON.stringify(business))

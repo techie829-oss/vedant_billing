@@ -151,7 +151,6 @@ const authStore = useAuthStore()
 
 const email = ref('')
 const password = ref('')
-const registerUrl = import.meta.env.VITE_REG_URL || 'https://vedantbilling.com/register'
 const googleAuthUrl = `${client.defaults.baseURL}/auth/google/redirect`
 
 const showRegistrationModal = ref(false)
