@@ -8,6 +8,7 @@ export interface QuickNote {
     user_id: string
     type: 'order_receipt' | 'hisab'
     title: string
+    description?: string
     content: ParsedItem[]
     total_amount: number
     created_at: string

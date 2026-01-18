@@ -11,12 +11,14 @@
                 <div class="p-6 pb-4 border-b-2 border-dashed border-gray-200 shrink-0 z-10 bg-white">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-800 tracking-tight font-mono">{{ businessName }}
-                            </h1>
+                            <input v-model="noteTitle" type="text"
+                                class="text-2xl font-bold text-gray-800 tracking-tight font-mono bg-transparent border-none p-0 focus:ring-0 placeholder:text-gray-300 w-full"
+                                placeholder="Note Title...">
                             <div class="text-xs text-gray-500 mt-1 font-mono flex items-center gap-2">
                                 <span>{{ currentDate }}</span>
                                 <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-                                <span class="uppercase tracking-wider">Note #{{ Math.floor(Math.random() * 1000) + 4000
+                                <span class="uppercase tracking-wider">Note #{{ Math.floor(Math.random()
+                                    * 1000) + 4000
                                     }}</span>
                             </div>
                         </div>
@@ -175,8 +177,15 @@
                     </div>
                 </div>
 
+                <!-- Custom Note / Remarks Section -->
+                <div class="px-6 py-2 bg-gray-50 z-10">
+                    <textarea v-model="noteDescription"
+                        class="w-full text-sm font-mono bg-white border-gray-200 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 placeholder:text-gray-400 p-2"
+                        rows="2" placeholder="Add custom note..."></textarea>
+                </div>
+
                 <!-- Footer Total -->
-                <div class="p-6 bg-gray-50 border-t border-gray-200 z-10">
+                <div class="p-6 pt-2 bg-gray-50 border-t border-gray-200 z-10">
                     <div class="flex justify-between items-center">
                         <div class="flex gap-2">
                             <button @click="clearAll" v-if="items.length > 0"
@@ -233,13 +242,13 @@
                                     {{ note.type === 'order_receipt' ? 'Order' : 'Hisab' }}
                                 </span>
                                 <span class="text-xs text-gray-400">{{ new Date(note.created_at).toLocaleDateString()
-                                    }}</span>
+                                }}</span>
                             </div>
                             <h3 class="font-bold text-gray-800 text-sm mb-1 line-clamp-1">{{ note.title }}</h3>
                             <div class="flex justify-between items-end">
                                 <span class="font-mono font-bold text-indigo-600">{{
                                     formatCurrency(Number(note.total_amount))
-                                    }}</span>
+                                }}</span>
                                 <button @click.stop="deleteNote(note.id)"
                                     class="text-gray-300 hover:text-red-500 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -309,13 +318,11 @@
 import { ref, computed, nextTick, onMounted } from 'vue'
 import AppLayout from '../../layouts/AppLayout.vue'
 import { parseLine, type ParsedItem } from '../../utils/smartParser'
-import { useAuthStore } from '../../stores/auth'
 import { useRouter } from 'vue-router'
 import { useQuickNoteStore, type QuickNote } from '../../stores/quickNote'
 import { storeToRefs } from 'pinia'
 
 const router = useRouter()
-const authStore = useAuthStore()
 const quickNoteStore = useQuickNoteStore()
 
 const { loading, notes } = storeToRefs(quickNoteStore)
@@ -325,6 +332,10 @@ const inputLine = ref('')
 const selectedOperator = ref('+') // Default operator
 const orderItems = ref<ParsedItem[]>([])
 const hisabItems = ref<ParsedItem[]>([])
+// Note Metadata
+const noteTitle = ref('')
+const noteDescription = ref('')
+
 // History State
 const showHistory = ref(false)
 
@@ -342,7 +353,6 @@ const editNameRef = ref<HTMLInputElement | null>(null)
 const editingIndex = ref<number | null>(null)
 const editingItem = ref<ParsedItem>({ raw: '', qty: 0, name: '', price: 0, total: 0, is_valid: false })
 
-const businessName = computed(() => authStore.activeBusiness?.name || 'My Business')
 // Format: "31 Dec, 2025"
 const currentDate = computed(() => {
     return new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -508,7 +518,8 @@ const convertToInvoice = () => {
             unit_price: i.price,
             tax_rate: 0, // Default 0 for rough notes
             discount: 0
-        }))
+        })),
+        notes: noteDescription.value // Pass description to invoice notes
     }
 
     // Just a simple hack: Store in session/local storage and read in QuotationForm
@@ -522,6 +533,8 @@ const saveToBackend = async () => {
     try {
         await quickNoteStore.saveNote({
             type: mode.value,
+            title: noteTitle.value || 'Untitled Note',
+            description: noteDescription.value,
             content: items.value,
             total_amount: grandTotal.value
         })
@@ -539,6 +552,8 @@ const loadNote = (note: QuickNote) => {
         if (!confirm('Current note will be cleared. Load saved note?')) return
     }
     mode.value = note.type
+    noteTitle.value = note.title
+    noteDescription.value = note.description || ''
     // Deep copy content to avoid reference issues
     // Ensure content is parsed correctly if backend sends plain object
     items.value = JSON.parse(JSON.stringify(note.content))

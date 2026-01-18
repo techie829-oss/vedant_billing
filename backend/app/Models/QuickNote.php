@@ -17,6 +17,7 @@ class QuickNote extends Model
         'user_id',
         'type',
         'title',
+        'description',
         'content',
         'total_amount',
     ];
