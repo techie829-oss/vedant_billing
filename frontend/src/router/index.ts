@@ -292,14 +292,24 @@ router.beforeEach((to, _from, next) => {
     } else if (isAuthenticated && to.name === 'business-selection' && hasBusiness) {
         // Trying to switch business? For now, if they have one selected, redirect to dashboard.
         // Or allow it if we want to support switching. Let's allow switching explicitly,
-        // but for now the implementation plan said: "redirect to / if business already selected"
-        // Allow access to business selection page so users can switch
         next()
     } else if (isAuthenticated && to.name === 'settings.team' && !auth.hasFeature('multi_user')) {
         // Feature restricted (e.g. Starter Plan trying to access Team)
         alert("Upgrade to Pro to access Team Management.") // Optional user feedback
         next({ name: 'dashboard' })
     } else {
+        // Strict Subscription Enforcement
+        // If authenticated and has business selected, checking plan status
+        if (isAuthenticated && hasBusiness) {
+            const currentPlan = auth.currentSubscription?.plan;
+            const isRestrictedRoute = !['billing', 'settings.business', 'settings-billing', 'settings.team', 'business-create', 'business-selection', 'login'].includes(to.name as string);
+
+            // If no plan is active (or deleted), force redirect to billing page (plan selection)
+            if (!currentPlan && isRestrictedRoute) {
+                next({ name: 'billing' });
+                return;
+            }
+        }
         next()
     }
 })
