@@ -12,7 +12,7 @@
       </div>
       <p class="text-gray-500 mb-6">No businesses found associated with your account.</p>
 
-      <router-link to="/billing"
+      <router-link to="/businesses/create"
         class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
         <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd"
