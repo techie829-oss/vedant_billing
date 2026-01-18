@@ -232,20 +232,27 @@
                 </div>
             </div>
         </div>
+        <!-- Address Required Modal -->
+        <BillingAddressModal :isOpen="showAddressModal" :business="authStore.activeBusiness"
+            @close="showAddressModal = false" @saved="handleAddressSaved" />
     </AppLayout>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import AppLayout from '../layouts/AppLayout.vue'
+import BillingAddressModal from '../components/BillingAddressModal.vue'
 import client from '../api/client'
+import { useAuthStore } from '../stores/auth'
 
+const authStore = useAuthStore()
 const plans = ref<any[]>([])
 const currentSubscription = ref<any>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
 const processing = ref(false)
 const targetPlanId = ref<string | null>(null)
+const showAddressModal = ref(false)
 
 const fetchPlans = async () => {
     try {
@@ -281,6 +288,22 @@ const getUsage = (featureSlug: string) => {
 }
 
 const subscribe = async (planId: string) => {
+    // 1. Check if business has billing address
+    const business = authStore.activeBusiness
+    if (!business) return
+
+    // Check for required billing fields: Address, City, State, Pincode
+    const hasAddress = business.address &&
+        business.meta?.city &&
+        business.meta?.state &&
+        business.meta?.pincode
+
+    if (!hasAddress) {
+        targetPlanId.value = planId
+        showAddressModal.value = true
+        return
+    }
+
     if (!confirm('Are you sure you want to switch to this plan?')) return;
 
     processing.value = true
@@ -296,6 +319,18 @@ const subscribe = async (planId: string) => {
     } finally {
         processing.value = false
         targetPlanId.value = null
+    }
+}
+
+const handleAddressSaved = async () => {
+    showAddressModal.value = false
+    // Refresh business data implies auth store is updated (which we did in component)
+    // But we might want to ensure we have the absolute latest?
+    // Actually the component updated the auth store.
+
+    if (targetPlanId.value) {
+        // Retry subscription flow
+        subscribe(targetPlanId.value)
     }
 }
 
