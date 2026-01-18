@@ -184,7 +184,7 @@
                             </div>
 
                             <p class="mt-4 text-sm text-gray-500">{{ plan.description || 'Perfect for growing
-                            businesses.' }}</p>
+                                businesses.' }}</p>
 
                             <ul class="mt-6 space-y-4">
                                 <li v-for="feature in plan.features" :key="feature.id" class="flex items-start">
@@ -247,18 +247,28 @@ const error = ref<string | null>(null)
 const processing = ref(false)
 const targetPlanId = ref<string | null>(null)
 
-if (currentSubscription.value && !currentSubscription.value.plan) {
-    currentSubscription.value = null;
-    setTimeout(() => {
-        scrollToPlans()
-    }, 500)
-}
-} catch (err: any) {
-    error.value = 'Failed to load plans or subscription.'
-    console.error(err)
-} finally {
-    loading.value = false
-}
+const fetchPlans = async () => {
+    try {
+        const [plansRes, subRes] = await Promise.all([
+            client.get('/plans'),
+            client.get('/subscriptions')
+        ])
+        plans.value = plansRes.data
+        currentSubscription.value = subRes.data
+
+        // If subscription exists but plan is missing/deleted, treat as no subscription and redirect to plans
+        if (currentSubscription.value && !currentSubscription.value.plan) {
+            currentSubscription.value = null;
+            setTimeout(() => {
+                scrollToPlans()
+            }, 500)
+        }
+    } catch (err: any) {
+        error.value = 'Failed to load plans or subscription.'
+        console.error(err)
+    } finally {
+        loading.value = false
+    }
 }
 
 const isCurrentPlan = (planId: string) => {
