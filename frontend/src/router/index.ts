@@ -242,12 +242,7 @@ const router = createRouter({
             component: () => import('../views/settings/BusinessProfileView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
         },
-        {
-            path: '/settings/billing',
-            name: 'settings-billing',
-            component: () => import('../views/settings/PricingView.vue'),
-            meta: { requiresAuth: true, requiresBusiness: true }
-        },
+
         {
             path: '/settings/team',
             name: 'settings.team',
@@ -302,7 +297,7 @@ router.beforeEach((to, _from, next) => {
         // If authenticated and has business selected, checking plan status
         if (isAuthenticated && hasBusiness) {
             const currentPlan = auth.currentSubscription?.plan;
-            const isRestrictedRoute = !['billing', 'settings.business', 'settings-billing', 'settings.team', 'business-create', 'business-selection', 'login'].includes(to.name as string);
+            const isRestrictedRoute = !['billing', 'settings.business', 'settings.team', 'business-create', 'business-selection', 'login'].includes(to.name as string);
 
             // If no plan is active (or deleted), force redirect to billing page (plan selection)
             if (!currentPlan && isRestrictedRoute) {
