@@ -235,6 +235,12 @@
         <!-- Address Required Modal -->
         <BillingAddressModal :isOpen="showAddressModal" :business="authStore.activeBusiness"
             @close="showAddressModal = false" @saved="handleAddressSaved" />
+
+        <!-- Confirmation Modal -->
+        <ConfirmationModal :isOpen="showConfirmModal" title="Confirm Plan Change"
+            message="Are you sure you want to switch to this plan? Your subscription will be updated immediately."
+            confirmText="Yes, Switch Plan" :processing="processing" @close="showConfirmModal = false"
+            @confirm="confirmSubscription" />
     </AppLayout>
 </template>
 
@@ -242,6 +248,7 @@
 import { ref, onMounted } from 'vue'
 import AppLayout from '../layouts/AppLayout.vue'
 import BillingAddressModal from '../components/BillingAddressModal.vue'
+import ConfirmationModal from '../components/ConfirmationModal.vue'
 import client from '../api/client'
 import { useAuthStore } from '../stores/auth'
 
@@ -253,6 +260,7 @@ const error = ref<string | null>(null)
 const processing = ref(false)
 const targetPlanId = ref<string | null>(null)
 const showAddressModal = ref(false)
+const showConfirmModal = ref(false)
 
 const fetchPlans = async () => {
     try {
@@ -290,7 +298,6 @@ const getUsage = (featureSlug: string) => {
 const subscribe = async (planId: string) => {
     // 1. Check if business has billing address
     const business = authStore.activeBusiness
-    console.log('Subscribe Check - Business:', business);
     if (!business) return
 
     // Check for required billing fields: Address, City, State, Pincode
@@ -302,27 +309,25 @@ const subscribe = async (planId: string) => {
         meta.state &&
         meta.pincode
 
-    console.log('Subscribe Check - hasAddress (Robust):', hasAddress, {
-        address: business.address,
-        metaraw: business.meta,
-        city: meta.city
-    });
-
     if (!hasAddress) {
-        console.log('Address missing, opening modal to fix.');
         targetPlanId.value = planId
         showAddressModal.value = true
         return
     }
 
-    if (!confirm('Are you sure you want to switch to this plan?')) return;
+    // Open confirmation modal
+    targetPlanId.value = planId
+    showConfirmModal.value = true
+}
+
+const confirmSubscription = async () => {
+    if (!targetPlanId.value) return;
 
     processing.value = true
-    targetPlanId.value = planId
-
     try {
-        const response = await client.post('/subscriptions', { plan_id: planId })
+        const response = await client.post('/subscriptions', { plan_id: targetPlanId.value })
         currentSubscription.value = response.data
+        showConfirmModal.value = false
         alert('Plan switched successfully!')
     } catch (err: any) {
         console.error('Subscription error:', err)
@@ -334,12 +339,7 @@ const subscribe = async (planId: string) => {
 }
 
 const handleAddressSaved = async () => {
-    console.log('Address Saved. Retrying subscription...');
     showAddressModal.value = false
-
-    // Log new state
-    console.log('Active Business after save:', authStore.activeBusiness);
-
     if (targetPlanId.value) {
         // Retry subscription flow
         await subscribe(targetPlanId.value)
