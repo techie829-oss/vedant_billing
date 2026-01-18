@@ -4,11 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [\App\Http\Controllers\Web\LandingController::class, 'index'])->name('home');
 
-// Web Registration (Consumer) - DEPRECATED (Moved to Frontend)
-// Route::middleware('guest')->group(function () {
-//     Route::get('register', [\App\Http\Controllers\Web\AuthController::class, 'showRegister'])->name('register');
-//     Route::post('register', [\App\Http\Controllers\Web\AuthController::class, 'register']);
-// });
+
 
 // Legal Pages
 Route::get('privacy-policy', [\App\Http\Controllers\Web\LandingController::class, 'privacy'])->name('privacy');
