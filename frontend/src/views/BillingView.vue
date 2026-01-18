@@ -224,7 +224,8 @@
                                 ]">
                                 <span v-if="processing && targetPlanId === plan.id">Processing...</span>
                                 <span v-else-if="isCurrentPlan(plan.id)">Current Plan</span>
-                                <span v-else>Switch Plan</span>
+                                <span v-else>{{ currentSubscription && currentSubscription.plan ? 'Switch Plan' :
+                                    'Choose Plan' }}</span>
                             </button>
                         </div>
                     </div>
