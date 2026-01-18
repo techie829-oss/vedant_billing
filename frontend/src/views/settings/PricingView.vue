@@ -5,7 +5,8 @@
         <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
 
             <!-- Current Subscription Status -->
-            <div v-if="currentSubscription" class="bg-white overflow-hidden shadow rounded-lg mb-8">
+            <div v-if="currentSubscription && currentSubscription.plan"
+                class="bg-white overflow-hidden shadow rounded-lg mb-8">
                 <div class="px-4 py-5 sm:p-6">
                     <h3 class="text-lg leading-6 font-medium text-gray-900">Current Plan</h3>
                     <div class="mt-2 max-w-xl text-sm text-gray-500">
