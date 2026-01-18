@@ -30,11 +30,11 @@ class SubscriptionController extends Controller
         // Limit Billing Access to Admins/Owners
         Gate::authorize('update', $business);
 
-        $subscription = $business->subscriptions()
+        $active = $business->subscriptions()
             ->where(function ($query) {
                 $query->where('status', 'active')
                     ->orWhere(function ($q) {
-                        $q->where('status', 'trialing') // Assuming trialing status exists or logic
+                        $q->where('status', 'trialing')
                             ->where('trial_ends_at', '>', now());
                     });
             })
@@ -42,14 +42,22 @@ class SubscriptionController extends Controller
             ->latest()
             ->first();
 
-        Log::info('Subscription retrieved', ['id' => $subscription ? $subscription->id : 'none']);
+        // Check for pending subscription
+        $pending = $business->subscriptions()
+            ->where('status', 'pending')
+            ->with('plan')
+            ->latest()
+            ->first();
 
-        if ($subscription) {
+        if ($active) {
             $usageService = new UsageService();
-            $subscription->usage = $usageService->getUsage($business);
+            $active->usage = $usageService->getUsage($business);
         }
 
-        return response()->json($subscription);
+        return response()->json([
+            'active' => $active,
+            'pending' => $pending
+        ]);
     }
 
     /**
@@ -67,25 +75,24 @@ class SubscriptionController extends Controller
         }
 
         $business = Business::findOrFail($businessId);
-
-        // Security Check
         Gate::authorize('update', $business);
 
-        // Deactivate current active subscriptions
-        $business->subscriptions()->where('status', 'active')->update(['status' => 'canceled', 'canceled_at' => now()]);
+        // Cancel any other pending subscriptions for cleanliness
+        $business->subscriptions()->where('status', 'pending')->forceDelete();
 
-        // Create new subscription
         $plan = Plan::findOrFail($request->plan_id);
 
+        // Create new PENDING subscription
         $subscription = Subscription::create([
             'business_id' => $businessId,
             'plan_id' => $plan->id,
-            'status' => 'active',
-            'current_cycle_start' => now(),
-            'current_cycle_end' => $plan->interval === 'yearly' ? now()->addYear() : now()->addMonth(),
+            'status' => 'pending',
+            'current_cycle_start' => null,
+            'current_cycle_end' => null,
+            'meta' => []
         ]);
 
-        return response()->json($subscription->load('plan'), 201);
+        return response()->json($subscription, 201);
     }
 
     /**
@@ -111,10 +118,31 @@ class SubscriptionController extends Controller
     private function createSubscription(Request $request)
     {
         $plan = Plan::findOrFail($request->plan_id);
+        $businessId = $request->header('X-Business-ID');
 
         if (!$plan->razorpay_plan_id) {
             return response()->json(['message' => 'This plan is not configured for recurring payment'], 400);
         }
+
+        // Find existing pending or create new
+        $subscription = Subscription::where('business_id', $businessId)
+            ->where('plan_id', $plan->id)
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
+
+        if (!$subscription) {
+            $subscription = Subscription::create([
+                'business_id' => $businessId,
+                'plan_id' => $plan->id,
+                'status' => 'pending',
+                'meta' => ['type' => 'recurring']
+            ]);
+        } else {
+            // Update meta type just in case
+            $subscription->update(['meta' => array_merge($subscription->meta ?? [], ['type' => 'recurring'])]);
+        }
+
 
         $keyId = config('services.razorpay.key_id', env('RAZORPAY_KEY_ID'));
         $keySecret = config('services.razorpay.key_secret', env('RAZORPAY_KEY_SECRET'));
@@ -129,14 +157,29 @@ class SubscriptionController extends Controller
                 'customer_notify' => 1,
                 'notes' => [
                     'internal_plan_id' => $plan->id,
-                    'business_id' => $request->header('X-Business-ID')
+                    'business_id' => $businessId,
+                    'internal_subscription_id' => $subscription->id
                 ]
             ]);
 
         if ($response->successful()) {
-            return response()->json($response->json());
+            $data = $response->json();
+
+            // Update meta with razorpay id
+            $subscription->update([
+                'meta' => array_merge($subscription->meta ?? [], [
+                    'razorpay_id' => $data['id'],
+                    'provider_status' => $data['status']
+                ])
+            ]);
+
+            return response()->json(array_merge($data, [
+                'key_id' => $keyId,
+                'internal_subscription_id' => $subscription->id
+            ]));
         }
 
+        // Keep pending subscription, just log error
         Log::error('Razorpay Subscription Failed', ['response' => $response->body()]);
         return response()->json(['message' => 'Failed to create subscription', 'details' => $response->json()], 500);
     }
@@ -147,6 +190,25 @@ class SubscriptionController extends Controller
     private function createOrder(Request $request)
     {
         $plan = Plan::findOrFail($request->plan_id);
+        $businessId = $request->header('X-Business-ID');
+
+        // Find existing pending or create new
+        $subscription = Subscription::where('business_id', $businessId)
+            ->where('plan_id', $plan->id)
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
+
+        if (!$subscription) {
+            $subscription = Subscription::create([
+                'business_id' => $businessId,
+                'plan_id' => $plan->id,
+                'status' => 'pending',
+                'meta' => ['type' => 'one_time']
+            ]);
+        } else {
+            $subscription->update(['meta' => array_merge($subscription->meta ?? [], ['type' => 'one_time'])]);
+        }
 
         $keyId = config('services.razorpay.key_id', env('RAZORPAY_KEY_ID'));
         $keySecret = config('services.razorpay.key_secret', env('RAZORPAY_KEY_SECRET'));
@@ -161,16 +223,33 @@ class SubscriptionController extends Controller
                 'receipt' => 'ord_' . time(),
                 'notes' => [
                     'plan_id' => $plan->id,
-                    'business_id' => $request->header('X-Business-ID'),
-                    'type' => 'one_time'
+                    'business_id' => $businessId,
+                    'type' => 'one_time',
+                    'internal_subscription_id' => $subscription->id
                 ]
             ]);
 
         if ($response->successful()) {
-            return response()->json($response->json());
+            $data = $response->json();
+
+            // Update meta with razorpay order id
+            $subscription->update([
+                'meta' => array_merge($subscription->meta ?? [], ['razorpay_order_id' => $data['id']])
+            ]);
+
+            return response()->json(array_merge($data, [
+                'key_id' => $keyId,
+                'internal_subscription_id' => $subscription->id
+            ]));
         }
 
-        return response()->json(['message' => 'Failed to create order'], 500);
+        // Keep pending
+        Log::error('Razorpay Order Failed', ['response' => $response->body()]);
+
+        return response()->json([
+            'message' => 'Failed to create order',
+            'details' => $response->json()
+        ], 500);
     }
 
     /**
@@ -212,23 +291,53 @@ class SubscriptionController extends Controller
             $business = Business::findOrFail($businessId);
             Gate::authorize('update', $business);
 
+            // Find the pending subscription
+            // If internal_subscription_id is unknown, we could search by meta->razorpay_order_id
+            // But we can require internal_subscription_id or search intelligently
+
+            $query = Subscription::where('business_id', $businessId)->where('status', 'pending');
+
+            if ($isRecurring) {
+                // For recurring, we might store subscription_id in meta or just match latest pending
+                // or match by plan_id
+                // Best is to search by razorpay_id stored in meta
+                // But JSON search in MySQL/Postgres varies. 
+                // Simple fallback: Fetch all pending and check meta in PHP or just assume the latest pending subscription for this plan
+                $subscription = $query->where('plan_id', $request->plan_id)->latest()->first();
+            } else {
+                // For One Time, check razorpay_order_id in meta
+                $orderId = $request->razorpay_order_id;
+                $subscription = $query->get()->first(function ($sub) use ($orderId) {
+                    return ($sub->meta['razorpay_order_id'] ?? '') === $orderId;
+                });
+            }
+
+            if (!$subscription) {
+                // Fallback: Create new if not found (should not happen in new flow, but good for safety)
+                $plan = Plan::findOrFail($request->plan_id);
+                $subscription = Subscription::create([
+                    'business_id' => $business->id,
+                    'plan_id' => $plan->id,
+                    'status' => 'pending',
+                    'meta' => []
+                ]);
+            }
+
             // Deactivate old active subscriptions
             $business->subscriptions()->where('status', 'active')->update(['status' => 'canceled', 'canceled_at' => now()]);
 
-            $plan = Plan::findOrFail($request->plan_id);
+            $plan = $subscription->plan; // Reload plan relationship
 
-            $subscription = Subscription::create([
-                'business_id' => $business->id,
-                'plan_id' => $plan->id,
+            $subscription->update([
                 'status' => 'active',
                 'current_cycle_start' => now(),
                 'current_cycle_end' => $plan->interval === 'yearly' ? now()->addYear() : now()->addMonth(),
-                'meta' => [
+                'meta' => array_merge($subscription->meta ?? [], [
                     'razorpay_payment_id' => $request->razorpay_payment_id,
-                    'razorpay_id' => $isRecurring ? $request->razorpay_subscription_id : $request->razorpay_order_id,
+                    'razorpay_id' => $isRecurring ? $request->razorpay_subscription_id : ($request->razorpay_order_id ?? null),
                     'type' => $isRecurring ? 'recurring' : 'one_time',
                     'auto_renewal' => $isRecurring
-                ]
+                ])
             ]);
 
             return response()->json(['message' => 'Payment verified. Plan Activated.', 'subscription' => $subscription]);

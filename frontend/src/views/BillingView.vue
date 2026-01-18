@@ -139,24 +139,44 @@
                     </button>
                 </div>
 
+                <!-- Pending Payment Section -->
+                <div v-if="pendingSubscription && pendingSubscription.plan"
+                    class="bg-orange-50 rounded-xl shadow-sm border border-orange-200 p-6">
+                    <h3 class="text-lg font-semibold text-orange-800 mb-2">Pending Payment</h3>
+                    <p class="text-sm text-orange-700 mb-4">
+                        You have a pending subscription for <strong>{{ pendingSubscription.plan.name }}</strong>.
+                        Please complete the payment to activate it.
+                    </p>
+                    <button @click="subscribe(pendingSubscription.plan.id)"
+                        class="w-full bg-orange-600 text-white rounded-lg py-2 px-4 text-sm font-medium hover:bg-orange-700 transition-colors">
+                        Pay & Activate Now
+                    </button>
+                </div>
+
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-semibold text-gray-900">Invoices</h3>
                         <a href="#" class="text-sm text-indigo-600 hover:text-indigo-800">View All</a>
                     </div>
                     <div class="space-y-3">
-                        <div class="flex justify-between items-center text-sm py-2 border-b border-gray-50">
-                            <div class="flex items-center">
-                                <svg class="h-4 w-4 text-gray-400 mr-2" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                <span>INV-00123</span>
+                        <div
+                            v-if="currentSubscription && currentSubscription.meta && currentSubscription.meta.payment_history && currentSubscription.meta.payment_history.length">
+                            <div v-for="(inv, idx) in currentSubscription.meta.payment_history.slice(0, 5)" :key="idx"
+                                class="flex justify-between items-center text-sm py-2 border-b border-gray-50 last:border-0">
+                                <div class="flex items-center">
+                                    <svg class="h-4 w-4 text-gray-400 mr-2" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    <span>{{ inv.invoice_number }}</span>
+                                </div>
+                                <span class="text-gray-500">{{ new Date(inv.date).toLocaleDateString() }}</span>
+                                <span class="font-medium text-gray-900">₹{{ inv.amount }}</span>
                             </div>
-                            <span class="text-gray-500">Dec 01, 2025</span>
-                            <span class="font-medium text-gray-900">₹{{ currentSubscription && currentSubscription.plan
-                                ? currentSubscription.plan.price : '0.00' }}</span>
+                        </div>
+                        <div v-else class="text-sm text-gray-500 italic py-2">
+                            No invoices generated yet.
                         </div>
                     </div>
                 </div>
@@ -215,15 +235,19 @@
                         </div>
 
                         <div class="p-6 bg-gray-50 border-t border-gray-100">
-                            <button @click="subscribe(plan.id)" :disabled="isCurrentPlan(plan.id) || processing"
+                            <button @click="isPendingPlan(plan.id) ? processPayment(plan.id) : subscribe(plan.id)"
+                                :disabled="isCurrentPlan(plan.id) || processing"
                                 class="w-full border rounded-lg py-2 px-4 shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
                                 :class="[
                                     isCurrentPlan(plan.id)
                                         ? 'bg-gray-100 text-gray-500 cursor-default border-gray-200'
-                                        : 'bg-indigo-600 text-white hover:bg-indigo-700 border-transparent'
+                                        : isPendingPlan(plan.id)
+                                            ? 'bg-orange-600 text-white hover:bg-orange-700 border-transparent'
+                                            : 'bg-indigo-600 text-white hover:bg-indigo-700 border-transparent'
                                 ]">
                                 <span v-if="processing && targetPlanId === plan.id">Processing...</span>
                                 <span v-else-if="isCurrentPlan(plan.id)">Current Plan</span>
+                                <span v-else-if="isPendingPlan(plan.id)">Complete Payment</span>
                                 <span v-else>{{ currentSubscription && currentSubscription.plan ? 'Switch Plan' :
                                     'Choose Plan' }}</span>
                             </button>
@@ -255,6 +279,7 @@ import { useAuthStore } from '../stores/auth'
 const authStore = useAuthStore()
 const plans = ref<any[]>([])
 const currentSubscription = ref<any>(null)
+const pendingSubscription = ref<any>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
 const processing = ref(false)
@@ -269,7 +294,15 @@ const fetchPlans = async () => {
             client.get('/subscriptions')
         ])
         plans.value = plansRes.data
-        currentSubscription.value = subRes.data
+
+        // Handle new response format { active: ..., pending: ... }
+        if (subRes.data.active || subRes.data.pending) {
+            currentSubscription.value = subRes.data.active
+            pendingSubscription.value = subRes.data.pending
+        } else {
+            // Fallback for old format if backend not fully synced/cached (though we updated it)
+            currentSubscription.value = subRes.data.id ? subRes.data : null;
+        }
 
         // If subscription exists but plan is missing/deleted, treat as no subscription and redirect to plans
         if (currentSubscription.value && !currentSubscription.value.plan) {
@@ -284,6 +317,10 @@ const fetchPlans = async () => {
     } finally {
         loading.value = false
     }
+}
+
+const isPendingPlan = (planId: string) => {
+    return pendingSubscription.value && pendingSubscription.value.plan_id === planId
 }
 
 const isCurrentPlan = (planId: string) => {
@@ -320,29 +357,133 @@ const subscribe = async (planId: string) => {
     showConfirmModal.value = true
 }
 
+// Helper to load Razorpay script dynamically
+const loadRazorpay = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+        if ((window as any).Razorpay) {
+            resolve(true)
+            return
+        }
+        const script = document.createElement('script')
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+        script.onload = () => resolve(true)
+        script.onerror = () => resolve(false)
+        document.body.appendChild(script)
+    })
+}
+
 const confirmSubscription = async () => {
     if (!targetPlanId.value) return;
 
     processing.value = true
     try {
-        const response = await client.post('/subscriptions', { plan_id: targetPlanId.value })
-        currentSubscription.value = response.data
+        // 1. Create Pending Subscription (Database Record)
+        await client.post('/subscriptions', { plan_id: targetPlanId.value })
+
+        // 2. Refresh State to show "Pending" UI
+        await fetchPlans()
+
         showConfirmModal.value = false
-        alert('Plan switched successfully!')
+
+        // 3. Initiate Payment immediately (User flow continuity)
+        await processPayment(targetPlanId.value)
+
     } catch (err: any) {
-        console.error('Subscription error:', err)
-        alert('Failed to switch plan. Please try again.')
+        console.error('Subscription creation error:', err)
+        alert('Failed to select plan. Please try again.')
     } finally {
         processing.value = false
         targetPlanId.value = null
     }
 }
 
+const processPayment = async (planId: string) => {
+    processing.value = true
+    try {
+        // 1. Load Razorpay SDK
+        const isLoaded = await loadRazorpay()
+        if (!isLoaded) {
+            alert('Failed to load payment gateway. Please check your internet connection.')
+            return
+        }
+
+        // 2. Initiate Payment (Get Order/Subscription ID)
+        // Uses existing pending subscription from backend
+        const plan = plans.value.find(p => p.id === planId)
+        const paymentType = plan?.razorpay_plan_id ? 'subscription' : 'one_time'
+
+        const initResponse = await client.post('/subscriptions/initiate-payment', {
+            plan_id: planId,
+            type: paymentType
+        })
+
+        const { id: razorpayId, key_id: keyId, notes } = initResponse.data
+
+        // 3. Open Razorpay Checkout
+        const options = {
+            key: keyId,
+            name: "Vedant Billing",
+            description: "Subscription Upgrade",
+            [notes && notes.type === 'one_time' ? 'order_id' : 'subscription_id']: razorpayId,
+            handler: async (response: any) => {
+                await verifyPayment(response, planId)
+            },
+            prefill: {
+                name: authStore.activeBusiness?.name || '',
+                email: authStore.user?.email || '',
+                contact: authStore.activeBusiness?.phone || ''
+            },
+            theme: {
+                color: "#4f46e5"
+            },
+            modal: {
+                ondismiss: () => {
+                    processing.value = false
+                    alert('Payment cancelled. You can complete payment explicitly from the dashboard.')
+                }
+            }
+        }
+
+        const rzp = new (window as any).Razorpay(options)
+        rzp.open()
+
+    } catch (err: any) {
+        console.error('Payment initiation error:', err)
+        alert(err.response?.data?.message || 'Failed to initiate payment. Please try again.')
+        processing.value = false
+    }
+}
+
+const verifyPayment = async (paymentResponse: any, planId: string) => {
+    try {
+        const payload = {
+            razorpay_payment_id: paymentResponse.razorpay_payment_id,
+            razorpay_signature: paymentResponse.razorpay_signature,
+            razorpay_subscription_id: paymentResponse.razorpay_subscription_id,
+            razorpay_order_id: paymentResponse.razorpay_order_id,
+            plan_id: planId
+        }
+
+        const response = await client.post('/subscriptions/verify-payment', payload)
+
+        // Update local state
+        const verResponse = response.data.subscription ? response.data : { subscription: response.data }
+        currentSubscription.value = verResponse.subscription || verResponse
+        pendingSubscription.value = null // Clear pending on success
+
+        alert('Payment successful! Plan switched.')
+    } catch (err: any) {
+        console.error('Payment verification error:', err)
+        alert('Payment verification failed. Please contact support if money was deducted.')
+    } finally {
+        processing.value = false
+    }
+}
+
 const handleAddressSaved = async () => {
     showAddressModal.value = false
     if (targetPlanId.value) {
-        // Retry subscription flow
-        await subscribe(targetPlanId.value)
+        showConfirmModal.value = true
     }
 }
 

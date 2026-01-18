@@ -26,20 +26,27 @@
                         <label for="name" class="block text-sm font-medium text-text-muted mb-1">Plan Name</label>
                         <input type="text" name="name" id="name" class="input-field" required
                             value="{{ old('name', $plan->name) }}">
-                        @error('name') <p class="text-sm text-danger mt-1">{{ $message }}</p> @enderror
+                        @error('name')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
                         <label for="slug" class="block text-sm font-medium text-text-muted mb-1">Slug</label>
-                        <input type="text" name="slug" id="slug" class="input-field" value="{{ old('slug', $plan->slug) }}">
-                        @error('slug') <p class="text-sm text-danger mt-1">{{ $message }}</p> @enderror
+                        <input type="text" name="slug" id="slug" class="input-field"
+                            value="{{ old('slug', $plan->slug) }}">
+                        @error('slug')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
                         <label for="price" class="block text-sm font-medium text-text-muted mb-1">Price (₹)</label>
                         <input type="number" name="price" id="price" class="input-field" required
                             value="{{ old('price', $plan->price) }}" min="0" step="0.01">
-                        @error('price') <p class="text-sm text-danger mt-1">{{ $message }}</p> @enderror
+                        @error('price')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -51,14 +58,31 @@
                             <option value="yearly" {{ old('interval', $plan->interval) === 'yearly' ? 'selected' : '' }}>
                                 Yearly</option>
                         </select>
-                        @error('interval') <p class="text-sm text-danger mt-1">{{ $message }}</p> @enderror
+                        @error('interval')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="razorpay_plan_id" class="block text-sm font-medium text-text-muted mb-1">
+                            Razorpay Plan ID
+                            <span class="text-xs text-gray-500">(For recurring subscriptions only)</span>
+                        </label>
+                        <input type="text" name="razorpay_plan_id" id="razorpay_plan_id" class="input-field"
+                            value="{{ old('razorpay_plan_id', $plan->razorpay_plan_id) }}"
+                            placeholder="plan_xxxxxxxxxxxxx">
+                        <p class="text-xs text-text-muted mt-1">Leave empty for one-time payment plans</p>
+                        @error('razorpay_plan_id')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div class="md:col-span-2">
                         <label for="description" class="block text-sm font-medium text-text-muted mb-1">Description</label>
-                        <textarea name="description" id="description" rows="3"
-                            class="input-field">{{ old('description', $plan->description) }}</textarea>
-                        @error('description') <p class="text-sm text-danger mt-1">{{ $message }}</p> @enderror
+                        <textarea name="description" id="description" rows="3" class="input-field">{{ old('description', $plan->description) }}</textarea>
+                        @error('description')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -69,7 +93,9 @@
                             <option value="inactive" {{ old('status', $plan->status) === 'inactive' ? 'selected' : '' }}>
                                 Inactive</option>
                         </select>
-                        @error('status') <p class="text-sm text-danger mt-1">{{ $message }}</p> @enderror
+                        @error('status')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
             </div>
@@ -79,7 +105,7 @@
                 <h3 class="text-lg font-medium text-text mb-4">Features & Limits</h3>
 
                 <div class="space-y-3">
-                    @foreach($features as $feature)
+                    @foreach ($features as $feature)
                         @php
                             $planFeature = $plan->features->find($feature->id);
                             $isEnabled = $planFeature !== null;
@@ -88,7 +114,9 @@
                         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md border border-gray-200">
                             <div class="flex-1">
                                 <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" name="feature_enabled[{{ $feature->id }}]" value="1" {{ $isEnabled ? 'checked' : '' }} class="rounded border-gray-300 text-primary mr-3">
+                                    <input type="checkbox" name="feature_enabled[{{ $feature->id }}]" value="1"
+                                        {{ $isEnabled ? 'checked' : '' }}
+                                        class="rounded border-gray-300 text-primary mr-3">
                                     <div>
                                         <div class="font-medium text-text">{{ $feature->name }}</div>
                                         <div class="text-sm text-text-muted">{{ $feature->description }}</div>
@@ -96,9 +124,11 @@
                                 </label>
                             </div>
                             <div class="ml-4 w-32">
-                                <input type="number" name="features[{{ $loop->index }}][limit]" class="input-field text-sm"
-                                    placeholder="Limit" min="-1" value="{{ $limit }}">
-                                <input type="hidden" name="features[{{ $loop->index }}][id]" value="{{ $feature->id }}">
+                                <input type="number" name="features[{{ $loop->index }}][limit]"
+                                    class="input-field text-sm" placeholder="Limit" min="-1"
+                                    value="{{ $limit }}">
+                                <input type="hidden" name="features[{{ $loop->index }}][id]"
+                                    value="{{ $feature->id }}">
                             </div>
                         </div>
                     @endforeach

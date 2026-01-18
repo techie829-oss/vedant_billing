@@ -23,23 +23,29 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="name" class="block text-sm font-medium text-text-muted mb-1">Plan Name</label>
-                        <input type="text" name="name" id="name" class="input-field" required value="{{ old('name') }}"
-                            placeholder="e.g., Pro Plan">
-                        @error('name') <p class="text-sm text-danger mt-1">{{ $message }}</p> @enderror
+                        <input type="text" name="name" id="name" class="input-field" required
+                            value="{{ old('name') }}" placeholder="e.g., Pro Plan">
+                        @error('name')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
                         <label for="slug" class="block text-sm font-medium text-text-muted mb-1">Slug (Optional)</label>
                         <input type="text" name="slug" id="slug" class="input-field" value="{{ old('slug') }}"
                             placeholder="Auto-generated if empty">
-                        @error('slug') <p class="text-sm text-danger mt-1">{{ $message }}</p> @enderror
+                        @error('slug')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
                         <label for="price" class="block text-sm font-medium text-text-muted mb-1">Price (₹)</label>
                         <input type="number" name="price" id="price" class="input-field" required
                             value="{{ old('price', 0) }}" min="0" step="0.01" placeholder="999">
-                        @error('price') <p class="text-sm text-danger mt-1">{{ $message }}</p> @enderror
+                        @error('price')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -49,14 +55,31 @@
                             <option value="monthly" {{ old('interval') === 'monthly' ? 'selected' : '' }}>Monthly</option>
                             <option value="yearly" {{ old('interval') === 'yearly' ? 'selected' : '' }}>Yearly</option>
                         </select>
-                        @error('interval') <p class="text-sm text-danger mt-1">{{ $message }}</p> @enderror
+                        @error('interval')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="razorpay_plan_id" class="block text-sm font-medium text-text-muted mb-1">
+                            Razorpay Plan ID
+                            <span class="text-xs text-gray-500">(For recurring subscriptions only)</span>
+                        </label>
+                        <input type="text" name="razorpay_plan_id" id="razorpay_plan_id" class="input-field"
+                            value="{{ old('razorpay_plan_id') }}" placeholder="plan_xxxxxxxxxxxxx">
+                        <p class="text-xs text-text-muted mt-1">Leave empty for one-time payment plans</p>
+                        @error('razorpay_plan_id')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div class="md:col-span-2">
                         <label for="description" class="block text-sm font-medium text-text-muted mb-1">Description</label>
                         <textarea name="description" id="description" rows="3" class="input-field"
                             placeholder="Brief description of this plan">{{ old('description') }}</textarea>
-                        @error('description') <p class="text-sm text-danger mt-1">{{ $message }}</p> @enderror
+                        @error('description')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -66,7 +89,9 @@
                             </option>
                             <option value="inactive" {{ old('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
                         </select>
-                        @error('status') <p class="text-sm text-danger mt-1">{{ $message }}</p> @enderror
+                        @error('status')
+                            <p class="text-sm text-danger mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
             </div>
@@ -78,7 +103,7 @@
                     unlimited.</p>
 
                 <div class="space-y-3">
-                    @foreach($features as $feature)
+                    @foreach ($features as $feature)
                         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md border border-gray-200">
                             <div class="flex-1">
                                 <label class="flex items-center cursor-pointer">
@@ -91,9 +116,10 @@
                                 </label>
                             </div>
                             <div class="ml-4 w-32">
-                                <input type="number" name="features[{{ $loop->index }}][limit]" class="input-field text-sm"
-                                    placeholder="Limit" min="-1" value="-1">
-                                <input type="hidden" name="features[{{ $loop->index }}][id]" value="{{ $feature->id }}">
+                                <input type="number" name="features[{{ $loop->index }}][limit]"
+                                    class="input-field text-sm" placeholder="Limit" min="-1" value="-1">
+                                <input type="hidden" name="features[{{ $loop->index }}][id]"
+                                    value="{{ $feature->id }}">
                             </div>
                         </div>
                     @endforeach

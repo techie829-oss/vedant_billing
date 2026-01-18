@@ -57,17 +57,38 @@ class WebhookController extends Controller
 
             if ($subscription) {
                 // Extend the subscription
-                // Razorpay gives new end_at, or we just add interval.
-                // best is to trust Razorpay's current_end
                 $endedAt = $payload['payload']['subscription']['entity']['end_at'] ?? null; // Timestamp
+
+                // Get Payment Details
+                $amount = $payload['payload']['payment']['entity']['amount'] / 100;
+                $invoiceId = 'INV-' . strtoupper(substr(md5(uniqid()), 0, 8)); // Generate fake invoice ID or use Razorpay's if available
+                $date = date('Y-m-d');
+
+                $history = $subscription->meta['payment_history'] ?? [];
+
+                // Idempotency: Check if payment already recorded
+                foreach ($history as $record) {
+                    if (isset($record['razorpay_payment_id']) && $record['razorpay_payment_id'] === $paymentId) {
+                        Log::info("Webhook: Payment {$paymentId} already processed. Skipping.");
+                        return;
+                    }
+                }
+
+                $history[] = [
+                    'invoice_number' => $invoiceId,
+                    'date' => $date,
+                    'amount' => $amount,
+                    'razorpay_payment_id' => $paymentId
+                ];
 
                 if ($endedAt) {
                     $subscription->update([
                         'current_cycle_end' => \Carbon\Carbon::createFromTimestamp($endedAt),
-                        'status' => 'active' // Ensure it's active
+                        'status' => 'active',
+                        'meta' => array_merge($subscription->meta ?? [], ['payment_history' => $history])
                     ]);
 
-                    Log::info("Subscription {$subscription->id} extended via Webhook.");
+                    Log::info("Subscription {$subscription->id} extended via Webhook. Invoice generated.");
                 }
             } else {
                 Log::warning("Webhook: Subscription not found for ID: {$subscriptionId}");
