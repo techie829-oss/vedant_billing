@@ -34,9 +34,9 @@
           <div class="mt-5 h-0 flex-1 overflow-y-auto">
             <nav class="space-y-1 px-2">
               <!-- Mobile Nav Links (Duplicates of Desktop for now to ensure working state) -->
-              <router-link v-if="hasActivePlan" to="/" @click="mobileMenuOpen = false"
+              <router-link to="/" @click="mobileMenuOpen = false"
                 class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
-                :class="[$route.path === '/' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+                :class="[$route.path === '/' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -45,8 +45,9 @@
                 Dashboard
               </router-link>
 
-              <router-link v-if="hasActivePlan" to="/invoices/create" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors text-indigo-600 bg-indigo-50 mt-2 mb-2">
+              <router-link to="/invoices/create" @click="mobileMenuOpen = false"
+                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors text-indigo-600 bg-indigo-50 mt-2 mb-2"
+                :class="[!hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg class="h-6 w-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -54,9 +55,9 @@
                 New Invoice
               </router-link>
 
-              <router-link v-if="hasActivePlan" to="/quick-note" @click="mobileMenuOpen = false"
+              <router-link to="/quick-note" @click="mobileMenuOpen = false"
                 class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
-                :class="[$route.path.startsWith('/quick-note') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+                :class="[$route.path.startsWith('/quick-note') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -65,9 +66,9 @@
                 Fast Note
               </router-link>
 
-              <router-link v-if="hasActivePlan" to="/invoices" @click="mobileMenuOpen = false"
+              <router-link to="/invoices" @click="mobileMenuOpen = false"
                 class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
-                :class="[$route.path.startsWith('/invoices') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+                :class="[$route.path.startsWith('/invoices') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -76,9 +77,9 @@
                 Invoices
               </router-link>
 
-              <router-link v-if="hasActivePlan" to="/customers" @click="mobileMenuOpen = false"
+              <router-link to="/customers" @click="mobileMenuOpen = false"
                 class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
-                :class="[$route.path.startsWith('/customers') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+                :class="[$route.path.startsWith('/customers') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -87,9 +88,9 @@
                 Customers
               </router-link>
 
-              <router-link v-if="hasActivePlan" to="/products" @click="mobileMenuOpen = false"
+              <router-link to="/products" @click="mobileMenuOpen = false"
                 class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
-                :class="[$route.path.startsWith('/products') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+                :class="[$route.path.startsWith('/products') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -98,9 +99,9 @@
                 Products
               </router-link>
 
-              <router-link v-if="hasActivePlan" to="/reports" @click="mobileMenuOpen = false"
+              <router-link to="/reports" @click="mobileMenuOpen = false"
                 class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
-                :class="[$route.path.startsWith('/reports') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+                :class="[$route.path.startsWith('/reports') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -134,9 +135,8 @@
           </router-link>
         </div>
         <nav class="p-4 space-y-1 flex-1 overflow-y-auto">
-          <router-link v-if="hasActivePlan" to="/"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
-            :class="[$route.path === '/' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+          <router-link to="/" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            :class="[$route.path === '/' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -145,9 +145,9 @@
             Dashboard
           </router-link>
 
-          <router-link v-if="hasActivePlan" to="/quick-note"
+          <router-link to="/quick-note"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
-            :class="[$route.path.startsWith('/quick-note') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+            :class="[$route.path.startsWith('/quick-note') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -156,9 +156,9 @@
             Fast Note
           </router-link>
 
-          <router-link v-if="hasActivePlan" to="/customers"
+          <router-link to="/customers"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
-            :class="[$route.path.startsWith('/customers') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+            :class="[$route.path.startsWith('/customers') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -167,9 +167,9 @@
             Customers
           </router-link>
 
-          <router-link v-if="hasActivePlan" to="/products"
+          <router-link to="/products"
             class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
-            :class="[$route.path.startsWith('/products') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+            :class="[$route.path.startsWith('/products') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -178,10 +178,10 @@
             Products
           </router-link>
 
-          <div v-if="hasActivePlan">
-            <button @click="toggleReportsMenu"
+          <div>
+            <button @click="toggleReportsMenu" :disabled="!hasActivePlan"
               class="w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors focus:outline-none"
-              :class="[$route.path.startsWith('/reports') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
+              :class="[$route.path.startsWith('/reports') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -218,7 +218,7 @@
           </div>
 
           <!-- Sales / Billing Section -->
-          <div v-if="hasActivePlan" class="pt-2 pb-1">
+          <div class="pt-2 pb-1">
             <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Sales</p>
 
             <router-link to="/invoices"
@@ -256,7 +256,7 @@
           </div>
 
           <!-- Finance Section -->
-          <div v-if="hasActivePlan" class="pt-2 pb-1">
+          <div class="pt-2 pb-1">
             <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Finance</p>
             <router-link to="/cashbook"
               class="flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-colors"
@@ -356,8 +356,7 @@
         </main>
 
         <!-- Mobile Bottom Navigation -->
-        <div v-if="hasActivePlan"
-          class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 lg:hidden z-50 pb-safe">
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 lg:hidden z-50 pb-safe">
           <div class="flex justify-around items-center h-16">
             <router-link to="/"
               class="flex flex-col items-center justify-center w-full h-full text-xs font-medium transition-colors"
