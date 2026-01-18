@@ -134,6 +134,29 @@ export const useAuthStore = defineStore('auth', {
             localStorage.removeItem('userBusinesses')
 
             window.location.href = '/login'
+        },
+
+        async refreshSession() {
+            if (!this.token) return
+
+            try {
+                await this.fetchUser()
+                await this.fetchBusinesses()
+
+                // Refresh active business to ensure latest permissions/roles
+                if (this.activeBusiness) {
+                    const fresh = this.userBusinesses.find((b: any) => b.id === this.activeBusiness.id)
+                    if (fresh) {
+                        this.setActiveBusiness(fresh)
+                    } else {
+                        // Business might have been deleted or access revoked
+                        this.activeBusiness = null
+                        localStorage.removeItem('activeBusiness')
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to refresh session", e)
+            }
         }
     }
 })
