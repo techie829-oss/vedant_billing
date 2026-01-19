@@ -1,23 +1,45 @@
 <template>
     <AppLayout>
-
-        <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900">
-                    {{ isEditMode ? 'Edit Invoice' : 'New Invoice' }}
-                </h2>
-            </div>
-            <div class="mt-4 flex sm:mt-0 sm:ml-4">
-                <button @click="$router.back()" type="button"
-                    class="inline-flex items-center rounded-lg bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Cancel</button>
-                <button @click="save('draft')" :disabled="loading" type="button"
-                    class="ml-3 inline-flex items-center rounded-lg bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                    Save as Draft
-                </button>
-                <button @click="save('sent')" :disabled="loading" type="button"
-                    class="ml-3 inline-flex items-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                    {{ loading ? 'Saving...' : 'Save Invoice' }}
-                </button>
+        <!-- Sticky Top Status Bar -->
+        <div class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm mb-6">
+            <div class="px-4 sm:px-6 lg:px-8 py-4">
+                <div class="flex items-center justify-between">
+                    <!-- Left: Back + Title + Status -->
+                    <div class="flex items-center gap-4">
+                        <button @click="$router.back()" type="button"
+                            class="inline-flex items-center text-gray-600 hover:text-gray-900">
+                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Back
+                        </button>
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-xl font-bold text-gray-900">
+                                {{ isEditMode ? `Invoice #${form.invoice_number}` : 'New Invoice' }}
+                            </h2>
+                            <span v-if="isEditMode"
+                                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" :class="{
+                                    'bg-gray-100 text-gray-800': !form.status || form.status === 'draft',
+                                    'bg-blue-100 text-blue-800': form.status === 'sent',
+                                    'bg-green-100 text-green-800': form.status === 'paid'
+                                }">
+                                {{ form.status ? form.status.toUpperCase() : 'DRAFT' }}
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Right: Action Buttons -->
+                    <div class="flex gap-2">
+                        <button @click="save('draft')" :disabled="loading" type="button"
+                            class="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                            {{ loading ? 'Saving...' : 'Save Draft' }}
+                        </button>
+                        <button @click="save('sent')" :disabled="loading" type="button"
+                            class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">
+                            {{ loading ? 'Saving...' : 'Save & Finalize' }}
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -565,16 +587,22 @@
             </div>
 
             <!-- Bottom Actions -->
-            <div class="mt-6 flex items-center justify-end gap-x-4">
+            <div
+                class="mt-8 flex items-center justify-between gap-x-6 border-t border-gray-200 bg-gray-50 px-4 py-4 sm:px-8">
                 <button @click="$router.back()" type="button"
-                    class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
-                <button @click="save('draft')" :disabled="loading" type="button"
-                    class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Save
-                    as Draft</button>
-                <button @click="save('sent')" :disabled="loading" type="button"
-                    class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                    {{ loading ? 'Saving...' : 'Save Invoice' }}
+                    class="text-sm font-semibold text-gray-900 hover:text-gray-700">
+                    Cancel
                 </button>
+                <div class="flex gap-2">
+                    <button @click="save('draft')" :disabled="loading" type="button"
+                        class="inline-flex items-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                        {{ loading ? 'Saving...' : 'Save Draft' }}
+                    </button>
+                    <button @click="save('sent')" :disabled="loading" type="button"
+                        class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">
+                        {{ loading ? 'Saving...' : 'Save & Finalize' }}
+                    </button>
+                </div>
             </div>
 
         </form>
@@ -609,7 +637,7 @@ const customers = ref<any[]>([])
 const products = ref<Product[]>([])
 
 // Display Options State
-const showDisplayOptions = ref(false)
+const showDisplayOptions = ref(true) // Changed to true - visible by default
 const rememberSettings = ref(false)
 
 const form = ref({
@@ -625,6 +653,7 @@ const form = ref({
     vehicle_no: '',
     eway_bill_no: '',
     po_number: '',
+    status: 'draft' as 'draft' | 'sent' | 'paid',
     meta: {
         display_options: {
             show_transport_details: false,
@@ -930,6 +959,7 @@ const loadInvoice = async () => {
                 vehicle_no: invoice.vehicle_no || '',
                 eway_bill_no: invoice.eway_bill_no || '',
                 po_number: invoice.po_number || '',
+                status: invoice.status || 'draft',
                 meta: {
                     display_options: {
                         show_transport_details: invoice.meta?.display_options?.show_transport_details ??

@@ -73,6 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Payment Verification Step (We need to add this to the controller)
     Route::post('/subscriptions/verify-payment', [\App\Http\Controllers\Api\SubscriptionController::class, 'verifyPayment']);
     Route::post('/subscriptions/initiate-payment', [\App\Http\Controllers\Api\SubscriptionController::class, 'initiatePayment']);
+    Route::post('/subscriptions/activate-free', [\App\Http\Controllers\Api\SubscriptionController::class, 'activateFree']);
 
     // Webhook
     Route::post('/webhooks/razorpay', [\App\Http\Controllers\Api\WebhookController::class, 'handle']);

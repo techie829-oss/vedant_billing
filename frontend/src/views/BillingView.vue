@@ -385,8 +385,22 @@ const confirmSubscription = async () => {
 
         showConfirmModal.value = false
 
-        // 3. Initiate Payment immediately (User flow continuity)
-        await processPayment(targetPlanId.value)
+        // 3. Check if plan is free (₹0) - skip payment
+        const plan = plans.value.find(p => p.id === targetPlanId.value)
+        if (plan && plan.price === 0) {
+            // Free plan - activate immediately without payment
+            try {
+                await client.post('/subscriptions/activate-free', { plan_id: targetPlanId.value })
+                await fetchPlans() // Refresh to show active status
+                alert('Free plan activated successfully!')
+            } catch (err: any) {
+                console.error('Free plan activation error:', err)
+                alert('Failed to activate free plan. Please contact support.')
+            }
+        } else {
+            // Paid plan - Initiate Payment immediately
+            await processPayment(targetPlanId.value)
+        }
 
     } catch (err: any) {
         console.error('Subscription creation error:', err)

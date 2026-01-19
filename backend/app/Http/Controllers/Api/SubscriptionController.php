@@ -345,4 +345,57 @@ class SubscriptionController extends Controller
 
         return response()->json(['message' => 'Invalid signature'], 400);
     }
+
+    /**
+     * Activate free plan (₹0) without payment processing
+     */
+    public function activateFree(Request $request)
+    {
+        $request->validate([
+            'plan_id' => 'required|exists:plans,id'
+        ]);
+
+        $businessId = $request->header('X-Business-ID');
+        if (!$businessId) {
+            return response()->json(['message' => 'Business ID required'], 400);
+        }
+
+        $business = Business::findOrFail($businessId);
+        Gate::authorize('update', $business);
+
+        $plan = Plan::findOrFail($request->plan_id);
+
+        // Verify plan is actually free
+        if ($plan->price > 0) {
+            return response()->json(['message' => 'This endpoint is only for free plans'], 400);
+        }
+
+        // Find pending subscription
+        $subscription = Subscription::where('business_id', $businessId)
+            ->where('plan_id', $plan->id)
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
+
+        if (!$subscription) {
+            return response()->json(['message' => 'No pending subscription found'], 404);
+        }
+
+        // Deactivate existing active subscriptions
+        Subscription::where('business_id', $businessId)
+            ->where('status', 'active')
+            ->update(['status' => 'canceled']);
+
+        // Activate the free subscription
+        $subscription->update([
+            'status' => 'active',
+            'current_cycle_start' => now(),
+            'current_cycle_end' => now()->addMonth(),
+        ]);
+
+        return response()->json([
+            'message' => 'Free plan activated successfully',
+            'subscription' => $subscription->load('plan')
+        ]);
+    }
 }
