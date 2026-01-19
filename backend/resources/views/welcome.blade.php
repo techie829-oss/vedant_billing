@@ -1,86 +1,14 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+@extends('layouts.web')
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@section('title', 'VedantBilling - Smart Invoicing & Inventory for Growing Businesses')
+@section('description',
+    'VedantBilling is the all-in-one invoicing and inventory management solution for growing
+    businesses. Create professional invoices, track stock, and manage payments effortlessly.')
+@section('keywords',
+    'invoicing software, inventory management, billing system, small business accounting, gst billing,
+    vedantbilling')
 
-    <!-- SEO Meta Tags -->
-    <meta name="description"
-        content="VedantBilling is the all-in-one invoicing and inventory management solution for growing businesses. Create professional invoices, track stock, and manage payments effortlessly.">
-    <meta name="keywords"
-        content="invoicing software, inventory management, billing system, small business accounting, gst billing, vedantbilling">
-    <meta name="author" content="VedantBilling">
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:title" content="VedantBilling - Smart Invoicing & Inventory for Growing Businesses">
-    <meta property="og:description"
-        content="Manage invoices, track inventory, and handle accounting with a platform designed for modern businesses. Fast, secure, and intuitive.">
-    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ url('/') }}">
-    <meta property="twitter:title" content="VedantBilling - Smart Invoicing & Inventory for Growing Businesses">
-    <meta property="twitter:description"
-        content="Manage invoices, track inventory, and handle accounting with a platform designed for modern businesses. Fast, secure, and intuitive.">
-    <meta property="twitter:image" content="{{ asset('images/og-image.jpg') }}">
-
-    <title>VedantBilling - Smart Invoicing & Inventory for Growing Businesses</title>
-
-    <!-- Styles & Scripts -->
-    @vite(['resources/css/app.scss', 'resources/js/app.js'])
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=outfit:300,400,500,600,700&display=swap" rel="stylesheet" />
-    <style>
-        body {
-            font-family: 'Outfit', sans-serif;
-        }
-    </style>
-</head>
-
-<body class="antialiased bg-gray-50 text-gray-900">
-
-    <!-- Navbar -->
-    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex items-center">
-                    <a href="#" class="flex items-center gap-2">
-                        <!-- Logo Icon -->
-                        <div
-                            class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                            B</div>
-                        <span
-                            class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">VedantBilling</span>
-                    </a>
-                </div>
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#features"
-                        class="text-sm font-medium text-gray-600 hover:text-blue-600 transition">Features</a>
-                    <a href="#pricing"
-                        class="text-sm font-medium text-gray-600 hover:text-blue-600 transition">Pricing</a>
-                    <a href="#testimonials"
-                        class="text-sm font-medium text-gray-600 hover:text-blue-600 transition">Reviews</a>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <!-- PWA Login Link -->
-                    <a href="{{ rtrim(env('WEB_URL', 'https://app.vedantbilling.com'), '/') . '/login' }}"
-                        class="text-sm font-medium text-gray-700 hover:text-gray-900">Login</a>
-
-                    <a href="{{ rtrim(env('WEB_URL', 'https://app.vedantbilling.com'), '/') . '/register' }}"
-                        class="px-5 py-2.5 rounded-full bg-blue-600 text-white text-sm font-medium shadow-lg shadow-blue-600/30 hover:bg-blue-700 hover:shadow-blue-600/40 transition-all transform hover:-translate-y-0.5">
-                        Get Started
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
+@section('content')
     <!-- Hero Section -->
     <div class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -97,9 +25,9 @@
                     class="px-8 py-4 rounded-full bg-blue-600 text-white text-lg font-semibold shadow-xl shadow-blue-600/20 hover:bg-blue-700 hover:shadow-blue-600/40 transition-all transform hover:-translate-y-1">
                     Start Your Free Trial
                 </a>
-                <a href="#demo"
+                <a href="#features"
                     class="px-8 py-4 rounded-full bg-white text-gray-700 text-lg font-semibold border border-gray-200 shadow-sm hover:bg-gray-50 hover:border-gray-300 transition-all">
-                    View Interactive Demo
+                    View Features
                 </a>
             </div>
         </div>
@@ -171,8 +99,7 @@
                 <!-- Feature 2 -->
                 <div
                     class="p-8 rounded-2xl bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300">
-                    <div
-                        class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600 mb-6">
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600 mb-6">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
@@ -186,8 +113,7 @@
                 <!-- Feature 3 -->
                 <div
                     class="p-8 rounded-2xl bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300">
-                    <div
-                        class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 mb-6">
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 mb-6">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
@@ -282,6 +208,115 @@
         </div>
     </div>
 
+    <!-- Testimonials Section -->
+    <div id="testimonials" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Trusted by Growing Businesses</h2>
+                <p class="text-xl text-gray-500">See what our customers have to say</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"VedantBilling transformed our invoicing process. What used to take hours
+                        now takes minutes. Absolutely love it!"</p>
+                    <div class="flex items-center">
+                        <div
+                            class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                            S</div>
+                        <div class="ml-3">
+                            <p class="font-medium text-gray-900">Santosh Kumar</p>
+                            <p class="text-sm text-gray-500">Owner, R/S Chitra Enterprises</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"The GST compliance features are a lifesaver. Perfect for Indian small
+                        businesses. Highly recommended!"</p>
+                    <div class="flex items-center">
+                        <div
+                            class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-bold">
+                            V</div>
+                        <div class="ml-3">
+                            <p class="font-medium text-gray-900">Vinit Kumar</p>
+                            <p class="text-sm text-gray-500">Owner, Kripal Overseas</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"Professional invoices in seconds. The inventory tracking is excellent
+                        too.
+                        Best investment for my business."</p>
+                    <div class="flex items-center">
+                        <div
+                            class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                            V</div>
+                        <div class="ml-3">
+                            <p class="font-medium text-gray-900">Vijay Kumar</p>
+                            <p class="text-sm text-gray-500">Owner, Shiva Traders</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- FAQ Section (Detailed Addition) -->
     <div id="faq" class="py-24 bg-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -316,46 +351,4 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="col-span-1 md:col-span-1">
-                    <span class="text-2xl font-bold text-white">VedantBilling</span>
-                    <p class="mt-4 text-gray-400 text-sm">Empowering growing businesses with smart financial tools.</p>
-                </div>
-                <div>
-                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Product</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="{{ route('home') }}#features" class="hover:text-white">Features</a></li>
-                        <li><a href="{{ route('home') }}#pricing" class="hover:text-white">Pricing</a></li>
-                        <li><a href="{{ config('app.frontend_url') }}/login" class="hover:text-white">Login</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Resources</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="{{ config('app.frontend_url') }}/register" class="hover:text-white">Get
-                                Started</a></li>
-                        <li><a href="{{ config('app.frontend_url') }}/dashboard"
-                                class="hover:text-white">Dashboard</a></li>
-                        <li><a href="{{ route('home') }}" class="hover:text-white">Support</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Legal</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="{{ route('privacy') }}" class="hover:text-white">Privacy</a></li>
-                        <li><a href="{{ route('terms') }}" class="hover:text-white">Terms</a></li>
-                        <li><a href="{{ route('home') }}" class="hover:text-white">Security</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="mt-12 border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
-                &copy; {{ date('Y') }} VedantBilling Inc. All rights reserved.
-            </div>
-        </div>
-    </footer>
-
-</body>
-
-</html>
+@endsection

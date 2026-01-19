@@ -1,5 +1,10 @@
 @extends('layouts.web')
 
+@section('title', 'Terms and Conditions - VedantBilling')
+@section('description', 'Review VedantBilling\'s Terms and Conditions to understand the rules and guidelines for using
+    our service.')
+@section('keywords', 'terms and conditions, terms of service, user agreement, vedantbilling terms')
+
 @section('content')
     <div class="bg-white py-16 px-4 overflow-hidden sm:px-6 lg:px-8 lg:py-24">
         <div class="relative max-w-xl mx-auto">

@@ -1,5 +1,10 @@
 @extends('layouts.web')
 
+@section('title', 'Privacy Policy - VedantBilling')
+@section('description', 'Read VedantBilling\'s Privacy Policy to understand how we collect, use, and protect your
+    personal information.')
+@section('keywords', 'privacy policy, data protection, vedantbilling privacy, user data, gdpr')
+
 @section('content')
     <div class="bg-white py-16 px-4 overflow-hidden sm:px-6 lg:px-8 lg:py-24">
         <div class="relative max-w-xl mx-auto">
