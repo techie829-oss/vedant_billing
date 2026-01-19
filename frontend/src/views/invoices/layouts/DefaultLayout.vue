@@ -28,8 +28,12 @@
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{{ invoice.type ===
-                            'quote' ? 'ESTIMATE' : 'TAX INVOICE' }}</p>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{{ documentTitle }}
+                        </p>
+                        <p v-if="copyType && (invoice.type === 'invoice' || invoice.type === 'tax_invoice' || invoice.type === 'bill_of_supply')"
+                            class="text-[10px] font-bold text-gray-500 uppercase mb-1">
+                            ({{ copyLabel }})
+                        </p>
                         <h2 class="text-lg font-mono font-bold text-gray-900">{{ invoice.invoice_number }}</h2>
                         <div class="text-xs text-gray-500 mt-1 space-y-0.5">
                             <p>Date: <span class="font-medium text-gray-900">{{ formatDate(invoice.date) }}</span></p>
@@ -357,8 +361,17 @@ import { computed } from 'vue';
 const props = defineProps<{
     invoice: any,
     taxBreakdown: any,
-    qrCodeUrl: string
+    qrCodeUrl: string,
+    copyType?: string
 }>()
+
+const copyLabel = computed(() => {
+    switch (props.copyType) {
+        case 'duplicate': return 'DUPLICATE FOR TRANSPORTER'
+        case 'triplicate': return 'TRIPLICATE FOR SUPPLIER'
+        default: return 'ORIGINAL FOR RECIPIENT'
+    }
+})
 
 const MAX_ITEMS_FIRST = 15; // Items that fit on first page with addresses and totals
 const MAX_ITEMS_STD = 20;   // More items on subsequent pages
@@ -457,6 +470,18 @@ const pages = computed(() => {
     }
 
     return _pages;
+});
+
+const documentTitle = computed(() => {
+    switch (props.invoice.type) {
+        case 'proforma_invoice': return 'PROFORMA INVOICE';
+        case 'quote': return 'ESTIMATE';
+        case 'credit_note': return 'CREDIT NOTE';
+        case 'debit_note': return 'DEBIT NOTE';
+        case 'delivery_challan': return 'DELIVERY CHALLAN';
+        case 'bill_of_supply': return 'BILL OF SUPPLY';
+        default: return 'TAX INVOICE';
+    }
 });
 
 const formatCurrency = (val: any) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(val))

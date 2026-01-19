@@ -2,10 +2,8 @@
     <AppLayout>
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Credit Notes</h1>
-                <p class="text-sm text-gray-500 mt-1">
-                    Manage your customer credit notes and refunds.
-                </p>
+                <h1 class="text-2xl font-bold text-gray-900">{{ pageTitle }}</h1>
+                <p class="text-sm text-gray-500 mt-1">{{ pageDescription }}</p>
             </div>
             <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-4">
                 <div class="flex gap-2">
@@ -25,13 +23,13 @@
                     </button>
                 </div>
 
-                <router-link to="/credit-notes/create"
+                <router-link :to="createRoute"
                     class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none transition-colors">
                     <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    Create Credit Note
+                    {{ createButtonText }}
                 </router-link>
             </div>
         </div>
@@ -61,11 +59,12 @@
                             <td colspan="6" class="text-center py-4 text-gray-500">Loading...</td>
                         </tr>
                         <tr v-else-if="invoices.length === 0">
-                            <td colspan="6" class="text-center py-4 text-gray-500">No credit notes found.</td>
+                            <td colspan="6" class="text-center py-4 text-gray-500">No {{ pageTitle.toLowerCase() }}
+                                found.</td>
                         </tr>
                         <tr v-for="invoice in invoices" :key="invoice.id">
                             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                <router-link :to="`/credit-notes/${invoice.id}`"
+                                <router-link :to="`${baseRoute}/${invoice.id}`"
                                     class="text-indigo-600 hover:text-indigo-900 hover:underline">
                                     {{ invoice.invoice_number }}
                                 </router-link>
@@ -84,25 +83,7 @@
                             </td>
                             <td
                                 class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                <router-link :to="`/credit-notes/${invoice.id}`"
-                                    class="text-gray-600 hover:text-gray-900 mr-4" title="View">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </router-link>
-                                <a :href="`/invoices/${invoice.id}/print`" target="_blank"
-                                    class="text-gray-600 hover:text-gray-900 mr-4" title="Print / PDF">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                                    </svg>
-                                </a>
-                                <router-link :to="`/credit-notes/${invoice.id}/edit`" v-if="invoice.status === 'draft'"
+                                <router-link :to="`${baseRoute}/${invoice.id}/edit`" v-if="invoice.status === 'draft'"
                                     class="text-indigo-600 hover:text-indigo-900 mr-4" title="Edit">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -139,18 +120,64 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import AppLayout from '../../layouts/AppLayout.vue'
 import { useAuthStore } from '../../stores/auth'
 import { useInvoiceStore } from '../../stores/invoice'
 import { storeToRefs } from 'pinia'
 
+const route = useRoute()
 const authStore = useAuthStore()
 const invoiceStore = useInvoiceStore()
 const { invoices, loading, pagination } = storeToRefs(invoiceStore)
 
 const statusFilter = ref('')
-const typeFilter = ref('credit_note') // Hardcoded for CreditNoteListView
+
+// Detect document type from route
+const documentType = computed(() => {
+    const path = route.path
+    if (path.includes('/quotations')) return 'proforma_invoice'
+    if (path.includes('/credit-notes')) return 'credit_note'
+    if (path.includes('/debit-notes')) return 'debit_note'
+    if (path.includes('/delivery-challans')) return 'delivery_challan'
+    return 'tax_invoice,bill_of_supply' // Invoices show both types
+})
+
+const baseRoute = computed(() => {
+    const path = route.path
+    if (path.includes('/quotations')) return '/quotations'
+    if (path.includes('/credit-notes')) return '/credit-notes'
+    if (path.includes('/debit-notes')) return '/debit-notes'
+    if (path.includes('/delivery-challans')) return '/delivery-challans'
+    return '/invoices'
+})
+
+const pageTitle = computed(() => {
+    if (documentType.value === 'proforma_invoice') return 'Quotations'
+    if (documentType.value === 'credit_note') return 'Credit Notes'
+    if (documentType.value === 'debit_note') return 'Debit Notes'
+    if (documentType.value === 'delivery_challan') return 'Delivery Challans'
+    return 'Invoices'
+})
+
+const pageDescription = computed(() => {
+    if (documentType.value === 'proforma_invoice') return 'Manage your quotations and estimates.'
+    if (documentType.value === 'credit_note') return 'Manage your customer credit notes and refunds.'
+    if (documentType.value === 'debit_note') return 'Manage debit notes for additional charges.'
+    if (documentType.value === 'delivery_challan') return 'Manage delivery challans for goods movement.'
+    return 'Manage your invoices and bills of supply.'
+})
+
+const createRoute = computed(() => `${baseRoute.value}/create`)
+
+const createButtonText = computed(() => {
+    if (documentType.value === 'proforma_invoice') return 'Create Quotation'
+    if (documentType.value === 'credit_note') return 'Create Credit Note'
+    if (documentType.value === 'debit_note') return 'Create Debit Note'
+    if (documentType.value === 'delivery_challan') return 'Create Delivery Challan'
+    return 'Create Invoice'
+})
 
 const refresh = async () => {
     if (!authStore.currentBusinessId) return
@@ -158,7 +185,7 @@ const refresh = async () => {
     try {
         const params: any = {
             business_id: authStore.currentBusinessId,
-            type: typeFilter.value,
+            type: documentType.value,
             page: pagination.value.current_page
         }
         if (statusFilter.value) {
@@ -166,7 +193,7 @@ const refresh = async () => {
         }
         await invoiceStore.fetchInvoices(params)
     } catch (e) {
-        console.error('Error fetching credit notes:', e)
+        console.error('Error fetching documents:', e)
     } finally {
         loading.value = false
     }
@@ -178,7 +205,7 @@ const changePage = (page: number) => {
     refresh()
 }
 
-watch([statusFilter, () => authStore.currentBusinessId], () => {
+watch([statusFilter, () => authStore.currentBusinessId, documentType], () => {
     invoiceStore.pagination.current_page = 1
     refresh()
 })
@@ -204,7 +231,7 @@ const getStatusClass = (status: string) => {
 }
 
 const deleteInv = async (id: string) => {
-    if (confirm(`Are you sure you want to delete this credit note?`)) {
+    if (confirm(`Are you sure you want to delete this ${pageTitle.value.slice(0, -1).toLowerCase()}?`)) {
         await invoiceStore.deleteInvoice(id)
         refresh()
     }

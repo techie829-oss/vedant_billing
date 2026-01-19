@@ -23,7 +23,7 @@ export interface Product {
 
 export interface SyncJob {
     id?: number;
-    type: 'create_invoice' | 'update_customer' | 'create_customer';
+    type: 'create_invoice' | 'update_customer' | 'create_customer' | 'finalize_invoice';
     payload: any;
     createdAt: number;
     status: 'pending' | 'processing' | 'failed';

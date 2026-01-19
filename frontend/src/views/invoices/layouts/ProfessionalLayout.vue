@@ -39,8 +39,14 @@
             </div>
 
             <div class="text-right">
-                <h2 class="text-4xl font-black text-gray-200 uppercase tracking-wide select-none">{{ invoice.type ===
-                    'credit_note' ? 'CREDIT NOTE' : (invoice.type === 'quote' ? 'ESTIMATE' : 'INVOICE') }}</h2>
+                <h2 class="text-4xl font-black text-gray-200 uppercase tracking-wide select-none">
+                    {{ getDocumentTitle() }}
+                </h2>
+                <!-- Copy Type -->
+                <p v-if="copyType && (invoice.type === 'invoice' || invoice.type === 'tax_invoice' || invoice.type === 'bill_of_supply')"
+                    class="text-xs font-bold text-gray-500 uppercase mt-1">
+                    ({{ copyLabel }})
+                </p>
                 <div class="mt-4 space-y-1">
                     <div class="flex justify-end gap-3 items-center">
                         <span class="text-xs font-bold text-gray-400 uppercase">{{ invoice.type === 'credit_note' ? 'CN'
@@ -334,8 +340,17 @@ import { useAuthStore } from '../../../stores/auth'
 const props = defineProps<{
     invoice: any,
     taxBreakdown: any,
-    qrCodeUrl: string
+    qrCodeUrl: string,
+    copyType?: string
 }>()
+
+const copyLabel = computed(() => {
+    switch (props.copyType) {
+        case 'duplicate': return 'DUPLICATE FOR TRANSPORTER'
+        case 'triplicate': return 'TRIPLICATE FOR SUPPLIER'
+        default: return 'ORIGINAL FOR RECIPIENT'
+    }
+})
 
 const finalTotals = computed(() => {
     const total = Number(props.invoice.grand_total) || 0;
@@ -365,6 +380,19 @@ const formatCurrency = (value: number | string) => {
 const formatDate = (dateString: string) => {
     if (!dateString) return ''
     return new Date(dateString).toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+
+const getDocumentTitle = () => {
+    switch (props.invoice.type) {
+        case 'bill_of_supply': return 'BILL OF SUPPLY'
+        case 'proforma_invoice': return 'PROFORMA INVOICE'
+        case 'quote': return 'ESTIMATE'
+        case 'delivery_challan': return 'DELIVERY CHALLAN'
+        case 'credit_note': return 'CREDIT NOTE'
+        case 'debit_note': return 'DEBIT NOTE'
+        case 'tax_invoice': return 'TAX INVOICE'
+        default: return 'INVOICE'
+    }
 }
 
 // Simple Indian numbering system converter (can be improved or moved to utility)

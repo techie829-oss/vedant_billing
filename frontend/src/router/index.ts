@@ -190,13 +190,13 @@ const router = createRouter({
         {
             path: '/quotations',
             name: 'quotations',
-            component: () => import('../views/invoices/QuotationListView.vue'),
+            component: () => import('../views/invoices/DocumentListView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
         },
         {
             path: '/quotations/create',
             name: 'quotation-create',
-            component: () => import('../views/invoices/QuotationFormView.vue'),
+            component: () => import('../views/invoices/InvoiceFormView.vue'), // Unified form
             meta: { requiresAuth: true, requiresBusiness: true }
         },
         {
@@ -208,20 +208,20 @@ const router = createRouter({
         {
             path: '/quotations/:id/edit',
             name: 'quotation-edit',
-            component: () => import('../views/invoices/QuotationFormView.vue'),
+            component: () => import('../views/invoices/InvoiceFormView.vue'), // Unified form
             meta: { requiresAuth: true, requiresBusiness: true }
         },
         // Credit Notes
         {
             path: '/credit-notes',
             name: 'credit-notes',
-            component: () => import('../views/invoices/CreditNoteListView.vue'),
+            component: () => import('../views/invoices/DocumentListView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
         },
         {
             path: '/credit-notes/create',
             name: 'credit-note-create',
-            component: () => import('../views/invoices/CreditNoteFormView.vue'),
+            component: () => import('../views/invoices/InvoiceFormView.vue'), // Unified form
             meta: { requiresAuth: true, requiresBusiness: true }
         },
         {
@@ -233,7 +233,57 @@ const router = createRouter({
         {
             path: '/credit-notes/:id/edit',
             name: 'credit-note-edit',
-            component: () => import('../views/invoices/CreditNoteFormView.vue'),
+            component: () => import('../views/invoices/InvoiceFormView.vue'), // Unified form
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        // Debit Notes
+        {
+            path: '/debit-notes',
+            name: 'debit-notes',
+            component: () => import('../views/invoices/DocumentListView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/debit-notes/create',
+            name: 'debit-note-create',
+            component: () => import('../views/invoices/InvoiceFormView.vue'), // Unified form
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/debit-notes/:id',
+            name: 'debit-note-detail',
+            component: () => import('../views/invoices/InvoiceDetailView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/debit-notes/:id/edit',
+            name: 'debit-note-edit',
+            component: () => import('../views/invoices/InvoiceFormView.vue'), // Unified form
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        // Delivery Challans
+        {
+            path: '/delivery-challans',
+            name: 'delivery-challans',
+            component: () => import('../views/invoices/DocumentListView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/delivery-challans/create',
+            name: 'delivery-challan-create',
+            component: () => import('../views/invoices/InvoiceFormView.vue'), // Unified form
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/delivery-challans/:id',
+            name: 'delivery-challan-detail',
+            component: () => import('../views/invoices/InvoiceDetailView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/delivery-challans/:id/edit',
+            name: 'delivery-challan-edit',
+            component: () => import('../views/invoices/InvoiceFormView.vue'), // Unified form
             meta: { requiresAuth: true, requiresBusiness: true }
         },
         {

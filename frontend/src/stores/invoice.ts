@@ -252,9 +252,9 @@ export const useInvoiceStore = defineStore('invoice', {
 
         async finalizeInvoice(id: string) {
             this.loading = true
+            const index = this.invoices.findIndex(i => i.id === id)
             try {
                 const response = await client.post(`/invoices/${id}/finalize`)
-                const index = this.invoices.findIndex(i => i.id === id)
                 if (index !== -1) {
                     this.invoices[index] = response.data
                 }
@@ -263,11 +263,79 @@ export const useInvoiceStore = defineStore('invoice', {
                 }
                 return response.data
             } catch (error: any) {
+                // If offline and we just mark as confirmed locally?
+                // For finalize, enforcing backend check is better, but maybe:
+                if (!navigator.onLine && index !== -1) {
+                    const updated = { ...this.invoices[index], status: 'sent' } as Invoice
+                    this.invoices[index] = updated
+                    if (this.currentInvoice && this.currentInvoice.id === id) {
+                        this.currentInvoice = updated
+                    }
+                    await db.invoices.put(updated) // Update local DB
+                    await syncService.addToQueue('finalize_invoice', { id })
+                    return updated
+                }
                 this.error = error.response?.data?.message || 'Failed to finalize invoice'
                 throw error
             } finally {
                 this.loading = false
             }
-        }
+        },
+
+        async duplicateInvoice(id: string) {
+            this.loading = true
+            try {
+                const response = await client.post(`/invoices/${id}/duplicate`)
+                this.invoices.unshift(response.data)
+                return response.data
+            } catch (error: any) {
+                this.error = error.response?.data?.message || 'Failed to duplicate invoice'
+                throw error
+            } finally {
+                this.loading = false
+            }
+        },
+
+        async convertEstimateToInvoice(id: string) {
+            this.loading = true
+            try {
+                const response = await client.post(`/invoices/${id}/convert`)
+                this.invoices.unshift(response.data)
+                return response.data
+            } catch (error: any) {
+                this.error = error.response?.data?.message || 'Failed to convert estimate'
+                throw error
+            } finally {
+                this.loading = false
+            }
+        },
+
+        async sendEmail(id: string) {
+            try {
+                await client.post(`/invoices/${id}/email`)
+            } catch (error: any) {
+                throw error
+            }
+        },
+
+        async recordPayment(id: string, data: any) {
+            try {
+                // We post to /payments but it updates the invoice status/paid_amount usually
+                const response = await client.post('/payments', {
+                    invoice_id: id,
+                    ...data
+                })
+                // Ideally we should reload the invoice here or update state
+                // fetchInvoice(id) // But we can just let caller do it
+                return response.data
+            } catch (error: any) {
+                throw error
+            }
+        },
+
+        // Helper if needed to convert estimate on client side (or server if route existed)
+        // For now, client logic resides in view, but we could move it here.
+        // Let's keep it simple.
+
     }
 })

@@ -49,6 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('invoices', \App\Http\Controllers\Api\InvoiceController::class);
     Route::post('/invoices/{invoice}/finalize', [\App\Http\Controllers\Api\InvoiceController::class, 'finalize']);
     Route::post('/invoices/{invoice}/duplicate', [\App\Http\Controllers\Api\InvoiceController::class, 'duplicate']);
+    Route::post('/invoices/{invoice}/convert', [\App\Http\Controllers\Api\InvoiceController::class, 'convert']);
     Route::get('/invoices/{invoice}/download', [\App\Http\Controllers\Api\InvoiceController::class, 'download']);
     Route::post('/invoices/{invoice}/email', [\App\Http\Controllers\Api\InvoiceController::class, 'email']);
 

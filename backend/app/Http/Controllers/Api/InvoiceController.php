@@ -52,7 +52,7 @@ class InvoiceController extends Controller
         Gate::authorize('create', Invoice::class);
 
         $validated = $request->validate([
-            'type' => 'nullable|in:invoice,credit_note,quote',
+            'type' => 'nullable|in:tax_invoice,bill_of_supply,proforma_invoice,delivery_challan,credit_note,debit_note',
             'parent_id' => 'nullable|exists:invoices,id',
             'reason' => 'nullable|string',
             'party_id' => 'required|exists:parties,id',
@@ -77,15 +77,8 @@ class InvoiceController extends Controller
         ]);
 
         return DB::transaction(function () use ($validated, $request) {
-            $type = $validated['type'] ?? 'invoice';
-            $prefix = $type === 'credit_note' ? 'CN-' : 'INV-';
-
-            // Generate Number
-            // Use separate counters? Or shared? Usually separate.
-            // For simplicity, we are using global count (might clash if mixed). 
-            // Better: Count by type.
-            $count = Invoice::where('type', $type)->count() + 1;
-            $invoiceNumber = $prefix . str_pad($count, 5, '0', STR_PAD_LEFT);
+            $type = $validated['type'] ?? 'tax_invoice'; // Default to tax invoice
+            $invoiceNumber = $this->getNextInvoiceNumber($type);
 
             $invoice = Invoice::create([
                 'type' => $type,
@@ -133,6 +126,7 @@ class InvoiceController extends Controller
         }
 
         $validated = $request->validate([
+            'type' => 'sometimes|in:tax_invoice,bill_of_supply,proforma_invoice,delivery_challan,credit_note,debit_note',
             'parent_id' => 'nullable|exists:invoices,id',
             'reason' => 'nullable|string',
             'party_id' => 'sometimes|exists:parties,id',
@@ -157,6 +151,12 @@ class InvoiceController extends Controller
         ]);
 
         return DB::transaction(function () use ($validated, $invoice) {
+            // Check if type is changing
+            if (isset($validated['type']) && $validated['type'] !== $invoice->type) {
+                // Generate new number for new type
+                $validated['invoice_number'] = $this->getNextInvoiceNumber($validated['type']);
+            }
+
             $invoice->update($validated); // Updates basic fields if present
 
             if (isset($validated['items'])) {
@@ -239,15 +239,19 @@ class InvoiceController extends Controller
     /**
      * Duplicate an invoice (create a new draft copy).
      */
+    /**
+     * Duplicate an invoice (create a new draft copy).
+     */
     public function duplicate(Invoice $invoice)
     {
         return DB::transaction(function () use ($invoice) {
-            // Generate new invoice number
-            $count = Invoice::count() + 1;
-            $newInvoiceNumber = 'INV-' . str_pad($count, 5, '0', STR_PAD_LEFT);
+            // Determine Prefix
+            $type = $invoice->type ?? 'tax_invoice';
+            $newInvoiceNumber = $this->getNextInvoiceNumber($type);
 
             // Create new invoice with same data but as draft
             $newInvoice = Invoice::create([
+                'type' => $type,
                 'party_id' => $invoice->party_id,
                 'invoice_number' => $newInvoiceNumber,
                 'date' => now()->format('Y-m-d'), // Today's date
@@ -277,6 +281,52 @@ class InvoiceController extends Controller
             })->toArray();
 
             $this->syncItems($newInvoice, $itemsData);
+
+            return response()->json($newInvoice->load(['items', 'party']), 201);
+        });
+    }
+
+    /**
+     * Convert a quote/estimate to an invoice.
+     */
+    public function convert(Invoice $invoice)
+    {
+        return DB::transaction(function () use ($invoice) {
+            $type = 'tax_invoice';
+            $newInvoiceNumber = $this->getNextInvoiceNumber($type);
+
+            // Create new invoice linked to the quote
+            $newInvoice = Invoice::create([
+                'type' => $type,
+                'parent_id' => $invoice->id, // Link to original quote
+                'party_id' => $invoice->party_id,
+                'invoice_number' => $newInvoiceNumber,
+                'date' => now()->format('Y-m-d'),
+                'due_date' => now()->addDays(30)->format('Y-m-d'),
+                'status' => 'draft',
+                'notes' => $invoice->notes,
+                'terms' => $invoice->terms,
+                'meta' => $invoice->meta,
+            ]);
+
+            // Copy items
+            $itemsData = $invoice->items->map(function ($item) {
+                return [
+                    'product_id' => $item->product_id,
+                    'name' => $item->name,
+                    'description' => $item->description,
+                    'hsn_code' => $item->hsn_code,
+                    'quantity' => $item->quantity,
+                    'unit_price' => $item->unit_price,
+                    'discount' => $item->discount,
+                    'tax_rate' => $item->tax_rate,
+                ];
+            })->toArray();
+
+            $this->syncItems($newInvoice, $itemsData);
+
+            // Optionally update status of quote to accepted?
+            // $invoice->update(['status' => 'accepted']);
 
             return response()->json($newInvoice->load(['items', 'party']), 201);
         });
@@ -383,5 +433,31 @@ class InvoiceController extends Controller
             ->send(new \App\Mail\InvoiceEmail($invoice, $pdf->output()));
 
         return response()->json(['message' => 'Invoice sent successfully.']);
+    }
+
+    /**
+     * Get invoice number prefix based on document type
+     */
+    protected function getInvoicePrefix(string $type): string
+    {
+        return match ($type) {
+            'bill_of_supply' => 'BS/',
+            'proforma_invoice' => 'PI/',
+            'delivery_challan' => 'DC/',
+            'credit_note' => 'CN/',
+            'debit_note' => 'DN/',
+            'tax_invoice' => 'INV/',
+            default => 'INV/',
+        };
+    }
+
+    /**
+     * Get next invoice number for a given type
+     */
+    protected function getNextInvoiceNumber(string $type): string
+    {
+        $prefix = $this->getInvoicePrefix($type);
+        $count = Invoice::where('type', $type)->count() + 1;
+        return $prefix . str_pad($count, 5, '0', STR_PAD_LEFT);
     }
 }

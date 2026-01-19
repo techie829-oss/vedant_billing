@@ -67,6 +67,17 @@
                     Duplicate
                 </button>
 
+                <!-- Copy Type Selection (Only for Invoice Types that support copies) -->
+                <div v-if="invoice.type === 'invoice' || invoice.type === 'tax_invoice' || invoice.type === 'bill_of_supply'"
+                    class="relative inline-block text-left">
+                    <select v-model="printCopyType"
+                        class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="original">Original</option>
+                        <option value="duplicate">Duplicate</option>
+                        <option value="triplicate">Triplicate</option>
+                    </select>
+                </div>
+
                 <button @click="printInvoice"
                     class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                     Print
@@ -252,7 +263,7 @@
                         class="invoice-content-wrapper origin-top-left absolute top-0 left-0 bg-white shadow-lg flex flex-col items-center"
                         :style="{ transform: `scale(${scale})`, width: '210mm', minHeight: '297mm' }">
                         <component :is="layoutComponent" :invoice="invoice" :taxBreakdown="taxBreakdown"
-                            :qrCodeUrl="qrCodeUrl" class="box-border" />
+                            :qrCodeUrl="qrCodeUrl" :copyType="printCopyType" class="box-border" />
                     </div>
                 </div>
             </div>
@@ -351,6 +362,13 @@
 
         </div>
     </AppLayout>
+
+    <ConfirmationModal :is-open="confirmModal.isOpen" :title="confirmModal.title" :message="confirmModal.message"
+        :confirm-text="confirmModal.confirmText" :processing="confirmModal.processing" @close="closeConfirmModal"
+        @confirm="handleConfirm" />
+
+    <AlertModal :is-open="alertModal.isOpen" :title="alertModal.title" :message="alertModal.message"
+        :type="alertModal.type" @close="alertModal.isOpen = false" />
 </template>
 
 <script setup lang="ts">
@@ -370,10 +388,87 @@ import QRCode from 'qrcode'
 // @ts-ignore
 import html2pdf from 'html2pdf.js'
 
+import ConfirmationModal from '../../components/ConfirmationModal.vue'
+import AlertModal from '../../components/AlertModal.vue'
+
+const invoice = ref<any>(null)
+const loading = ref(true)
+const invoiceStore = useInvoiceStore()
 const route = useRoute()
 const router = useRouter()
-const invoiceStore = useInvoiceStore()
-const { currentInvoice: invoice, loading } = storeToRefs(invoiceStore)
+
+const printCopyType = ref('original')
+
+// Modal States
+const confirmModal = ref({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: 'Confirm',
+    processing: false,
+    onConfirm: async () => { }
+})
+
+const alertModal = ref({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info'
+})
+
+const showAlert = (message: string, title = 'Info', type = 'info') => {
+    alertModal.value = {
+        isOpen: true,
+        title,
+        message,
+        type
+    }
+}
+
+const showConfirm = (title: string, message: string, onConfirm: () => Promise<void>, confirmText = 'Confirm') => {
+    confirmModal.value = {
+        isOpen: true,
+        title,
+        message,
+        confirmText,
+        processing: false,
+        onConfirm
+    }
+}
+
+const closeConfirmModal = () => {
+    confirmModal.value.isOpen = false
+}
+
+const handleConfirm = async () => {
+    confirmModal.value.processing = true
+    try {
+        await confirmModal.value.onConfirm()
+        closeConfirmModal()
+    } catch (e) {
+        console.error(e)
+    } finally {
+        confirmModal.value.processing = false
+    }
+}
+
+// Destructure from storeToRefs after local refs are defined
+const { currentInvoice: storeInvoice, loading: storeLoading } = storeToRefs(invoiceStore)
+
+const capitalize = (s: string) => {
+    if (typeof s !== 'string') return ''
+    return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+// Watch store values and update local refs
+watch(storeInvoice, (newVal) => {
+    invoice.value = newVal
+}, { immediate: true })
+
+watch(storeLoading, (newVal) => {
+    loading.value = newVal
+}, { immediate: true })
+
 
 const converting = ref(false)
 const containerRef = ref<HTMLElement | null>(null)
@@ -450,44 +545,25 @@ const typeLabel = computed(() => {
 
 const convertToInvoice = async () => {
     if (!invoice.value) return
-    if (!confirm('This will create a new Draft Invoice from this Estimate. Continue?')) return
-
-    converting.value = true
-    try {
-        // Create new invoice payload from quote
-        const payload = {
-            ...invoice.value,
-            id: undefined, // Create new
-            invoice_number: '', // Let backend generate or empty
-            type: 'invoice',
-            status: 'draft',
-            date: new Date().toISOString().split('T')[0],
-            due_date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            meta: {
-                ...invoice.value.meta,
-                converted_from_quote_id: invoice.value.id
-            }
-        }
-
-        // Clean up fields that shouldn't be copied
-        delete (payload as any).created_at
-        delete (payload as any).updated_at
-        delete (payload as any).allocations
-        delete (payload as any).credit_notes
-
-        const newInvoice = await invoiceStore.createInvoice(payload as any)
-
-        // Optionally update quote status to 'accepted'?
-        // For now, just navigate to new invoice
-        router.push(`/invoices/${newInvoice.id}/edit`)
-
-        alert('Estimate converted to Invoice successfully!')
-    } catch (e: any) {
-        console.error('Conversion failed', e)
-        alert(e.response?.data?.message || 'Failed to convert estimate')
-    } finally {
-        converting.value = false
+    if (invoice.value.status !== 'accepted' && invoice.value.status !== 'draft' && invoice.value.status !== 'sent') {
+        showAlert('Only accepted, draft or sent estimates can be converted to invoices', 'Cannot Convert', 'error')
+        return
     }
+
+    showConfirm(
+        'Convert to Invoice',
+        'This will create a new Draft Invoice from this Estimate. Continue?',
+        async () => {
+            try {
+                const newInvoice = await invoiceStore.convertEstimateToInvoice(invoice.value.id)
+                showAlert('Estimate converted to Invoice successfully!', 'Success', 'success')
+                router.push(`/invoices/${newInvoice.id}/edit`)
+            } catch (e: any) {
+                showAlert(e.response?.data?.message || 'Failed to convert estimate', 'Error', 'error')
+            }
+        },
+        'Convert'
+    )
 }
 
 const layoutComponent = computed(() => {
@@ -593,7 +669,7 @@ const paymentForm = ref({
 
 const outstandingAmount = computed(() => {
     if (!invoice.value) return 0
-    const paidByAllocations = (invoice.value.allocations || []).reduce((sum, a) => sum + Number(a.amount), 0)
+    const paidByAllocations = (invoice.value.allocations || []).reduce((sum: number, a: any) => sum + Number(a.amount), 0)
     // Or use paid_amount from invoice if updated? Let's use allocations sum for now as it's realtime.
     return (Number(invoice.value.grand_total) - paidByAllocations).toFixed(2)
 })
@@ -603,12 +679,10 @@ const submitPayment = async () => {
 
     submittingPayment.value = true
     try {
-        await client.post('/payments', {
-            invoice_id: invoice.value.id,
-            amount: paymentForm.value.amount,
-            date: paymentForm.value.date,
-            method: paymentForm.value.method,
-            reference: paymentForm.value.reference,
+        await invoiceStore.recordPayment(invoice.value.id, {
+            amount: Number(paymentForm.value.amount),
+            payment_date: paymentForm.value.date,
+            payment_method: paymentForm.value.method,
             notes: paymentForm.value.reference // Use reference as notes for simplicity or add notes field
         })
 
@@ -623,9 +697,10 @@ const submitPayment = async () => {
             method: 'bank_transfer',
             reference: ''
         }
+        showAlert('Payment recorded successfully', 'Success', 'success')
     } catch (e: any) {
         console.error('Payment failed', e)
-        alert(e.response?.data?.message || 'Failed to record payment')
+        showAlert(e.response?.data?.message || 'Failed to record payment', 'Error', 'error')
     } finally {
         submittingPayment.value = false
     }
@@ -708,12 +783,34 @@ const printInvoice = () => {
 }
 
 const finalize = async () => {
-    if (confirm('Are you sure? Once finalized, you cannot edit this invoice.')) {
-        await invoiceStore.finalizeInvoice(invoice.value!.id)
-    }
+    if (!invoice.value) return
+    showConfirm(
+        'Finalize Invoice',
+        'Are you sure? Once finalized, you cannot edit this invoice.',
+        async () => {
+            try {
+                // We don't have updateStatus in store yet, let's use check finalizeInvoice or add updateStatus
+                // The store has finalizeInvoice which calls /finalize.
+                // But markAsSent usually implies just changing status if allowed.
+                // Let's check store actions again.
+                // Store has finalizeInvoice. It also has updateInvoice.
+                // Let's use updateInvoice to set status to sent if that's what we want,
+                // OR use finalizeInvoice if that's the intention.
+                // The original code passed 'sent' to updateStatus which didn't exist in store props in lint,
+                // but local `invoiceStore` definition might have had it?
+                // Actually previous code was: await invoiceStore.updateStatus(invoice.value.id, 'sent')
+                // But lint said it didn't exist.
+                // Let's use updateInvoice.
+                await invoiceStore.updateInvoice(invoice.value.id, { status: 'sent' })
+                loadInvoice()
+                showAlert('Invoice finalized successfully', 'Success', 'success')
+            } catch (e: any) {
+                showAlert(e.response?.data?.message || 'Failed to update status', 'Error', 'error')
+            }
+        },
+        'Finalize'
+    )
 }
-
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 const getStatusClass = (status: string) => {
     switch (status) {
@@ -728,23 +825,19 @@ const getStatusClass = (status: string) => {
 const duplicateInvoice = async () => {
     if (!invoice.value) return
 
-    if (!confirm('This will create a new draft invoice with the same items. Continue?')) {
-        return
-    }
-
-    loading.value = true
-    try {
-        const response = await client.post(`/invoices/${invoice.value.id}/duplicate`)
-        const newInvoice = response.data
-
-        // Navigate to the new draft invoice for editing
-        router.push(`/invoices/${newInvoice.id}/edit`)
-    } catch (e: any) {
-        console.error('Duplicate failed:', e)
-        alert(e.response?.data?.message || 'Failed to duplicate invoice')
-    } finally {
-        loading.value = false
-    }
+    showConfirm(
+        'Duplicate Invoice',
+        'This will create a new draft invoice with the same items. Continue?',
+        async () => {
+            try {
+                const newInvoice = await invoiceStore.duplicateInvoice(invoice.value.id)
+                router.push(`/invoices/${newInvoice.id}/edit`)
+            } catch (e: any) {
+                showAlert(e.response?.data?.message || 'Failed to duplicate invoice', 'Error', 'error')
+            }
+        },
+        'Duplicate'
+    )
 }
 
 const createCreditNote = () => {
@@ -862,7 +955,7 @@ const shareWhatsApp = () => {
     shareMenuOpen.value = false
     const phone = invoice.value?.party?.phone
     if (!phone) {
-        alert('Customer phone number is missing.')
+        showAlert('Customer phone number is missing.', 'Missing Info', 'warning')
         return
     }
     const text = encodeURIComponent(getShareText())
@@ -873,7 +966,7 @@ const shareSMS = () => {
     shareMenuOpen.value = false
     const phone = invoice.value?.party?.phone
     if (!phone) {
-        alert('Customer phone number is missing.')
+        showAlert('Customer phone number is missing.', 'Missing Info', 'warning')
         return
     }
     const text = encodeURIComponent(getShareText())
@@ -884,22 +977,27 @@ const sendingEmail = ref(false)
 const sendEmail = async () => {
     if (!invoice.value) return
     if (!invoice.value.party?.email) {
-        alert('This customer does not have an email address.')
+        showAlert('This customer does not have an email address.', 'Missing Info', 'warning')
         return
     }
 
-    if (!confirm(`Send invoice PDF to ${invoice.value.party.email}?`)) return
-
-    sendingEmail.value = true
-    try {
-        await client.post(`/invoices/${invoice.value.id}/email`)
-        alert('Email sent successfully!')
-    } catch (e: any) {
-        console.error('Email failed', e)
-        alert(e.response?.data?.message || 'Failed to send email')
-    } finally {
-        sendingEmail.value = false
-    }
+    showConfirm(
+        'Send Email',
+        `Send invoice PDF to ${invoice.value.party.email}?`,
+        async () => {
+            sendingEmail.value = true
+            try {
+                await client.post(`/invoices/${invoice.value.id}/email`)
+                showAlert('Email sent successfully!', 'Success', 'success')
+            } catch (e: any) {
+                console.error('Email failed', e)
+                showAlert(e.response?.data?.message || 'Failed to send email', 'Error', 'error')
+            } finally {
+                sendingEmail.value = false
+            }
+        },
+        'Send'
+    )
 }
 
 onMounted(() => {

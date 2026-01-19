@@ -12,7 +12,14 @@
 
                 <!-- HEADER SECTION: "Tax Invoice" + Company Details -->
                 <div class="shrink-0">
-                    <div class="text-center font-bold text-base border-b border-black py-1">Tax Invoice</div>
+                    <div class="text-center font-bold text-base border-b border-black py-1">
+                        {{ documentTitle }}
+                        <span
+                            v-if="copyType && (invoice.type === 'invoice' || invoice.type === 'tax_invoice' || invoice.type === 'bill_of_supply')"
+                            class="uppercase text-xs ml-2">
+                            ({{ copyLabel }})
+                        </span>
+                    </div>
 
                     <!-- Top Grid: Seller Info (Left) | Invoice Meta (Right) -->
                     <div class="grid grid-cols-2 border-b border-black">
@@ -331,8 +338,17 @@ import { computed } from 'vue';
 const props = defineProps<{
     invoice: any,
     taxBreakdown: any,
-    qrCodeUrl: string
+    qrCodeUrl: string,
+    copyType?: string
 }>()
+
+const copyLabel = computed(() => {
+    switch (props.copyType) {
+        case 'duplicate': return 'DUPLICATE FOR TRANSPORTER'
+        case 'triplicate': return 'TRIPLICATE FOR SUPPLIER'
+        default: return 'ORIGINAL FOR RECIPIENT'
+    }
+})
 
 const finalTotals = computed(() => {
     const total = Number(props.invoice.grand_total) || 0;
@@ -438,6 +454,18 @@ const amountInWords = (num: number) => {
     else result += ' Rupees';
     return result;
 }
+
+const documentTitle = computed(() => {
+    switch (props.invoice.type) {
+        case 'proforma_invoice': return 'PROFORMA INVOICE';
+        case 'quote': return 'ESTIMATE';
+        case 'credit_note': return 'CREDIT NOTE';
+        case 'debit_note': return 'DEBIT NOTE';
+        case 'delivery_challan': return 'DELIVERY CHALLAN';
+        case 'bill_of_supply': return 'BILL OF SUPPLY';
+        default: return 'TAX INVOICE';
+    }
+});
 </script>
 
 <style scoped>

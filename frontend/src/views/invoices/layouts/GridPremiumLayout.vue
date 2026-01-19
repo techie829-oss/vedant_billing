@@ -34,8 +34,11 @@
                         <div class="flex-grow p-4 bg-gray-50 flex flex-col justify-center items-end">
                             <h2
                                 class="text-2xl font-black text-gray-900 uppercase tracking-widest border-b-2 border-gray-900 pb-1 mb-2">
-                                {{ invoice.type === 'credit_note' ? 'CREDIT NOTE' : (invoice.type === 'quote' ?
-                                    'ESTIMATE' : 'TAX INVOICE') }}</h2>
+                                {{ documentTitle }}</h2>
+                            <p v-if="copyType && (invoice.type === 'invoice' || invoice.type === 'tax_invoice' || invoice.type === 'bill_of_supply')"
+                                class="text-[10px] font-bold text-gray-500 uppercase mb-2">
+                                ({{ copyLabel }})
+                            </p>
                             <div class="text-right space-y-1 w-full">
                                 <div class="flex justify-between items-center gap-4">
                                     <span class="text-xs font-bold uppercase text-gray-500">Invoice No</span>
@@ -324,8 +327,17 @@ import { computed } from 'vue';
 const props = defineProps<{
     invoice: any
     taxBreakdown: { cgst: number, sgst: number, igst: number, taxType: string, posState: string },
-    qrCodeUrl?: string
+    qrCodeUrl?: string,
+    copyType?: string
 }>()
+
+const copyLabel = computed(() => {
+    switch (props.copyType) {
+        case 'duplicate': return 'DUPLICATE FOR TRANSPORTER'
+        case 'triplicate': return 'TRIPLICATE FOR SUPPLIER'
+        default: return 'ORIGINAL FOR RECIPIENT'
+    }
+})
 
 const finalTotals = computed(() => {
     const total = Number(props.invoice.grand_total) || 0;
@@ -375,6 +387,18 @@ const amountInWords = (num: number) => {
     str += (Number(n[5]) != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[Number(n[5]![0])] + ' ' + a[Number(n[5]![1])]) + '' : '';
     return str;
 }
+
+const documentTitle = computed(() => {
+    switch (props.invoice.type) {
+        case 'proforma_invoice': return 'PROFORMA INVOICE';
+        case 'quote': return 'ESTIMATE';
+        case 'credit_note': return 'CREDIT NOTE';
+        case 'debit_note': return 'DEBIT NOTE';
+        case 'delivery_challan': return 'DELIVERY CHALLAN';
+        case 'bill_of_supply': return 'BILL OF SUPPLY';
+        default: return 'TAX INVOICE';
+    }
+});
 </script>
 
 <style scoped></style>

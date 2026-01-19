@@ -132,6 +132,28 @@
                 Credit Notes
               </router-link>
 
+              <router-link to="/debit-notes" @click="mobileMenuOpen = false"
+                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                :class="[$route.path.startsWith('/debit-notes') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Debit Notes
+              </router-link>
+
+              <router-link to="/delivery-challans" @click="mobileMenuOpen = false"
+                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                :class="[$route.path.startsWith('/delivery-challans') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h5.586a1 1 0 00.707-.293l5.414-5.414a1 1 0 00.293-.707V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                Delivery Challans
+              </router-link>
+
               <router-link to="/cashbook" @click="mobileMenuOpen = false"
                 class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
                 :class="[$route.path.startsWith('/cashbook') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
@@ -321,6 +343,27 @@
                   d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l2.333-1.75L10 21l2.333-1.75L15 21l1.667-1.75L19 21z" />
               </svg>
               Credit Notes
+            </router-link>
+
+            <router-link to="/debit-notes"
+              class="flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-colors mb-1"
+              :class="[$route.path.startsWith('/debit-notes') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Debit Notes
+            </router-link>
+
+            <router-link to="/delivery-challans"
+              class="flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-colors mb-1"
+              :class="[$route.path.startsWith('/delivery-challans') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h5.586a1 1 0 00.707-.293l5.414-5.414a1 1 0 00.293-.707V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              Delivery Challans
             </router-link>
           </div>
 

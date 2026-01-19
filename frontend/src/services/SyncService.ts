@@ -62,6 +62,9 @@ class SyncService {
             case 'create_customer':
                 await client.post('/parties', job.payload);
                 break;
+            case 'finalize_invoice':
+                await client.post(`/invoices/${job.payload.id}/finalize`);
+                break;
             // Add other cases
         }
     }

@@ -16,7 +16,8 @@
                         </button>
                         <div class="flex items-center gap-3">
                             <h2 class="text-xl font-bold text-gray-900">
-                                {{ isEditMode ? `Invoice #${form.invoice_number}` : 'New Invoice' }}
+                                {{ isEditMode ? `${getDocumentTypeLabel()} #${form.invoice_number}` : `New
+                                ${getDocumentTypeLabel()}` }}
                             </h2>
                             <span v-if="isEditMode"
                                 class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" :class="{
@@ -167,60 +168,104 @@
                 </div>
             </div>
 
-            <!-- Customer & Dates -->
+            <!-- Document Type Selection -->
             <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                <div class="p-3 sm:p-8">
-                    <div class="grid max-w-2xl grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-6 sm:gap-x-6 sm:gap-y-8">
-                        <div class="col-span-2 sm:col-span-3">
-                            <label for="customer"
-                                class="block text-sm font-medium leading-6 text-gray-900">Customer</label>
-                            <div class="mt-2">
-                                <div class="relative">
-                                    <select id="customer" v-model="form.party_id" required
-                                        class="block w-full appearance-none rounded-md border-0 py-2 pl-3.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                        <option value="" disabled>Select Customer</option>
-                                        <option v-for="party in customers" :key="party.id" :value="party.id">{{
-                                            party.name }}</option>
-                                    </select>
-                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                                            aria-hidden="true">
-                                            <path fill-rule="evenodd"
-                                                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
+                <div class="px-4 py-6 sm:p-8">
+                    <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
+                        <div class="sm:col-span-3">
+                            <CustomSelect id="document-type" label="Document Type" v-model="form.type"
+                                :options="documentTypeOptions" />
+                        </div>
+
+                        <!-- Copy Type Selection (Only for Bill of Supply) -->
+                        <div v-if="form.type === 'bill_of_supply'" class="sm:col-span-3">
+                            <label for="copy-type" class="block text-sm font-medium leading-6 text-gray-900">Copy
+                                Type</label>
+                            <select id="copy-type" v-model="form.meta.copy_type"
+                                class="mt-2 block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                <option value="original">Original for Recipient</option>
+                                <option value="duplicate">Duplicate for Transporter</option>
+                                <option value="triplicate">Triplicate for Supplier</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer & Invoice Details Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <!-- Card 1: Customer & Invoice Details -->
+                <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+                    <div class="px-4 py-6 sm:p-8">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <CustomSelect id="customer" label="Customer" v-model="form.party_id"
+                                    :options="customers.map(c => ({ label: c.name, value: c.id, description: c.raw_phone || c.email }))"
+                                    searchable />
+
+                                <div class="mt-2 text-right">
+                                    <router-link to="/parties/create?type=customer"
+                                        class="text-sm text-indigo-600 hover:text-indigo-500">
+                                        + Add New Customer
+                                    </router-link>
                                 </div>
-                                <router-link to="/customers/create"
-                                    class="mt-2 text-sm text-indigo-600 hover:text-indigo-500 block">
-                                    + Add New Customer
-                                </router-link>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium leading-6 text-gray-900">Invoice Number</label>
+                                <div class="mt-1">
+                                    <input type="text" v-model="form.invoice_number" placeholder="(Auto-generated)"
+                                        class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                </div>
                             </div>
                         </div>
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label for="date" class="block text-sm font-medium leading-6 text-gray-900">Invoice
+                                    Date</label>
+                                <div class="mt-1">
+                                    <input type="date" id="date" v-model="form.date" required
+                                        class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                </div>
+                            </div>
 
-                        <div class="col-span-2 sm:col-span-3">
-                            <label class="block text-sm font-medium leading-6 text-gray-900">Invoice Number</label>
-                            <div class="mt-2">
-                                <input type="text" v-model="form.invoice_number" placeholder="(Auto-generated)"
-                                    class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                            <div>
+                                <label for="due_date" class="block text-sm font-medium leading-6 text-gray-900">Due
+                                    Date</label>
+                                <div class="mt-1">
+                                    <input type="date" id="due_date" v-model="form.due_date" required
+                                        class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="col-span-1 sm:col-span-3">
-                            <label for="date" class="block text-sm font-medium leading-6 text-gray-900">Invoice
-                                Date</label>
-                            <div class="mt-2">
-                                <input type="date" id="date" v-model="form.date" required
-                                    class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                <!-- Card 2: Transport / Order Details (Conditional) -->
+                <div v-if="form.meta.display_options.show_transport_details"
+                    class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+                    <div class="px-4 py-6 sm:p-8">
+                        <h4 class="text-base font-semibold leading-7 text-gray-900 mb-4">Transport / Order Details</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium leading-6 text-gray-900">Challan No.</label>
+                                <input type="text" v-model="form.challan_no"
+                                    class="mt-1 block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
-                        </div>
-
-                        <div class="col-span-1 sm:col-span-3">
-                            <label for="due_date" class="block text-sm font-medium leading-6 text-gray-900">Due
-                                Date</label>
-                            <div class="mt-2">
-                                <input type="date" id="due_date" v-model="form.due_date" required
-                                    class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                            <div>
+                                <label class="block text-sm font-medium leading-6 text-gray-900">Vehicle No.</label>
+                                <input type="text" v-model="form.vehicle_no"
+                                    class="mt-1 block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium leading-6 text-gray-900">E-Way Bill No.</label>
+                                <input type="text" v-model="form.eway_bill_no"
+                                    class="mt-1 block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium leading-6 text-gray-900">PO Number</label>
+                                <input type="text" v-model="form.po_number"
+                                    class="mt-1 block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
                         </div>
                     </div>
@@ -231,7 +276,7 @@
             <div v-if="form.party_id" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Billing Address -->
                 <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                    <div class="p-3 sm:p-8">
+                    <div class="px-4 py-6 sm:p-8">
                         <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Billing Address</h3>
                         <div class="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-6 sm:gap-x-6 sm:gap-y-4">
                             <div class="col-span-2 sm:col-span-6">
@@ -262,13 +307,15 @@
                 <!-- Shipping Address -->
                 <div v-if="form.meta.display_options.show_shipping_address"
                     class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                    <div class="p-3 sm:p-8">
-                        <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Shipping Address</h3>
-                        <div class="flex items-center mb-4">
-                            <input id="same_as_billing" type="checkbox"
-                                @change="(e: Event) => { if ((e.target as HTMLInputElement).checked) form.meta.shipping_address = { ...form.meta.billing_address } }"
-                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            <label for="same_as_billing" class="ml-2 text-sm text-gray-600">Same as Billing</label>
+                    <div class="px-4 py-6 sm:p-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-base font-semibold leading-7 text-gray-900">Shipping Address</h3>
+                            <div class="flex items-center">
+                                <input id="same_as_billing" type="checkbox"
+                                    @change="(e: Event) => { if ((e.target as HTMLInputElement).checked) form.meta.shipping_address = { ...form.meta.billing_address } }"
+                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                <label for="same_as_billing" class="ml-2 text-sm text-gray-600">Same as Billing</label>
+                            </div>
                         </div>
                         <div class="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-6 sm:gap-x-6 sm:gap-y-4">
                             <div class="col-span-2 sm:col-span-6">
@@ -297,35 +344,7 @@
                 </div>
             </div>
 
-            <!-- Transport / Order Details -->
-            <div v-if="form.meta.display_options.show_transport_details"
-                class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                <div class="p-3 sm:p-8">
-                    <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Transport / Order Details</h3>
-                    <div class="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-4">
-                        <div>
-                            <label class="block text-sm font-medium leading-6 text-gray-900">Challan No.</label>
-                            <input type="text" v-model="form.challan_no"
-                                class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium leading-6 text-gray-900">Vehicle No.</label>
-                            <input type="text" v-model="form.vehicle_no"
-                                class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium leading-6 text-gray-900">E-Way Bill No.</label>
-                            <input type="text" v-model="form.eway_bill_no"
-                                class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium leading-6 text-gray-900">PO Number</label>
-                            <input type="text" v-model="form.po_number"
-                                class="mt-2 block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                        </div>
-                    </div>
-                </div>
-            </div>
+
 
             <!-- Line Items -->
             <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
@@ -417,34 +436,34 @@
                                         class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Product</th>
                                     <th v-if="form.meta.display_options.show_description"
-                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
+                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Notes</th>
                                     <th v-if="form.meta.display_options.show_hsn"
-                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
+                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         HSN/SAC
                                     </th>
                                     <th
-                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
+                                        class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Qty
                                     </th>
                                     <th
-                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">
+                                        class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Price
                                     </th>
                                     <th v-if="form.meta.display_options.show_discount"
-                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
+                                        class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Disc %
                                     </th>
                                     <th v-if="form.meta.display_options.show_discount"
-                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
+                                        class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Sell Price
                                     </th>
                                     <th v-if="form.meta.display_options.show_gst_breakdown"
-                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
+                                        class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Tax %
                                     </th>
                                     <th
-                                        class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-28">
+                                        class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Total
                                     </th>
                                     <th
@@ -475,20 +494,20 @@
                                     <td class="px-1 py-1">
                                         <input type="number" v-model.number="item.quantity" min="0.01" step="0.01"
                                             @input="calculateDiscountAmount(item)"
-                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6"
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6 text-right"
                                             required />
                                     </td>
                                     <td class="px-1 py-1">
                                         <input type="number" v-model.number="item.unit_price" min="0" step="0.01"
                                             @input="calculateDiscountAmount(item)"
-                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6"
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6 text-right"
                                             required />
                                     </td>
                                     <td v-if="form.meta.display_options.show_discount" class="px-1 py-1">
                                         <!-- Discount Percent Input -->
                                         <input type="number" v-model.number="item.discount_percent" min="0" max="100"
                                             step="0.1" @input="calculateDiscountAmount(item)"
-                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6 text-right" />
                                     </td>
                                     <td v-if="form.meta.display_options.show_discount" class="px-1 py-1">
                                         <!-- Calculated Sell Price Display -->
@@ -499,7 +518,7 @@
                                     </td>
                                     <td v-if="form.meta.display_options.show_gst_breakdown" class="px-1 py-1">
                                         <input type="number" v-model.number="item.tax_rate" min="0" step="0.1"
-                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
+                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6 text-right" />
                                     </td>
                                     <td
                                         class="px-2 py-1 text-right text-sm text-gray-900 font-medium whitespace-nowrap">
@@ -565,7 +584,7 @@
 
             <!-- Notes & Terms -->
             <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-                <div class="p-3 sm:p-8">
+                <div class="px-4 py-6 sm:p-8">
                     <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 sm:gap-y-8">
                         <div>
                             <label for="notes" class="block text-sm font-medium leading-6 text-gray-900">Notes</label>
@@ -620,6 +639,32 @@ import { useAuthStore } from '../../stores/auth'
 import { storeToRefs } from 'pinia'
 import StateSelect from '../../components/StateSelect.vue'
 import ProductAutocomplete from '../../components/ProductAutocomplete.vue'
+import CustomSelect from '../../components/CustomSelect.vue'
+
+const documentTypeOptions = [
+    {
+        label: 'Sales Documents',
+        options: [
+            { label: 'Tax Invoice (GST)', value: 'tax_invoice', description: 'Regular GST invoice for sales' },
+            { label: 'Bill of Supply (No GST)', value: 'bill_of_supply', description: 'For composition/exempted goods' },
+            { label: 'Proforma Invoice (Estimate)', value: 'proforma_invoice', description: 'Quotation - not a tax invoice' }
+        ]
+    },
+    {
+        label: 'Adjustments',
+        options: [
+            { label: 'Credit Note (Return/Reduction)', value: 'credit_note', description: 'Issue when reducing invoice amount (returns, discounts)' },
+            { label: 'Debit Note (Additional Charges)', value: 'debit_note', description: 'Issue when increasing invoice amount' }
+        ]
+    },
+    {
+        label: 'Logistics',
+        options: [
+            { label: 'Delivery Challan', value: 'delivery_challan', description: 'For transport of goods without invoice' }
+        ]
+    }
+]
+
 import client from '../../api/client'
 
 const router = useRouter()
@@ -633,6 +678,28 @@ const { loading } = storeToRefs(invoiceStore)
 
 const isEditMode = computed(() => route.params.id !== undefined)
 
+// Detect default type from route name
+const defaultType = computed(() => {
+    const routeName = route.name?.toString() || ''
+    if (routeName.includes('quotation')) return 'proforma_invoice'
+    if (routeName.includes('credit-note')) return 'credit_note'
+    if (routeName.includes('debit-note')) return 'debit_note'
+    if (routeName.includes('delivery-challan')) return 'delivery_challan'
+    return 'tax_invoice' // Default for invoice routes
+})
+
+// Get document type label for display
+const getDocumentTypeLabel = () => {
+    switch (form.value.type) {
+        case 'bill_of_supply': return 'Bill of Supply'
+        case 'proforma_invoice': return 'Quotation'
+        case 'delivery_challan': return 'Delivery Challan'
+        case 'credit_note': return 'Credit Note'
+        case 'debit_note': return 'Debit Note'
+        default: return 'Invoice'
+    }
+}
+
 const customers = ref<any[]>([])
 const products = ref<Product[]>([])
 
@@ -642,7 +709,7 @@ const rememberSettings = ref(false)
 
 const form = ref({
     invoice_number: '',
-    type: 'invoice', // Hardcoded
+    type: 'tax_invoice', // Default to tax invoice
     party_id: '',
     date: new Date().toISOString().split('T')[0],
     due_date: new Date().toISOString().split('T')[0],
@@ -675,7 +742,8 @@ const form = ref({
             city: '',
             state: '',
             zip: ''
-        }
+        },
+        copy_type: 'original' as 'original' | 'duplicate' | 'triplicate'
     }
 })
 
@@ -943,7 +1011,7 @@ const loadInvoice = async () => {
 
             form.value = {
                 invoice_number: invoice.invoice_number,
-                type: 'invoice',
+                type: invoice.type || 'tax_invoice',
                 party_id: invoice.party_id,
                 date: formatDate(invoice.date),
                 due_date: formatDate(invoice.due_date),
@@ -972,7 +1040,8 @@ const loadInvoice = async () => {
                         show_description: invoice.meta?.display_options?.show_description ?? true
                     },
                     billing_address: invoice.meta?.billing_address || { street: '', city: '', state: '', zip: '' },
-                    shipping_address: invoice.meta?.shipping_address || { street: '', city: '', state: '', zip: '' }
+                    shipping_address: invoice.meta?.shipping_address || { street: '', city: '', state: '', zip: '' },
+                    copy_type: invoice.meta?.copy_type || 'original'
                 }
             }
 
@@ -1055,6 +1124,12 @@ onMounted(() => {
     loadCustomers()
     loadProducts()
     loadInvoice()
+
+    // Auto-set document type from route for new documents
+    if (!isEditMode.value) {
+        form.value.type = defaultType.value
+    }
+
     window.addEventListener('keydown', handleKeydown)
 })
 

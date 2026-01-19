@@ -21,7 +21,7 @@
     <form method="POST" action="{{ route('internal.tenants.update-status', $business->id) }}" class="inline-block">
         @csrf
         @method('PATCH')
-        @if($business->status === 'active')
+        @if ($business->status === 'active')
             <input type="hidden" name="status" value="suspended">
             <button type="submit"
                 class="px-4 py-2 bg-red-50 text-red-700 rounded-md hover:bg-red-100 font-medium text-sm border border-red-200"
@@ -55,7 +55,7 @@
                     <div>
                         <dt class="text-sm font-medium text-text-muted">Status</dt>
                         <dd class="mt-1">
-                            @if($business->status === 'active')
+                            @if ($business->status === 'active')
                                 <span
                                     class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
                             @else
@@ -72,14 +72,14 @@
 
                     <div class="sm:col-span-2 border-t border-gray-100 pt-4 mt-2"></div>
 
-                    @if($business->mobile)
+                    @if ($business->mobile)
                         <div>
                             <dt class="text-sm font-medium text-text-muted">Mobile</dt>
                             <dd class="mt-1 text-sm text-text">{{ $business->mobile }}</dd>
                         </div>
                     @endif
 
-                    @if($business->website)
+                    @if ($business->website)
                         <div>
                             <dt class="text-sm font-medium text-text-muted">Website</dt>
                             <dd class="mt-1 text-sm text-text">
@@ -89,37 +89,40 @@
                         </div>
                     @endif
 
-                    @if($business->gstin)
+                    @if ($business->gstin)
                         <div>
                             <dt class="text-sm font-medium text-text-muted">GSTIN</dt>
                             <dd class="mt-1 text-sm text-text font-mono">{{ $business->gstin }}</dd>
                         </div>
                     @endif
 
-                    @if($business->pan)
+                    @if ($business->pan)
                         <div>
                             <dt class="text-sm font-medium text-text-muted">PAN</dt>
                             <dd class="mt-1 text-sm text-text font-mono">{{ $business->pan }}</dd>
                         </div>
                     @endif
 
-                    @if($business->address)
+                    @if ($business->address)
                         <div class="sm:col-span-2">
                             <dt class="text-sm font-medium text-text-muted">Address</dt>
                             <dd class="mt-1 text-sm text-text whitespace-pre-line">{{ $business->address }}</dd>
                         </div>
                     @endif
 
-                    @if($business->bank_name || $business->ifsc_code)
+                    @if ($business->bank_name || $business->ifsc_code)
                         <div class="sm:col-span-2 border-t border-gray-100 pt-4 mt-2">
                             <dt class="text-sm font-medium text-text-muted mb-2">Bank Details</dt>
                             <dd class="text-sm text-text bg-gray-50 p-3 rounded border border-gray-200">
-                                @if($business->bank_name)
-                                <div class="font-medium">{{ $business->bank_name }}</div>@endif
-                                @if($business->account_number)
-                                <div>A/C: {{ $business->account_number }}</div>@endif
-                                @if($business->ifsc_code)
-                                <div>IFSC: {{ $business->ifsc_code }}</div>@endif
+                                @if ($business->bank_name)
+                                    <div class="font-medium">{{ $business->bank_name }}</div>
+                                @endif
+                                @if ($business->account_number)
+                                    <div>A/C: {{ $business->account_number }}</div>
+                                @endif
+                                @if ($business->ifsc_code)
+                                    <div>IFSC: {{ $business->ifsc_code }}</div>
+                                @endif
                             </dd>
                         </div>
                     @endif
@@ -144,7 +147,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            @foreach($business->users as $user)
+                            @foreach ($business->users as $user)
                                 <tr>
                                     <td class="py-3 whitespace-nowrap text-sm text-text">
                                         <div class="font-medium">{{ $user->name }}</div>
@@ -178,7 +181,7 @@
             <div class="card bg-blue-50 border-blue-100">
                 <h3 class="text-lg font-medium text-blue-900 mb-4">Current Subscription</h3>
 
-                @if($sub = $business->subscriptions->first())
+                @if ($sub = $business->subscriptions->first())
                     <div class="space-y-4">
                         <div>
                             <div class="text-sm text-blue-700">Plan</div>
@@ -189,7 +192,7 @@
                             <div class="text-sm font-medium text-blue-900">{{ ucfirst($sub->plan->interval) }}</div>
                         </div>
 
-                        @if($sub->onTrial())
+                        @if ($sub->onTrial())
                             <div class="bg-blue-100 rounded p-2 text-sm text-blue-800">
                                 On Trial until {{ $sub->trial_ends_at->format('M d') }}
                             </div>
@@ -203,7 +206,11 @@
                         </div>
                     </div>
                 @else
-                    <p class="text-sm text-blue-800">No active subscription.</p>
+                    <p class="text-sm text-blue-800 mb-3">No active subscription.</p>
+                    <a href="{{ route('internal.subscriptions.create', ['business_id' => $business->id]) }}"
+                        class="text-sm text-white bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded font-medium shadow-sm transition-colors">
+                        Subscribe Now
+                    </a>
                 @endif
             </div>
 
@@ -213,12 +220,13 @@
                     <h3 class="text-lg font-medium text-text">Feature Overrides</h3>
                 </div>
 
-                @if($business->featureOverrides->count() > 0)
+                @if ($business->featureOverrides->count() > 0)
                     <div class="space-y-3 mb-6">
-                        @foreach($business->featureOverrides as $override)
+                        @foreach ($business->featureOverrides as $override)
                             <div class="flex justify-between items-center p-2 bg-gray-50 rounded border border-gray-200">
                                 <div>
-                                    <div class="font-medium text-sm text-text">{{ $override->feature->name ?? 'Unknown' }}</div>
+                                    <div class="font-medium text-sm text-text">{{ $override->feature->name ?? 'Unknown' }}
+                                    </div>
                                     <div class="text-xs text-text-muted">
                                         Limit:
                                         {{ $override->limit == -1 ? 'Unlimited' : ($override->limit == 0 ? 'Disabled' : $override->limit) }}
@@ -246,7 +254,7 @@
                         <div>
                             <select name="feature_id" class="input-field text-sm py-1">
                                 <option value="">Select Feature...</option>
-                                @foreach($features as $feature)
+                                @foreach ($features as $feature)
                                     <option value="{{ $feature->id }}">{{ $feature->name }}</option>
                                 @endforeach
                             </select>
