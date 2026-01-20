@@ -947,8 +947,11 @@ const getShareText = () => {
     const invNum = invoice.value.invoice_number
     const amount = outstandingAmount.value
     const date = invoice.value.due_date ? `due on ${invoice.value.due_date}` : ''
+    // Use Main URL (Landing Page) from env for public link
+    const appUrl = import.meta.env.VITE_MAIN_URL || window.location.origin
+    const publicLink = `${appUrl}/p/invoices/${invoice.value.id}`
 
-    return `Hello ${invoice.value.party?.name || 'Customer'},\n\nThis is a gentle reminder from ${businessName}. Your Invoice ${invNum} for ₹${amount} is ${date}.\n\nPlease ensure payment is made at the earliest.\n\nThank you.`
+    return `Hello ${invoice.value.party?.name || 'Customer'},\n\nThis is a gentle reminder from ${businessName}. Your Invoice ${invNum} for ₹${amount} is ${date}.\n\nYou can view and download your invoice here:\n${publicLink}\n\nPlease ensure payment is made at the earliest.\n\nThank you.`
 }
 
 const shareWhatsApp = () => {

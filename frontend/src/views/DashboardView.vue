@@ -211,6 +211,38 @@
 
       <!-- Right Column: Recent Activity & Secondary Stats -->
       <div class="space-y-8">
+        <!-- Low Stock Alert Widget -->
+        <div v-if="lowStockProducts.length > 0"
+          class="bg-white shadow-sm rounded-xl border border-red-100 overflow-hidden">
+          <div class="px-6 py-4 border-b border-red-50 bg-red-50/50 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <div class="p-1.5 bg-red-100 rounded-lg text-red-600">
+                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 class="text-sm font-bold text-red-900">Low Stock Alert</h3>
+            </div>
+            <router-link to="/products" class="text-xs font-medium text-red-600 hover:text-red-500">View
+              Inventory</router-link>
+          </div>
+          <div class="divide-y divide-gray-50">
+            <div v-for="product in lowStockProducts" :key="product.id"
+              class="px-6 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors">
+              <div>
+                <p class="text-sm font-medium text-gray-900 truncate w-40">{{ product.name }}</p>
+                <p class="text-[10px] text-gray-500">Unit: {{ product.unit }}</p>
+              </div>
+              <div class="text-right">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-700">
+                  {{ Number(product.current_stock) }} Left
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="grid grid-cols-2 gap-4">
           <!-- Total Customers -->
           <div
@@ -334,6 +366,13 @@ interface RecentActivity {
   status: string
 }
 
+interface LowStockProduct {
+  id: string
+  name: string
+  current_stock: number
+  unit: string
+}
+
 const metrics = ref<DashboardMetrics>({
   revenue: 0,
   outstanding: 0,
@@ -343,6 +382,7 @@ const metrics = ref<DashboardMetrics>({
 })
 
 const recentActivity = ref<RecentActivity[]>([])
+const lowStockProducts = ref<LowStockProduct[]>([])
 const cashflowHistory = ref<any[]>([])
 
 const chartData = computed(() => {
@@ -435,6 +475,7 @@ onMounted(async () => {
     const response = await client.get('/dashboard')
     metrics.value = response.data.metrics
     recentActivity.value = response.data.recent_activity
+    lowStockProducts.value = response.data.low_stock_products || []
     cashflowHistory.value = response.data.cashflow_chart || []
   } catch (e) {
     console.error('Failed to load dashboard data', e)

@@ -98,9 +98,18 @@ class DashboardController extends Controller
             ];
         });
 
+        // Low Stock Products
+        $lowStockProducts = Product::where('current_stock', '<=', 10)
+            ->where('type', 'goods') // Only goods have stock
+            ->where('status', 'active')
+            ->orderBy('current_stock', 'asc')
+            ->limit(5)
+            ->get();
+
         return response()->json([
             'metrics' => $metrics,
             'recent_activity' => $recentInvoices,
+            'low_stock_products' => $lowStockProducts,
             'sales_chart' => $salesChart,
             'cashflow_chart' => $cashflowChart
         ]);

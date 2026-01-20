@@ -22,6 +22,27 @@ services:
     depends_on:
       - redis
 
+  queue:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: vedant-backend
+    container_name: vedant_queue
+    restart: unless-stopped
+    working_dir: /var/www
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    command: php artisan queue:work --tries=3 --timeout=90
+    depends_on:
+      - redis
+      - backend
+    networks:
+      - vedant_network
+      - pgsql_default
+
   frontend:
     build:
       context: ./frontend

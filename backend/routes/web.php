@@ -9,6 +9,10 @@ Route::get('/', [\App\Http\Controllers\Web\LandingController::class, 'index'])->
 // Legal Pages
 Route::get('privacy-policy', [\App\Http\Controllers\Web\LandingController::class, 'privacy'])->name('privacy');
 Route::get('terms-and-conditions', [\App\Http\Controllers\Web\LandingController::class, 'terms'])->name('terms');
+Route::get('sitemap.xml', [\App\Http\Controllers\Web\LandingController::class, 'sitemap'])->name('sitemap');
+
+// Public Invoice View
+Route::get('p/invoices/{id}', [\App\Http\Controllers\Api\PublicInvoiceController::class, 'show'])->name('public.invoice.show');
 
 
 
