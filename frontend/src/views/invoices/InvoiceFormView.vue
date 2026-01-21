@@ -195,8 +195,7 @@
             <!-- Customer & Invoice Details Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                 <!-- Card 1: Customer & Invoice Details -->
-                <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl"
-                    :class="{ 'md:col-span-2': !form.meta.display_options.show_transport_details }">
+                <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
                     <div class="px-4 py-6 sm:p-8">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
@@ -220,48 +219,23 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Credit/Debit Note Specific Fields -->
-                    <div v-if="['credit_note', 'debit_note'].includes(form.type)"
-                        class="grid grid-cols-2 gap-4 mt-4 py-4 border-t border-gray-100">
-                        <div>
-                            <label class="block text-sm font-medium leading-6 text-gray-900">Original
-                                Invoice</label>
-                            <div class="mt-1">
-                                <CustomSelect v-model="form.parent_id" :options="customerInvoices.map(inv => ({
-                                    label: `${inv.invoice_number} (${formatDate(inv.date)}) - ${formatCurrency(inv.grand_total)}`,
-                                    value: inv.id
-                                }))" placeholder="Select Original Invoice" searchable />
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label for="date" class="block text-sm font-medium leading-6 text-gray-900">Invoice
+                                    Date</label>
+                                <div class="mt-1">
+                                    <input type="date" id="date" v-model="form.date" required
+                                        class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium leading-6 text-gray-900">Reason</label>
-                            <div class="mt-1">
-                                <input type="text" v-model="form.reason" placeholder="e.g. Sales Return"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="grid grid-cols-2 gap-4 mt-4">
-                        <div>
-                            <label for="date" class="block text-sm font-medium leading-6 text-gray-900">
-                                {{ ['credit_note', 'debit_note'].includes(form.type) ? 'Note Date' : 'Invoice Date'
-                                }}
-                            </label>
-                            <div class="mt-1">
-                                <input type="date" id="date" v-model="form.date" required
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="due_date" class="block text-sm font-medium leading-6 text-gray-900">Due
-                                Date</label>
-                            <div class="mt-1">
-                                <input type="date" id="due_date" v-model="form.due_date" required
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                            <div>
+                                <label for="due_date" class="block text-sm font-medium leading-6 text-gray-900">Due
+                                    Date</label>
+                                <div class="mt-1">
+                                    <input type="date" id="due_date" v-model="form.due_date" required
+                                        class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -666,7 +640,6 @@ import { storeToRefs } from 'pinia'
 import StateSelect from '../../components/StateSelect.vue'
 import ProductAutocomplete from '../../components/ProductAutocomplete.vue'
 import CustomSelect from '../../components/CustomSelect.vue'
-import { formatDate } from '../../utils/formatters'
 
 const documentTypeOptions = [
     {
@@ -728,7 +701,6 @@ const getDocumentTypeLabel = () => {
 }
 
 const customers = ref<any[]>([])
-const customerInvoices = ref<any[]>([]) // For linking Credit Notes
 const products = ref<Product[]>([])
 
 // Display Options State
@@ -738,8 +710,6 @@ const rememberSettings = ref(false)
 const form = ref({
     invoice_number: '',
     type: 'tax_invoice', // Default to tax invoice
-    parent_id: '', // For Credit/Debit Notes
-    reason: '', // For Credit/Debit Notes
     party_id: '',
     date: new Date().toISOString().split('T')[0],
     due_date: new Date().toISOString().split('T')[0],
@@ -830,29 +800,9 @@ watch(() => form.value.party_id, (newId) => {
                 form.value.meta.billing_address = party.billing_address ? { ...party.billing_address } : { street: '', city: '', state: '', zip: '' }
                 form.value.meta.shipping_address = party.shipping_address ? { ...party.shipping_address } : { street: '', city: '', state: '', zip: '' }
             }
-
-            // Fetch invoices for this customer if type is credit/debit note
-            if (['credit_note', 'debit_note'].includes(form.value.type)) {
-                fetchCustomerInvoices(newId)
-            }
         }
     }
 })
-
-// Fetch customer invoices for Credit Note linking
-const fetchCustomerInvoices = async (partyId: string) => {
-    try {
-        const { data } = await client.get('/invoices', {
-            params: {
-                party_id: partyId,
-                type: 'tax_invoice' // We usually credit against a tax invoice
-            }
-        })
-        customerInvoices.value = data.data
-    } catch (e) {
-        console.error('Failed to fetch customer invoices', e)
-    }
-}
 
 const addItem = async () => {
     form.value.items.push({
@@ -1057,16 +1007,14 @@ const loadInvoice = async () => {
         const invoice = await invoiceStore.fetchInvoice(route.params.id as string)
         if (invoice) {
             // Correct date format for input=date (YYYY-MM-DD)
-            const toISODate = (d: string) => d ? new Date(d).toISOString().split('T')[0] : ''
+            const formatDate = (d: string) => d ? new Date(d).toISOString().split('T')[0] : ''
 
             form.value = {
                 invoice_number: invoice.invoice_number,
                 type: invoice.type || 'tax_invoice',
-                parent_id: invoice.parent_id || '',
-                reason: invoice.reason || '',
                 party_id: invoice.party_id,
-                date: toISODate(invoice.date),
-                due_date: toISODate(invoice.due_date),
+                date: formatDate(invoice.date),
+                due_date: formatDate(invoice.due_date),
                 items: invoice.items.map((i: any) => ({
                     ...i,
                     name: i.name || (!i.product_id ? i.description : ''),
