@@ -64,6 +64,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/export/{type}', [\App\Http\Controllers\Api\ExportController::class, 'export']);
     Route::get('/cashbook', [\App\Http\Controllers\Api\CashbookController::class, 'index']);
 
+    // Inventory
+    Route::get('inventory', [\App\Http\Controllers\Api\InventoryController::class, 'index']);
+    Route::post('inventory', [\App\Http\Controllers\Api\InventoryController::class, 'store']); // Use this instead of adjust-stock for full features
+
     // Plans
     Route::get('/plans', [\App\Http\Controllers\Api\PlanController::class, 'index']);
 

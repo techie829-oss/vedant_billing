@@ -47,6 +47,10 @@
                     class="text-xs font-bold text-gray-500 uppercase mt-1">
                     ({{ copyLabel }})
                 </p>
+                <p v-if="complianceText"
+                    class="text-xs font-bold text-gray-500 uppercase mt-1 border px-2 py-0.5 inline-block">
+                    {{ complianceText }}
+                </p>
                 <div class="mt-4 space-y-1">
                     <div class="flex justify-end gap-3 items-center">
                         <span class="text-xs font-bold text-gray-400 uppercase">{{ invoice.type === 'credit_note' ? 'CN'
@@ -146,7 +150,7 @@
                             Disc</th>
 
                         <!-- Dynamic Tax Headers -->
-                        <template v-if="invoice.meta?.display_options?.show_gst_breakdown">
+                        <template v-if="invoice.meta?.display_options?.show_gst_breakdown && isTaxDocument">
                             <template v-if="taxBreakdown.taxType === 'IGST'">
                                 <th class="py-3 text-right font-bold w-24">IGST</th>
                             </template>
@@ -183,7 +187,7 @@
                                 Number(item.discount) : '-' }}</td>
 
                         <!-- Dynamic Tax Columns -->
-                        <template v-if="invoice.meta?.display_options?.show_gst_breakdown">
+                        <template v-if="invoice.meta?.display_options?.show_gst_breakdown && isTaxDocument">
                             <template v-if="taxBreakdown.taxType === 'IGST'">
                                 <td class="py-3 px-1 text-right text-gray-500 align-top">
                                     <div class="text-[10px]">{{ Number(item.tax_rate) }}%</div>
@@ -282,7 +286,7 @@
                         </div>
 
                         <!-- Tax Breakdown -->
-                        <div v-if="invoice.meta?.display_options?.show_gst_breakdown"
+                        <div v-if="invoice.meta?.display_options?.show_gst_breakdown && isTaxDocument"
                             class="border-b border-gray-100 pb-2">
                             <template v-if="taxBreakdown.taxType === 'IGST'">
                                 <div class="flex justify-between text-gray-500">
@@ -336,6 +340,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useAuthStore } from '../../../stores/auth'
+import { formatCurrency, formatDate, amountInWords } from '../../../utils/formatters';
 
 const props = defineProps<{
     invoice: any,
@@ -368,19 +373,24 @@ const totalDiscount = computed(() => {
 });
 
 const authStore = useAuthStore()
+const isTaxDocument = computed(() => {
+    const taxTypes = ['invoice', 'tax_invoice', 'credit_note', 'debit_note'];
+    return taxTypes.includes(props.invoice.type);
+});
+
+const complianceText = computed(() => {
+    if (!isTaxDocument.value) {
+        if (props.invoice.type === 'bill_of_supply') return '';
+        if (props.invoice.type === 'delivery_challan') return 'NOT FOR SALE';
+        if (['quote', 'proforma_invoice', 'estimate'].includes(props.invoice.type)) return 'THIS IS NOT A TAX INVOICE';
+    }
+    return '';
+});
+
 const shouldShowBranding = computed(() => {
     const slug = authStore.currentSubscription?.plan?.slug
     return !slug || ['free', 'starter'].includes(slug)
 })
-
-const formatCurrency = (value: number | string) => {
-    return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(value))
-}
-
-const formatDate = (dateString: string) => {
-    if (!dateString) return ''
-    return new Date(dateString).toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' })
-}
 
 const getDocumentTitle = () => {
     switch (props.invoice.type) {
@@ -395,33 +405,4 @@ const getDocumentTitle = () => {
     }
 }
 
-// Simple Indian numbering system converter (can be improved or moved to utility)
-const amountInWords = (num: number) => {
-    if (!num) return 'Zero';
-
-    const a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
-    const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-
-    const inWords = (nStr: any): string => {
-        let n: any = nStr.toString();
-        if (n.length > 9) return 'overflow';
-        // @ts-ignore
-        n = ('000000000' + n).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-        // @ts-ignore
-        if (!n) return; var str = '';
-        // @ts-ignore
-        str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
-        // @ts-ignore
-        str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh ' : '';
-        // @ts-ignore
-        str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
-        // @ts-ignore
-        str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
-        // @ts-ignore
-        str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
-        return str;
-    }
-
-    return inWords(Math.floor(num));
-}
 </script>

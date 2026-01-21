@@ -18,7 +18,7 @@
                     Catalog Scans
                     <span v-if="pendingCount > 0"
                         class="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">{{
-                        pendingCount }}</span>
+                            pendingCount }}</span>
                 </router-link>
                 <router-link to="/products/create"
                     class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-3 sm:py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none transition-colors">
@@ -27,6 +27,15 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     Add Product
+                </router-link>
+                <router-link to="/inventory/history"
+                    class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-3 sm:py-2 border border-blue-200 shadow-sm text-sm font-medium rounded-lg text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none transition-colors">
+                    <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    History
                 </router-link>
             </div>
         </div>
@@ -49,7 +58,7 @@
                                     {{ product.type }}
                                 </span>
                                 <span class="text-[10px] text-gray-400" v-if="product.hsn_code">HSN: {{ product.hsn_code
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                         <div class="text-right flex-shrink-0">
@@ -100,7 +109,10 @@
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Type</th>
                                     <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">
-                                        Price</th>
+                                        Sale Price</th>
+                                    <th scope="col"
+                                        class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900 hidden sm:table-cell">
+                                        Buy Price</th>
                                     <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">
                                         Stock</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -131,7 +143,7 @@
                                             HSN: {{ product.hsn_code }}</div>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ product.sku || '-'
-                                    }}</td>
+                                        }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 capitalize">
                                         <span
                                             class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
@@ -141,9 +153,36 @@
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900 text-right">₹{{
                                         Number(product.sale_price).toFixed(2) }}</td>
+                                    <td
+                                        class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right hidden sm:table-cell">
+                                        {{ product.purchase_price ? '₹' + Number(product.purchase_price).toFixed(2) :
+                                            '-' }}
+                                    </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right">
-                                        <span v-if="product.type === 'goods'">{{ Number(product.current_stock || 0) }}
-                                            {{ product.unit || '' }}</span>
+                                        <div v-if="product.type === 'goods'" class="flex flex-col items-end gap-1">
+                                            <span>{{ Number(product.current_stock || 0) }} {{ product.unit || ''
+                                            }}</span>
+                                            <div class="flex items-center gap-1 mt-1">
+                                                <button @click.prevent="openStockModal(product, 'purchase')"
+                                                    class="p-1.5 rounded bg-green-50 text-green-600 hover:bg-green-100 ring-1 ring-green-600/20"
+                                                    title="Add Stock (Purchase)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                        viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                                    </svg>
+                                                </button>
+                                                <button @click.prevent="openStockModal(product, 'adjustment')"
+                                                    class="p-1.5 rounded bg-red-50 text-red-600 hover:bg-red-100 ring-1 ring-red-600/20"
+                                                    title="Reduce Stock (Sale/Adj)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                        viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M20 12H4" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
                                         <span v-else>-</span>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -257,7 +296,7 @@
                                         <h3 class="text-sm font-medium text-green-800">{{
                                             scanResult.temp_products.length }} products extracted</h3>
                                         <p class="mt-1 text-sm text-green-700">Vendor: {{ scanResult.vendor || 'Unknown'
-                                            }} | Invoice: {{ scanResult.invoice_no || '-' }}</p>
+                                        }} | Invoice: {{ scanResult.invoice_no || '-' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -290,7 +329,7 @@
                                                 <div class="font-medium text-gray-900">{{ item.temp_product.name }}
                                                 </div>
                                                 <div class="text-xs text-gray-500">SKU: {{ item.temp_product.sku || '-'
-                                                    }}</div>
+                                                }}</div>
                                             </td>
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{
                                                 item.temp_product.quantity }} {{ item.temp_product.unit }}</td>
@@ -346,8 +385,13 @@
                 </div>
             </div>
         </div>
+
+        <StockAdjustmentModal :isOpen="showStockModal" :product="selectedProduct" :type="stockActionType"
+            @close="showStockModal = false" @saved="onStockUpdated" />
     </AppLayout>
 </template>
+
+
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
@@ -355,6 +399,7 @@ import { storeToRefs } from 'pinia'
 import { useProductStore } from '../../stores/product'
 import AppLayout from '../../layouts/AppLayout.vue'
 import client from '../../api/client'
+import StockAdjustmentModal from './StockAdjustmentModal.vue'
 
 const productStore = useProductStore()
 const { products, loading } = storeToRefs(productStore)
@@ -365,7 +410,25 @@ const scanning = ref(false)
 const scanError = ref('')
 const scanResult = ref<any>(null)
 const processingIds = ref<string[]>([])
-const pendingCount = ref(0)
+const pendingCount = ref(0) // Assuming pendingCount logic exists
+
+// Stock Adjustment
+const showStockModal = ref(false)
+const selectedProduct = ref<any>(null)
+const stockActionType = ref<'purchase' | 'adjustment'>('purchase')
+
+const openStockModal = (product: any, type: 'purchase' | 'adjustment') => {
+    selectedProduct.value = product
+    stockActionType.value = type
+    showStockModal.value = true
+}
+
+const onStockUpdated = async () => {
+    await productStore.fetchProducts()
+    // Optional: Show toast
+}
+
+// ... (rest of existing script)
 
 onMounted(async () => {
     await productStore.fetchProducts()

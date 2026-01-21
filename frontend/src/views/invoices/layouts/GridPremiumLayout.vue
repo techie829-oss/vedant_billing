@@ -39,6 +39,10 @@
                                 class="text-[10px] font-bold text-gray-500 uppercase mb-2">
                                 ({{ copyLabel }})
                             </p>
+                            <p v-if="complianceText"
+                                class="text-[10px] font-bold text-red-600 uppercase mb-2 border border-red-200 px-2 py-0.5 rounded bg-red-50">
+                                {{ complianceText }}
+                            </p>
                             <div class="text-right space-y-1 w-full">
                                 <div class="flex justify-between items-center gap-4">
                                     <span class="text-xs font-bold uppercase text-gray-500">Invoice No</span>
@@ -104,7 +108,7 @@
                                 <template v-else-if="invoice.party?.shipping_address">
                                     <p>{{ invoice.party.shipping_address.street }}</p>
                                     <p>{{ invoice.party.shipping_address.city }} {{ invoice.party.shipping_address.zip
-                                        }}</p>
+                                    }}</p>
                                     <p>{{ invoice.party.shipping_address.state }}</p>
                                 </template>
                             </div>
@@ -143,7 +147,7 @@
                                 <th v-if="invoice.meta?.display_options?.show_discount"
                                     class="py-2 px-3 text-right w-20 border-r border-gray-600">Disc.</th>
 
-                                <template v-if="invoice.meta?.display_options?.show_gst_breakdown">
+                                <template v-if="invoice.meta?.display_options?.show_gst_breakdown && isTaxDocument">
                                     <template v-if="taxBreakdown.taxType === 'IGST'">
                                         <th class="py-2 px-3 text-right w-24 border-r border-gray-600">IGST</th>
                                     </template>
@@ -182,7 +186,7 @@
                                         Number(item.discount) ? '-' +
                                             Number(item.discount) : '-' }}</td>
 
-                                <template v-if="invoice.meta?.display_options?.show_gst_breakdown">
+                                <template v-if="invoice.meta?.display_options?.show_gst_breakdown && isTaxDocument">
                                     <template v-if="taxBreakdown.taxType === 'IGST'">
                                         <td class="py-3 px-3 text-right border-r border-gray-800 text-[10px]">
                                             <div>{{ Number(item.tax_rate) }}%</div>
@@ -204,7 +208,7 @@
                                 </template>
 
                                 <td class="py-3 px-3 text-right font-bold border-gray-800">{{ formatCurrency(item.total)
-                                    }}</td>
+                                }}</td>
                             </tr>
                             <!-- Fill Empty Rows to maintain height if needed, OR just let it flow -->
                         </tbody>
@@ -274,7 +278,7 @@
                         </div>
 
                         <!-- Tax Totals -->
-                        <template v-if="invoice.meta?.display_options?.show_gst_breakdown">
+                        <template v-if="invoice.meta?.display_options?.show_gst_breakdown && isTaxDocument">
                             <template v-if="taxBreakdown.taxType === 'IGST'">
                                 <div class="flex justify-between items-center p-2 border-b border-gray-300">
                                     <span class="text-xs text-gray-600">IGST</span>
@@ -323,6 +327,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { formatCurrency, formatDate, amountInWords } from '../../../utils/formatters';
 
 const props = defineProps<{
     invoice: any
@@ -354,39 +359,20 @@ const totalDiscount = computed(() => {
     return (props.invoice.items || []).reduce((acc: number, item: any) => acc + (Number(item.discount) || 0), 0);
 });
 
-const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR'
-    }).format(value)
-}
+const isTaxDocument = computed(() => {
+    const taxTypes = ['invoice', 'tax_invoice', 'credit_note', 'debit_note'];
+    return taxTypes.includes(props.invoice.type);
+});
 
-const formatDate = (dateString: string) => {
-    if (!dateString) return ''
-    return new Date(dateString).toLocaleDateString('en-IN', {
-        day: 'numeric', month: 'short', year: 'numeric'
-    })
-}
+const complianceText = computed(() => {
+    if (!isTaxDocument.value) {
+        if (props.invoice.type === 'bill_of_supply') return '';
+        if (props.invoice.type === 'delivery_challan') return 'NOT FOR SALE';
+        if (['quote', 'proforma_invoice', 'estimate'].includes(props.invoice.type)) return 'THIS IS NOT A TAX INVOICE';
+    }
+    return '';
+});
 
-const amountInWords = (num: number) => {
-    if (!num) return 'Zero'
-    const a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
-    const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-
-    const sNum = Math.floor(num).toString();
-    if (sNum.length > 9) return 'overflow';
-
-    const n = ('000000000' + sNum).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-    if (!n) return '';
-
-    let str = '';
-    str += (Number(n[1]) != 0) ? (a[Number(n[1])] || b[Number(n[1]![0])] + ' ' + a[Number(n[1]![1])]) + 'crore ' : '';
-    str += (Number(n[2]) != 0) ? (a[Number(n[2])] || b[Number(n[2]![0])] + ' ' + a[Number(n[2]![1])]) + 'lakh ' : '';
-    str += (Number(n[3]) != 0) ? (a[Number(n[3])] || b[Number(n[3]![0])] + ' ' + a[Number(n[3]![1])]) + 'thousand ' : '';
-    str += (Number(n[4]) != 0) ? (a[Number(n[4])] || b[Number(n[4]![0])] + ' ' + a[Number(n[4]![1])]) + 'hundred ' : '';
-    str += (Number(n[5]) != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[Number(n[5]![0])] + ' ' + a[Number(n[5]![1])]) + '' : '';
-    return str;
-}
 
 const documentTitle = computed(() => {
     switch (props.invoice.type) {

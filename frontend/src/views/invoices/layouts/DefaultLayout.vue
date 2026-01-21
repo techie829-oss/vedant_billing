@@ -30,8 +30,10 @@
                     <div class="text-right">
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{{ documentTitle }}
                         </p>
-                        <p v-if="copyType && (invoice.type === 'invoice' || invoice.type === 'tax_invoice' || invoice.type === 'bill_of_supply')"
-                            class="text-[10px] font-bold text-gray-500 uppercase mb-1">
+                        <p v-if="complianceText" class="text-[9px] font-bold text-gray-500 uppercase mt-1">
+                            {{ complianceText }}
+                        </p>
+                        <p v-if="copyType && isTaxDocument" class="text-[10px] font-bold text-gray-500 uppercase mb-1">
                             ({{ copyLabel }})
                         </p>
                         <h2 class="text-lg font-mono font-bold text-gray-900">{{ invoice.invoice_number }}</h2>
@@ -357,6 +359,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { formatCurrency, formatDate, amountInWords } from '../../../utils/formatters';
 
 const props = defineProps<{
     invoice: any,
@@ -472,6 +475,21 @@ const pages = computed(() => {
     return _pages;
 });
 
+const isTaxDocument = computed(() => {
+    // Only these types should show Tax Breakdowns and Tax Columns
+    const taxTypes = ['invoice', 'tax_invoice', 'credit_note', 'debit_note'];
+    return taxTypes.includes(props.invoice.type);
+});
+
+const complianceText = computed(() => {
+    if (!isTaxDocument.value) {
+        if (props.invoice.type === 'bill_of_supply') return ''; // Usually just title is enough, or specific composition text if needed
+        if (props.invoice.type === 'delivery_challan') return 'NOT FOR SALE';
+        if (['quote', 'proforma_invoice', 'estimate'].includes(props.invoice.type)) return 'THIS IS NOT A TAX INVOICE';
+    }
+    return '';
+});
+
 const documentTitle = computed(() => {
     switch (props.invoice.type) {
         case 'proforma_invoice': return 'PROFORMA INVOICE';
@@ -484,39 +502,7 @@ const documentTitle = computed(() => {
     }
 });
 
-const formatCurrency = (val: any) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(val))
-const formatDate = (d: string) => d ? new Date(d).toLocaleDateString('en-IN') : ''
-const amountInWords = (num: number) => {
-    // ... (Keep existing impl)
-    if (!num) return 'Zero';
-    const a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
-    const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-    const inWords = (nStr: any): string => {
-        let n: any = nStr.toString();
-        if (n.length > 9) return 'overflow';
-        // @ts-ignore
-        n = ('000000000' + n).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-        // @ts-ignore
-        if (!n) return; var str = '';
-        // @ts-ignore
-        str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
-        // @ts-ignore
-        str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh ' : '';
-        // @ts-ignore
-        str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
-        // @ts-ignore
-        str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
-        // @ts-ignore
-        str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
-        return str;
-    }
-    const wholePart = Math.floor(num);
-    const decimalPart = Math.round((num - wholePart) * 100);
-    let result = inWords(wholePart);
-    if (decimalPart > 0) result += ' Rupees and ' + inWords(decimalPart) + ' Paise';
-    else result += ' Rupees';
-    return result;
-}
+
 </script>
 
 <style scoped>

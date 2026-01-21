@@ -126,6 +126,7 @@ class ProductController extends Controller
                         'product_id' => $product->id,
                         'type' => 'adjustment',
                         'quantity' => $diff,
+                        'unit_price' => $validated['purchase_price'] ?? $product->purchase_price,
                         'notes' => 'Manual Correction via Edit',
                     ]);
                     // increment/decrement handles concurrency better than set, but we are inside transaction

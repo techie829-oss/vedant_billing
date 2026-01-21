@@ -19,6 +19,9 @@
                             class="uppercase text-xs ml-2">
                             ({{ copyLabel }})
                         </span>
+                        <span v-if="complianceText" class="uppercase text-xs ml-2 border border-black px-1">
+                            {{ complianceText }}
+                        </span>
                     </div>
 
                     <!-- Top Grid: Seller Info (Left) | Invoice Meta (Right) -->
@@ -334,6 +337,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { formatNumber, formatDate, amountInWords } from '../../../utils/formatters';
 
 const props = defineProps<{
     invoice: any,
@@ -371,15 +375,31 @@ const MAX_ITEMS_FIRST = 12; // Items fit on first page
 const MAX_ITEMS_STD = 18;   // Items fit on subsequent pages
 const TOTALS_SPACE_ITEMS = 6;
 
+const isTaxDocument = computed(() => {
+    const taxTypes = ['invoice', 'tax_invoice', 'credit_note', 'debit_note'];
+    return taxTypes.includes(props.invoice.type);
+});
+
+const complianceText = computed(() => {
+    if (!isTaxDocument.value) {
+        if (props.invoice.type === 'bill_of_supply') return '';
+        if (props.invoice.type === 'delivery_challan') return 'NOT FOR SALE';
+        if (['quote', 'proforma_invoice', 'estimate'].includes(props.invoice.type)) return 'THIS IS NOT A TAX INVOICE';
+    }
+    return '';
+});
+
 // Display Options
 const safeMeta = computed(() => props.invoice.meta || {})
 const displayOpts = computed(() => {
     const opts = safeMeta.value.display_options || {}
+    const showGst = isTaxDocument.value ? (opts.show_gst_breakdown ?? true) : false;
+
     return {
-        show_qr_bank_details: opts.show_qr_bank_details ?? true, // Default true for Classic Grid
+        show_qr_bank_details: opts.show_qr_bank_details ?? true,
         show_hsn: opts.show_hsn ?? true,
-        show_gst_breakdown: opts.show_gst_breakdown ?? true,
-        show_ship_to: opts.show_ship_to ?? true, // Default true - show consignee section
+        show_gst_breakdown: showGst,
+        show_ship_to: opts.show_ship_to ?? true,
         show_discount: opts.show_discount ?? false
     }
 })
@@ -422,38 +442,6 @@ const pages = computed(() => {
     return _pages;
 });
 
-const formatNumber = (val: any) => new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(val))
-const formatDate = (d: string) => d ? new Date(d).toLocaleDateString('en-IN') : ''
-const amountInWords = (num: number) => {
-    if (!num) return 'Zero';
-    const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
-    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-    const inWords = (nStr: any): string => {
-        let n: any = nStr.toString();
-        if (n.length > 9) return 'overflow';
-        // @ts-ignore
-        n = ('000000000' + n).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-        // @ts-ignore
-        if (!n) return; var str = '';
-        // @ts-ignore
-        str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
-        // @ts-ignore
-        str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
-        // @ts-ignore
-        str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
-        // @ts-ignore
-        str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
-        // @ts-ignore
-        str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
-        return str;
-    }
-    const wholePart = Math.floor(num);
-    const decimalPart = Math.round((num - wholePart) * 100);
-    let result = inWords(wholePart);
-    if (decimalPart > 0) result += ' Rupees and ' + inWords(decimalPart) + ' Paise';
-    else result += ' Rupees';
-    return result;
-}
 
 const documentTitle = computed(() => {
     switch (props.invoice.type) {

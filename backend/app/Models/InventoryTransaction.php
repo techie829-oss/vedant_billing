@@ -15,12 +15,15 @@ class InventoryTransaction extends Model
         'product_id',
         'type', // purchase, sale, adjustment, return
         'quantity',
+        'unit_price',
+        'party_id',
         'notes',
         'reference_id',
     ];
 
     protected $casts = [
         'quantity' => 'decimal:2',
+        'unit_price' => 'decimal:2',
     ];
 
     protected static function booted(): void
@@ -46,5 +49,10 @@ class InventoryTransaction extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function party()
+    {
+        return $this->belongsTo(Party::class);
     }
 }

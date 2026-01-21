@@ -138,6 +138,12 @@ const router = createRouter({
             meta: { requiresAuth: true, requiresBusiness: true }
         },
         {
+            path: '/inventory/history',
+            name: 'inventory.history',
+            component: () => import('../views/products/InventoryHistoryView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
             path: '/invoice-scans',
             name: 'invoice-scans',
             component: () => import('../views/invoices/InvoiceScansView.vue'),
