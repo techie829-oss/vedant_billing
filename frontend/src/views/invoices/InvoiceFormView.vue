@@ -229,14 +229,10 @@
                             <label class="block text-sm font-medium leading-6 text-gray-900">Original
                                 Invoice</label>
                             <div class="mt-1">
-                                <select v-model="form.parent_id"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                    <option value="">Select Original Invoice</option>
-                                    <option v-for="inv in customerInvoices" :key="inv.id" :value="inv.id">
-                                        {{ inv.invoice_number }} ({{ formatDate(inv.date) }}) - ₹{{ inv.grand_total
-                                        }}
-                                    </option>
-                                </select>
+                                <CustomSelect v-model="form.parent_id" :options="customerInvoices.map(inv => ({
+                                    label: `${inv.invoice_number} (${formatDate(inv.date)}) - ${formatCurrency(inv.grand_total)}`,
+                                    value: inv.id
+                                }))" placeholder="Select Original Invoice" searchable />
                             </div>
                         </div>
                         <div>
