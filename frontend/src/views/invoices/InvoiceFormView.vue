@@ -670,6 +670,7 @@ import { storeToRefs } from 'pinia'
 import StateSelect from '../../components/StateSelect.vue'
 import ProductAutocomplete from '../../components/ProductAutocomplete.vue'
 import CustomSelect from '../../components/CustomSelect.vue'
+import { formatDate } from '../../utils/formatters'
 
 const documentTypeOptions = [
     {
@@ -1060,14 +1061,16 @@ const loadInvoice = async () => {
         const invoice = await invoiceStore.fetchInvoice(route.params.id as string)
         if (invoice) {
             // Correct date format for input=date (YYYY-MM-DD)
-            const formatDate = (d: string) => d ? new Date(d).toISOString().split('T')[0] : ''
+            const toISODate = (d: string) => d ? new Date(d).toISOString().split('T')[0] : ''
 
             form.value = {
                 invoice_number: invoice.invoice_number,
                 type: invoice.type || 'tax_invoice',
+                parent_id: invoice.parent_id || '',
+                reason: invoice.reason || '',
                 party_id: invoice.party_id,
-                date: formatDate(invoice.date),
-                due_date: formatDate(invoice.due_date),
+                date: toISODate(invoice.date),
+                due_date: toISODate(invoice.due_date),
                 items: invoice.items.map((i: any) => ({
                     ...i,
                     name: i.name || (!i.product_id ? i.description : ''),
