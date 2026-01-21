@@ -220,51 +220,52 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Credit/Debit Note Specific Fields -->
-                        <div v-if="['credit_note', 'debit_note'].includes(form.type)"
-                            class="grid grid-cols-2 gap-4 mt-4 py-4 border-t border-gray-100">
-                            <div>
-                                <label class="block text-sm font-medium leading-6 text-gray-900">Original
-                                    Invoice</label>
-                                <div class="mt-1">
-                                    <select v-model="form.parent_id"
-                                        class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                        <option value="">Select Original Invoice</option>
-                                        <option v-for="inv in customerInvoices" :key="inv.id" :value="inv.id">
-                                            {{ inv.invoice_number }} ({{ formatDate(inv.date) }}) - ₹{{ inv.grand_total
-                                            }}
-                                        </option>
-                                    </select>
-                                </div>
+                    </div>
+
+                    <!-- Credit/Debit Note Specific Fields -->
+                    <div v-if="['credit_note', 'debit_note'].includes(form.type)"
+                        class="grid grid-cols-2 gap-4 mt-4 py-4 border-t border-gray-100">
+                        <div>
+                            <label class="block text-sm font-medium leading-6 text-gray-900">Original
+                                Invoice</label>
+                            <div class="mt-1">
+                                <select v-model="form.parent_id"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                    <option value="">Select Original Invoice</option>
+                                    <option v-for="inv in customerInvoices" :key="inv.id" :value="inv.id">
+                                        {{ inv.invoice_number }} ({{ formatDate(inv.date) }}) - ₹{{ inv.grand_total
+                                        }}
+                                    </option>
+                                </select>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium leading-6 text-gray-900">Reason</label>
-                                <div class="mt-1">
-                                    <input type="text" v-model="form.reason" placeholder="e.g. Sales Return"
-                                        class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                                </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium leading-6 text-gray-900">Reason</label>
+                            <div class="mt-1">
+                                <input type="text" v-model="form.reason" placeholder="e.g. Sales Return"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label for="date" class="block text-sm font-medium leading-6 text-gray-900">
+                                {{ ['credit_note', 'debit_note'].includes(form.type) ? 'Note Date' : 'Invoice Date'
+                                }}
+                            </label>
+                            <div class="mt-1">
+                                <input type="date" id="date" v-model="form.date" required
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4 mt-4">
-                            <div>
-                                <label for="date" class="block text-sm font-medium leading-6 text-gray-900">
-                                    {{ ['credit_note', 'debit_note'].includes(form.type) ? 'Note Date' : 'Invoice Date'
-                                    }}
-                                </label>
-                                <div class="mt-1">
-                                    <input type="date" id="date" v-model="form.date" required
-                                        class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label for="due_date" class="block text-sm font-medium leading-6 text-gray-900">Due
-                                    Date</label>
-                                <div class="mt-1">
-                                    <input type="date" id="due_date" v-model="form.due_date" required
-                                        class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                                </div>
+                        <div>
+                            <label for="due_date" class="block text-sm font-medium leading-6 text-gray-900">Due
+                                Date</label>
+                            <div class="mt-1">
+                                <input type="date" id="due_date" v-model="form.due_date" required
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                             </div>
                         </div>
                     </div>
