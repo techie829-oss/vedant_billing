@@ -195,7 +195,8 @@
             <!-- Customer & Invoice Details Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                 <!-- Card 1: Customer & Invoice Details -->
-                <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+                <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl"
+                    :class="{ 'md:col-span-2': !form.meta.display_options.show_transport_details }">
                     <div class="px-4 py-6 sm:p-8">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
@@ -219,10 +220,38 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Credit/Debit Note Specific Fields -->
+                        <div v-if="['credit_note', 'debit_note'].includes(form.type)"
+                            class="grid grid-cols-2 gap-4 mt-4 py-4 border-t border-gray-100">
+                            <div>
+                                <label class="block text-sm font-medium leading-6 text-gray-900">Original
+                                    Invoice</label>
+                                <div class="mt-1">
+                                    <select v-model="form.parent_id"
+                                        class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                        <option value="">Select Original Invoice</option>
+                                        <option v-for="inv in customerInvoices" :key="inv.id" :value="inv.id">
+                                            {{ inv.invoice_number }} ({{ formatDate(inv.date) }}) - ₹{{ inv.grand_total
+                                            }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium leading-6 text-gray-900">Reason</label>
+                                <div class="mt-1">
+                                    <input type="text" v-model="form.reason" placeholder="e.g. Sales Return"
+                                        class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-2 gap-4 mt-4">
                             <div>
-                                <label for="date" class="block text-sm font-medium leading-6 text-gray-900">Invoice
-                                    Date</label>
+                                <label for="date" class="block text-sm font-medium leading-6 text-gray-900">
+                                    {{ ['credit_note', 'debit_note'].includes(form.type) ? 'Note Date' : 'Invoice Date'
+                                    }}
+                                </label>
                                 <div class="mt-1">
                                     <input type="date" id="date" v-model="form.date" required
                                         class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
@@ -701,6 +730,7 @@ const getDocumentTypeLabel = () => {
 }
 
 const customers = ref<any[]>([])
+const customerInvoices = ref<any[]>([]) // For linking Credit Notes
 const products = ref<Product[]>([])
 
 // Display Options State
@@ -710,6 +740,8 @@ const rememberSettings = ref(false)
 const form = ref({
     invoice_number: '',
     type: 'tax_invoice', // Default to tax invoice
+    parent_id: '', // For Credit/Debit Notes
+    reason: '', // For Credit/Debit Notes
     party_id: '',
     date: new Date().toISOString().split('T')[0],
     due_date: new Date().toISOString().split('T')[0],
@@ -800,9 +832,29 @@ watch(() => form.value.party_id, (newId) => {
                 form.value.meta.billing_address = party.billing_address ? { ...party.billing_address } : { street: '', city: '', state: '', zip: '' }
                 form.value.meta.shipping_address = party.shipping_address ? { ...party.shipping_address } : { street: '', city: '', state: '', zip: '' }
             }
+
+            // Fetch invoices for this customer if type is credit/debit note
+            if (['credit_note', 'debit_note'].includes(form.value.type)) {
+                fetchCustomerInvoices(newId)
+            }
         }
     }
 })
+
+// Fetch customer invoices for Credit Note linking
+const fetchCustomerInvoices = async (partyId: string) => {
+    try {
+        const { data } = await client.get('/invoices', {
+            params: {
+                party_id: partyId,
+                type: 'tax_invoice' // We usually credit against a tax invoice
+            }
+        })
+        customerInvoices.value = data.data
+    } catch (e) {
+        console.error('Failed to fetch customer invoices', e)
+    }
+}
 
 const addItem = async () => {
     form.value.items.push({
