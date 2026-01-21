@@ -1,7 +1,8 @@
 @extends('layouts.web')
 
 @section('title', 'Privacy Policy - VedantBilling')
-@section('description', 'Read VedantBilling\'s Privacy Policy to understand how we collect, use, and protect your
+@section('description',
+    'Read VedantBilling\'s Privacy Policy to understand how we collect, use, and protect your
     personal information.')
 @section('keywords', 'privacy policy, data protection, vedantbilling privacy, user data, gdpr')
 

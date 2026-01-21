@@ -30,12 +30,29 @@ class LandingController extends Controller
         return view('web.terms');
     }
 
+    public function services()
+    {
+        return view('web.services');
+    }
+
+    public function pricing()
+    {
+        $plans = \App\Models\Plan::with('features')
+            ->where('status', 'active')
+            ->orderBy('price')
+            ->get();
+
+        return view('web.pricing', compact('plans'));
+    }
+
     public function sitemap()
     {
         $urls = [
             route('home'),
             route('privacy'),
             route('terms'),
+            route('services'),
+            route('pricing'),
             // Add internal login page if we want it indexed? Probably no.
             // route('internal.login'),
         ];

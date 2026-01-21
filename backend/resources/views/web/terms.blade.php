@@ -1,7 +1,8 @@
 @extends('layouts.web')
 
-@section('title', 'Terms and Conditions - VedantBilling')
-@section('description', 'Review VedantBilling\'s Terms and Conditions to understand the rules and guidelines for using
+@section('title', 'Terms of Service - VedantBilling')
+@section('description',
+    'Review VedantBilling\'s Terms and Conditions to understand the rules and guidelines for using
     our service.')
 @section('keywords', 'terms and conditions, terms of service, user agreement, vedantbilling terms')
 

@@ -1,29 +1,46 @@
 @extends('layouts.web')
-
-@section('title', 'VedantBilling - Smart Invoicing & Inventory for Growing Businesses')
+@section('title', 'GST Billing & Invoicing Software in India | VedantBilling')
 @section('description',
-    'VedantBilling is the all-in-one invoicing and inventory management solution for growing
-    businesses. Create professional invoices, track stock, and manage payments effortlessly.')
+    'VedantBilling is a GST billing and invoicing software for Indian businesses. Create invoices,
+    manage inventory, track stock history, generate reports, and verify invoices online with a secure cloud platform.')
 @section('keywords',
-    'invoicing software, inventory management, billing system, small business accounting, gst billing,
-    vedantbilling')
+    'GST billing software India, invoicing software India, billing software for small business,
+    inventory management software India, invoice verification software')
 
 @section('content')
     <!-- Hero Section -->
     <div class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 mb-6">
-                Invoicing made <span
-                    class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">effortless.</span>
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 mb-6">
+                Simple <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">GST
+                    Billing</span> & Invoicing Software
+                <br class="hidden md:block" />for Indian Businesses
             </h1>
-            <p class="mt-4 text-xl text-gray-500 max-w-2xl mx-auto mb-10">
-                Manage invoices, track inventory, and handle accounting with a platform designed for modern businesses.
-                Fast, secure, and intuitive.
+            <p class="mt-4 text-xl text-gray-500 max-w-3xl mx-auto mb-8">
+                Create professional GST invoices, manage inventory, track stock movement, and run your business smoothly
+                with VedantBilling – a secure cloud billing solution built for growing Indian businesses.
             </p>
+
+            <!-- Trust Badges -->
+            <div class="flex flex-wrap justify-center gap-4 md:gap-8 mb-10 text-sm font-medium text-gray-600">
+                <span class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg> GST Ready</span>
+                <span class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg> Secure Cloud Platform</span>
+                <span class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg> Made for Indian Businesses</span>
+            </div>
+
             <div class="flex flex-col sm:flex-row justify-center gap-4">
                 <a href="{{ rtrim(env('WEB_URL', 'https://app.vedantbilling.com'), '/') . '/register' }}"
                     class="px-8 py-4 rounded-full bg-blue-600 text-white text-lg font-semibold shadow-xl shadow-blue-600/20 hover:bg-blue-700 hover:shadow-blue-600/40 transition-all transform hover:-translate-y-1">
-                    Start Your Free Trial
+                    Start Free Trial
                 </a>
                 <a href="#features"
                     class="px-8 py-4 rounded-full bg-white text-gray-700 text-lg font-semibold border border-gray-200 shadow-sm hover:bg-gray-50 hover:border-gray-300 transition-all">
@@ -67,36 +84,51 @@
         </div>
     </div>
 
-    <!-- Features Section -->
+    <!-- Core Features Section -->
     <div id="features" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-base font-semibold text-blue-600 tracking-wide uppercase">Features</h2>
+                <h2 class="text-base font-semibold text-blue-600 tracking-wide uppercase">Core Features</h2>
                 <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                    Everything you need to run your business
+                    All‑in‑One Billing, Inventory & Business Management
                 </p>
                 <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
-                    From inventory tracking to tax calculation, we've got you covered.
+                    From creating tax invoices to tracking inventory, we've got you covered.
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                <!-- Feature 1 -->
+                <!-- Smart GST Invoicing -->
                 <div
                     class="p-8 rounded-2xl bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300">
                     <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 mb-6">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                             </path>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Smart Invoicing</h3>
-                    <p class="text-gray-600">Create professional invoices in seconds. Automate recurring billing and
-                        payment reminders.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Smart GST Invoicing</h3>
+                    <p class="text-gray-600">Create GST‑compliant tax invoices in seconds. Auto-calculate taxes, apply
+                        discounts, and generate professional PDFs instantly.</p>
                 </div>
 
-                <!-- Feature 2 -->
+                <!-- Complete Document Management -->
+                <div
+                    class="p-8 rounded-2xl bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300">
+                    <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Document Management</h3>
+                    <p class="text-gray-600">Manage Tax Invoices, Bill of Supply, Quotations, Credit Notes, and Delivery
+                        Challans from a single dashboard.</p>
+                </div>
+
+                <!-- Inventory & Stock -->
                 <div
                     class="p-8 rounded-2xl bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300">
                     <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600 mb-6">
@@ -105,12 +137,42 @@
                                 d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Inventory Management</h3>
-                    <p class="text-gray-600">Track stock levels in real-time. Get low stock alerts and manage multiple
-                        warehouses.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Inventory & Stock</h3>
+                    <p class="text-gray-600">Track stock in real-time. View transaction history, get low-stock alerts, and
+                        maintain accurate HSN codes.</p>
                 </div>
 
-                <!-- Feature 3 -->
+                <!-- Customer Management -->
+                <div
+                    class="p-8 rounded-2xl bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center text-yellow-600 mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Customer Management</h3>
+                    <p class="text-gray-600">Securely store customer and supplier details (GSTIN, Address) for quick access
+                        while billing.</p>
+                </div>
+
+                <!-- Expense Tracking -->
+                <div
+                    class="p-8 rounded-2xl bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300">
+                    <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center text-red-600 mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Expense Tracking</h3>
+                    <p class="text-gray-600">Record and categorize daily expenses. Monitor spending easy to keep your
+                        accounts organized.</p>
+                </div>
+
+                <!-- Reports & Dashboard -->
                 <div
                     class="p-8 rounded-2xl bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300">
                     <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 mb-6">
@@ -120,24 +182,98 @@
                             </path>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Financial Reports</h3>
-                    <p class="text-gray-600">Gain insights with detailed Profit & Loss, Sales, and Tax reports. Make
-                        data-driven decisions.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Reports & Dashboard</h3>
+                    <p class="text-gray-600">Gain insights with Sales, P&L, and GST Tax Summary reports. Export data to
+                        Excel/CSV anytime.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Features Section -->
+    <div class="py-24 bg-gray-50 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-base font-semibold text-blue-600 tracking-wide uppercase">Advanced Features</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    Built for Speed & Trust
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm flex items-start">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="text-lg font-bold text-gray-900">Invoice Verification System</h4>
+                        <p class="mt-2 text-gray-600">Every invoice includes a secure online verification link. Helping
+                            your clients verify authenticity instantly.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-sm flex items-start">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
+                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="text-lg font-bold text-gray-900">Scan Invoices (OCR)</h4>
+                        <p class="mt-2 text-gray-600">Scan physical purchase bills using your camera. Auto-extract details
+                            to save time on data entry.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-sm flex items-start">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="text-lg font-bold text-gray-900">Offline Mode (PWA)</h4>
+                        <p class="mt-2 text-gray-600">Create invoices even without internet. Data syncs automatically once
+                            you are back online.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-sm flex items-start">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="text-lg font-bold text-gray-900">Tally Import</h4>
+                        <p class="mt-2 text-gray-600">Import your existing master data directly from Tally XML. Get started
+                            in minutes.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Pricing Section -->
-    <div id="pricing" class="py-24 bg-gray-50 border-t border-gray-200">
+    <div id="pricing" class="py-24 bg-white border-t border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-base font-semibold text-blue-600 tracking-wide uppercase">Pricing</h2>
                 <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                    Simple, transparent pricing
+                    Simple & Affordable Pricing
                 </p>
                 <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
-                    No hidden fees. Cancel anytime.
+                    Choose a plan that fits your business size. No hidden charges.
                 </p>
             </div>
 
@@ -208,147 +344,129 @@
         </div>
     </div>
 
-    <!-- Testimonials Section -->
-    <div id="testimonials" class="py-24 bg-white">
+    <!-- Trust & Security Section -->
+    <div id="why-us" class="py-24 bg-white border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">Trusted by Growing Businesses</h2>
-                <p class="text-xl text-gray-500">See what our customers have to say</p>
+                <h2 class="text-base font-semibold text-blue-600 tracking-wide uppercase">Why Choose Us</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    Secure, Reliable & Built for Business Growth
+                </p>
+                <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+                    Small and medium businesses across India trust VedantBilling.
+                </p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-gray-50 rounded-lg p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="flex text-yellow-400">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                        </div>
+
+            <div class="grid grid-cols-3 gap-2 md:gap-6 text-center">
+                <!-- Security -->
+                <div
+                    class="p-4 md:p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-100 hover:bg-blue-50 transition-all duration-300 group">
+                    <div
+                        class="w-12 h-12 md:w-16 md:h-16 bg-white text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-sm group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
                     </div>
-                    <p class="text-gray-600 mb-4">"VedantBilling transformed our invoicing process. What used to take hours
-                        now takes minutes. Absolutely love it!"</p>
-                    <div class="flex items-center">
-                        <div
-                            class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                            S</div>
-                        <div class="ml-3">
-                            <p class="font-medium text-gray-900">Santosh Kumar</p>
-                            <p class="text-sm text-gray-500">Owner, R/S Chitra Enterprises</p>
-                        </div>
-                    </div>
+                    <h3 class="text-xs md:text-lg font-bold text-gray-900 mb-2 md:mb-3 group-hover:text-blue-700">
+                        Enterprise Security</h3>
+                    <p class="hidden md:block text-gray-600 text-sm leading-relaxed">Secure authentication and data
+                        isolation.</p>
                 </div>
-                <div class="bg-gray-50 rounded-lg p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="flex text-yellow-400">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                        </div>
+
+                <!-- Support -->
+                <div
+                    class="p-4 md:p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:border-green-100 hover:bg-green-50 transition-all duration-300 group">
+                    <div
+                        class="w-12 h-12 md:w-16 md:h-16 bg-white text-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-sm group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
                     </div>
-                    <p class="text-gray-600 mb-4">"The GST compliance features are a lifesaver. Perfect for Indian small
-                        businesses. Highly recommended!"</p>
-                    <div class="flex items-center">
-                        <div
-                            class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-bold">
-                            V</div>
-                        <div class="ml-3">
-                            <p class="font-medium text-gray-900">Vinit Kumar</p>
-                            <p class="text-sm text-gray-500">Owner, Kripal Overseas</p>
-                        </div>
-                    </div>
+                    <h3 class="text-xs md:text-lg font-bold text-gray-900 mb-2 md:mb-3 group-hover:text-green-700">24/7
+                        Reliability</h3>
+                    <p class="hidden md:block text-gray-600 text-sm leading-relaxed">Modern cloud infrastructure, always
+                        online.</p>
                 </div>
-                <div class="bg-gray-50 rounded-lg p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="flex text-yellow-400">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                        </div>
+
+                <!-- Compliance -->
+                <div
+                    class="p-4 md:p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:border-purple-100 hover:bg-purple-50 transition-all duration-300 group">
+                    <div
+                        class="w-12 h-12 md:w-16 md:h-16 bg-white text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-sm group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                     </div>
-                    <p class="text-gray-600 mb-4">"Professional invoices in seconds. The inventory tracking is excellent
-                        too.
-                        Best investment for my business."</p>
-                    <div class="flex items-center">
-                        <div
-                            class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                            V</div>
-                        <div class="ml-3">
-                            <p class="font-medium text-gray-900">Vijay Kumar</p>
-                            <p class="text-sm text-gray-500">Owner, Shiva Traders</p>
-                        </div>
-                    </div>
+                    <h3 class="text-xs md:text-lg font-bold text-gray-900 mb-2 md:mb-3 group-hover:text-purple-700">GST
+                        Compliant</h3>
+                    <p class="hidden md:block text-gray-600 text-sm leading-relaxed">Automatic tax updates and government
+                        compliance.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- FAQ Section (Detailed Addition) -->
-    <div id="faq" class="py-24 bg-white">
+    <!-- FAQ Section -->
+    <div id="faq" class="py-24 bg-white border-t border-gray-200">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-3xl font-extrabold text-gray-900">Frequently Asked Questions</h2>
-                <p class="mt-4 text-gray-500">Everything you need to know about VedantBilling.</p>
+                <h2 class="text-base font-semibold text-blue-600 tracking-wide uppercase">FAQ</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    Frequently Asked Questions
+                </p>
+                <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+                    Common questions about VedantBilling.
+                </p>
             </div>
 
             <div class="space-y-8">
                 <div>
-                    <h3 class="text-lg font-medium text-gray-900">Can I switch plans later?</h3>
-                    <p class="mt-2 text-gray-500">Yes, you can upgrade or downgrade your plan at any time from your
-                        dashboard. Changes take effect immediately.</p>
+                    <h3 class="text-lg font-medium text-gray-900">Is VedantBilling GST compliant?</h3>
+                    <p class="mt-2 text-gray-500">Yes. VedantBilling supports CGST, SGST, IGST, HSN codes, GST‑ready
+                        invoice formats and tax summary reports for easy GST filing.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900">Can I use VedantBilling for free?</h3>
+                    <p class="mt-2 text-gray-500">Yes. We offer a free plan for small businesses. You can also try paid
+                        plans free for 14 days before upgrading.</p>
                 </div>
                 <div>
                     <h3 class="text-lg font-medium text-gray-900">Is my data secure?</h3>
-                    <p class="mt-2 text-gray-500">Absolutely. We use industry-standard encryption to protect your data.
-                        Your financial information is our top priority.</p>
+                    <p class="mt-2 text-gray-500">Yes. Your data is protected with secure login, role‑based access and
+                        separate data storage for each business.</p>
                 </div>
                 <div>
-                    <h3 class="text-lg font-medium text-gray-900">Do you offer a free trial?</h3>
-                    <p class="mt-2 text-gray-500">Yes! The Starter plan is completely free forever. For paid plans, we
-                        offer a 14-day risk-free trial.</p>
+                    <h3 class="text-lg font-medium text-gray-900">Can I verify invoices online?</h3>
+                    <p class="mt-2 text-gray-500">Yes. Every invoice includes a secure verification link that allows
+                        customers and auditors to verify invoice authenticity online.</p>
                 </div>
                 <div>
-                    <h3 class="text-lg font-medium text-gray-900">What payment methods do you accept?</h3>
-                    <p class="mt-2 text-gray-500">We accept major credit cards, debit cards, and UPI payments for
-                        Indian customers.</p>
+                    <h3 class="text-lg font-medium text-gray-900">How can I pay for my subscription?</h3>
+                    <p class="mt-2 text-gray-500">You can pay for your VedantBilling subscription using credit cards, debit
+                        cards and UPI through secure online payment integration.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "VedantBilling",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "INR"
+      },
+      "description": "VedantBilling is a GST billing and invoicing software for Indian businesses. Create invoices, manage inventory, track stock history, generate reports, and verify invoices online with a secure cloud platform.",
+      "featureList": "GST Invoicing, Inventory Tracking, Delivery Challan, Bill of Supply, Financial Reports, Stock History, Low Stock Alerts"
+    }
+    </script>
 @endsection
