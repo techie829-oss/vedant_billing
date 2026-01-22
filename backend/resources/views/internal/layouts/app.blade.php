@@ -86,6 +86,16 @@
                 </svg>
                 Admin Users
             </a>
+
+            <a href="{{ route('internal.leads.index') }}"
+                class="flex items-center px-4 py-2 text-sm font-medium rounded-md group {{ request()->routeIs('internal.leads.*') ? 'bg-blue-50 text-primary' : 'text-text-muted hover:bg-gray-50 hover:text-text' }}">
+                <svg class="mr-3 h-5 w-5 {{ request()->routeIs('internal.leads.*') ? 'text-primary' : 'text-gray-400 group-hover:text-gray-500' }}"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Leads
+            </a>
         </nav>
 
         <div class="p-4 border-t border-gray-200">

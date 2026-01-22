@@ -11,6 +11,8 @@ Route::get('privacy-policy', [\App\Http\Controllers\Web\LandingController::class
 Route::get('terms-and-conditions', [\App\Http\Controllers\Web\LandingController::class, 'terms'])->name('terms');
 Route::get('services', [\App\Http\Controllers\Web\LandingController::class, 'services'])->name('services');
 Route::get('pricing', [\App\Http\Controllers\Web\LandingController::class, 'pricing'])->name('pricing');
+Route::get('contact', [\App\Http\Controllers\Web\LandingController::class, 'contact'])->name('contact');
+Route::post('contact', [\App\Http\Controllers\Web\LandingController::class, 'storeContact'])->name('contact.store');
 Route::get('sitemap.xml', [\App\Http\Controllers\Web\LandingController::class, 'sitemap'])->name('sitemap');
 
 // Public Invoice View
@@ -55,5 +57,8 @@ Route::prefix('internal')->name('internal.')->group(function () {
         // Subscription Management
         Route::resource('subscriptions', \App\Http\Controllers\Internal\SubscriptionController::class)->only(['index', 'create', 'store']);
         Route::post('subscriptions/{id}/cancel', [\App\Http\Controllers\Internal\SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
+
+        // Lead Management
+        Route::resource('leads', \App\Http\Controllers\Internal\LeadController::class)->only(['index']);
     });
 });
