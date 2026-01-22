@@ -173,7 +173,7 @@
                                 class="text-base text-gray-400 hover:text-white transition">Get Started</a></li>
                         <li><a href="{{ route('home') }}#faq"
                                 class="text-base text-gray-400 hover:text-white transition">FAQ</a></li>
-                        <li><a href="{{ rtrim(config('app.frontend_url', 'https://app.vedantbilling.com'), '/') . '/contact' }}"
+                        <li><a href="{{ route('contact') }}"
                                 class="text-base text-gray-400 hover:text-white transition">Contact Us</a></li>
                     </ul>
                 </div>
