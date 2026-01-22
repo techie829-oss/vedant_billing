@@ -61,11 +61,13 @@ class LandingController extends Controller
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
         foreach ($urls as $url) {
+            $priority = $url === route('home') ? '1.0' : '0.8';
+
             $xml .= '<url>';
             $xml .= '<loc>' . $url . '</loc>';
             $xml .= '<lastmod>' . now()->toAtomString() . '</lastmod>';
             $xml .= '<changefreq>weekly</changefreq>';
-            $xml .= '<priority>0.8</priority>';
+            $xml .= '<priority>' . $priority . '</priority>';
             $xml .= '</url>';
         }
 
