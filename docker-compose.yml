@@ -13,7 +13,7 @@ services:
       - ./backend:/var/www
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     ports:
-      - "127.0.0.1:9000:9000"   # ✅ PHP-FPM exposed ONLY to host NGINX
+      - "127.0.0.1:9000:9000"   
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -43,18 +43,6 @@ services:
       - vedant_network
       - pgsql_default
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    image: vedant-frontend
-    container_name: vedant_frontend
-    restart: unless-stopped
-    volumes:
-      - frontend_dist:/frontend
-    networks:
-      - vedant_network
-
   redis:
     image: redis:alpine
     container_name: vedant_redis
@@ -68,6 +56,3 @@ networks:
 
   pgsql_default:
     external: true
-
-volumes:
-  frontend_dist:
