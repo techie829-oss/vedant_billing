@@ -24,9 +24,9 @@
     <meta name="keywords" content="@yield('keywords', 'gst billing software, free invoicing app, inventory management, accounting software india')">
 
     <link rel="canonical" href="{{ url()->current() }}" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}?v=7" />
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}?v=7" />
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon.png') }}?v=7" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}?v=8" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}?v=8" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon.png') }}?v=8" />
     <link rel="manifest" href="{{ asset('manifest.json') }}" />
 
     <!-- Open Graph / Facebook -->
@@ -34,14 +34,14 @@
     <meta property="og:url" content="{{ url()->current() }}" />
     <meta property="og:title" content="@yield('title', 'VedantBilling - GST Billing & Invoicing Software')" />
     <meta property="og:description" content="@yield('description', 'Free GST billing software for small businesses in India. manage inventory, create invoices, and handle accounting with ease.')" />
-    <meta property="og:image" content="{{ asset('images/VedantBilling.png') }}" />
+    <meta property="og:image" content="{{ asset('images/og-image.png') }}" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="{{ url()->current() }}" />
     <meta property="twitter:title" content="@yield('title', 'VedantBilling - GST Billing & Invoicing Software')" />
     <meta property="twitter:description" content="@yield('description', 'Free GST billing software for small businesses in India. manage inventory, create invoices, and handle accounting with ease.')" />
-    <meta property="twitter:image" content="{{ asset('images/VedantBilling.png') }}" />
+    <meta property="twitter:image" content="{{ asset('images/og-image.png') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -60,7 +60,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}" class="flex items-center gap-2">
-                        <img src="{{ asset('images/logo.png') }}" alt="VedantBilling" class="h-10 w-auto">
+                        <img src="{{ asset('images/logo.png') }}" alt="VedantBilling" class="h-14 w-auto">
                         <!-- Solid text color to avoid blur issues -->
                         <span class="text-2xl font-bold text-gray-900">
                             VedantBilling
@@ -144,7 +144,10 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <!-- Company Info -->
                 <div class="col-span-1 md:col-span-1">
-                    <span class="text-2xl font-bold text-blue-600">VedantBilling</span>
+                    <div class="flex items-center gap-2">
+                        <img src="{{ asset('images/logo.png') }}" alt="VedantBilling" class="h-10 w-auto">
+                        <span class="text-2xl font-bold text-blue-600">VedantBilling</span>
+                    </div>
                     <p class="mt-4 text-gray-500 text-sm">
                         Simplifying GST billing and inventory for Indian businesses. Secure, reliable, and easy to use.
                     </p>
