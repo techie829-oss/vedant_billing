@@ -24,8 +24,10 @@
     <meta name="keywords" content="@yield('keywords', 'gst billing software, free invoicing app, inventory management, accounting software india')">
 
     <link rel="canonical" href="{{ url()->current() }}" />
-    <link rel="icon" href="{{ asset('favicon.ico') }}?v=2" />
-    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=3" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/logo.png') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/logo.png') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/logo.png') }}" />
     <link rel="manifest" href="{{ asset('manifest.json') }}" />
 
     <!-- Open Graph / Facebook -->
