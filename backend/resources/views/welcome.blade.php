@@ -277,7 +277,7 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach ($plans as $plan)
                     <div
                         class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-8 border flex flex-col {{ $plan->slug === 'pro' ? 'border-2 border-blue-600 relative overflow-hidden' : 'border-gray-100' }}">
