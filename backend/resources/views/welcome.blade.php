@@ -428,7 +428,7 @@
                     <p class="text-gray-600 mb-4">"VedantBilling transformed our invoicing process. What used to take hours
                         now takes minutes. Absolutely love it!"</p>
                     <div class="font-bold text-gray-900">Santosh Kumar</div>
-                    <div class="text-sm text-gray-500">Retail Store Owner, Delhi</div>
+                    <div class="text-sm text-gray-500">Owner, R/S Chitra Enterprises</div>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
                     <div class="flex items-center mb-4">
@@ -450,7 +450,7 @@
                     <p class="text-gray-600 mb-4">"Professional invoices in seconds. The inventory tracking is excellent
                         too. Best investment for my business."</p>
                     <div class="font-bold text-gray-900">Vijay Kumar</div>
-                    <div class="text-sm text-gray-500">Electronics Dealer, Mumbai</div>
+                    <div class="text-sm text-gray-500">Owner, Shiva Traders</div>
                 </div>
             </div>
         </div>
