@@ -1,9 +1,8 @@
 @extends('layouts.web')
 
-@section('title', 'Contact Us - VedantBilling')
-@section('description',
-    'Get in touch with VedantBilling for any queries, support, or partnership opportunities. We are
-    here to help you.')
+@section('title', 'Contact Support - VedantBilling')
+@section('description', 'Need help? Contact VedantBilling support team for queries regarding GST billing software,
+    pricing, or technical assistance.')
 
 @section('content')
     <div class="bg-blue-50 py-16 sm:py-24">

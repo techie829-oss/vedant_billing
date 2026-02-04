@@ -1,9 +1,8 @@
 @extends('layouts.web')
 
-@section('title', 'Pricing Plans - VedantBilling')
-@section('description',
-    'Choose the perfect billing plan for your business. Start for free and upgrade as you grow. No
-    hidden fees.')
+@section('title', 'Pricing Plans - Affordable GST Billing Software | VedantBilling')
+@section('description', 'Simple, transparent pricing for Indian businesses. Start with our Free Plan or upgrade for
+    advanced GST features. No hidden fees.')
 @section('keywords', 'billing software pricing, free gst software, invoicing plans, small business software cost')
 
 @section('content')

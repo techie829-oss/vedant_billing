@@ -1,9 +1,8 @@
 @extends('layouts.web')
 
-@section('title', 'Our Services - VedantBilling')
-@section('description',
-    'Explore the comprehensive billing and inventory services offered by VedantBilling for Indian
-    businesses.')
+@section('title', 'Features & Services - GST Invoicing & Inventory | VedantBilling')
+@section('description', 'Explore our comprehensive features: GST Invoicing, Inventory Management, Financial Reports, and
+    Party Management designed for Indian SMEs.')
 @section('keywords', 'gst filing, inventory tracking, invoice generation, business reports')
 
 @section('content')

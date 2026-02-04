@@ -72,6 +72,7 @@ class LandingController extends Controller
             route('terms'),
             route('services'),
             route('pricing'),
+            route('contact'),
             // Add internal login page if we want it indexed? Probably no.
             // route('internal.login'),
         ];

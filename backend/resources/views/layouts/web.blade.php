@@ -23,6 +23,22 @@
     <meta name="description" content="@yield('description', 'Free GST billing software for small businesses in India. manage inventory, create invoices, and handle accounting with ease.')">
     <meta name="keywords" content="@yield('keywords', 'gst billing software, free invoicing app, inventory management, accounting software india')">
 
+    <link rel="canonical" href="{{ url()->current() }}" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ url()->current() }}" />
+    <meta property="og:title" content="@yield('title', 'VedantBilling - GST Billing & Invoicing Software')" />
+    <meta property="og:description" content="@yield('description', 'Free GST billing software for small businesses in India. manage inventory, create invoices, and handle accounting with ease.')" />
+    <meta property="og:image" content="{{ asset('images/seo-banner.jpg') }}" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="{{ url()->current() }}" />
+    <meta property="twitter:title" content="@yield('title', 'VedantBilling - GST Billing & Invoicing Software')" />
+    <meta property="twitter:description" content="@yield('description', 'Free GST billing software for small businesses in India. manage inventory, create invoices, and handle accounting with ease.')" />
+    <meta property="twitter:image" content="{{ asset('images/seo-banner.jpg') }}" />
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
