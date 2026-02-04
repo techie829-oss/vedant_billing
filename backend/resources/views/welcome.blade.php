@@ -409,6 +409,116 @@
         </div>
     </div>
 
+    <!-- Testimonials Section -->
+    <div class="py-24 bg-gray-50 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-base font-semibold text-blue-600 tracking-wide uppercase">Testimonials</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    Trusted by Indian Businesses
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"VedantBilling transformed our invoicing process. What used to take hours
+                        now takes minutes. Absolutely love it!"</p>
+                    <div class="flex items-center">
+                        <div
+                            class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                            S</div>
+                        <div class="ml-3">
+                            <p class="font-medium text-gray-900">Santosh Kumar</p>
+                            <p class="text-sm text-gray-500">Owner, R/S Chitra Enterprises</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"The GST compliance features are a lifesaver. Perfect for Indian small
+                        businesses. Highly recommended!"</p>
+                    <div class="flex items-center">
+                        <div
+                            class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-bold">
+                            V</div>
+                        <div class="ml-3">
+                            <p class="font-medium text-gray-900">Vinit Kumar</p>
+                            <p class="text-sm text-gray-500">Owner, Kripal Overseas</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-yellow-400">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"Professional invoices in seconds. The inventory tracking is excellent
+                        too. Best investment for my business."</p>
+                    <div class="flex items-center">
+                        <div
+                            class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                            V</div>
+                        <div class="ml-3">
+                            <p class="font-medium text-gray-900">Vijay Kumar</p>
+                            <p class="text-sm text-gray-500">Owner, Shiva Traders</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- FAQ Section -->
     <div id="faq" class="py-24 bg-white border-t border-gray-200">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
