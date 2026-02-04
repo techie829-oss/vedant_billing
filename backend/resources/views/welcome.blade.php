@@ -1,6 +1,7 @@
 @extends('layouts.web')
 @section('title', 'GST Billing Software for Indian Businesses | VedantBilling')
-@section('description', 'Cloud-based GST billing & invoicing software for SMEs — generate GST invoices, track inventory,
+@section('description',
+    'Cloud-based GST billing & invoicing software for SMEs — generate GST invoices, track inventory,
     export reports & stay compliant. Try free!')
 @section('keywords',
     'GST billing software India, invoicing software India, billing software for small business,
@@ -408,52 +409,6 @@
         </div>
     </div>
 
-    <!-- Testimonials Section -->
-    <div class="py-24 bg-gray-50 border-t border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-base font-semibold text-blue-600 tracking-wide uppercase">Testimonials</h2>
-                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                    Trusted by Indian Businesses
-                </p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-4">
-                        <div class="text-yellow-400 flex">
-                            ★★★★★
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-4">"VedantBilling made GST filing so easy for my retail shop. Highly
-                        recommended!"</p>
-                    <div class="font-bold text-gray-900">Rahul Sharma</div>
-                    <div class="text-sm text-gray-500">Retail Store Owner, Delhi</div>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-4">
-                        <div class="text-yellow-400 flex">
-                            ★★★★★
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-4">"The inventory tracking is a lifesaver. I can check my stock from
-                        anywhere."</p>
-                    <div class="font-bold text-gray-900">Priya Patel</div>
-                    <div class="text-sm text-gray-500">Wholesale Trader, Ahmedabad</div>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                    <div class="flex items-center mb-4">
-                        <div class="text-yellow-400 flex">
-                            ★★★★★
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-4">"Best billing software I've used. Simple, fast, and secure."</p>
-                    <div class="font-bold text-gray-900">Amit Verma</div>
-                    <div class="text-sm text-gray-500">Electronics Dealer, Mumbai</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- FAQ Section -->
     <div id="faq" class="py-24 bg-white border-t border-gray-200">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -512,11 +467,6 @@
         "priceCurrency": "INR"
       },
       "description": "Cloud-based GST billing & invoicing software for SMEs in India. Generate GST invoices, track inventory, export reports & stay compliant. Try free!",
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "ratingCount": "124"
-      },
       "featureList": "GST Invoicing, Inventory Tracking, Delivery Challan, Bill of Supply, Financial Reports, Stock History, Low Stock Alerts"
     }
     </script>
