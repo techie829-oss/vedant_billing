@@ -441,15 +441,8 @@
                     </div>
                     <p class="text-gray-600 mb-4">"VedantBilling transformed our invoicing process. What used to take hours
                         now takes minutes. Absolutely love it!"</p>
-                    <div class="flex items-center">
-                        <div
-                            class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                            S</div>
-                        <div class="ml-3">
-                            <p class="font-medium text-gray-900">Santosh Kumar</p>
-                            <p class="text-sm text-gray-500">Owner, R/S Chitra Enterprises</p>
-                        </div>
-                    </div>
+                    <div class="font-bold text-gray-900">Santosh Kumar</div>
+                    <div class="text-sm text-gray-500">Owner, R/S Chitra Enterprises</div>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
                     <div class="flex items-center mb-4">
@@ -473,15 +466,8 @@
                     </div>
                     <p class="text-gray-600 mb-4">"The GST compliance features are a lifesaver. Perfect for Indian small
                         businesses. Highly recommended!"</p>
-                    <div class="flex items-center">
-                        <div
-                            class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-bold">
-                            V</div>
-                        <div class="ml-3">
-                            <p class="font-medium text-gray-900">Vinit Kumar</p>
-                            <p class="text-sm text-gray-500">Owner, Kripal Overseas</p>
-                        </div>
-                    </div>
+                    <div class="font-bold text-gray-900">Vinit Kumar</div>
+                    <div class="text-sm text-gray-500">Owner, Kripal Overseas</div>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
                     <div class="flex items-center mb-4">
@@ -505,15 +491,8 @@
                     </div>
                     <p class="text-gray-600 mb-4">"Professional invoices in seconds. The inventory tracking is excellent
                         too. Best investment for my business."</p>
-                    <div class="flex items-center">
-                        <div
-                            class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                            V</div>
-                        <div class="ml-3">
-                            <p class="font-medium text-gray-900">Vijay Kumar</p>
-                            <p class="text-sm text-gray-500">Owner, Shiva Traders</p>
-                        </div>
-                    </div>
+                    <div class="font-bold text-gray-900">Vijay Kumar</div>
+                    <div class="text-sm text-gray-500">Owner, Shiva Traders</div>
                 </div>
             </div>
         </div>
@@ -577,6 +556,11 @@
         "priceCurrency": "INR"
       },
       "description": "Cloud-based GST billing & invoicing software for SMEs in India. Generate GST invoices, track inventory, export reports & stay compliant. Try free!",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "124"
+      },
       "featureList": "GST Invoicing, Inventory Tracking, Delivery Challan, Bill of Supply, Financial Reports, Stock History, Low Stock Alerts"
     }
     </script>
