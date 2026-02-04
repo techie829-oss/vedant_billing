@@ -421,47 +421,19 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
                     <div class="flex items-center mb-4">
-                        <div class="flex text-yellow-400">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
+                        <div class="text-yellow-400 flex">
+                            ★★★★★
                         </div>
                     </div>
                     <p class="text-gray-600 mb-4">"VedantBilling transformed our invoicing process. What used to take hours
                         now takes minutes. Absolutely love it!"</p>
                     <div class="font-bold text-gray-900">Santosh Kumar</div>
-                    <div class="text-sm text-gray-500">Owner, R/S Chitra Enterprises</div>
+                    <div class="text-sm text-gray-500">Retail Store Owner, Delhi</div>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
                     <div class="flex items-center mb-4">
-                        <div class="flex text-yellow-400">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
+                        <div class="text-yellow-400 flex">
+                            ★★★★★
                         </div>
                     </div>
                     <p class="text-gray-600 mb-4">"The GST compliance features are a lifesaver. Perfect for Indian small
@@ -471,28 +443,14 @@
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
                     <div class="flex items-center mb-4">
-                        <div class="flex text-yellow-400">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 15l-5.5 3 1.5-6.5L1 6l6.5-.5L10 0l2.5 5.5L19 6l-5 5.5 1.5 6.5z" />
-                            </svg>
+                        <div class="text-yellow-400 flex">
+                            ★★★★★
                         </div>
                     </div>
                     <p class="text-gray-600 mb-4">"Professional invoices in seconds. The inventory tracking is excellent
                         too. Best investment for my business."</p>
                     <div class="font-bold text-gray-900">Vijay Kumar</div>
-                    <div class="text-sm text-gray-500">Owner, Shiva Traders</div>
+                    <div class="text-sm text-gray-500">Electronics Dealer, Mumbai</div>
                 </div>
             </div>
         </div>
