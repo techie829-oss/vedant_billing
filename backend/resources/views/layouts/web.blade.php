@@ -24,20 +24,23 @@
     <meta name="keywords" content="@yield('keywords', 'gst billing software, free invoicing app, inventory management, accounting software india')">
 
     <link rel="canonical" href="{{ url()->current() }}" />
+    <link rel="icon" href="{{ asset('favicon.ico') }}?v=2" />
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}" />
+    <link rel="manifest" href="{{ asset('manifest.json') }}" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ url()->current() }}" />
     <meta property="og:title" content="@yield('title', 'VedantBilling - GST Billing & Invoicing Software')" />
     <meta property="og:description" content="@yield('description', 'Free GST billing software for small businesses in India. manage inventory, create invoices, and handle accounting with ease.')" />
-    <meta property="og:image" content="{{ asset('images/seo-banner.jpg') }}" />
+    <meta property="og:image" content="{{ asset('images/VedantBilling.png') }}" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="{{ url()->current() }}" />
     <meta property="twitter:title" content="@yield('title', 'VedantBilling - GST Billing & Invoicing Software')" />
     <meta property="twitter:description" content="@yield('description', 'Free GST billing software for small businesses in India. manage inventory, create invoices, and handle accounting with ease.')" />
-    <meta property="twitter:image" content="{{ asset('images/seo-banner.jpg') }}" />
+    <meta property="twitter:image" content="{{ asset('images/VedantBilling.png') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
