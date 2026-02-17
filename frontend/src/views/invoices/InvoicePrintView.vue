@@ -135,16 +135,13 @@ const printInvoice = () => {
     status.value = 'Printing...'
     try {
         // Set logical title for print (replaces "Vedant Billing" in browser header)
-        const originalTitle = document.title
+        // This title is used by the browser as the default filename for "Save as PDF"
         document.title = invoice.value?.invoice_number || 'Invoice'
 
         window.print()
 
-        // Restore title after a delay (optional, but good practice)
-        setTimeout(() => {
-            document.title = originalTitle
-        }, 1000)
-
+        // We do NOT restore the title immediately because some browsers might capture it late.
+        // It's a dedicated print view anyway, so keeping the invoice number as title is fine/better.
         status.value = 'Print dialog triggered - Use Ctrl+P or ⌘+P if blocked'
     } catch (e: any) {
         status.value = 'Print Error: ' + e.message

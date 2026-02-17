@@ -7,7 +7,7 @@
             class="a4-page mx-auto bg-white shadow-lg print:shadow-none print:m-0 flex flex-col relative mb-8 print:mb-0 break-after-page">
 
             <!-- HEADER (Fixed height Visual) -->
-            <div class="h-[40mm] px-[10mm] pt-[10mm] border-b border-gray-200 shrink-0">
+            <div class="px-[10mm] py-6 border-b border-gray-200 shrink-0">
                 <div class="flex gap-5 justify-between items-start">
                     <div class="flex gap-5">
                         <div v-if="invoice.business?.meta?.logo_url"
@@ -24,6 +24,10 @@
                                         invoice.business?.meta?.zip || invoice.business?.zip || invoice.business?.pincode ||
                                         invoice.business?.meta?.pincode }}
                                 </p>
+                                <p v-if="invoice.business?.gstin" class="font-bold text-gray-700">GSTIN: {{
+                                    invoice.business.gstin }}</p>
+                                <p v-if="invoice.business?.pan" class="font-bold text-gray-700">PAN: {{
+                                    invoice.business.pan }}</p>
                             </div>
                         </div>
                     </div>
@@ -62,7 +66,7 @@
                             <div class="text-gray-600 text-xs mt-1 leading-relaxed">
                                 <!-- Prioritize Snapshot Address -->
                                 <template v-if="safeMeta.billing_address?.street || safeMeta.billing_address?.city">
-                                    <p>{{ safeMeta.billing_address.street }}</p>
+                                    <p class="whitespace-pre-line">{{ safeMeta.billing_address.street }}</p>
                                     <p>
                                         {{ safeMeta.billing_address.city }}
                                         <span v-if="safeMeta.billing_address.state">, {{
@@ -73,7 +77,7 @@
                                     </p>
                                 </template>
                                 <template v-else>
-                                    <p>{{ invoice.party?.billing_address?.street }}</p>
+                                    <p class="whitespace-pre-line">{{ invoice.party?.billing_address?.street }}</p>
                                     <p>
                                         {{ invoice.party?.billing_address?.city }}
                                         <span v-if="invoice.party?.billing_address?.state">, {{
@@ -98,13 +102,13 @@
                             <p class="font-bold text-gray-900">{{ invoice.party?.name }}</p>
                             <div class="text-gray-600 text-xs mt-1 leading-relaxed">
                                 <template v-if="safeMeta.shipping_address?.street || safeMeta.shipping_address?.city">
-                                    <p>{{ safeMeta.shipping_address.street }}</p>
+                                    <p class="whitespace-pre-line">{{ safeMeta.shipping_address.street }}</p>
                                     <p>{{ safeMeta.shipping_address.city }} {{ safeMeta.shipping_address.state }} -
                                         {{
                                             safeMeta.shipping_address.zip || safeMeta.shipping_address.pincode }}</p>
                                 </template>
                                 <template v-else>
-                                    <p>{{ invoice.party?.shipping_address?.street }}</p>
+                                    <p class="whitespace-pre-line">{{ invoice.party?.shipping_address?.street }}</p>
                                     <p>{{ invoice.party?.shipping_address?.city }} {{
                                         invoice.party?.shipping_address?.state }} - {{
                                             invoice.party?.shipping_address?.zip || invoice.party?.shipping_address?.pincode

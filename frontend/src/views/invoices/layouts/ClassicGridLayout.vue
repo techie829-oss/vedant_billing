@@ -35,6 +35,7 @@
                                 <p class="text-[10px]">Pincode : {{ invoice.business?.meta?.pincode ||
                                     invoice.business?.zip || '-' }}</p>
                                 <p class="text-[10px] font-bold mt-1">GSTIN/UIN: {{ invoice.business?.gstin }}</p>
+                                <p class="text-[10px] font-bold">PAN: {{ invoice.business?.pan }}</p>
                                 <p class="text-[10px]">State Name: {{ invoice.business?.meta?.state ||
                                     invoice.business?.state }}</p>
                                 <p class="text-[10px]">Email: {{ invoice.business?.meta?.email ||
@@ -109,7 +110,7 @@
                                 <div class="p-1">
                                     <span class="block text-[10px] font-bold">Destination</span>
                                     <span>{{ invoice.meta?.destination || invoice.party?.shipping_address?.city || ''
-                                    }}</span>
+                                        }}</span>
                                 </div>
                             </div>
                             <!-- Row 7: Terms of Delivery (Full Width) -->
@@ -131,7 +132,8 @@
                             <div>
                                 <span class="block text-[9px] font-bold uppercase mb-0.5">BUYER (BILL TO)</span>
                                 <h2 class="font-bold text-sm uppercase">{{ invoice.party?.name }}</h2>
-                                <p class="text-[10px] mt-0.5">{{ invoice.party?.billing_address?.street }}</p>
+                                <p class="text-[10px] mt-0.5 whitespace-pre-line">{{
+                                    invoice.party?.billing_address?.street }}</p>
                                 <p class="text-[10px]">City: {{ invoice.party?.billing_address?.city }}<span
                                         v-if="invoice.party?.billing_address?.zip"> - {{
                                             invoice.party?.billing_address?.zip }}</span></p>
@@ -144,7 +146,8 @@
                             <div>
                                 <span class="block text-[9px] font-bold uppercase mb-0.5">CONSIGNEE (SHIP TO)</span>
                                 <h2 class="font-bold text-sm uppercase">{{ invoice.party?.name }}</h2>
-                                <p class="text-[10px] mt-0.5">{{ invoice.party?.shipping_address?.street
+                                <p class="text-[10px] mt-0.5 whitespace-pre-line">{{
+                                    invoice.party?.shipping_address?.street
                                     || invoice.party?.billing_address?.street }}</p>
                                 <p class="text-[10px]">City: {{ invoice.party?.shipping_address?.city ||
                                     invoice.party?.billing_address?.city }}</p>
@@ -226,7 +229,7 @@
                         <div class="p-1 px-2 border-b border-black">
                             <span class="font-bold text-[10px]">Amount Chargeable (in words):</span>
                             <span class="capitalize font-bold ml-2">Indian Rupees {{ amountInWords(finalTotals.rounded)
-                                }} Only</span>
+                            }} Only</span>
                         </div>
 
                         <!-- Tax Summary Table -->

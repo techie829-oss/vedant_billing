@@ -20,6 +20,8 @@
                                 invoice.business?.name }}</h1>
                         <p v-if="invoice.business?.gstin" class="text-xs font-semibold text-gray-500 mt-1">GSTIN: {{
                             invoice.business.gstin }}</p>
+                        <p v-if="invoice.business?.pan" class="text-xs font-semibold text-gray-500 mt-0.5">PAN: {{
+                            invoice.business.pan }}</p>
                     </div>
                 </div>
 
@@ -78,12 +80,12 @@
                 <p class="font-bold text-base text-gray-900">{{ invoice.party?.name }}</p>
                 <div class="text-xs text-gray-600 mt-1 leading-relaxed">
                     <template v-if="invoice.meta?.billing_address?.street || invoice.meta?.billing_address?.city">
-                        <p>{{ invoice.meta.billing_address.street }}</p>
+                        <p class="whitespace-pre-line">{{ invoice.meta.billing_address.street }}</p>
                         <p>{{ invoice.meta.billing_address.city }} {{ invoice.meta.billing_address.zip }}</p>
                         <p>{{ invoice.meta.billing_address.state }}</p>
                     </template>
                     <template v-else>
-                        <p>{{ invoice.party?.billing_address?.street }}</p>
+                        <p class="whitespace-pre-line">{{ invoice.party?.billing_address?.street }}</p>
                         <p>{{ invoice.party?.billing_address?.city }} {{ invoice.party?.billing_address?.zip }}</p>
                         <p>{{ invoice.party?.billing_address?.state }}</p>
                     </template>
@@ -99,12 +101,12 @@
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Ship To</h3>
                     <div class="text-xs text-gray-600 leading-relaxed mb-6">
                         <template v-if="invoice.meta?.shipping_address?.street || invoice.meta?.shipping_address?.city">
-                            <p>{{ invoice.meta.shipping_address.street }}</p>
+                            <p class="whitespace-pre-line">{{ invoice.meta.shipping_address.street }}</p>
                             <p>{{ invoice.meta.shipping_address.city }} {{ invoice.meta.shipping_address.zip }}</p>
                             <p>{{ invoice.meta.shipping_address.state }}</p>
                         </template>
                         <template v-else-if="invoice.party?.shipping_address">
-                            <p>{{ invoice.party.shipping_address.street }}</p>
+                            <p class="whitespace-pre-line">{{ invoice.party.shipping_address.street }}</p>
                             <p>{{ invoice.party.shipping_address.city }} {{ invoice.party.shipping_address.zip }}</p>
                             <p>{{ invoice.party.shipping_address.state }}</p>
                         </template>
@@ -207,7 +209,7 @@
                         </template>
 
                         <td class="py-3 px-1 text-right font-bold text-gray-900 align-top">{{ formatCurrency(item.total)
-                        }}</td>
+                            }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -316,7 +318,7 @@
                         <div class="flex justify-between items-center pt-2">
                             <span class="font-bold text-gray-900 text-lg">Total</span>
                             <span class="font-bold text-gray-900 text-lg">{{ formatCurrency(finalTotals.rounded)
-                            }}</span>
+                                }}</span>
                         </div>
                     </div>
 

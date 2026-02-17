@@ -32,9 +32,12 @@ class InvoiceController extends Controller
             $query->where('party_id', $request->party_id);
         }
 
-        // Filter by type (invoice vs credit_note)
         if ($request->has('type')) {
-            $query->where('type', $request->type);
+            if ($request->type === 'invoice') {
+                $query->whereIn('type', ['tax_invoice', 'bill_of_supply', 'invoice']);
+            } else {
+                $query->where('type', $request->type);
+            }
         }
 
         $invoices = $query->orderBy('date', 'desc')
@@ -74,11 +77,19 @@ class InvoiceController extends Controller
             'vehicle_no' => 'nullable|string|max:50',
             'po_number' => 'nullable|string|max:50',
             'meta' => 'nullable|array',
+            'invoice_number' => [
+                'nullable',
+                'string',
+                'max:50',
+                \Illuminate\Validation\Rule::unique('invoices')->where(function ($query) {
+                    return $query->where('business_id', auth()->user()->currentBusinessId());
+                })
+            ],
         ]);
 
         return DB::transaction(function () use ($validated, $request) {
             $type = $validated['type'] ?? 'tax_invoice'; // Default to tax invoice
-            $invoiceNumber = $this->getNextInvoiceNumber($type);
+            $invoiceNumber = $validated['invoice_number'] ?? $this->getNextInvoiceNumber($type);
 
             $invoice = Invoice::create([
                 'type' => $type,
@@ -148,13 +159,24 @@ class InvoiceController extends Controller
             'vehicle_no' => 'nullable|string|max:50',
             'po_number' => 'nullable|string|max:50',
             'meta' => 'nullable|array',
+            'invoice_number' => [
+                'nullable',
+                'string',
+                'max:50',
+                \Illuminate\Validation\Rule::unique('invoices')->ignore($invoice->id)->where(function ($query) {
+                    return $query->where('business_id', auth()->user()->currentBusinessId());
+                })
+            ],
         ]);
 
         return DB::transaction(function () use ($validated, $invoice) {
             // Check if type is changing
+            // Check if type is changing
             if (isset($validated['type']) && $validated['type'] !== $invoice->type) {
-                // Generate new number for new type
-                $validated['invoice_number'] = $this->getNextInvoiceNumber($validated['type']);
+                // Generate new number for new type ONLY if invoice_number is not explicitly provided in this update
+                if (!isset($validated['invoice_number'])) {
+                    $validated['invoice_number'] = $this->getNextInvoiceNumber($validated['type']);
+                }
             }
 
             $invoice->update($validated); // Updates basic fields if present
@@ -457,7 +479,16 @@ class InvoiceController extends Controller
     protected function getNextInvoiceNumber(string $type): string
     {
         $prefix = $this->getInvoicePrefix($type);
-        $count = Invoice::where('type', $type)->count() + 1;
-        return $prefix . str_pad($count, 5, '0', STR_PAD_LEFT);
+        $count = Invoice::withTrashed()->where('type', $type)->count() + 1;
+
+        $number = $prefix . str_pad($count, 5, '0', STR_PAD_LEFT);
+
+        // Ensure uniqueness by checking if it exists (including soft deleted)
+        while (Invoice::withTrashed()->where('invoice_number', $number)->exists()) {
+            $count++;
+            $number = $prefix . str_pad($count, 5, '0', STR_PAD_LEFT);
+        }
+
+        return $number;
     }
 }

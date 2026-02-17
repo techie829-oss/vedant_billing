@@ -24,6 +24,8 @@
                             invoice.business?.meta?.pincode].filter(Boolean).join(', ') }}</p>
                             <p v-if="invoice.business?.gstin" class="font-bold mt-1">GSTIN: {{ invoice.business.gstin }}
                             </p>
+                            <p v-if="invoice.business?.pan" class="font-bold mt-1">PAN: {{ invoice.business.pan }}
+                            </p>
                             <div class="flex flex-wrap gap-x-3 mt-1 text-[11px]">
                                 <span v-if="invoice.business?.meta?.email">E: {{ invoice.business.meta.email }}</span>
                                 <span v-if="invoice.business?.meta?.mobile">M: {{ invoice.business.meta.mobile }}</span>
@@ -72,12 +74,12 @@
                         <div class="text-xs text-gray-600 mt-1 leading-relaxed">
                             <template
                                 v-if="invoice.meta?.billing_address?.street || invoice.meta?.billing_address?.city">
-                                <p>{{ invoice.meta.billing_address.street }}</p>
+                                <p class="whitespace-pre-line">{{ invoice.meta.billing_address.street }}</p>
                                 <p>{{ invoice.meta.billing_address.city }} {{ invoice.meta.billing_address.zip }}</p>
                                 <p>{{ invoice.meta.billing_address.state }}</p>
                             </template>
                             <template v-else>
-                                <p>{{ invoice.party?.billing_address?.street }}</p>
+                                <p class="whitespace-pre-line">{{ invoice.party?.billing_address?.street }}</p>
                                 <p>{{ invoice.party?.billing_address?.city }} {{ invoice.party?.billing_address?.zip }}
                                 </p>
                                 <p>{{ invoice.party?.billing_address?.state }}</p>
@@ -100,15 +102,15 @@
                             <div class="text-xs text-gray-600 leading-relaxed">
                                 <template
                                     v-if="invoice.meta?.shipping_address?.street || invoice.meta?.shipping_address?.city">
-                                    <p>{{ invoice.meta.shipping_address.street }}</p>
+                                    <p class="whitespace-pre-line">{{ invoice.meta.shipping_address.street }}</p>
                                     <p>{{ invoice.meta.shipping_address.city }} {{ invoice.meta.shipping_address.zip }}
                                     </p>
                                     <p>{{ invoice.meta.shipping_address.state }}</p>
                                 </template>
                                 <template v-else-if="invoice.party?.shipping_address">
-                                    <p>{{ invoice.party.shipping_address.street }}</p>
+                                    <p class="whitespace-pre-line">{{ invoice.party.shipping_address.street }}</p>
                                     <p>{{ invoice.party.shipping_address.city }} {{ invoice.party.shipping_address.zip
-                                    }}</p>
+                                        }}</p>
                                     <p>{{ invoice.party.shipping_address.state }}</p>
                                 </template>
                             </div>
@@ -208,7 +210,7 @@
                                 </template>
 
                                 <td class="py-3 px-3 text-right font-bold border-gray-800">{{ formatCurrency(item.total)
-                                }}</td>
+                                    }}</td>
                             </tr>
                             <!-- Fill Empty Rows to maintain height if needed, OR just let it flow -->
                         </tbody>

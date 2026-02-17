@@ -34,6 +34,10 @@ class BusinessController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'currency' => 'required|string|size:3', // e.g., INR
+            'gstin' => 'nullable|string|regex:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/',
+            'address' => 'nullable|string',
+            'pan' => 'nullable|string',
+            'website' => 'nullable|url',
             // Add other fields as necessary from migration
         ]);
 

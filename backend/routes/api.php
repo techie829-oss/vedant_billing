@@ -55,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('tax-rates', \App\Http\Controllers\Api\TaxRateController::class);
     Route::get('/gst-states', [\App\Http\Controllers\Api\GstController::class, 'index']);
+    Route::get('/gst-lookup/{gstin}', [\App\Http\Controllers\Api\GstController::class, 'lookup']);
 
     // Payments
     Route::post('/payments', [\App\Http\Controllers\Api\PaymentController::class, 'store']);

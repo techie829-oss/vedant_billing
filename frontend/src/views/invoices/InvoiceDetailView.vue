@@ -463,6 +463,9 @@ const capitalize = (s: string) => {
 // Watch store values and update local refs
 watch(storeInvoice, (newVal) => {
     invoice.value = newVal
+    if (newVal?.invoice_number) {
+        document.title = newVal.invoice_number
+    }
 }, { immediate: true })
 
 watch(storeLoading, (newVal) => {
@@ -906,7 +909,7 @@ const downloadPdf = async () => {
         // Configure options
         const opt = {
             margin: 0, // Top, Left, Bottom, Right
-            filename: `Invoice-${invoice.value.invoice_number}.pdf`,
+            filename: `${invoice.value.invoice_number}.pdf`,
             image: { type: 'jpeg', quality: 0.98 } as const,
             html2canvas: {
                 scale: 2,

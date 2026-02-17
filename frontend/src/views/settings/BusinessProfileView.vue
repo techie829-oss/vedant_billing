@@ -112,6 +112,38 @@
                     <form class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
                         <div class="px-4 py-6 sm:p-8">
                             <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                                <!-- GSTIN & PAN moved to top -->
+                                <div class="sm:col-span-3">
+                                    <label for="gstin" class="block text-sm font-medium leading-6 text-gray-900">
+                                        GSTIN
+                                        <span v-if="form.gstin && form.gstin.length >= 15"
+                                            class="ml-2 inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Verified</span>
+                                    </label>
+                                    <div class="mt-2 flex rounded-md shadow-sm">
+                                        <input type="text" v-model="form.gstin" id="gstin"
+                                            class="block w-full rounded-none rounded-l-md border-0 py-2 px-3.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                            placeholder="Ex. 29ABCDE1234F1Z5" />
+                                        <button type="button" @click="fetchGst"
+                                            :disabled="!form.gstin || form.gstin.length < 15 || fetchingGst"
+                                            class="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50">
+                                            {{ fetchingGst ? '...' : 'Fetch' }}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="sm:col-span-3">
+                                    <label for="pan" class="block text-sm font-medium leading-6 text-gray-900">
+                                        PAN
+                                        <span v-if="form.pan && form.pan.length >= 10"
+                                            class="ml-2 inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Verified</span>
+                                    </label>
+                                    <div class="mt-2">
+                                        <input type="text" v-model="form.pan" id="pan"
+                                            class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                            placeholder="Optional" />
+                                    </div>
+                                </div>
+
                                 <div class="sm:col-span-4">
                                     <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Business
                                         Name</label>
@@ -178,47 +210,7 @@
                     </form>
                 </div>
 
-                <!-- Tax Information -->
-                <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3 pt-10">
-                    <div class="px-4 sm:px-0">
-                        <h2 class="text-base font-semibold leading-7 text-gray-900">Tax Information</h2>
-                        <p class="mt-1 text-sm leading-6 text-gray-600">Legal tax identifiers.</p>
-                    </div>
 
-                    <form class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-                        <div class="px-4 py-6 sm:p-8">
-                            <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                                <div class="sm:col-span-3">
-                                    <label for="gstin"
-                                        class="block text-sm font-medium leading-6 text-gray-900">GSTIN</label>
-                                    <div class="mt-2">
-                                        <input type="text" v-model="form.gstin" id="gstin"
-                                            class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                                    </div>
-                                </div>
-
-                                <div class="sm:col-span-3">
-                                    <label for="pan"
-                                        class="block text-sm font-medium leading-6 text-gray-900">PAN</label>
-                                    <div class="mt-2">
-                                        <input type="text" v-model="form.pan" id="pan"
-                                            class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                                    </div>
-                                </div>
-
-                                <div class="sm:col-span-3">
-                                    <label for="upi_id" class="block text-sm font-medium leading-6 text-gray-900">UPI ID
-                                        (for QR Code)</label>
-                                    <div class="mt-2">
-                                        <input type="text" v-model="form.meta.upi_id" id="upi_id"
-                                            placeholder="e.g. business@upi"
-                                            class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
 
                 <!-- Bank Details -->
                 <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3 pt-10">
@@ -254,6 +246,16 @@
                                         class="block text-sm font-medium leading-6 text-gray-900">IFSC Code</label>
                                     <div class="mt-2">
                                         <input type="text" v-model="form.ifsc_code" id="ifsc_code"
+                                            class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                    </div>
+                                </div>
+
+                                <div class="sm:col-span-3">
+                                    <label for="upi_id" class="block text-sm font-medium leading-6 text-gray-900">UPI ID
+                                        (for QR Code)</label>
+                                    <div class="mt-2">
+                                        <input type="text" v-model="form.meta.upi_id" id="upi_id"
+                                            placeholder="e.g. business@upi"
                                             class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                                     </div>
                                 </div>
@@ -823,6 +825,7 @@ const saving = ref(false)
 const uploading = ref(false)
 const downloading = ref(false)
 const downloadingCsv = ref<string | null>(null)
+const fetchingGst = ref(false)
 
 const showPreviewModal = ref(false)
 const previewLayout = ref<'default' | 'professional' | 'grid_premium' | 'classic'>('default')
@@ -1004,6 +1007,77 @@ const fetchBusiness = async () => {
         console.error("Failed to load business details", e)
     } finally {
         loading.value = false
+    }
+}
+
+const fetchGst = async () => {
+    if (!form.value.gstin || form.value.gstin.length < 15) return
+    fetchingGst.value = true
+    try {
+        const response = await client.get(`/gst-lookup/${form.value.gstin}`)
+        const data = response.data
+
+        if (data.legal_name) form.value.name = data.legal_name
+        if (data.trade_name && !form.value.name) form.value.name = data.trade_name
+
+        // Auto-extract PAN from GSTIN if 15 chars (chars 3-12)
+        if (form.value.gstin.length === 15) {
+            form.value.pan = form.value.gstin.substring(2, 12)
+        }
+
+        if (data.address) form.value.address = data.address
+
+        // Attempt to map granular fields if available (from raw meta)
+        const raw = data.raw || data // Handle both cached (raw in meta) and fresh (data is meta)
+
+        if (raw) {
+            // Construct detailed address string
+            let addrParts = []
+            const fullAddr = data.full_address_details || {}
+
+            // Prioritize verified granular details
+            if (Object.keys(fullAddr).length > 0) {
+                if (fullAddr.floor_no) addrParts.push(fullAddr.floor_no)
+                if (fullAddr.building_no) addrParts.push(fullAddr.building_no)
+                if (fullAddr.building_name) addrParts.push(fullAddr.building_name)
+                if (fullAddr.street) addrParts.push(fullAddr.street)
+                if (fullAddr.location) addrParts.push(fullAddr.location)
+                // if (fullAddr.district && fullAddr.district !== fullAddr.city) addrParts.push(fullAddr.district)
+            }
+            // Fallback to raw fields if full_address_details is empty but raw exists (e.g. old data)
+            else {
+                if (raw.flno) addrParts.push(raw.flno)
+                if (raw.bno) addrParts.push(raw.bno)
+                if (raw.bnm) addrParts.push(raw.bnm)
+                if (raw.st) addrParts.push(raw.st)
+                if (raw.loc) addrParts.push(raw.loc)
+            }
+
+            if (addrParts.length > 0) {
+                form.value.address = addrParts.filter(Boolean).join('\n')
+            }
+
+            // City/State/Pincode Mappings
+            if (data.city) form.value.meta.city = data.city
+            else if (raw.city) form.value.meta.city = raw.city
+
+            if (data.pincode) form.value.meta.pincode = data.pincode
+            else if (raw.pincode) form.value.meta.pincode = raw.pincode
+
+            // State
+            const stateName = data.state || raw.state
+            if (stateName) {
+                // Try to match state name 
+                const matchedState = states.value.find(s => s.name.toLowerCase() === stateName.toLowerCase())
+                form.value.meta.state = matchedState ? matchedState.name : stateName
+            }
+        }
+
+        alert('Details fetched successfully!')
+    } catch (e: any) {
+        alert('Failed to fetch GST details: ' + (e.response?.data?.message || e.message))
+    } finally {
+        fetchingGst.value = false
     }
 }
 
