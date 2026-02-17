@@ -33,7 +33,7 @@ class CashfreeGstService
             $response = Http::withHeaders([
                 'x-client-id' => $this->clientId,
                 'x-client-secret' => $this->clientSecret,
-                'x-api-version' => '2023-08-01', // Recommended version
+                'x-api-version' => '2023-08-01',
                 'Content-Type' => 'application/json'
             ])->post($this->baseUrl, [
                         'GSTIN' => $gstin,
