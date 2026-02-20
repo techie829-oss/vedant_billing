@@ -292,6 +292,44 @@ const router = createRouter({
             component: () => import('../views/invoices/InvoiceFormView.vue'), // Unified form
             meta: { requiresAuth: true, requiresBusiness: true }
         },
+        // Vendors
+        {
+            path: '/vendors',
+            name: 'vendors-list',
+            component: () => import('../views/vendors/VendorListView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/vendors/create',
+            name: 'vendors.create',
+            component: () => import('../views/vendors/VendorFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/vendors/:id/edit',
+            name: 'vendors.edit',
+            component: () => import('../views/vendors/VendorFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        // Purchase Invoices
+        {
+            path: '/purchases',
+            name: 'purchases-list',
+            component: () => import('../views/purchases/PurchaseListView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/purchases/create',
+            name: 'purchases.create',
+            component: () => import('../views/purchases/PurchaseFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/purchases/:id/edit',
+            name: 'purchases.edit',
+            component: () => import('../views/purchases/PurchaseFormView.vue'),
+            meta: { requiresAuth: true, requiresBusiness: true }
+        },
         {
             path: '/settings/business',
             name: 'settings.business',

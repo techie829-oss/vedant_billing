@@ -55,7 +55,7 @@ class InvoiceController extends Controller
         Gate::authorize('create', Invoice::class);
 
         $validated = $request->validate([
-            'type' => 'nullable|in:tax_invoice,bill_of_supply,proforma_invoice,delivery_challan,credit_note,debit_note',
+            'type' => 'nullable|in:tax_invoice,bill_of_supply,proforma_invoice,delivery_challan,credit_note,debit_note,purchase_invoice',
             'parent_id' => 'nullable|exists:invoices,id',
             'reason' => 'nullable|string',
             'party_id' => 'required|exists:parties,id',
@@ -137,7 +137,7 @@ class InvoiceController extends Controller
         }
 
         $validated = $request->validate([
-            'type' => 'sometimes|in:tax_invoice,bill_of_supply,proforma_invoice,delivery_challan,credit_note,debit_note',
+            'type' => 'sometimes|in:tax_invoice,bill_of_supply,proforma_invoice,delivery_challan,credit_note,debit_note,purchase_invoice',
             'parent_id' => 'nullable|exists:invoices,id',
             'reason' => 'nullable|string',
             'party_id' => 'sometimes|exists:parties,id',
@@ -468,6 +468,7 @@ class InvoiceController extends Controller
             'delivery_challan' => 'DC/',
             'credit_note' => 'CN/',
             'debit_note' => 'DN/',
+            'purchase_invoice' => 'PUR/',
             'tax_invoice' => 'INV/',
             default => 'INV/',
         };
