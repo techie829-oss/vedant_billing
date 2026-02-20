@@ -44,93 +44,125 @@
             <p class="mt-2 text-sm text-gray-500">Loading scan details...</p>
         </div>
 
-        <div v-else-if="scanData" class="bg-white shadow rounded-lg overflow-hidden">
-            <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Extracted Products</h3>
+        <div v-else-if="scanData" class="space-y-6">
+            <!-- Vendor Information Card -->
+            <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-100">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Vendor Information</h3>
+                    <div
+                        class="border rounded-lg p-5 bg-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h4 class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Scanned Vendor
+                                Name</h4>
+                            <p class="text-lg font-bold text-gray-900">{{ scanData.vendor || 'Unknown Vendor' }}</p>
+                            <p class="text-sm text-gray-500 mt-1">Found on the invoice scan</p>
+                        </div>
+                        <div class="w-full sm:w-1/2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Map to existing vendor or
+                                auto-create</label>
+                            <select v-model="invoiceForm.party_id"
+                                class="block w-full rounded-md border-0 py-2.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm font-medium">
+                                <option value="">+ Auto-create new vendor: {{ scanData.vendor || 'Unknown' }}</option>
+                                <option v-for="v in vendors" :key="v.id" :value="v.id">{{ v.name }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <div class="space-y-6">
-                    <div v-for="item in scanData.temp_products" :key="item.temp_product.id"
-                        class="border rounded-lg p-4 bg-gray-50">
-                        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                            <!-- Scanned Data -->
-                            <div>
-                                <h4 class="text-sm font-medium text-gray-900 mb-2">Scanned Item</h4>
-                                <dl class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
-                                    <div class="sm:col-span-2">
-                                        <dt class="text-xs font-medium text-gray-500">Name</dt>
-                                        <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.name }}</dd>
-                                    </div>
-                                    <div>
-                                        <dt class="text-xs font-medium text-gray-500">Quantity</dt>
-                                        <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.quantity }}</dd>
-                                    </div>
-                                    <div>
-                                        <dt class="text-xs font-medium text-gray-500">Price</dt>
-                                        <dd class="mt-1 text-sm text-gray-900">₹{{ item.temp_product.price }}</dd>
-                                    </div>
-                                    <div v-if="item.temp_product.tax_rate">
-                                        <dt class="text-xs font-medium text-gray-500">Tax Rate</dt>
-                                        <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.tax_rate }}%</dd>
-                                    </div>
-                                </dl>
-                            </div>
+            <!-- Extracted Products Card -->
+            <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-100">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Extracted Products</h3>
 
-                            <!-- Catalog Actions / Matches -->
-                            <div>
-                                <h4 class="text-sm font-medium text-gray-900 mb-2">Add to Catalog</h4>
+                    <div class="space-y-6">
+                        <div v-for="item in scanData.temp_products" :key="item.temp_product.id"
+                            class="border rounded-lg p-4 bg-gray-50">
+                            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                                <!-- Scanned Data -->
+                                <div>
+                                    <h4 class="text-sm font-medium text-gray-900 mb-2">Scanned Item</h4>
+                                    <dl class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
+                                        <div class="sm:col-span-2">
+                                            <dt class="text-xs font-medium text-gray-500">Name</dt>
+                                            <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.name }}</dd>
+                                        </div>
+                                        <div>
+                                            <dt class="text-xs font-medium text-gray-500">Quantity</dt>
+                                            <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.quantity }}</dd>
+                                        </div>
+                                        <div>
+                                            <dt class="text-xs font-medium text-gray-500">Price</dt>
+                                            <dd class="mt-1 text-sm text-gray-900">₹{{ item.temp_product.price }}</dd>
+                                        </div>
+                                        <div v-if="item.temp_product.tax_rate">
+                                            <dt class="text-xs font-medium text-gray-500">Tax Rate</dt>
+                                            <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.tax_rate }}%
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </div>
 
-                                <div v-if="item.temp_product.status === 'pending'" class="space-y-3">
-                                    <div v-if="item.suggested_matches && item.suggested_matches.length > 0"
-                                        class="mb-3">
-                                        <p class="text-xs text-gray-500 mb-2">Suggested Match:</p>
-                                        <div v-for="match in item.suggested_matches" :key="match.product_id"
-                                            class="flex items-center justify-between bg-white p-2 rounded border mb-2">
-                                            <span class="text-sm text-gray-700">{{ match.name }} ({{
-                                                Math.round(match.confidence * 100) }}%)</span>
-                                            <button @click="matchProduct(item.temp_product.id, match.product_id)"
-                                                class="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-100">
-                                                Match
+                                <!-- Catalog Actions / Matches -->
+                                <div>
+                                    <h4 class="text-sm font-medium text-gray-900 mb-2">Add to Catalog</h4>
+
+                                    <div v-if="item.temp_product.status === 'pending'" class="space-y-3">
+                                        <div v-if="item.suggested_matches && item.suggested_matches.length > 0"
+                                            class="mb-3">
+                                            <p class="text-xs text-gray-500 mb-2">Suggested Match:</p>
+                                            <div v-for="match in item.suggested_matches" :key="match.product_id"
+                                                class="flex items-center justify-between bg-white p-2 rounded border mb-2">
+                                                <span class="text-sm text-gray-700">{{ match.name }} ({{
+                                                    Math.round(match.confidence * 100) }}%)</span>
+                                                <button @click="matchProduct(item.temp_product.id, match.product_id)"
+                                                    class="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-100">
+                                                    Match
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex space-x-2">
+                                            <button @click="addNewProduct(item.temp_product.id)"
+                                                class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none">
+                                                Add as New
+                                            </button>
+                                            <button @click="rejectProduct(item.temp_product.id)"
+                                                class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                                                Reject
                                             </button>
                                         </div>
                                     </div>
 
-                                    <div class="flex space-x-2">
-                                        <button @click="addNewProduct(item.temp_product.id)"
-                                            class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none">
-                                            Add as New
-                                        </button>
-                                        <button @click="rejectProduct(item.temp_product.id)"
-                                            class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
-                                            Reject
-                                        </button>
+                                    <div v-else class="flex items-center h-full">
+                                        <span v-if="item.temp_product.status === 'matched'"
+                                            class="text-green-600 font-medium flex items-center">
+                                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                            Matched
+                                        </span>
+                                        <span v-else-if="item.temp_product.status === 'added'"
+                                            class="text-blue-600 font-medium flex items-center">
+                                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                            </svg>
+                                            Added as New
+                                        </span>
+                                        <span v-else-if="item.temp_product.status === 'rejected'"
+                                            class="text-red-600 font-medium flex items-center">
+                                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                            Rejected
+                                        </span>
                                     </div>
-                                </div>
-
-                                <div v-else class="flex items-center h-full">
-                                    <span v-if="item.temp_product.status === 'matched'"
-                                        class="text-green-600 font-medium flex items-center">
-                                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                        Matched
-                                    </span>
-                                    <span v-else-if="item.temp_product.status === 'added'"
-                                        class="text-blue-600 font-medium flex items-center">
-                                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                        </svg>
-                                        Added as New
-                                    </span>
-                                    <span v-else-if="item.temp_product.status === 'rejected'"
-                                        class="text-red-600 font-medium flex items-center">
-                                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
-                                        Rejected
-                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -149,22 +181,6 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Create Purchase Invoice</h3>
 
                     <div class="space-y-4">
-                        <!-- Vendor -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Vendor <span
-                                    class="text-red-500">*</span></label>
-                            <div class="flex gap-2">
-                                <select v-model="invoiceForm.party_id"
-                                    class="block w-full rounded-md border-0 py-2 pl-3 pr-8 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm">
-                                    <option value="">-- Select Existing Vendor --</option>
-                                    <option v-for="v in vendors" :key="v.id" :value="v.id">{{ v.name }}</option>
-                                </select>
-                            </div>
-                            <p v-if="!invoiceForm.party_id" class="mt-1 text-xs text-gray-500">
-                                Or vendor will be auto-created as: <strong>{{ scanData?.vendor }}</strong>
-                            </p>
-                        </div>
-
                         <!-- Invoice Number -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Vendor's Invoice No.</label>

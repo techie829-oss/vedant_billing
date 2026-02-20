@@ -141,21 +141,42 @@ class InvoiceOcrService
     {
         $fullPath = Storage::disk('public')->path($scan->image_path);
 
-        try {
-            // Extract text with OCR
-            $rawText = $this->ocrService->extractText($fullPath);
+        $provider = env('LLM_PROVIDER', 'ollama');
+        $fileSizeMB = file_exists($fullPath) ? filesize($fullPath) / 1048576 : 0;
+        $maxVisionSizeMB = 10; // Threshold before we fallback to text-only extraction
 
-            if (empty(trim($rawText))) {
-                throw new \Exception("No text could be extracted from the invoice image.");
+        try {
+            $rawText = "";
+            $useNativeVision = ($provider === 'gemini' && $fileSizeMB <= $maxVisionSizeMB);
+
+            if ($useNativeVision) {
+                // Gemini Vision can read the image directly, bypass Tesseract OCR
+                Log::info("Skipping Tesseract OCR. Using Gemini Vision directly on image. (Size: " . round($fileSizeMB, 2) . "MB)");
+                $rawText = "[ Native Vision API Mode ]";
+            } else {
+                // Extract text with OCR for Ollama, OR as a fallback for massive Gemini payload
+                if ($provider === 'gemini') {
+                    Log::info("File size (" . round($fileSizeMB, 2) . "MB) exceeds direct Vision limit. Falling back to OCR extraction first.");
+                }
+                $rawText = $this->ocrService->extractText($fullPath);
+
+                if (empty(trim($rawText))) {
+                    throw new \Exception("No text could be extracted from the invoice image.");
+                }
             }
 
             $scan->update(['raw_ocr_text' => $rawText]);
 
-            // Parse invoice with LLM
-            $invoiceData = $this->llmService->parseInvoice($rawText);
+            // Parse invoice with LLM (pass image path only if using native multimodal capabilities)
+            $imagePayloadPath = $useNativeVision ? $fullPath : null;
+            $invoiceData = $this->llmService->parseInvoice($rawText, $imagePayloadPath);
 
             if (empty($invoiceData) || !isset($invoiceData['items'])) {
-                throw new \Exception("Could not parse invoice data. Please ensure the image is clear and contains product information.");
+                if ($provider === 'ollama') {
+                    throw new \Exception("Could not parse invoice data. Please ensure the image is clear and contains product information.");
+                } else {
+                    throw new \Exception("Gemini Vision could not parse the invoice data. Please ensure the image is clear.");
+                }
             }
 
             $invoiceDate = null;
