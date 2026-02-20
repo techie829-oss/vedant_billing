@@ -58,6 +58,13 @@ class OcrService
 
             $tesseract = new TesseractOCR($ocrPath);
 
+            // Use custom temp dir to safely avoid macOS tempnam() fallback warnings
+            $tempDir = storage_path('app/ocr_temp');
+            if (!file_exists($tempDir)) {
+                mkdir($tempDir, 0755, true);
+            }
+            $tesseract->tempDir($tempDir);
+
             // Use custom tesseract path from environment if specified
             // Otherwise defaults to system PATH
             $tesseractPath = env('TESSERACT_PATH');

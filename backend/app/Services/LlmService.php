@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\Log;
 class LlmService
 {
   protected string $baseUrl;
-  protected string $model = 'llama3:8b';
+  protected string $model = 'llama3:latest';
 
   public function __construct()
   {
     // Use Ollama API URL from environment, default to localhost
     $this->baseUrl = env('OLLAMA_API_URL', 'http://localhost:11434') . '/api/generate';
-    $this->model = env('OLLAMA_MODEL', 'llama3:8b');
+    $this->model = env('OLLAMA_MODEL', 'llama3:latest');
   }
 
   /**

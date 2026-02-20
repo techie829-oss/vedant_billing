@@ -117,3 +117,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/subscriptions/verify-payment', [\App\Http\Controllers\Api\SubscriptionController::class, 'verifyPayment']);
     Route::post('/subscriptions/initiate-payment', [\App\Http\Controllers\Api\SubscriptionController::class, 'initiatePayment']);
 });
+require __DIR__.'/api_debug.php';
