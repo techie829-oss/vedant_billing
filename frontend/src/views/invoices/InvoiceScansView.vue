@@ -155,7 +155,9 @@
                                         'bg-red-50 text-red-700 ring-red-600/20': scan.status === 'failed'
                                     }">
                                     {{ scan.status === 'success' ? 'Completed' : scan.status === 'pending' ?
-                                        'Processing' : 'Failed' }}
+                                        'Processing…' : 'Failed' }}
+                                    <span v-if="scan.status === 'pending'"
+                                        class="ml-1 inline-block w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
                                 </span>
                                 <p class="text-sm font-medium text-gray-900">
                                     {{ scan.vendor_name || 'Unknown Vendor' }}
@@ -246,7 +248,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AppLayout from '../../layouts/AppLayout.vue'
 import client from '../../api/client'
@@ -258,6 +260,7 @@ const loading = ref(false)
 const showUploadModal = ref(false)
 const uploading = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
+let pollTimer: ReturnType<typeof setTimeout> | null = null
 
 const filters = ref({
     status: '',
@@ -276,8 +279,22 @@ onMounted(() => {
     fetchScans()
 })
 
+onUnmounted(() => {
+    if (pollTimer) clearTimeout(pollTimer)
+})
+
+function schedulePoll() {
+    if (pollTimer) clearTimeout(pollTimer)
+    const hasPending = scans.value.some(s => s.status === 'pending')
+    if (hasPending) {
+        pollTimer = setTimeout(async () => {
+            await fetchScans()
+        }, 5000)
+    }
+}
+
 async function fetchScans() {
-    loading.value = true
+    loading.value = loading.value ? true : scans.value.length === 0
     try {
         const params = new URLSearchParams()
         if (filters.value.status) params.append('status', filters.value.status)
@@ -292,6 +309,8 @@ async function fetchScans() {
         stats.value.success = scans.value.filter(s => s.status === 'success').length
         stats.value.pending = scans.value.filter(s => s.status === 'pending').length
         stats.value.failed = scans.value.filter(s => s.status === 'failed').length
+
+        schedulePoll()
     } catch (error) {
         console.error('Failed to fetch scans:', error)
     } finally {
