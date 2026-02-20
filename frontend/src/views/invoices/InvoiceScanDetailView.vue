@@ -241,12 +241,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import AppLayout from '../../layouts/AppLayout.vue'
 import client from '../../api/client'
 
 const route = useRoute()
-const router = useRouter()
 const scanId = route.params.id as string
 
 const loading = ref(true)
