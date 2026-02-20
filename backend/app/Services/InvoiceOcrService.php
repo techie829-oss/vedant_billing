@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\InvoiceScan;
+use App\Models\Party;
 use App\Models\TempProduct;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -23,6 +24,86 @@ class InvoiceOcrService
         $this->ocrService = $ocrService;
         $this->llmService = $llmService;
         $this->matchingService = $matchingService;
+    }
+
+    /**
+     * Scan a vendor's purchase invoice: OCR + LLM extraction.
+     * Returns extracted data for user review (no Invoice record created here).
+     *
+     * @param UploadedFile $file
+     * @param string $businessId
+     * @return array
+     */
+    public function scanPurchaseInvoice(UploadedFile $file, string $businessId): array
+    {
+        $path = $file->store('purchase_invoice_scans', 'public');
+        $fullPath = Storage::disk('public')->path($path);
+
+        Log::info("Purchase invoice scan started: {$path}");
+
+        // OCR
+        $rawText = $this->ocrService->extractText($fullPath);
+
+        if (empty(trim($rawText))) {
+            throw new \Exception("No text could be extracted from the invoice image. Please ensure the image is clear.");
+        }
+
+        // LLM extraction
+        $data = $this->llmService->parseInvoice($rawText);
+
+        if (empty($data)) {
+            throw new \Exception("Could not extract invoice data from the image. Please try a clearer image.");
+        }
+
+        // Parse date safely
+        $invoiceDate = null;
+        if (!empty($data['invoice_date'])) {
+            try {
+                $clean = str_replace(['O', 'o'], '0', $data['invoice_date']);
+                $invoiceDate = \Carbon\Carbon::parse($clean)->format('Y-m-d');
+            } catch (\Exception $e) {
+                Log::warning("Could not parse purchase invoice date: {$data['invoice_date']}");
+            }
+        }
+
+        // Try to auto-match vendor by name in existing parties
+        $vendorId = null;
+        $vendorName = $data['vendor_name'] ?? null;
+
+        if ($vendorName) {
+            $vendor = Party::where('business_id', $businessId)
+                ->where('party_type', 'vendor')
+                ->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($vendorName) . '%'])
+                ->first();
+
+            if ($vendor) {
+                $vendorId = $vendor->id;
+                $vendorName = $vendor->name; // use canonical name
+            }
+        }
+
+        // Normalize items
+        $items = [];
+        foreach ($data['items'] ?? [] as $item) {
+            $items[] = [
+                'name' => $item['name'] ?? 'Unknown Item',
+                'description' => $item['description'] ?? null,
+                'hsn_code' => $item['hsn_code'] ?? null,
+                'quantity' => (float) ($item['quantity'] ?? 1),
+                'unit_price' => (float) ($item['price'] ?? 0),
+                'tax_rate' => (float) ($item['tax_rate'] ?? 0),
+            ];
+        }
+
+        return [
+            'vendor_name' => $vendorName,
+            'vendor_id' => $vendorId,    // null if not matched
+            'invoice_number' => $data['invoice_number'] ?? null,
+            'invoice_date' => $invoiceDate ?? now()->format('Y-m-d'),
+            'due_date' => now()->addDays(30)->format('Y-m-d'),
+            'raw_text' => $rawText,
+            'items' => $items,
+        ];
     }
 
     /**

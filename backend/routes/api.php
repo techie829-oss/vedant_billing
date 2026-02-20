@@ -53,6 +53,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/invoices/{invoice}/download', [\App\Http\Controllers\Api\InvoiceController::class, 'download']);
     Route::post('/invoices/{invoice}/email', [\App\Http\Controllers\Api\InvoiceController::class, 'email']);
 
+    // Purchase Invoice Scan (OCR auto-import)
+    Route::post('/purchases/scan', [\App\Http\Controllers\Api\PurchaseController::class, 'scan']);
+    Route::post('/purchases/confirm-scan', [\App\Http\Controllers\Api\PurchaseController::class, 'confirmScan']);
+
     Route::apiResource('tax-rates', \App\Http\Controllers\Api\TaxRateController::class);
     Route::get('/gst-states', [\App\Http\Controllers\Api\GstController::class, 'index']);
     Route::get('/gst-lookup/{gstin}', [\App\Http\Controllers\Api\GstController::class, 'lookup']);
