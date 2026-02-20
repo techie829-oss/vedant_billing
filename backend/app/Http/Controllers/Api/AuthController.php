@@ -105,15 +105,17 @@ class AuthController extends Controller
             'g-recaptcha-response' => ['required', 'string'],
         ]);
 
-        // Verify reCAPTCHA
-        $response = \Illuminate\Support\Facades\Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => config('services.recaptcha.secret'),
-            'response' => $validated['g-recaptcha-response'],
-            'remoteip' => $request->ip(),
-        ]);
+        // Verify reCAPTCHA (skip in local dev — site keys are domain-restricted)
+        if (app()->environment('production')) {
+            $response = \Illuminate\Support\Facades\Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+                'secret' => config('services.recaptcha.secret'),
+                'response' => $validated['g-recaptcha-response'],
+                'remoteip' => $request->ip(),
+            ]);
 
-        if (!$response->json('success') || $response->json('score') < 0.5) {
-            return response()->json(['message' => 'Google reCAPTCHA verification failed. Please try again.'], 422);
+            if (!$response->json('success') || $response->json('score') < 0.5) {
+                return response()->json(['message' => 'Google reCAPTCHA verification failed. Please try again.'], 422);
+            }
         }
 
         $user = User::create([

@@ -7,26 +7,27 @@ use Illuminate\Support\Facades\Log;
 
 class LlmService
 {
-    protected string $baseUrl;
-    protected string $model = 'llama3';
+  protected string $baseUrl;
+  protected string $model = 'llama3:8b';
 
-    public function __construct()
-    {
-        // Use Ollama API URL from environment, default to localhost
-        $this->baseUrl = env('OLLAMA_API_URL', 'http://localhost:11434') . '/api/generate';
-    }
+  public function __construct()
+  {
+    // Use Ollama API URL from environment, default to localhost
+    $this->baseUrl = env('OLLAMA_API_URL', 'http://localhost:11434') . '/api/generate';
+    $this->model = env('OLLAMA_MODEL', 'llama3:8b');
+  }
 
-    /**
-     * Parse raw receipt text into structured JSON.
-     *
-     * @param string $rawText
-     * @return array
-     */
-    public function parseReceipt(string $rawText): array
-    {
-        Log::info("Sending text to Ollama (Length: " . strlen($rawText) . ")");
+  /**
+   * Parse raw receipt text into structured JSON.
+   *
+   * @param string $rawText
+   * @return array
+   */
+  public function parseReceipt(string $rawText): array
+  {
+    Log::info("Sending text to Ollama (Length: " . strlen($rawText) . ")");
 
-        $prompt = <<<EOT
+    $prompt = <<<EOT
 You are a receipt data extraction assistant.
 
 IMPORTANT: If the image contains MULTIPLE RECEIPTS, handle them as follows:
@@ -79,52 +80,52 @@ RAW TEXT:
 {$rawText}
 EOT;
 
-        try {
-            // Increase timeout for first request (Ollama loads model into memory)
-            // First request: 10-20 seconds, subsequent: 3-8 seconds
-            $response = Http::timeout(120)->post($this->baseUrl, [
-                'model' => $this->model,
-                'prompt' => $prompt,
-                'stream' => false,
-                'format' => 'json' // Enforce JSON mode
-            ]);
+    try {
+      // Increase timeout for first request (Ollama loads model into memory)
+      // First request: 10-20 seconds, subsequent: 3-8 seconds
+      $response = Http::timeout(120)->post($this->baseUrl, [
+        'model' => $this->model,
+        'prompt' => $prompt,
+        'stream' => false,
+        'format' => 'json' // Enforce JSON mode
+      ]);
 
-            if ($response->failed()) {
-                throw new \Exception("Ollama API Error: " . $response->body());
-            }
+      if ($response->failed()) {
+        throw new \Exception("Ollama API Error: " . $response->body());
+      }
 
-            $json = $response->json();
-            $content = $json['response'] ?? '{}';
+      $json = $response->json();
+      $content = $json['response'] ?? '{}';
 
-            Log::info("Ollama Response: " . substr($content, 0, 100) . "...");
+      Log::info("Ollama Response: " . substr($content, 0, 100) . "...");
 
-            $data = json_decode($content, true);
+      $data = json_decode($content, true);
 
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                // Fallback: try to strip markdown code blocks if Llama adds them
-                $cleanContent = preg_replace('/```json|```/', '', $content);
-                $data = json_decode($cleanContent, true);
-            }
+      if (json_last_error() !== JSON_ERROR_NONE) {
+        // Fallback: try to strip markdown code blocks if Llama adds them
+        $cleanContent = preg_replace('/```json|```/', '', $content);
+        $data = json_decode($cleanContent, true);
+      }
 
-            return $data ?? [];
+      return $data ?? [];
 
-        } catch (\Exception $e) {
-            Log::error("LLM Extraction Failed: " . $e->getMessage());
-            return [];
-        }
+    } catch (\Exception $e) {
+      Log::error("LLM Extraction Failed: " . $e->getMessage());
+      return [];
     }
+  }
 
-    /**
-     * Parse purchase invoice text to extract vendor and product line items.
-     *
-     * @param string $rawText
-     * @return array
-     */
-    public function parseInvoice(string $rawText): array
-    {
-        Log::info("Sending invoice text to Ollama (Length: " . strlen($rawText) . ")");
+  /**
+   * Parse purchase invoice text to extract vendor and product line items.
+   *
+   * @param string $rawText
+   * @return array
+   */
+  public function parseInvoice(string $rawText): array
+  {
+    Log::info("Sending invoice text to Ollama (Length: " . strlen($rawText) . ")");
 
-        $prompt = <<<EOT
+    $prompt = <<<EOT
 You are a purchase invoice data extraction assistant.
 Extract the following information from the invoice text below:
 
@@ -184,36 +185,36 @@ INVOICE TEXT:
 {$rawText}
 EOT;
 
-        try {
-            // Increase timeout for invoice parsing (can be longer text)
-            $response = Http::timeout(1800)->post($this->baseUrl, [
-                'model' => $this->model,
-                'prompt' => $prompt,
-                'stream' => false,
-                'format' => 'json'
-            ]);
+    try {
+      // Increase timeout for invoice parsing (can be longer text)
+      $response = Http::timeout(1800)->post($this->baseUrl, [
+        'model' => $this->model,
+        'prompt' => $prompt,
+        'stream' => false,
+        'format' => 'json'
+      ]);
 
-            if ($response->failed()) {
-                throw new \Exception("Ollama API Error: " . $response->body());
-            }
+      if ($response->failed()) {
+        throw new \Exception("Ollama API Error: " . $response->body());
+      }
 
-            $json = $response->json();
-            $content = $json['response'] ?? '{}';
+      $json = $response->json();
+      $content = $json['response'] ?? '{}';
 
-            Log::info("Ollama Invoice Response: " . substr($content, 0, 200) . "...");
+      Log::info("Ollama Invoice Response: " . substr($content, 0, 200) . "...");
 
-            $data = json_decode($content, true);
+      $data = json_decode($content, true);
 
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                $cleanContent = preg_replace('/```json|```/', '', $content);
-                $data = json_decode($cleanContent, true);
-            }
+      if (json_last_error() !== JSON_ERROR_NONE) {
+        $cleanContent = preg_replace('/```json|```/', '', $content);
+        $data = json_decode($cleanContent, true);
+      }
 
-            return $data ?? [];
+      return $data ?? [];
 
-        } catch (\Exception $e) {
-            Log::error("Invoice LLM Extraction Failed: " . $e->getMessage());
-            return [];
-        }
+    } catch (\Exception $e) {
+      Log::error("Invoice LLM Extraction Failed: " . $e->getMessage());
+      return [];
     }
+  }
 }
