@@ -5,10 +5,19 @@
         <h2 class="text-2xl font-bold text-gray-900">Dashboard</h2>
         <p class="text-sm text-gray-500 mt-1">Overview of your business performance.</p>
       </div>
-      <div class="mt-4 sm:mt-0 flex space-x-3">
+      <div class="mt-4 sm:mt-0 flex gap-2 flex-wrap">
+        <router-link to="/purchases/create"
+          class="inline-flex items-center px-3 py-2 border border-orange-200 shadow-sm text-sm font-medium rounded-lg text-orange-700 bg-orange-50 hover:bg-orange-100 transition-colors">
+          <svg class="-ml-0.5 mr-1.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          Purchase Bill
+        </router-link>
         <router-link to="/invoices/create"
-          class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none transition-colors">
-          <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+          class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+          <svg class="-ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
@@ -19,7 +28,7 @@
 
     <!-- Quick Actions -->
     <div class="mb-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-      <!-- Highlighted Feature: Fast Note -->
+      <!-- Fast Note -->
       <router-link to="/quick-note"
         class="flex flex-col items-center justify-center p-4 bg-yellow-50 rounded-xl shadow-sm border border-yellow-200 hover:shadow-md hover:bg-yellow-100 transition-all group cursor-pointer relative overflow-hidden">
         <div class="absolute top-0 right-0 w-8 h-8 bg-yellow-200 rotate-45 transform translate-x-4 -translate-y-4">
@@ -33,7 +42,6 @@
         </div>
         <span class="text-sm font-bold text-yellow-900">Fast Note</span>
       </router-link>
-
 
       <router-link to="/cashbook"
         class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-emerald-100 transition-all group cursor-pointer">
@@ -58,6 +66,48 @@
         </div>
         <span class="text-sm font-medium text-gray-900">Invoice</span>
       </router-link>
+
+      <!-- Purchase Invoice -->
+      <router-link to="/purchases/create"
+        class="flex flex-col items-center justify-center p-4 bg-orange-50 rounded-xl shadow-sm border border-orange-100 hover:shadow-md hover:border-orange-200 transition-all group cursor-pointer">
+        <div
+          class="h-10 w-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        </div>
+        <span class="text-sm font-medium text-orange-900">Purchase Bill</span>
+      </router-link>
+
+      <!-- Scan Invoice -->
+      <router-link to="/invoice-scans"
+        class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-100 transition-all group cursor-pointer">
+        <div
+          class="h-10 w-10 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+        <span class="text-sm font-medium text-gray-900">Scan Invoice</span>
+      </router-link>
+
+      <!-- Add Vendor -->
+      <router-link to="/vendors/create"
+        class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-100 transition-all group cursor-pointer">
+        <div
+          class="h-10 w-10 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+        </div>
+        <span class="text-sm font-medium text-gray-900">Add Vendor</span>
+      </router-link>
+
       <router-link to="/quotations"
         class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-teal-100 transition-all group cursor-pointer">
         <div
@@ -68,18 +118,6 @@
           </svg>
         </div>
         <span class="text-sm font-medium text-gray-900">Estimate</span>
-      </router-link>
-
-      <router-link to="/expenses/create"
-        class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-red-100 transition-all group cursor-pointer">
-        <div
-          class="h-10 w-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <span class="text-sm font-medium text-gray-900">Add Expense</span>
       </router-link>
 
       <router-link to="/customers"
@@ -93,6 +131,7 @@
         </div>
         <span class="text-sm font-medium text-gray-900">Add Customer</span>
       </router-link>
+
       <router-link to="/products"
         class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-100 transition-all group cursor-pointer">
         <div
@@ -104,70 +143,21 @@
         </div>
         <span class="text-sm font-medium text-gray-900">Add Product</span>
       </router-link>
-
-      <router-link to="/credit-notes"
-        class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all group cursor-pointer">
-        <div
-          class="h-10 w-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l2.333-1.75L10 21l2.333-1.75L15 21l1.667-1.75L19 21z" />
-          </svg>
-        </div>
-        <span class="text-sm font-medium text-gray-900">Credit Note</span>
-      </router-link>
-
-      <router-link to="/reports"
-        class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-100 transition-all group cursor-pointer">
-        <div
-          class="h-10 w-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-          <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-        </div>
-        <span class="text-sm font-medium text-gray-900">View Reports</span>
-      </router-link>
-
-      <router-link to="/delivery-challans"
-        class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-100 transition-all group cursor-pointer">
-        <div
-          class="h-10 w-10 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
-          </svg>
-        </div>
-        <span class="text-sm font-medium text-gray-900">Delivery Challan</span>
-      </router-link>
-
-      <router-link to="/inventory-history"
-        class="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-blue-100 transition-all group cursor-pointer">
-        <div
-          class="h-10 w-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <span class="text-sm font-medium text-gray-900">Stock History</span>
-      </router-link>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
       <!-- Main Stats & Chart -->
       <div class="lg:col-span-2 space-y-8">
-        <!-- Stats Grid -->
+        <!-- Stats Grid (2x2) -->
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <!-- Total Revenue -->
+          <!-- Sales Revenue -->
           <div
-            class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 p-5 flex items-start justify-between group hover:shadow-md transition-shadow">
+            class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 p-5 flex items-start justify-between hover:shadow-md transition-shadow">
             <div>
-              <dt class="text-sm font-medium text-gray-500 truncate">Total Revenue</dt>
+              <dt class="text-sm font-medium text-gray-500">Sales Revenue</dt>
               <dd class="mt-1 text-3xl font-bold text-gray-900">₹{{ abbreviateNumber(metrics.revenue) }}</dd>
               <dd class="mt-1 text-xs text-green-600 font-medium bg-green-50 px-2 py-0.5 rounded-full inline-block">
-                Received & Pending
-              </dd>
+                Received &amp; Pending</dd>
             </div>
             <div class="p-3 bg-indigo-50 rounded-lg text-indigo-600">
               <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -177,16 +167,14 @@
               </svg>
             </div>
           </div>
-
-          <!-- Outstanding Invoices -->
+          <!-- Outstanding -->
           <div
-            class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 p-5 flex items-start justify-between group hover:shadow-md transition-shadow">
+            class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 p-5 flex items-start justify-between hover:shadow-md transition-shadow">
             <div>
-              <dt class="text-sm font-medium text-gray-500 truncate">Outstanding</dt>
+              <dt class="text-sm font-medium text-gray-500">Outstanding</dt>
               <dd class="mt-1 text-3xl font-bold text-gray-900">₹{{ abbreviateNumber(metrics.outstanding) }}</dd>
-              <dd class="mt-1 text-xs text-orange-600 font-medium bg-orange-50 px-2 py-0.5 rounded-full inline-block">
-                To be collected
-              </dd>
+              <dd class="mt-1 text-xs text-orange-600 font-medium bg-orange-50 px-2 py-0.5 rounded-full inline-block">To
+                be collected</dd>
             </div>
             <div class="p-3 bg-orange-50 rounded-lg text-orange-600">
               <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -196,18 +184,33 @@
               </svg>
             </div>
           </div>
-
-          <!-- Total Expenses -->
+          <!-- Total Purchases -->
           <div
-            class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 p-5 flex items-start justify-between group hover:shadow-md transition-shadow sm:col-span-2 lg:col-span-1 lg:col-start-1 lg:col-end-3">
+            class="bg-white overflow-hidden shadow-sm rounded-xl border border-orange-50 p-5 flex items-start justify-between hover:shadow-md transition-shadow">
             <div>
-              <dt class="text-sm font-medium text-gray-500 truncate">Total Expenses</dt>
-              <dd class="mt-1 text-3xl font-bold text-gray-900">₹{{ abbreviateNumber(metrics.total_expenses) }}</dd>
-              <dd class="mt-1 text-xs text-red-600 font-medium bg-red-50 px-2 py-0.5 rounded-full inline-block">
-                Money Out
-              </dd>
+              <dt class="text-sm font-medium text-gray-500">Total Purchases</dt>
+              <dd class="mt-1 text-3xl font-bold text-gray-900">₹{{ abbreviateNumber(metrics.total_purchases) }}</dd>
+              <dd class="mt-1 text-xs text-orange-600 font-medium bg-orange-50 px-2 py-0.5 rounded-full inline-block">
+                Bills from vendors</dd>
             </div>
-            <div class="p-3 bg-red-50 rounded-lg text-red-600">
+            <div class="p-3 bg-orange-50 rounded-lg text-orange-500">
+              <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+          </div>
+          <!-- Payable to Vendors -->
+          <div
+            class="bg-white overflow-hidden shadow-sm rounded-xl border border-red-50 p-5 flex items-start justify-between hover:shadow-md transition-shadow">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Payable to Vendors</dt>
+              <dd class="mt-1 text-3xl font-bold text-gray-900">₹{{ abbreviateNumber(metrics.payable_to_vendors) }}</dd>
+              <dd class="mt-1 text-xs text-red-600 font-medium bg-red-50 px-2 py-0.5 rounded-full inline-block">Pending
+                payment</dd>
+            </div>
+            <div class="p-3 bg-red-50 rounded-lg text-red-500">
               <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -216,6 +219,7 @@
             </div>
           </div>
         </div>
+
 
         <!-- Chart -->
         <div class="bg-white shadow-sm rounded-xl border border-gray-100 p-6">
@@ -267,8 +271,8 @@
             </div>
           </div>
         </div>
+        <!-- Customers & Vendors counts -->
         <div class="grid grid-cols-2 gap-4">
-          <!-- Total Customers -->
           <div
             class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 p-4 flex flex-col items-center justify-center text-center">
             <div class="p-2 bg-blue-50 rounded-full text-blue-600 mb-2">
@@ -282,61 +286,55 @@
             <dt class="text-xs font-medium text-gray-500">Customers</dt>
           </div>
 
-          <!-- Products -->
           <div
-            class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 p-4 flex flex-col items-center justify-center text-center">
-            <div class="p-2 bg-purple-50 rounded-full text-purple-600 mb-2">
+            class="bg-white overflow-hidden shadow-sm rounded-xl border border-orange-50 p-4 flex flex-col items-center justify-center text-center">
+            <div class="p-2 bg-orange-50 rounded-full text-orange-600 mb-2">
               <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             </div>
-            <dd class="text-2xl font-bold text-gray-900">{{ metrics.products }}</dd>
-            <dt class="text-xs font-medium text-gray-500">Products</dt>
+            <dd class="text-2xl font-bold text-gray-900">{{ metrics.vendors ?? 0 }}</dd>
+            <dt class="text-xs font-medium text-gray-500">Vendors</dt>
           </div>
         </div>
 
-        <!-- Recent Invoices -->
-        <div class="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden flex-1">
-          <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-            <h3 class="text-sm font-bold text-gray-900">Recent Invoices</h3>
-            <router-link to="/invoices" class="text-xs font-medium text-indigo-600 hover:text-indigo-500">View
+        <!-- Recent Purchase Invoices -->
+        <div class="bg-white shadow-sm rounded-xl border border-orange-100 overflow-hidden">
+          <div class="px-6 py-4 border-b border-orange-50 bg-orange-50/50 flex justify-between items-center">
+            <h3 class="text-sm font-bold text-orange-900">Recent Purchase Bills</h3>
+            <router-link to="/purchases" class="text-xs font-medium text-orange-600 hover:text-orange-500">View
               all</router-link>
           </div>
-          <div class="max-h-[400px] overflow-y-auto">
-            <div v-if="recentActivity.length > 0" class="divide-y divide-gray-100">
-              <div v-for="invoice in recentActivity" :key="invoice.id"
-                class="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
-                @click="$router.push(`/invoices/${invoice.id}`)">
-                <div class="flex items-start gap-3">
+          <div class="max-h-[220px] overflow-y-auto">
+            <div v-if="recentPurchases.length > 0" class="divide-y divide-gray-100">
+              <div v-for="inv in recentPurchases" :key="inv.id"
+                class="px-6 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
+                @click="$router.push(`/purchases/${inv.id}/edit`)">
+                <div class="flex items-start gap-2">
                   <div
-                    class="mt-1 h-8 w-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-[10px]">
-                    {{ invoice.customer_name.substring(0, 2).toUpperCase() }}
-                  </div>
+                    class="mt-0.5 h-7 w-7 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 font-bold text-[9px]">
+                    {{ inv.vendor_name.substring(0, 2).toUpperCase() }}</div>
                   <div>
-                    <p class="text-sm font-medium text-gray-900 truncate w-32">{{ invoice.customer_name }}</p>
-                    <p class="text-xs text-gray-500">{{ invoice.invoice_number }}</p>
+                    <p class="text-sm font-medium text-gray-900 truncate w-28">{{ inv.vendor_name }}</p>
+                    <p class="text-xs text-gray-400">{{ inv.invoice_number }}</p>
                   </div>
                 </div>
                 <div class="text-right">
-                  <p class="text-sm font-bold text-gray-900">₹{{ abbreviateNumber(Number(invoice.amount)) }}</p>
+                  <p class="text-sm font-bold text-gray-900">₹{{ abbreviateNumber(Number(inv.amount)) }}</p>
                   <span
                     class="inline-flex items-center rounded-sm px-1.5 py-0.5 text-[10px] font-medium ring-1 ring-inset capitalize"
-                    :class="{
-                      'bg-gray-50 text-gray-600 ring-gray-500/20': invoice.status === 'draft',
-                      'bg-blue-50 text-blue-700 ring-blue-700/20': invoice.status === 'sent',
-                      'bg-green-50 text-green-700 ring-green-600/20': invoice.status === 'paid',
-                      'bg-yellow-50 text-yellow-700 ring-yellow-600/20': invoice.status === 'partial',
-                      'bg-red-50 text-red-700 ring-red-600/20': invoice.status === 'overdue'
-                    }">
-                    {{ invoice.status }}
+                    :class="{ 'bg-gray-50 text-gray-600 ring-gray-500/20': inv.status === 'draft', 'bg-green-50 text-green-700 ring-green-600/20': inv.status === 'paid', 'bg-blue-50 text-blue-700 ring-blue-700/20': inv.status === 'sent' }">
+                    {{ inv.status }}
                   </span>
                 </div>
               </div>
             </div>
-            <div v-else class="p-6 text-center text-sm text-gray-500">
-              No recent activity to show.
+            <div v-else class="p-4 text-center text-xs text-gray-400">
+              No purchase bills yet.
+              <router-link to="/purchases/create" class="text-orange-600 hover:underline block mt-1">Add one
+                →</router-link>
             </div>
           </div>
         </div>
@@ -377,8 +375,11 @@ interface DashboardMetrics {
   revenue: number
   outstanding: number
   customers: number
+  vendors: number
   products: number
   total_expenses: number
+  total_purchases: number
+  payable_to_vendors: number
 }
 
 interface RecentActivity {
@@ -401,11 +402,15 @@ const metrics = ref<DashboardMetrics>({
   revenue: 0,
   outstanding: 0,
   customers: 0,
+  vendors: 0,
   products: 0,
   total_expenses: 0,
+  total_purchases: 0,
+  payable_to_vendors: 0,
 })
 
 const recentActivity = ref<RecentActivity[]>([])
+const recentPurchases = ref<any[]>([])
 const lowStockProducts = ref<LowStockProduct[]>([])
 const cashflowHistory = ref<any[]>([])
 
@@ -499,6 +504,7 @@ onMounted(async () => {
     const response = await client.get('/dashboard')
     metrics.value = response.data.metrics
     recentActivity.value = response.data.recent_activity
+    recentPurchases.value = response.data.recent_purchases || []
     lowStockProducts.value = response.data.low_stock_products || []
     cashflowHistory.value = response.data.cashflow_chart || []
   } catch (e) {

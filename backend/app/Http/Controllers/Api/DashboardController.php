@@ -24,24 +24,35 @@ class DashboardController extends Controller
         // Or if we use models, they should have the scope boot.
 
         $metrics = [
-            'revenue' => Invoice::whereIn('status', ['paid', 'partial', 'sent', 'overdue']) // Revenue = Total Sales Value
+            'revenue' => Invoice::whereIn('status', ['paid', 'partial', 'sent', 'overdue'])
+                ->whereNotIn('type', ['purchase_invoice'])
                 ->sum('grand_total'),
 
-            // Outstanding = Total Due
-            // Logic: Sum of (grand_total - paid_amount) for unpaid invoices
             'outstanding' => Invoice::whereIn('status', ['sent', 'partial', 'overdue'])
+                ->whereNotIn('type', ['purchase_invoice'])
                 ->selectRaw('SUM(grand_total - paid_amount) as outstanding')
                 ->value('outstanding') ?? 0,
 
             'customers' => Party::where('party_type', 'customer')->count(),
+            'vendors' => Party::where('party_type', 'vendor')->count(),
 
             'products' => Product::count(),
 
-            'total_expenses' => Expense::sum('amount'), // Total Expenses
+            'total_expenses' => Expense::sum('amount'),
+
+            'total_purchases' => Invoice::where('type', 'purchase_invoice')
+                ->whereIn('status', ['draft', 'sent', 'paid', 'partial'])
+                ->sum('grand_total'),
+
+            'payable_to_vendors' => Invoice::where('type', 'purchase_invoice')
+                ->whereIn('status', ['sent', 'partial', 'draft'])
+                ->selectRaw('SUM(grand_total - COALESCE(paid_amount, 0)) as payable')
+                ->value('payable') ?? 0,
         ];
 
-        // Recent Activity
+        // Recent Sales Invoices
         $recentInvoices = Invoice::with('party')
+            ->whereNotIn('type', ['purchase_invoice'])
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get()
@@ -56,25 +67,33 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Chart Data (Last 6 Months Sales)
-        $chartData = Invoice::selectRaw("TO_CHAR(date, 'YYYY-MM') as month, SUM(grand_total) as total")
-            ->whereIn('status', ['paid', 'partial', 'sent', 'overdue'])
-            ->where('date', '>=', now()->subMonths(6))
-            ->groupBy('month')
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
+        // Recent Purchase Invoices
+        $recentPurchases = Invoice::with('party')
+            ->where('type', 'purchase_invoice')
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function ($invoice) {
+                return [
+                    'id' => $invoice->id,
+                    'invoice_number' => $invoice->invoice_number,
+                    'vendor_name' => $invoice->party->name ?? 'Unknown',
+                    'date' => $invoice->date ? \Carbon\Carbon::parse($invoice->date)->format('Y-m-d') : null,
+                    'amount' => $invoice->grand_total,
+                    'status' => $invoice->status,
+                ];
+            });
 
-        // Chart Data (Last 6 Months Sales) -> RENAMED to Sales Trend (Invoices)
+        // Sales Chart (Last 6 Months)
         $salesChart = Invoice::selectRaw("TO_CHAR(date, 'YYYY-MM') as month, SUM(grand_total) as total")
             ->whereIn('status', ['paid', 'partial', 'sent', 'overdue'])
+            ->whereNotIn('type', ['purchase_invoice'])
             ->where('date', '>=', now()->subMonths(6))
             ->groupBy('month')
             ->orderBy('month')
             ->get();
 
         // Cashflow Chart (Income vs Expense) - Last 6 Months
-        // Income = Payments received
         $incomeData = Payment::selectRaw("TO_CHAR(date, 'YYYY-MM') as month, SUM(amount) as total")
             ->where('date', '>=', now()->subMonths(6))
             ->groupBy('month')
@@ -87,7 +106,6 @@ class DashboardController extends Controller
             ->orderBy('month')
             ->pluck('total', 'month');
 
-        // Merge months
         $months = $incomeData->keys()->merge($expenseData->keys())->unique()->sort()->values();
         $cashflowChart = $months->map(function ($month) use ($incomeData, $expenseData) {
             return [
@@ -100,7 +118,7 @@ class DashboardController extends Controller
 
         // Low Stock Products
         $lowStockProducts = Product::where('current_stock', '<=', 10)
-            ->where('type', 'goods') // Only goods have stock
+            ->where('type', 'goods')
             ->where('status', 'active')
             ->orderBy('current_stock', 'asc')
             ->limit(5)
@@ -109,6 +127,7 @@ class DashboardController extends Controller
         return response()->json([
             'metrics' => $metrics,
             'recent_activity' => $recentInvoices,
+            'recent_purchases' => $recentPurchases,
             'low_stock_products' => $lowStockProducts,
             'sales_chart' => $salesChart,
             'cashflow_chart' => $cashflowChart
