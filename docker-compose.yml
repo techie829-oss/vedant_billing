@@ -35,7 +35,7 @@ services:
     volumes:
       - ./backend:/var/www
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
-    command: php artisan queue:work --tries=3 --timeout=90
+    command: php artisan queue:work --tries=2 --timeout=600 --sleep=3
     depends_on:
       - redis
       - backend
