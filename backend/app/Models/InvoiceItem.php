@@ -22,6 +22,7 @@ class InvoiceItem extends Model
         'mrp',
         'tax_rate',
         'discount',
+        'discount_type',
         'tax_amount',
         'total',
         'batch_number',

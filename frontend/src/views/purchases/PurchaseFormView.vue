@@ -195,10 +195,17 @@
                     </div>
                   </td>
                   <td class="py-3 px-2 align-top">
-                    <div class="relative">
-                      <span class="absolute inset-y-0 left-2 flex items-center text-gray-400 text-xs mt-1.5">₹</span>
-                      <input type="number" step="any" v-model.number="item.discount" min="0" @input="calcItem(item)"
-                        class="block w-full rounded-md border-0 py-1.5 pl-6 pr-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
+                    <!-- Discount Input with Type Toggle -->
+                    <div class="relative flex items-center">
+                      <button type="button"
+                        @click="item.discount_type = item.discount_type === 'percentage' ? 'amount' : 'percentage'; calcItem(item)"
+                        class="absolute left-1 z-10 flex items-center justify-center w-6 h-6 rounded-md bg-gray-100 text-gray-500 hover:bg-gray-200 text-xs font-medium transition-colors"
+                        title="Toggle Discount Type">
+                        {{ item.discount_type === 'percentage' ? '%' : '₹' }}
+                      </button>
+                      <input type="number" step="any" v-model.number="item.discount" min="0"
+                        :max="item.discount_type === 'percentage' ? 100 : undefined" @input="calcItem(item)"
+                        class="block w-full rounded-md border-0 py-1.5 pl-8 pr-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
                     </div>
                   </td>
                   <td class="py-3 px-2 align-top">
@@ -278,9 +285,18 @@
                     class="block w-full rounded-md border-0 py-1.5 px-2 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600" />
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-gray-700 mb-1">Disc (₹)</label>
-                  <input type="number" step="any" v-model.number="item.discount" @input="calcItem(item)"
-                    class="block w-full rounded-md border-0 py-1.5 px-2 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600" />
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Disc</label>
+                  <div class="relative flex items-center">
+                    <button type="button"
+                      @click="item.discount_type = item.discount_type === 'percentage' ? 'amount' : 'percentage'; calcItem(item)"
+                      class="absolute left-1 z-10 flex items-center justify-center w-6 h-6 rounded-md bg-gray-100 text-gray-500 hover:bg-gray-200 text-xs font-medium transition-colors"
+                      title="Toggle Discount Type">
+                      {{ item.discount_type === 'percentage' ? '%' : '₹' }}
+                    </button>
+                    <input type="number" step="any" v-model.number="item.discount" min="0"
+                      :max="item.discount_type === 'percentage' ? 100 : undefined" @input="calcItem(item)"
+                      class="block w-full rounded-md border-0 py-1.5 pl-8 pr-1 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-right" />
+                  </div>
                 </div>
                 <div>
                   <label class="block text-xs font-medium text-gray-700 mb-1">Tax %</label>
@@ -371,6 +387,7 @@ const makeItem = () => ({
   expiry_date: '',
   tax_rate: 0,
   discount: 0,
+  discount_type: 'amount',
   total: 0
 })
 
@@ -389,7 +406,12 @@ const form = ref({
 })
 
 const calcItem = (item: any) => {
-  const base = Math.max(0, item.quantity * item.unit_price - (item.discount || 0))
+  const gross = item.quantity * item.unit_price;
+  const discountAmt = item.discount_type === 'percentage'
+    ? gross * ((item.discount || 0) / 100)
+    : (item.discount || 0);
+
+  const base = Math.max(0, gross - discountAmt)
   item.total = base + base * (item.tax_rate / 100)
 }
 
@@ -413,12 +435,22 @@ const onProductSelect = (item: any, product: any) => {
 }
 
 const subtotal = computed(() => form.value.items.reduce((s: number, i: any) => {
-  const base = Math.max(0, i.quantity * i.unit_price - (i.discount || 0))
+  const gross = i.quantity * i.unit_price;
+  const discountAmt = i.discount_type === 'percentage'
+    ? gross * ((i.discount || 0) / 100)
+    : (i.discount || 0);
+
+  const base = Math.max(0, gross - discountAmt)
   return s + base
 }, 0))
 
 const taxTotal = computed(() => form.value.items.reduce((s: number, i: any) => {
-  const base = Math.max(0, i.quantity * i.unit_price - (i.discount || 0))
+  const gross = i.quantity * i.unit_price;
+  const discountAmt = i.discount_type === 'percentage'
+    ? gross * ((i.discount || 0) / 100)
+    : (i.discount || 0);
+
+  const base = Math.max(0, gross - discountAmt)
   return s + base * (i.tax_rate / 100)
 }, 0))
 

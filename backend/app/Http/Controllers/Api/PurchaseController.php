@@ -72,6 +72,7 @@ class PurchaseController extends Controller
             'items.*.unit_price' => 'required|numeric|min:0',
             'items.*.mrp' => 'nullable|numeric|min:0',
             'items.*.discount' => 'nullable|numeric|min:0',
+            'items.*.discount_type' => 'nullable|in:amount,percentage',
             'items.*.tax_rate' => 'nullable|numeric|min:0',
             'items.*.hsn_code' => 'nullable|string',
             'items.*.batch_number' => 'nullable|string',
@@ -139,9 +140,15 @@ class PurchaseController extends Controller
                 $qty = $itemData['quantity'];
                 $price = $itemData['unit_price'];
                 $discount = $itemData['discount'] ?? 0;
+                $discountType = $itemData['discount_type'] ?? 'amount';
                 $taxRate = $itemData['tax_rate'] ?? 0;
 
-                $base = ($qty * $price) - $discount;
+                $gross = $qty * $price;
+                $discountAmt = $discountType === 'percentage'
+                    ? $gross * ($discount / 100)
+                    : $discount;
+
+                $base = $gross - $discountAmt;
                 $taxAmt = $base * ($taxRate / 100);
                 $total = $base + $taxAmt;
 
@@ -155,6 +162,7 @@ class PurchaseController extends Controller
                     'unit_price' => $price,
                     'mrp' => $itemData['mrp'] ?? null,
                     'discount' => $discount,
+                    'discount_type' => $discountType,
                     'tax_rate' => $taxRate,
                     'tax_amount' => $taxAmt,
                     'total' => $total,

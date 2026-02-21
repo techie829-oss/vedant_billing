@@ -150,6 +150,7 @@ class InvoiceController extends Controller
             'items.*.quantity' => 'required_with:items|numeric|min:0.01',
             'items.*.unit_price' => 'required_with:items|numeric|min:0',
             'items.*.discount' => 'nullable|numeric|min:0',
+            'items.*.discount_type' => 'nullable|in:amount,percentage',
             'items.*.hsn_code' => 'nullable|string|max:20',
             'items.*.tax_rate' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
@@ -222,10 +223,16 @@ class InvoiceController extends Controller
             $qty = $itemData['quantity'];
             $price = $itemData['unit_price'];
             $discount = $itemData['discount'] ?? 0;
+            $discountType = $itemData['discount_type'] ?? 'amount';
             $taxRate = $itemData['tax_rate'] ?? 0;
 
             // Calculate tax on discounted amount
-            $baseAmount = ($qty * $price) - $discount;
+            $gross = $qty * $price;
+            $discountAmt = $discountType === 'percentage'
+                ? $gross * ($discount / 100)
+                : $discount;
+
+            $baseAmount = $gross - $discountAmt;
             $taxable = $baseAmount > 0 ? $baseAmount : 0;
 
             $taxAmount = $taxable * ($taxRate / 100);
@@ -240,6 +247,7 @@ class InvoiceController extends Controller
                 'quantity' => $qty,
                 'unit_price' => $price,
                 'discount' => $discount,
+                'discount_type' => $discountType,
                 'tax_rate' => $taxRate,
                 'tax_amount' => $taxAmount,
                 'total' => $total,

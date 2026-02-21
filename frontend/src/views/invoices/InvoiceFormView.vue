@@ -504,15 +504,24 @@
                                             required />
                                     </td>
                                     <td v-if="form.meta.display_options.show_discount" class="px-1 py-1">
-                                        <!-- Discount Percent Input -->
-                                        <input type="number" v-model.number="item.discount_percent" min="0" max="100"
-                                            step="any" @input="calculateDiscountAmount(item)"
-                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6 text-right" />
+                                        <!-- Discount Input with Type Toggle -->
+                                        <div class="relative flex items-center">
+                                            <button type="button"
+                                                @click="item.discount_type = item.discount_type === 'percentage' ? 'amount' : 'percentage'; calculateDiscountAmount(item)"
+                                                class="absolute left-1 z-10 flex items-center justify-center w-6 h-6 rounded-md bg-gray-100 text-gray-500 hover:bg-gray-200 text-xs font-medium transition-colors"
+                                                title="Toggle Discount Type">
+                                                {{ item.discount_type === 'percentage' ? '%' : '₹' }}
+                                            </button>
+                                            <input type="number" v-model.number="item.discount" min="0"
+                                                :max="item.discount_type === 'percentage' ? 100 : undefined" step="any"
+                                                @input="calculateDiscountAmount(item)"
+                                                class="block w-full rounded-md border-0 py-1 pl-8 pr-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6 text-right" />
+                                        </div>
                                     </td>
                                     <td v-if="form.meta.display_options.show_discount" class="px-1 py-1">
                                         <!-- Calculated Sell Price Display -->
                                         <input type="text"
-                                            :value="formatCurrency((item.unit_price * (1 - (item.discount_percent || 0) / 100)))"
+                                            :value="formatCurrency((item.unit_price * item.quantity) - (item.discount_type === 'percentage' ? ((item.unit_price * item.quantity) * ((item.discount || 0) / 100)) : (item.discount || 0)))"
                                             disabled
                                             class="block w-full rounded-md border-0 py-1 px-2 text-gray-500 bg-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 text-xs leading-6 text-right" />
                                     </td>
@@ -713,7 +722,7 @@ const form = ref({
     party_id: '',
     date: new Date().toISOString().split('T')[0],
     due_date: new Date().toISOString().split('T')[0],
-    items: [] as (InvoiceItem & { discount_percent?: number })[],
+    items: [] as (InvoiceItem & { discount_type?: 'amount' | 'percentage' })[],
     notes: '',
     terms: '',
     challan_no: '',
@@ -812,7 +821,7 @@ const addItem = async () => {
         quantity: 1,
         unit_price: 0,
         discount: 0,
-        discount_percent: 0,
+        discount_type: 'amount',
         tax_rate: 0,
         tax_amount: 0,
         total: 0
@@ -841,23 +850,11 @@ const calculateLineTotal = (item: InvoiceItem) => {
     return taxable + tax
 }
 
-const calculateDiscountAmount = (item: InvoiceItem & { discount_percent?: number }) => {
-    // If discount percent is provided, calculate discount amount
-    // Discount Amount = (Quantity * Unit Price * Percent) / 100
-    // This is Total Discount for the line
-    const qty = Number(item.quantity) || 0
-    const price = Number(item.unit_price) || 0
-    const percent = Number(item.discount_percent) || 0
-
-    if (percent > 0) {
-        item.discount = (qty * price * percent) / 100
-    } else {
-        // If percent is 0, we might want to keep manual discount? 
-        // For now, let's assume if percent is touched, it drives discount.
-        // But what if user edits discount amount directly? 
-        // We should probably allow both. But for this specific task "MRP - Disc% -> Sell Price", 
-        // percent is the driver.
-        item.discount = 0
+const calculateDiscountAmount = (item: InvoiceItem & { discount_type?: 'amount' | 'percentage' }) => {
+    // Value computation relies mainly on Vue computed references now, 
+    // but we can sanitize the discount value here if needed.
+    if (item.discount !== undefined && item.discount < 0) {
+        item.discount = 0;
     }
 }
 
@@ -878,11 +875,17 @@ const totals = computed(() => {
     form.value.items.forEach(item => {
         const qty = Number(item.quantity) || 0
         const price = Number(item.unit_price) || 0
-        // Only apply discount if the option is enabled
-        const discount = form.value.meta.display_options.show_discount ? (Number(item.discount) || 0) : 0
+        const rawDiscount = Number(item.discount) || 0
         const taxRate = Number(item.tax_rate) || 0
 
-        const lineSub = (qty * price) - discount
+        let discountAmt = 0;
+        if (form.value.meta.display_options.show_discount) {
+            discountAmt = item.discount_type === 'percentage'
+                ? (qty * price) * (rawDiscount / 100)
+                : rawDiscount;
+        }
+
+        const lineSub = (qty * price) - discountAmt
         const taxable = lineSub > 0 ? lineSub : 0
         const lineTax = taxable * (taxRate / 100)
 
