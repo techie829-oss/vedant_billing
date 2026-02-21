@@ -132,7 +132,8 @@ IMPORTANT:
 - Extract ALL line items from the invoice
 - `price` MUST be the per-unit rate/price. NEVER extract the 'Total Amount', 'Taxable Amount', or 'Net Amount' into the price field. If a row has Rate=50 and Total=1000, the price is 50.
 - Quantity should be numeric. Sometimes quantity is under "Qty" or "NOB" (Number of Bottles). Use NOB if Qty is in cases.
-- If unit not specified, leave as null
+- `unit` MUST strictly be one of these exact string values: nos, pcs, pair, set, unit, gram, kg, quintal, ton, ml, ltr, mm, cm, mtr, inch, foot, yard, bag, bottle, box, bundle, can, carton, case, coil, crate, drum, jar, package, packet, pallet, reel, roll, sack, sheet, strip, tube, batch, lot, other.
+- If unit is not found or not clear, default to "nos" or "pcs".
 - Return price, mrp and discount as decimal numbers without currency symbols
 - For FMCG/Beverages, `mrp` is often explicitly listed in an "MRP" or "MRP/Bottle" column. Do NOT miss this.
 - `batch_number` is often listed under "Batch No" and `expiry_date` under "Mfg Date" or "Exp Date". 

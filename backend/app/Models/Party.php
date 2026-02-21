@@ -52,6 +52,21 @@ class Party extends Model
                 $model->business_id = $user->currentBusinessId();
             }
         });
+
+        static::deleting(function ($model) {
+            if ($model->isForceDeleting()) {
+                \App\Models\Invoice::where('party_id', $model->id)->forceDelete();
+                \App\Models\Payment::where('customer_id', $model->id)->forceDelete();
+            } else {
+                \App\Models\Invoice::where('party_id', $model->id)->delete();
+                \App\Models\Payment::where('customer_id', $model->id)->delete();
+            }
+        });
+
+        static::restoring(function ($model) {
+            \App\Models\Invoice::withTrashed()->where('party_id', $model->id)->restore();
+            \App\Models\Payment::withTrashed()->where('customer_id', $model->id)->restore();
+        });
     }
 
     public function business()
