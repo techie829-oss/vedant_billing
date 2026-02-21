@@ -62,16 +62,16 @@
               <table class="min-w-full divide-y divide-gray-300">
                 <thead class="bg-gray-50">
                   <tr>
-                    <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Name</th>
-                    <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Contact</th>
-                    <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Balance</th>
-                    <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
-                    <th class="relative py-3.5 pl-3 pr-4 sm:pr-6"><span class="sr-only">Actions</span></th>
+                    <th class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Name</th>
+                    <th class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">Contact</th>
+                    <th class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">Balance</th>
+                    <th class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">Status</th>
+                    <th class="relative py-2.5 pl-3 pr-4 sm:pr-6"><span class="sr-only">Actions</span></th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
                   <tr v-for="vendor in vendors" :key="vendor.id" class="hover:bg-gray-50 transition-colors duration-150">
-                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                    <td class="whitespace-nowrap py-2.5 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                       <div class="flex items-center">
                         <div class="h-10 w-10 flex-shrink-0 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 font-bold text-xs mr-3">
                           {{ vendor.name.substring(0, 2).toUpperCase() }}
@@ -82,24 +82,24 @@
                         </div>
                       </div>
                     </td>
-                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">
                       <div v-if="vendor.email">{{ vendor.email }}</div>
                       <div v-if="vendor.phone">{{ vendor.phone }}</div>
                     </td>
-                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                    <td class="whitespace-nowrap px-3 py-2.5 text-sm">
                       <div class="font-medium"
                         :class="vendor.current_balance > 0 ? 'text-green-600' : (vendor.current_balance < 0 ? 'text-red-600' : 'text-gray-900')">
                         ₹{{ Math.abs(vendor.current_balance).toFixed(2) }}
                         <span class="text-xs text-gray-400">{{ vendor.current_balance > 0 ? ' (Dr)' : (vendor.current_balance < 0 ? ' (Cr)' : '') }}</span>
                       </div>
                     </td>
-                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">
                       <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                         :class="vendor.status === 'active' ? 'bg-green-50 text-green-700 ring-green-600/20' : 'bg-gray-50 text-gray-600 ring-gray-500/10'">
                         {{ vendor.status }}
                       </span>
                     </td>
-                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                    <td class="relative whitespace-nowrap py-2.5 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                       <router-link :to="`/vendors/${vendor.id}/edit`" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</router-link>
                       <button @click="deleteVendor(vendor.id)" class="text-red-600 hover:text-red-900">Delete</button>
                     </td>

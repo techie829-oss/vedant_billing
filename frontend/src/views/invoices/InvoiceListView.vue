@@ -105,13 +105,13 @@
         <table class="min-w-full divide-y divide-gray-300">
           <thead class="bg-gray-50">
             <tr>
-              <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Number</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Customer</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Date</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Due Date</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Amount</th>
-              <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+              <th scope="col" class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Number</th>
+              <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">Customer</th>
+              <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">Date</th>
+              <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">Due Date</th>
+              <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">Status</th>
+              <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">Amount</th>
+              <th scope="col" class="relative py-2.5 pl-3 pr-4 sm:pr-6">
                 <span class="sr-only">Actions</span>
               </th>
             </tr>
@@ -124,23 +124,23 @@
               <td colspan="7" class="text-center py-4 text-gray-500">No invoices found.</td>
             </tr>
             <tr v-for="invoice in invoices" :key="invoice.id">
-              <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+              <td class="whitespace-nowrap py-2.5 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                 <router-link :to="`/invoices/${invoice.id}`"
                   class="text-indigo-600 hover:text-indigo-900 hover:underline">
                   {{ invoice.invoice_number }}
                 </router-link>
               </td>
-              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ invoice.party?.name || 'Unknown' }}</td>
-              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ formatDate(invoice.date) }}</td>
-              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ formatDate(invoice.due_date) }}</td>
-              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+              <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">{{ invoice.party?.name || 'Unknown' }}</td>
+              <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">{{ formatDate(invoice.date) }}</td>
+              <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">{{ formatDate(invoice.due_date) }}</td>
+              <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">
                 <span :class="getStatusClass(invoice.status)"
                   class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset">
                   {{ capitalize(invoice.status) }}
                 </span>
               </td>
-              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">₹{{ invoice.grand_total }}</td>
-              <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+              <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">₹{{ invoice.grand_total }}</td>
+              <td class="relative whitespace-nowrap py-2.5 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                 <router-link :to="`/invoices/${invoice.id}`" class="text-gray-600 hover:text-gray-900 mr-4"
                   title="View">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24"

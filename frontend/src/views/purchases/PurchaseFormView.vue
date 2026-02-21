@@ -22,7 +22,7 @@
     <div class="space-y-6">
       <!-- Header Info -->
       <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <div class="px-4 py-6 sm:p-8">
+        <div class="px-4 py-5 sm:p-6">
           <h3 class="text-base font-semibold leading-7 text-gray-900 mb-6">Invoice Details</h3>
           <div class="grid max-w-3xl grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
 
@@ -31,7 +31,7 @@
               <label class="block text-sm font-medium leading-6 text-gray-900">Vendor <span class="text-red-500">*</span></label>
               <div class="mt-2">
                 <select v-model="form.party_id" required
-                  class="block w-full rounded-md border-0 py-2 pl-3.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
+                  class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
                   <option value="">-- Select Vendor --</option>
                   <option v-for="v in vendors" :key="v.id" :value="v.id">{{ v.name }}</option>
                 </select>
@@ -46,7 +46,7 @@
               <label class="block text-sm font-medium leading-6 text-gray-900">Vendor's Invoice No.</label>
               <div class="mt-2">
                 <input type="text" v-model="form.invoice_number"
-                  class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                   placeholder="Auto-generated if blank" />
               </div>
             </div>
@@ -56,7 +56,7 @@
               <label class="block text-sm font-medium leading-6 text-gray-900">Invoice Date <span class="text-red-500">*</span></label>
               <div class="mt-2">
                 <input type="date" v-model="form.date" required
-                  class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
               </div>
             </div>
 
@@ -65,7 +65,7 @@
               <label class="block text-sm font-medium leading-6 text-gray-900">Due Date <span class="text-red-500">*</span></label>
               <div class="mt-2">
                 <input type="date" v-model="form.due_date" required
-                  class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
               </div>
             </div>
           </div>
@@ -74,7 +74,7 @@
 
       <!-- Items -->
       <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <div class="px-4 py-6 sm:p-8">
+        <div class="px-4 py-5 sm:p-6">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-base font-semibold leading-7 text-gray-900">Items</h3>
           </div>
@@ -187,7 +187,7 @@
 
       <!-- Notes -->
       <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <div class="px-4 py-6 sm:p-8">
+        <div class="px-4 py-5 sm:p-6">
           <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Notes</h3>
           <textarea v-model="form.notes" rows="3" placeholder="Internal notes about this purchase..."
             class="block w-full max-w-2xl rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"></textarea>

@@ -35,7 +35,7 @@
             <nav class="space-y-1 px-2">
               <!-- Mobile Nav Links (Duplicates of Desktop for now to ensure working state) -->
               <router-link to="/" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path === '/' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -56,7 +56,7 @@
               </router-link>
 
               <router-link to="/quick-note" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/quick-note') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -67,7 +67,7 @@
               </router-link>
 
               <router-link to="/invoices" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/invoices') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -78,7 +78,7 @@
               </router-link>
 
               <router-link to="/customers" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/customers') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -89,7 +89,7 @@
               </router-link>
 
               <router-link to="/products" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/products') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -100,7 +100,7 @@
               </router-link>
 
               <router-link to="/reports" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/reports') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -111,7 +111,7 @@
               </router-link>
 
               <router-link to="/quotations" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/quotations') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -122,7 +122,7 @@
               </router-link>
 
               <router-link to="/purchases" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/purchases') ? 'bg-orange-50 text-orange-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -133,7 +133,7 @@
               </router-link>
 
               <router-link to="/vendors" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/vendors') ? 'bg-orange-50 text-orange-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -144,7 +144,7 @@
               </router-link>
 
               <router-link to="/invoice-scans" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/invoice-scans') ? 'bg-orange-50 text-orange-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -157,7 +157,7 @@
               </router-link>
 
               <router-link to="/credit-notes" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/credit-notes') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -168,7 +168,7 @@
               </router-link>
 
               <router-link to="/debit-notes" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/debit-notes') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -179,7 +179,7 @@
               </router-link>
 
               <router-link to="/delivery-challans" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/delivery-challans') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -190,7 +190,7 @@
               </router-link>
 
               <router-link to="/cashbook" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/cashbook') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -201,7 +201,7 @@
               </router-link>
 
               <router-link v-if="canManageBusiness" to="/billing" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path === '/billing' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -212,7 +212,7 @@
               </router-link>
 
               <router-link v-if="canManageBusiness" to="/settings/business" @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/settings') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -226,7 +226,7 @@
 
               <router-link v-if="authStore.hasFeature('multi_user') && canManageBusiness" to="/settings/team"
                 @click="mobileMenuOpen = false"
-                class="flex items-center px-4 py-3 text-base font-medium rounded-xl transition-colors"
+                class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors"
                 :class="[$route.path.startsWith('/settings/team') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -261,7 +261,7 @@
           </router-link>
         </div>
         <nav class="p-4 space-y-1 flex-1 overflow-y-auto">
-          <router-link to="/" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+          <router-link to="/" class="flex items-center px-3 py-2 text-[13px] font-medium rounded-lg transition-colors"
             :class="[$route.path === '/' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
@@ -272,7 +272,7 @@
           </router-link>
 
           <router-link to="/quick-note"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            class="flex items-center px-3 py-2 text-[13px] font-medium rounded-lg transition-colors"
             :class="[$route.path.startsWith('/quick-note') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
@@ -283,7 +283,7 @@
           </router-link>
 
           <router-link to="/customers"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            class="flex items-center px-3 py-2 text-[13px] font-medium rounded-lg transition-colors"
             :class="[$route.path.startsWith('/customers') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
@@ -294,7 +294,7 @@
           </router-link>
 
           <router-link to="/products"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            class="flex items-center px-3 py-2 text-[13px] font-medium rounded-lg transition-colors"
             :class="[$route.path.startsWith('/products') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
@@ -348,7 +348,7 @@
             <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Sales</p>
 
             <router-link to="/invoices"
-              class="flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-colors mb-1"
+              class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors mb-1"
               :class="[$route.path.startsWith('/invoices') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
@@ -359,7 +359,7 @@
             </router-link>
 
             <router-link to="/quotations"
-              class="flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-colors mb-1"
+              class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors mb-1"
               :class="[$route.path.startsWith('/quotations') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
@@ -370,7 +370,7 @@
             </router-link>
 
             <router-link to="/credit-notes"
-              class="flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-colors mb-1"
+              class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors mb-1"
               :class="[$route.path.startsWith('/credit-notes') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
@@ -381,7 +381,7 @@
             </router-link>
 
             <router-link to="/debit-notes"
-              class="flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-colors mb-1"
+              class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors mb-1"
               :class="[$route.path.startsWith('/debit-notes') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
@@ -391,7 +391,7 @@
             </router-link>
 
             <router-link to="/delivery-challans"
-              class="flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-colors mb-1"
+              class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors mb-1"
               :class="[$route.path.startsWith('/delivery-challans') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
@@ -407,7 +407,7 @@
             <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Purchases</p>
 
             <router-link to="/purchases"
-              class="flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-colors mb-1"
+              class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors mb-1"
               :class="[$route.path.startsWith('/purchases') ? 'bg-orange-50 text-orange-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
@@ -418,7 +418,7 @@
             </router-link>
 
             <router-link to="/vendors"
-              class="flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-colors mb-1"
+              class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors mb-1"
               :class="[$route.path.startsWith('/vendors') ? 'bg-orange-50 text-orange-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
@@ -429,7 +429,7 @@
             </router-link>
 
             <router-link to="/invoice-scans"
-              class="flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-colors mb-1"
+              class="flex items-center px-3 py-1.5 text-xs font-medium rounded-lg transition-colors mb-1"
               :class="[$route.path.startsWith('/invoice-scans') ? 'bg-orange-50 text-orange-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
@@ -446,7 +446,7 @@
           <div class="pt-2 pb-1">
             <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Finance</p>
             <router-link to="/cashbook"
-              class="flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-colors"
+              class="flex items-center px-3 py-2 text-[13px] font-medium rounded-lg transition-colors"
               :class="[$route.path.startsWith('/cashbook') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', !hasActivePlan ? 'opacity-50 pointer-events-none' : '']">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
@@ -458,7 +458,7 @@
           </div>
 
           <router-link v-if="canManageBusiness" to="/billing"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            class="flex items-center px-3 py-2 text-[13px] font-medium rounded-lg transition-colors"
             :class="[$route.path === '/billing' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
@@ -470,7 +470,7 @@
 
 
           <router-link v-if="canManageBusiness" to="/settings/business"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            class="flex items-center px-3 py-2 text-[13px] font-medium rounded-lg transition-colors"
             :class="[$route.path.startsWith('/settings') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
@@ -485,7 +485,7 @@
 
 
           <router-link v-if="authStore.hasFeature('multi_user') && canManageBusiness" to="/settings/team"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors"
+            class="flex items-center px-3 py-2 text-[13px] font-medium rounded-lg transition-colors"
             :class="[$route.path === '/settings/team' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900']">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">

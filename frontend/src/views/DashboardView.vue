@@ -152,10 +152,10 @@
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <!-- Sales Revenue -->
           <div
-            class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 p-5 flex items-start justify-between hover:shadow-md transition-shadow">
+            class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 p-4 flex items-start justify-between hover:shadow-md transition-shadow">
             <div>
               <dt class="text-sm font-medium text-gray-500">Sales Revenue</dt>
-              <dd class="mt-1 text-3xl font-bold text-gray-900">₹{{ abbreviateNumber(metrics.revenue) }}</dd>
+              <dd class="mt-1 text-2xl font-bold text-gray-900">₹{{ abbreviateNumber(metrics.revenue) }}</dd>
               <dd class="mt-1 text-xs text-green-600 font-medium bg-green-50 px-2 py-0.5 rounded-full inline-block">
                 Received &amp; Pending</dd>
             </div>
@@ -169,10 +169,10 @@
           </div>
           <!-- Outstanding -->
           <div
-            class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 p-5 flex items-start justify-between hover:shadow-md transition-shadow">
+            class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 p-4 flex items-start justify-between hover:shadow-md transition-shadow">
             <div>
               <dt class="text-sm font-medium text-gray-500">Outstanding</dt>
-              <dd class="mt-1 text-3xl font-bold text-gray-900">₹{{ abbreviateNumber(metrics.outstanding) }}</dd>
+              <dd class="mt-1 text-2xl font-bold text-gray-900">₹{{ abbreviateNumber(metrics.outstanding) }}</dd>
               <dd class="mt-1 text-xs text-orange-600 font-medium bg-orange-50 px-2 py-0.5 rounded-full inline-block">To
                 be collected</dd>
             </div>
@@ -186,10 +186,10 @@
           </div>
           <!-- Total Purchases -->
           <div
-            class="bg-white overflow-hidden shadow-sm rounded-xl border border-orange-50 p-5 flex items-start justify-between hover:shadow-md transition-shadow">
+            class="bg-white overflow-hidden shadow-sm rounded-xl border border-orange-50 p-4 flex items-start justify-between hover:shadow-md transition-shadow">
             <div>
               <dt class="text-sm font-medium text-gray-500">Total Purchases</dt>
-              <dd class="mt-1 text-3xl font-bold text-gray-900">₹{{ abbreviateNumber(metrics.total_purchases) }}</dd>
+              <dd class="mt-1 text-2xl font-bold text-gray-900">₹{{ abbreviateNumber(metrics.total_purchases) }}</dd>
               <dd class="mt-1 text-xs text-orange-600 font-medium bg-orange-50 px-2 py-0.5 rounded-full inline-block">
                 Bills from vendors</dd>
             </div>
@@ -203,10 +203,10 @@
           </div>
           <!-- Payable to Vendors -->
           <div
-            class="bg-white overflow-hidden shadow-sm rounded-xl border border-red-50 p-5 flex items-start justify-between hover:shadow-md transition-shadow">
+            class="bg-white overflow-hidden shadow-sm rounded-xl border border-red-50 p-4 flex items-start justify-between hover:shadow-md transition-shadow">
             <div>
               <dt class="text-sm font-medium text-gray-500">Payable to Vendors</dt>
-              <dd class="mt-1 text-3xl font-bold text-gray-900">₹{{ abbreviateNumber(metrics.payable_to_vendors) }}</dd>
+              <dd class="mt-1 text-2xl font-bold text-gray-900">₹{{ abbreviateNumber(metrics.payable_to_vendors) }}</dd>
               <dd class="mt-1 text-xs text-red-600 font-medium bg-red-50 px-2 py-0.5 rounded-full inline-block">Pending
                 payment</dd>
             </div>
@@ -242,7 +242,7 @@
         <!-- Low Stock Alert Widget -->
         <div v-if="lowStockProducts.length > 0"
           class="bg-white shadow-sm rounded-xl border border-red-100 overflow-hidden">
-          <div class="px-6 py-4 border-b border-red-50 bg-red-50/50 flex justify-between items-center">
+          <div class="px-4 py-3 sm:px-5 sm:py-3.5 border-b border-red-50 bg-red-50/50 flex justify-between items-center">
             <div class="flex items-center gap-2">
               <div class="p-1.5 bg-red-100 rounded-lg text-red-600">
                 <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -258,7 +258,7 @@
           </div>
           <div class="divide-y divide-gray-50">
             <div v-for="product in lowStockProducts" :key="product.id"
-              class="px-6 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors">
+              class="px-4 py-2.5 sm:px-5 sm:py-3 flex items-center justify-between hover:bg-gray-50 transition-colors">
               <div>
                 <p class="text-sm font-medium text-gray-900 truncate w-40">{{ product.name }}</p>
                 <p class="text-[10px] text-gray-500">Unit: {{ product.unit }}</p>
@@ -302,7 +302,7 @@
 
         <!-- Recent Purchase Invoices -->
         <div class="bg-white shadow-sm rounded-xl border border-orange-100 overflow-hidden">
-          <div class="px-6 py-4 border-b border-orange-50 bg-orange-50/50 flex justify-between items-center">
+          <div class="px-4 py-3 sm:px-5 sm:py-3.5 border-b border-orange-50 bg-orange-50/50 flex justify-between items-center">
             <h3 class="text-sm font-bold text-orange-900">Recent Purchase Bills</h3>
             <router-link to="/purchases" class="text-xs font-medium text-orange-600 hover:text-orange-500">View
               all</router-link>
@@ -310,7 +310,7 @@
           <div class="max-h-[220px] overflow-y-auto">
             <div v-if="recentPurchases.length > 0" class="divide-y divide-gray-100">
               <div v-for="inv in recentPurchases" :key="inv.id"
-                class="px-6 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
+                class="px-4 py-2.5 sm:px-5 sm:py-3 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer"
                 @click="$router.push(`/purchases/${inv.id}/edit`)">
                 <div class="flex items-start gap-2">
                   <div

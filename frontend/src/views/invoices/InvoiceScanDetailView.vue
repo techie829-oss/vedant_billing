@@ -47,10 +47,10 @@
         <div v-else-if="scanData" class="space-y-6">
             <!-- Vendor Information Card -->
             <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-100">
-                <div class="px-4 py-5 sm:p-6">
+                <div class="px-4 py-4 sm:p-5">
                     <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Vendor Information</h3>
                     <div
-                        class="border rounded-lg p-5 bg-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        class="border rounded-lg p-4 bg-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
                             <h4 class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Scanned Vendor
                                 Name</h4>
@@ -72,12 +72,12 @@
 
             <!-- Extracted Products Card -->
             <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-100">
-                <div class="px-4 py-5 sm:p-6">
+                <div class="px-4 py-4 sm:p-5">
                     <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Extracted Products</h3>
 
                     <div class="space-y-6">
                         <div v-for="item in scanData.temp_products" :key="item.temp_product.id"
-                            class="border rounded-lg p-4 bg-gray-50">
+                            class="border rounded-lg p-3 sm:p-4 bg-gray-50">
                             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                                 <!-- Scanned Data -->
                                 <div>

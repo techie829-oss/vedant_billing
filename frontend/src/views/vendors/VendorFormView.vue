@@ -22,7 +22,7 @@
     <form @submit.prevent="saveVendor" class="space-y-6">
       <!-- Basic Info -->
       <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <div class="px-4 py-6 sm:p-8">
+        <div class="px-4 py-5 sm:p-6">
           <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div class="sm:col-span-full">
               <h3 class="text-base font-semibold leading-7 text-gray-900">Basic Information</h3>
@@ -33,7 +33,7 @@
               <label for="gstin" class="block text-sm font-medium leading-6 text-gray-900">GSTIN / Tax ID</label>
               <div class="flex gap-2 mt-2">
                 <input type="text" id="gstin" v-model="form.gstin"
-                  class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                   placeholder="27AAAC..." />
                 <button type="button" @click="fetchGst" :disabled="fetchingGst || !form.gstin || form.gstin.length < 15"
                   class="rounded-md bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-100 disabled:opacity-50">
@@ -46,7 +46,7 @@
               <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Vendor Name <span class="text-red-500">*</span></label>
               <div class="mt-2">
                 <input type="text" id="name" v-model="form.name" required
-                  class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                   placeholder="e.g. ABC Suppliers Ltd" />
               </div>
             </div>
@@ -55,7 +55,7 @@
               <label for="status" class="block text-sm font-medium leading-6 text-gray-900">Status</label>
               <div class="mt-2">
                 <select id="status" v-model="form.status"
-                  class="block w-full rounded-md border-0 py-2 pl-3.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
+                  class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                 </select>
@@ -67,7 +67,7 @@
 
       <!-- Contact -->
       <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <div class="px-4 py-6 sm:p-8">
+        <div class="px-4 py-5 sm:p-6">
           <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div class="sm:col-span-full">
               <h3 class="text-base font-semibold leading-7 text-gray-900">Contact & Tax</h3>
@@ -76,7 +76,7 @@
               <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email Address</label>
               <div class="mt-2">
                 <input type="email" id="email" v-model="form.email"
-                  class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                   placeholder="contact@vendor.com" />
               </div>
             </div>
@@ -84,14 +84,14 @@
               <label for="phone" class="block text-sm font-medium leading-6 text-gray-900">Phone</label>
               <div class="mt-2">
                 <input type="text" id="phone" v-model="form.phone"
-                  class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
               </div>
             </div>
             <div class="sm:col-span-3">
               <label for="pan" class="block text-sm font-medium leading-6 text-gray-900">PAN Number</label>
               <div class="mt-2">
                 <input type="text" id="pan" v-model="form.pan"
-                  class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                   placeholder="ABCDE1234F" />
               </div>
             </div>
@@ -104,14 +104,14 @@
                   <label class="block text-sm font-medium leading-6 text-gray-900">Street Address</label>
                   <div class="mt-2">
                     <textarea rows="2" v-model="form.billing_address.street"
-                      class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"></textarea>
+                      class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"></textarea>
                   </div>
                 </div>
                 <div class="sm:col-span-2">
                   <label class="block text-sm font-medium leading-6 text-gray-900">City</label>
                   <div class="mt-2">
                     <input type="text" v-model="form.billing_address.city"
-                      class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+                      class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
                   </div>
                 </div>
                 <div class="sm:col-span-2">
@@ -124,7 +124,7 @@
                   <label class="block text-sm font-medium leading-6 text-gray-900">PIN Code</label>
                   <div class="mt-2">
                     <input type="text" v-model="form.billing_address.zip"
-                      class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+                      class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
                   </div>
                 </div>
               </div>
@@ -135,11 +135,11 @@
 
       <!-- Notes -->
       <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <div class="px-4 py-6 sm:p-8">
+        <div class="px-4 py-5 sm:p-6">
           <h3 class="text-base font-semibold leading-7 text-gray-900">Notes</h3>
           <div class="mt-4">
             <textarea rows="3" v-model="form.notes"
-              class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+              class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
               placeholder="Internal notes about this vendor..."></textarea>
           </div>
         </div>
@@ -147,7 +147,7 @@
 
       <!-- Financial -->
       <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <div class="px-4 py-6 sm:p-8">
+        <div class="px-4 py-5 sm:p-6">
           <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Financial Details</h3>
           <div class="max-w-xs">
             <label class="block text-sm font-medium leading-6 text-gray-900">Opening Balance</label>

@@ -102,22 +102,22 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col"
-                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                                        class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                                         Name</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                    <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">
                                         SKU</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                    <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">
                                         Type</th>
-                                    <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">
+                                    <th scope="col" class="px-3 py-2.5 text-right text-sm font-semibold text-gray-900">
                                         Sale Price</th>
                                     <th scope="col"
-                                        class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900 hidden sm:table-cell">
+                                        class="px-3 py-2.5 text-right text-sm font-semibold text-gray-900 hidden sm:table-cell">
                                         Buy Price</th>
-                                    <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">
+                                    <th scope="col" class="px-3 py-2.5 text-right text-sm font-semibold text-gray-900">
                                         Stock</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                    <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">
                                         Status</th>
-                                    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                    <th scope="col" class="relative py-2.5 pl-3 pr-4 sm:pr-6">
                                         <span class="sr-only">Edit</span>
                                     </th>
                                 </tr>
@@ -137,28 +137,28 @@
                             <tbody v-else class="divide-y divide-gray-200 bg-white">
                                 <tr v-for="product in products" :key="product.id">
                                     <td
-                                        class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                        class="whitespace-nowrap py-2.5 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                                         {{ product.name }}
                                         <div class="text-xs text-gray-500 font-normal mt-0.5" v-if="product.hsn_code">
                                             HSN: {{ product.hsn_code }}</div>
                                     </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ product.sku || '-'
+                                    <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">{{ product.sku || '-'
                                         }}</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 capitalize">
+                                    <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500 capitalize">
                                         <span
                                             class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                             :class="product.type === 'goods' ? 'bg-blue-50 text-blue-700 ring-blue-700/10' : 'bg-purple-50 text-purple-700 ring-purple-700/10'">
                                             {{ product.type }}
                                         </span>
                                     </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900 text-right">₹{{
+                                    <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-900 text-right">₹{{
                                         Number(product.sale_price).toFixed(2) }}</td>
                                     <td
-                                        class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right hidden sm:table-cell">
+                                        class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500 text-right hidden sm:table-cell">
                                         {{ product.purchase_price ? '₹' + Number(product.purchase_price).toFixed(2) :
                                             '-' }}
                                     </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right">
+                                    <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500 text-right">
                                         <div v-if="product.type === 'goods'" class="flex flex-col items-end gap-1">
                                             <span>{{ Number(product.current_stock || 0) }} {{ product.unit || ''
                                             }}</span>
@@ -185,7 +185,7 @@
                                         </div>
                                         <span v-else>-</span>
                                     </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">
                                         <span
                                             class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                             :class="product.status === 'active' ? 'bg-green-50 text-green-700 ring-green-600/20' : 'bg-red-50 text-red-700 ring-red-600/10'">
@@ -193,7 +193,7 @@
                                         </span>
                                     </td>
                                     <td
-                                        class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                        class="relative whitespace-nowrap py-2.5 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                         <router-link :to="`/products/${product.id}/edit`"
                                             class="text-indigo-600 hover:text-indigo-900">Edit<span class="sr-only">, {{
                                                 product.name }}</span></router-link>

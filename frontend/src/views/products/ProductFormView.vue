@@ -17,7 +17,7 @@
         </div>
 
         <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-            <div class="px-4 py-6 sm:p-8">
+            <div class="px-4 py-5 sm:p-6">
                 <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 
                     <!-- Basic Info -->
@@ -25,7 +25,7 @@
                         <label class="block text-sm font-medium leading-6 text-gray-900">Product Name</label>
                         <div class="mt-2">
                             <input type="text" v-model="form.name"
-                                class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
 
@@ -33,7 +33,7 @@
                         <label class="block text-sm font-medium leading-6 text-gray-900">Type</label>
                         <div class="relative mt-2">
                             <select v-model="form.type"
-                                class="block w-full appearance-none rounded-md border-0 py-2 pl-3.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                 <option value="goods">Goods (Inventory)</option>
                                 <option value="service">Service</option>
                             </select>
@@ -52,7 +52,7 @@
                         <label class="block text-sm font-medium leading-6 text-gray-900">SKU / Item Code</label>
                         <div class="mt-2">
                             <input type="text" v-model="form.sku"
-                                class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
 
@@ -60,7 +60,7 @@
                         <label class="block text-sm font-medium leading-6 text-gray-900">HSN / SAC Code</label>
                         <div class="mt-2">
                             <input type="text" v-model="form.hsn_code"
-                                class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
 
@@ -69,7 +69,7 @@
                         <label class="block text-sm font-medium leading-6 text-gray-900">Sales Price (₹)</label>
                         <div class="mt-2">
                             <input type="number" step="0.01" v-model="form.sale_price"
-                                class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
 
@@ -77,12 +77,17 @@
                         <label class="block text-sm font-medium leading-6 text-gray-900">Tax Rate (%)</label>
                         <div class="relative mt-2">
                             <select v-model="form.tax_rate"
-                                class="block w-full appearance-none rounded-md border-0 py-2 pl-3.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                 <option :value="0">0% (Exempt)</option>
+                                <option :value="0.1">0.1%</option>
+                                <option :value="0.25">0.25%</option>
+                                <option :value="1.5">1.5%</option>
+                                <option :value="3">3%</option>
                                 <option :value="5">5%</option>
                                 <option :value="12">12%</option>
                                 <option :value="18">18%</option>
                                 <option :value="28">28%</option>
+                                <option :value="40">40%</option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                                 <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
@@ -99,7 +104,7 @@
                         <label class="block text-sm font-medium leading-6 text-gray-900">Purchase Price (₹)</label>
                         <div class="mt-2">
                             <input type="number" step="0.01" v-model="form.purchase_price"
-                                class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
 
@@ -107,7 +112,7 @@
                         <label class="block text-sm font-medium leading-6 text-gray-900">Unit</label>
                         <div class="relative mt-2">
                             <select v-model="form.unit"
-                                class="block w-full appearance-none rounded-md border-0 py-2 pl-3.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                 <option value="pcs">Pieces (pcs)</option>
                                 <option value="box">Box</option>
                                 <option value="kg">Kilogram (kg)</option>
@@ -132,7 +137,7 @@
                             Stock</label>
                         <div class="mt-2">
                             <input type="number" step="1" v-model="form.current_stock"
-                                class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                         <p class="mt-1 text-xs text-gray-500">Initial stock balance.</p>
                     </div>
@@ -141,7 +146,7 @@
                         <label class="block text-sm font-medium leading-6 text-gray-900">Status</label>
                         <div class="relative mt-2">
                             <select v-model="form.status"
-                                class="block w-full appearance-none rounded-md border-0 py-2 pl-3.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                             </select>
@@ -160,7 +165,7 @@
                         <label class="block text-sm font-medium leading-6 text-gray-900">Description</label>
                         <div class="mt-2">
                             <textarea v-model="form.description" rows="3"
-                                class="block w-full rounded-md border-0 py-2 px-3.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>
+                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>
                         </div>
                     </div>
 

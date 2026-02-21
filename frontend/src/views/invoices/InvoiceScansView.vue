@@ -20,7 +20,7 @@
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-4 mb-8">
             <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
+                <div class="p-4 sm:p-5">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
+                <div class="p-4 sm:p-5">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             <svg class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,7 +56,7 @@
                 </div>
             </div>
             <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
+                <div class="p-4 sm:p-5">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             <svg class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -74,7 +74,7 @@
                 </div>
             </div>
             <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
+                <div class="p-4 sm:p-5">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             <svg class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -142,7 +142,7 @@
             </div>
 
             <ul v-else role="list" class="divide-y divide-gray-200">
-                <li v-for="scan in scans" :key="scan.id" class="p-4 hover:bg-gray-50 cursor-pointer"
+                <li v-for="scan in scans" :key="scan.id" class="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer"
                     @click="viewScan(scan)">
                     <div class="flex items-center justify-between">
                         <div class="flex-1 min-w-0">
