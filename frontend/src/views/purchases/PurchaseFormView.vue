@@ -21,45 +21,51 @@
 
     <div class="space-y-6">
       <!-- Header Info -->
-      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <div class="px-4 py-5 sm:p-6">
-          <h3 class="text-base font-semibold leading-7 text-gray-900 mb-6">Invoice Details</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
 
-            <!-- Left Column -->
-            <div class="space-y-6">
+        <!-- Left Column: Primary Details -->
+        <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+          <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-base font-semibold leading-7 text-gray-900 mb-6">Invoice Details</h3>
+            <!-- Row 1 -->
+            <div class="grid grid-cols-2 gap-4">
               <!-- Vendor -->
               <div>
                 <label class="block text-sm font-medium leading-6 text-gray-900">Vendor <span
                     class="text-red-500">*</span></label>
-                <div class="mt-2">
+                <div class="mt-1">
                   <select v-model="form.party_id" required
                     class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
                     <option value="">-- Select Vendor --</option>
                     <option v-for="v in vendors" :key="v.id" :value="v.id">{{ v.name }}</option>
                   </select>
-                  <router-link to="/vendors/create" target="_blank"
-                    class="mt-1 inline-block text-xs text-indigo-600 hover:underline">
-                    + Add new vendor
-                  </router-link>
+                  <div class="mt-2 text-right">
+                    <router-link to="/vendors/create" target="_blank"
+                      class="text-sm text-indigo-600 hover:text-indigo-500">
+                      + Add new vendor
+                    </router-link>
+                  </div>
                 </div>
               </div>
 
               <!-- Invoice Number -->
               <div>
                 <label class="block text-sm font-medium leading-6 text-gray-900">Vendor's Invoice No.</label>
-                <div class="mt-2">
+                <div class="mt-1">
                   <input type="text" v-model="form.invoice_number"
                     class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-                    placeholder="Auto-generated if blank" />
+                    placeholder="(Auto-generated)" />
                 </div>
               </div>
+            </div>
 
+            <!-- Row 2 -->
+            <div class="grid grid-cols-2 gap-4 mt-4">
               <!-- Date -->
               <div>
                 <label class="block text-sm font-medium leading-6 text-gray-900">Invoice Date <span
                     class="text-red-500">*</span></label>
-                <div class="mt-2">
+                <div class="mt-1">
                   <input type="date" v-model="form.date" required
                     class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
                 </div>
@@ -69,19 +75,25 @@
               <div>
                 <label class="block text-sm font-medium leading-6 text-gray-900">Due Date <span
                     class="text-red-500">*</span></label>
-                <div class="mt-2">
+                <div class="mt-1">
                   <input type="date" v-model="form.due_date" required
                     class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            <!-- Right Column -->
-            <div class="space-y-6">
+        <!-- Right Column: Secondary Details -->
+        <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+          <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-base font-semibold leading-7 text-gray-900 mb-6">Other Details</h3>
+            <!-- Row 1 -->
+            <div class="grid grid-cols-2 gap-4">
               <!-- E-Way Bill Number -->
               <div>
                 <label class="block text-sm font-medium leading-6 text-gray-900">E-Way Bill No.</label>
-                <div class="mt-2">
+                <div class="mt-1">
                   <input type="text" v-model="form.eway_bill_no"
                     class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
                 </div>
@@ -90,16 +102,19 @@
               <!-- Vehicle Number -->
               <div>
                 <label class="block text-sm font-medium leading-6 text-gray-900">Vehicle No.</label>
-                <div class="mt-2">
+                <div class="mt-1">
                   <input type="text" v-model="form.vehicle_no"
                     class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
                 </div>
               </div>
+            </div>
 
+            <!-- Row 2 -->
+            <div class="grid grid-cols-2 gap-4 mt-4">
               <!-- PO Number -->
               <div>
                 <label class="block text-sm font-medium leading-6 text-gray-900">PO Number</label>
-                <div class="mt-2">
+                <div class="mt-1">
                   <input type="text" v-model="form.po_number"
                     class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
                 </div>
@@ -108,15 +123,15 @@
               <!-- Challan No. -->
               <div>
                 <label class="block text-sm font-medium leading-6 text-gray-900">Challan No.</label>
-                <div class="mt-2">
+                <div class="mt-1">
                   <input type="text" v-model="form.challan_no"
                     class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
                 </div>
               </div>
             </div>
-
           </div>
         </div>
+
       </div>
 
       <!-- Items -->
