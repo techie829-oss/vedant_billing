@@ -21,7 +21,7 @@ class InvoicePolicy
      */
     public function view(User $user, Invoice $invoice): bool
     {
-        return $user->currentBusinessId() === $invoice->party->business_id;
+        return $user->currentBusinessId() === $invoice->business_id;
     }
 
     /**
@@ -39,7 +39,7 @@ class InvoicePolicy
     {
         // Allow all members to edit (drafts etc)
         // We could restrict finalized invoices here, but that's usually status logic.
-        return $user->currentBusinessId() === $invoice->party->business_id;
+        return $user->currentBusinessId() === $invoice->business_id;
     }
 
     /**
@@ -48,7 +48,7 @@ class InvoicePolicy
      */
     public function delete(User $user, Invoice $invoice): bool
     {
-        if ($user->currentBusinessId() !== $invoice->party->business_id) {
+        if ($user->currentBusinessId() !== $invoice->business_id) {
             return false;
         }
 
