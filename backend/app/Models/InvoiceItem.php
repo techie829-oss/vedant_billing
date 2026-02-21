@@ -19,10 +19,13 @@ class InvoiceItem extends Model
         'hsn_code',
         'quantity',
         'unit_price',
+        'mrp',
         'tax_rate',
         'discount',
         'tax_amount',
         'total',
+        'batch_number',
+        'expiry_date',
     ];
 
     protected $casts = [

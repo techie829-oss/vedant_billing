@@ -11,6 +11,7 @@ export interface Product {
     sale_price: number
     purchase_price?: number
     tax_rate?: number
+    is_tax_inclusive?: boolean
     current_stock?: number
     unit?: string
     description?: string

@@ -207,12 +207,15 @@ class InvoiceOcrService
                     'name' => $item['name'],
                     'sku' => $item['sku'] ?? null,
                     'price' => $item['price'],
+                    'mrp' => $item['mrp'] ?? null,
                     'discount' => $item['discount'] ?? 0,
                     'quantity' => $item['quantity'],
                     'unit' => $item['unit'] ?? null,
                     'description' => $item['description'] ?? null,
                     'hsn_code' => $item['hsn_code'] ?? null,
                     'tax_rate' => $item['tax_rate'] ?? null,
+                    'batch_number' => $item['batch_number'] ?? null,
+                    'expiry_date' => $item['expiry_date'] ?? null,
                     'status' => 'pending',
                 ]);
 

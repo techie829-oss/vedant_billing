@@ -120,20 +120,24 @@ REQUIRED FIELDS:
   * quantity: Quantity ordered (numeric)
   * unit: Unit of measurement (kg, pcs, box, etc.) (string, nullable)
   * price: Unit price (numeric)
+  * mrp: Maximum Retail Price if listed separately (numeric, nullable)
   * discount: Discount amount applied to this item (numeric, default 0)
   * hsn_code: HSN/SAC code if available (string, nullable)
   * tax_rate: Tax rate percentage if available (numeric, nullable)
+  * batch_number: Manufacturing batch number (string, nullable)
+  * expiry_date: Manufacturing or Expiry date (string, nullable)
   * description: Any additional product details (string, nullable)
 
 IMPORTANT:
 - Extract ALL line items from the invoice
-- Price should be unit price, not total
-- Quantity should be numeric (convert "2 pcs" to quantity=2, unit="pcs")
+- `price` MUST be the per-unit rate/price. NEVER extract the 'Total Amount', 'Taxable Amount', or 'Net Amount' into the price field. If a row has Rate=50 and Total=1000, the price is 50.
+- Quantity should be numeric. Sometimes quantity is under "Qty" or "NOB" (Number of Bottles). Use NOB if Qty is in cases.
 - If unit not specified, leave as null
-- Return price and discount as decimal numbers without currency symbols
+- Return price, mrp and discount as decimal numbers without currency symbols
+- For FMCG/Beverages, `mrp` is often explicitly listed in an "MRP" or "MRP/Bottle" column. Do NOT miss this.
+- `batch_number` is often listed under "Batch No" and `expiry_date` under "Mfg Date" or "Exp Date". 
 - If multiple discounts exist per item (e.g., Discount + SPL Discount), sum them up into the single 'discount' field
 - If CGST and SGST are listed separately, SUM them for the 'tax_rate' (e.g., 20% CGST + 20% SGST = 40)
-- If items have MRP, Batch Number, or Mfg Date, include those details in the 'description' field
 
 Example output:
 {
@@ -148,10 +152,13 @@ Example output:
       "sku": "HP-EB-840",
       "quantity": 2,
       "unit": "pcs",
-      "price": 55000.00,
+      "price": 50000.00,
+      "mrp": 55000.00,
       "discount": 1000.00,
       "hsn_code": "8471",
       "tax_rate": 18,
+      "batch_number": "BNBAA024",
+      "expiry_date": "2026-01-22",
       "description": "14-inch, i5, 16GB RAM"
     },
     {
@@ -160,12 +167,16 @@ Example output:
       "quantity": 5,
       "unit": "pcs",
       "price": 450.00,
+      "mrp": null,
       "discount": 0.00,
       "hsn_code": "8471",
       "tax_rate": 18,
+      "batch_number": null,
+      "expiry_date": null,
       "description": null
     }
   ]
+}
 }
 
 Return ONLY a valid JSON object. Do not include markdown formatting or explanations.

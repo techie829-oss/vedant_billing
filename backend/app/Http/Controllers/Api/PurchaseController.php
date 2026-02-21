@@ -61,14 +61,21 @@ class PurchaseController extends Controller
             'date' => 'required|date',
             'due_date' => 'required|date',
             'notes' => 'nullable|string',
+            'po_number' => 'nullable|string',
+            'eway_bill_no' => 'nullable|string',
+            'vehicle_no' => 'nullable|string',
+            'challan_no' => 'nullable|string',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'nullable|exists:products,id',
             'items.*.name' => 'required|string',
             'items.*.quantity' => 'required|numeric|min:0.01',
             'items.*.unit_price' => 'required|numeric|min:0',
+            'items.*.mrp' => 'nullable|numeric|min:0',
             'items.*.discount' => 'nullable|numeric|min:0',
             'items.*.tax_rate' => 'nullable|numeric|min:0',
             'items.*.hsn_code' => 'nullable|string',
+            'items.*.batch_number' => 'nullable|string',
+            'items.*.expiry_date' => 'nullable|date',
             'items.*.description' => 'nullable|string',
         ]);
 
@@ -117,6 +124,10 @@ class PurchaseController extends Controller
                 'due_date' => $validated['due_date'],
                 'status' => 'draft',
                 'notes' => $validated['notes'] ?? null,
+                'po_number' => $validated['po_number'] ?? null,
+                'eway_bill_no' => $validated['eway_bill_no'] ?? null,
+                'vehicle_no' => $validated['vehicle_no'] ?? null,
+                'challan_no' => $validated['challan_no'] ?? null,
             ]);
 
             // Create items and calculate totals
@@ -142,10 +153,13 @@ class PurchaseController extends Controller
                     'hsn_code' => $itemData['hsn_code'] ?? null,
                     'quantity' => $qty,
                     'unit_price' => $price,
+                    'mrp' => $itemData['mrp'] ?? null,
                     'discount' => $discount,
                     'tax_rate' => $taxRate,
                     'tax_amount' => $taxAmt,
                     'total' => $total,
+                    'batch_number' => $itemData['batch_number'] ?? null,
+                    'expiry_date' => $itemData['expiry_date'] ?? null,
                 ]);
 
                 // Update inventory if mapped to a catalog product

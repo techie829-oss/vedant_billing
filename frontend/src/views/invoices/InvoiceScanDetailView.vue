@@ -100,6 +100,20 @@
                                             <dt class="text-xs font-medium text-gray-500">Price</dt>
                                             <dd class="mt-1 text-sm text-gray-900">₹{{ item.temp_product.price }}</dd>
                                         </div>
+                                        <div v-if="item.temp_product.mrp">
+                                            <dt class="text-xs font-medium text-gray-500">MRP</dt>
+                                            <dd class="mt-1 text-sm text-gray-900">₹{{ item.temp_product.mrp }}</dd>
+                                        </div>
+                                        <div v-if="item.temp_product.batch_number">
+                                            <dt class="text-xs font-medium text-gray-500">Batch No.</dt>
+                                            <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.batch_number }}
+                                            </dd>
+                                        </div>
+                                        <div v-if="item.temp_product.expiry_date">
+                                            <dt class="text-xs font-medium text-gray-500">Mfg/Exp Date</dt>
+                                            <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.expiry_date }}
+                                            </dd>
+                                        </div>
                                         <div v-if="item.temp_product.discount > 0">
                                             <dt class="text-xs font-medium text-gray-500">Discount</dt>
                                             <dd class="mt-1 text-sm text-green-600">-₹{{ item.temp_product.discount }}
@@ -212,6 +226,33 @@
                             </div>
                         </div>
 
+                        <!-- Logistics Details -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">E-Way Bill No.</label>
+                                <input type="text" v-model="invoiceForm.eway_bill_no" placeholder="Optional"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Vehicle No.</label>
+                                <input type="text" v-model="invoiceForm.vehicle_no" placeholder="Optional"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">PO Number</label>
+                                <input type="text" v-model="invoiceForm.po_number" placeholder="Optional"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Challan No.</label>
+                                <input type="text" v-model="invoiceForm.challan_no" placeholder="Optional"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                            </div>
+                        </div>
+
                         <!-- Items summary -->
                         <div class="bg-gray-50 rounded-lg p-3 text-sm">
                             <p class="font-medium text-gray-700 mb-2">Items from scan ({{ invoiceItems.length }})</p>
@@ -278,6 +319,10 @@ const invoiceForm = ref({
     invoice_number: '',
     date: today,
     due_date: in30,
+    po_number: '',
+    eway_bill_no: '',
+    vehicle_no: '',
+    challan_no: '',
 })
 
 // Can create invoice only when status=success and has items
@@ -293,9 +338,12 @@ const invoiceItems = computed(() => {
         product_id: tp.temp_product.matched_product_id ?? null,
         quantity: Number(tp.temp_product.quantity) || 1,
         unit_price: Number(tp.temp_product.price) || 0,
+        mrp: tp.temp_product.mrp ? Number(tp.temp_product.mrp) : null,
         discount: Number(tp.temp_product.discount) || 0,
         tax_rate: Number(tp.temp_product.tax_rate) || 0,
         hsn_code: tp.temp_product.hsn_code ?? null,
+        batch_number: tp.temp_product.batch_number ?? null,
+        expiry_date: tp.temp_product.expiry_date ?? null,
         description: tp.temp_product.description ?? null,
     }))
 })

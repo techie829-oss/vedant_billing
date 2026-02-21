@@ -68,8 +68,17 @@
                     <div class="sm:col-span-3">
                         <label class="block text-sm font-medium leading-6 text-gray-900">Sales Price (₹)</label>
                         <div class="mt-2">
-                            <input type="number" step="0.01" v-model="form.sale_price"
+                            <input type="number" step="any" v-model="form.sale_price"
                                 class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        </div>
+                        <div class="mt-2 flex items-center h-5">
+                            <input id="is_tax_inclusive" name="is_tax_inclusive" type="checkbox"
+                                v-model="form.is_tax_inclusive"
+                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                            <label for="is_tax_inclusive"
+                                class="ml-2 block text-sm font-medium leading-6 text-gray-900">
+                                This price includes GST
+                            </label>
                         </div>
                     </div>
 
@@ -98,7 +107,7 @@
                     <div class="sm:col-span-3">
                         <label class="block text-sm font-medium leading-6 text-gray-900">Purchase Price (₹)</label>
                         <div class="mt-2">
-                            <input type="number" step="0.01" v-model="form.purchase_price"
+                            <input type="number" step="any" v-model="form.purchase_price"
                                 class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
@@ -129,7 +138,7 @@
                         <label class="block text-sm font-medium leading-6 text-gray-900">Opening/Current
                             Stock</label>
                         <div class="mt-2">
-                            <input type="number" step="1" v-model="form.current_stock"
+                            <input type="number" step="any" v-model="form.current_stock"
                                 class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                         <p class="mt-1 text-xs text-gray-500">Initial stock balance.</p>
@@ -206,6 +215,7 @@ const form = ref<Partial<Product>>({
     sale_price: 0,
     purchase_price: 0,
     tax_rate: 18,
+    is_tax_inclusive: false,
     unit: 'pcs',
     current_stock: 0,
     status: 'active',

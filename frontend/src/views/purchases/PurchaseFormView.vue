@@ -28,14 +28,16 @@
 
             <!-- Vendor -->
             <div class="sm:col-span-4">
-              <label class="block text-sm font-medium leading-6 text-gray-900">Vendor <span class="text-red-500">*</span></label>
+              <label class="block text-sm font-medium leading-6 text-gray-900">Vendor <span
+                  class="text-red-500">*</span></label>
               <div class="mt-2">
                 <select v-model="form.party_id" required
                   class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
                   <option value="">-- Select Vendor --</option>
                   <option v-for="v in vendors" :key="v.id" :value="v.id">{{ v.name }}</option>
                 </select>
-                <router-link to="/vendors/create" target="_blank" class="mt-1 inline-block text-xs text-indigo-600 hover:underline">
+                <router-link to="/vendors/create" target="_blank"
+                  class="mt-1 inline-block text-xs text-indigo-600 hover:underline">
                   + Add new vendor
                 </router-link>
               </div>
@@ -53,7 +55,8 @@
 
             <!-- Date -->
             <div class="sm:col-span-2">
-              <label class="block text-sm font-medium leading-6 text-gray-900">Invoice Date <span class="text-red-500">*</span></label>
+              <label class="block text-sm font-medium leading-6 text-gray-900">Invoice Date <span
+                  class="text-red-500">*</span></label>
               <div class="mt-2">
                 <input type="date" v-model="form.date" required
                   class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
@@ -62,7 +65,8 @@
 
             <!-- Due Date -->
             <div class="sm:col-span-2">
-              <label class="block text-sm font-medium leading-6 text-gray-900">Due Date <span class="text-red-500">*</span></label>
+              <label class="block text-sm font-medium leading-6 text-gray-900">Due Date <span
+                  class="text-red-500">*</span></label>
               <div class="mt-2">
                 <input type="date" v-model="form.due_date" required
                   class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
@@ -84,7 +88,8 @@
             <table class="min-w-full">
               <thead>
                 <tr class="border-b border-gray-200">
-                  <th class="pb-2 text-left text-xs font-medium text-gray-500 uppercase pr-2 w-1/3">Item / Description</th>
+                  <th class="pb-2 text-left text-xs font-medium text-gray-500 uppercase pr-2 w-1/3">Item / Description
+                  </th>
                   <th class="pb-2 text-right text-xs font-medium text-gray-500 uppercase px-2 w-20">Qty</th>
                   <th class="pb-2 text-right text-xs font-medium text-gray-500 uppercase px-2 w-28">Rate</th>
                   <th class="pb-2 text-right text-xs font-medium text-gray-500 uppercase px-2 w-20">Tax %</th>
@@ -99,27 +104,31 @@
                       class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 text-sm" />
                   </td>
                   <td class="py-3 px-2">
-                    <input type="number" v-model.number="item.quantity" min="0.01" @input="calcItem(item)"
+                    <input type="number" step="any" v-model.number="item.quantity" min="0.01" @input="calcItem(item)"
                       class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
                   </td>
                   <td class="py-3 px-2">
                     <div class="relative">
                       <span class="absolute inset-y-0 left-2 flex items-center text-gray-400 text-xs">₹</span>
-                      <input type="number" v-model.number="item.unit_price" min="0" @input="calcItem(item)"
+                      <input type="number" step="any" v-model.number="item.unit_price" min="0" @input="calcItem(item)"
                         class="block w-full rounded-md border-0 py-1.5 pl-6 pr-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
                     </div>
                   </td>
                   <td class="py-3 px-2">
-                    <input type="number" v-model.number="item.tax_rate" min="0" max="100" @input="calcItem(item)"
+                    <input type="number" step="any" v-model.number="item.tax_rate" min="0" max="100"
+                      @input="calcItem(item)"
                       class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
                   </td>
                   <td class="py-3 px-2 text-right text-sm font-medium text-gray-900">
                     ₹{{ item.total.toFixed(2) }}
                   </td>
                   <td class="py-3 pl-2">
-                    <button @click="removeItem(idx)" type="button" class="text-red-400 hover:text-red-600" v-if="form.items.length > 1">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    <button @click="removeItem(idx)" type="button" class="text-red-400 hover:text-red-600"
+                      v-if="form.items.length > 1">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>
                   </td>
@@ -136,30 +145,32 @@
               <div class="grid grid-cols-3 gap-2">
                 <div>
                   <label class="text-xs text-gray-500">Qty</label>
-                  <input type="number" v-model.number="item.quantity" @input="calcItem(item)"
+                  <input type="number" step="any" v-model.number="item.quantity" @input="calcItem(item)"
                     class="block w-full rounded-md border-0 py-1.5 px-2 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600" />
                 </div>
                 <div>
                   <label class="text-xs text-gray-500">Rate (₹)</label>
-                  <input type="number" v-model.number="item.unit_price" @input="calcItem(item)"
+                  <input type="number" step="any" v-model.number="item.unit_price" @input="calcItem(item)"
                     class="block w-full rounded-md border-0 py-1.5 px-2 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600" />
                 </div>
                 <div>
                   <label class="text-xs text-gray-500">Tax %</label>
-                  <input type="number" v-model.number="item.tax_rate" @input="calcItem(item)"
+                  <input type="number" step="any" v-model.number="item.tax_rate" @input="calcItem(item)"
                     class="block w-full rounded-md border-0 py-1.5 px-2 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600" />
                 </div>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-sm font-medium text-gray-900">Total: ₹{{ item.total.toFixed(2) }}</span>
-                <button @click="removeItem(idx)" v-if="form.items.length > 1" type="button" class="text-red-500 text-xs">Remove</button>
+                <button @click="removeItem(idx)" v-if="form.items.length > 1" type="button"
+                  class="text-red-500 text-xs">Remove</button>
               </div>
             </div>
           </div>
 
           <button @click="addItem" type="button"
             class="mt-4 inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
             Add Item

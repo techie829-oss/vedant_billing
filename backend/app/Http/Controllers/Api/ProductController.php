@@ -54,6 +54,7 @@ class ProductController extends Controller
             'hsn_code' => 'nullable|string|max:50',
             'description' => 'nullable|string|max:1000',
             'tax_rate' => 'nullable|numeric|min:0|max:100',
+            'is_tax_inclusive' => 'boolean',
             'current_stock' => 'nullable|numeric|min:0', // Accept current_stock as opening
             'opening_stock' => 'nullable|numeric|min:0',
         ]);
@@ -110,6 +111,7 @@ class ProductController extends Controller
             'hsn_code' => 'nullable|string|max:50',
             'description' => 'nullable|string|max:1000',
             'tax_rate' => 'nullable|numeric|min:0|max:100',
+            'is_tax_inclusive' => 'boolean',
             'status' => 'sometimes|in:active,inactive',
             'current_stock' => 'sometimes|numeric|min:0', // Allow direct update
         ]);

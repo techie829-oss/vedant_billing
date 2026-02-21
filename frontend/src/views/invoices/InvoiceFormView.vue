@@ -492,13 +492,13 @@
                                             class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
                                     </td>
                                     <td class="px-1 py-1">
-                                        <input type="number" v-model.number="item.quantity" min="0.01" step="0.01"
+                                        <input type="number" v-model.number="item.quantity" min="0.01" step="any"
                                             @input="calculateDiscountAmount(item)"
                                             class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6 text-right"
                                             required />
                                     </td>
                                     <td class="px-1 py-1">
-                                        <input type="number" v-model.number="item.unit_price" min="0" step="0.01"
+                                        <input type="number" v-model.number="item.unit_price" min="0" step="any"
                                             @input="calculateDiscountAmount(item)"
                                             class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6 text-right"
                                             required />
@@ -506,7 +506,7 @@
                                     <td v-if="form.meta.display_options.show_discount" class="px-1 py-1">
                                         <!-- Discount Percent Input -->
                                         <input type="number" v-model.number="item.discount_percent" min="0" max="100"
-                                            step="0.1" @input="calculateDiscountAmount(item)"
+                                            step="any" @input="calculateDiscountAmount(item)"
                                             class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6 text-right" />
                                     </td>
                                     <td v-if="form.meta.display_options.show_discount" class="px-1 py-1">
@@ -933,9 +933,22 @@ const onProductSelect = (item: InvoiceItem, product: any) => {
     if (product) {
         item.name = product.name
         item.hsn_code = product.hsn_code || ''
-        item.unit_price = Number(product.sale_price) || 0
-        item.tax_rate = Number(product.tax_rate) || 0
+
+        const rate = Number(product.tax_rate) || 0
+        const rawPrice = Number(product.sale_price) || 0
+
+        if (product.is_tax_inclusive && rate > 0) {
+            // Reverse calculate exclusive base price
+            item.unit_price = Number((rawPrice / (1 + (rate / 100))).toFixed(4))
+        } else {
+            item.unit_price = rawPrice
+        }
+
+        item.tax_rate = rate
         if (!item.quantity) item.quantity = 1
+
+        // Ensure discount and totals are recalculated
+        calculateDiscountAmount(item)
     }
 }
 
