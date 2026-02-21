@@ -27,7 +27,7 @@
           <div class="grid max-w-3xl grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
 
             <!-- Vendor -->
-            <div class="sm:col-span-4">
+            <div class="sm:col-span-6">
               <label class="block text-sm font-medium leading-6 text-gray-900">Vendor <span
                   class="text-red-500">*</span></label>
               <div class="mt-2">
@@ -54,7 +54,7 @@
             </div>
 
             <!-- Date -->
-            <div class="sm:col-span-2">
+            <div class="sm:col-span-3">
               <label class="block text-sm font-medium leading-6 text-gray-900">Invoice Date <span
                   class="text-red-500">*</span></label>
               <div class="mt-2">
@@ -64,7 +64,7 @@
             </div>
 
             <!-- Due Date -->
-            <div class="sm:col-span-2">
+            <div class="sm:col-span-3">
               <label class="block text-sm font-medium leading-6 text-gray-900">Due Date <span
                   class="text-red-500">*</span></label>
               <div class="mt-2">
@@ -131,7 +131,8 @@
                   <th class="pb-2 text-left text-xs font-medium text-gray-500 uppercase px-2 w-32">Batch No</th>
                   <th class="pb-2 text-left text-xs font-medium text-gray-500 uppercase px-2 w-36">Mfg/Exp Date</th>
                   <th class="pb-2 text-right text-xs font-medium text-gray-500 uppercase px-2 w-20">Qty</th>
-                  <th class="pb-2 text-right text-xs font-medium text-gray-500 uppercase px-2 w-28">Rate</th>
+                  <th class="pb-2 text-right text-xs font-medium text-gray-500 uppercase px-2 w-24">Rate</th>
+                  <th class="pb-2 text-right text-xs font-medium text-gray-500 uppercase px-2 w-24">Disc</th>
                   <th class="pb-2 text-right text-xs font-medium text-gray-500 uppercase px-2 w-20">Tax %</th>
                   <th class="pb-2 text-right text-xs font-medium text-gray-500 uppercase px-2 w-28">Total</th>
                   <th class="pb-2 w-10"></th>
@@ -168,13 +169,20 @@
                     <div class="relative">
                       <span class="absolute inset-y-0 left-2 flex items-center text-gray-400 text-xs mt-1.5">₹</span>
                       <input type="number" step="any" v-model.number="item.unit_price" min="0" @input="calcItem(item)"
-                        class="block w-full rounded-md border-0 py-1.5 pl-6 pr-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
+                        class="block w-full rounded-md border-0 py-1.5 pl-6 pr-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
+                    </div>
+                  </td>
+                  <td class="py-3 px-2 align-top">
+                    <div class="relative">
+                      <span class="absolute inset-y-0 left-2 flex items-center text-gray-400 text-xs mt-1.5">₹</span>
+                      <input type="number" step="any" v-model.number="item.discount" min="0" @input="calcItem(item)"
+                        class="block w-full rounded-md border-0 py-1.5 pl-6 pr-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
                     </div>
                   </td>
                   <td class="py-3 px-2 align-top">
                     <input type="number" step="any" v-model.number="item.tax_rate" min="0" max="100"
                       @input="calcItem(item)"
-                      class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
+                      class="block w-full rounded-md border-0 py-1.5 px-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
                   </td>
                   <td class="py-3 px-2 text-right text-sm font-medium text-gray-900 align-top pt-5">
                     ₹{{ item.total.toFixed(2) }}
@@ -236,7 +244,7 @@
                 </div>
               </div>
 
-              <div class="grid grid-cols-3 gap-3">
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
                   <label class="block text-xs font-medium text-gray-700 mb-1">Qty</label>
                   <input type="number" step="any" v-model.number="item.quantity" @input="calcItem(item)"
@@ -245,6 +253,11 @@
                 <div>
                   <label class="block text-xs font-medium text-gray-700 mb-1">Rate (₹)</label>
                   <input type="number" step="any" v-model.number="item.unit_price" @input="calcItem(item)"
+                    class="block w-full rounded-md border-0 py-1.5 px-2 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Disc (₹)</label>
+                  <input type="number" step="any" v-model.number="item.discount" @input="calcItem(item)"
                     class="block w-full rounded-md border-0 py-1.5 px-2 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600" />
                 </div>
                 <div>
