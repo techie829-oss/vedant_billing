@@ -391,12 +391,22 @@
                                     </div>
                                     <div>
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Qty</label>
-                                        <input type="number" v-model.number="item.quantity" min="0.01" step="0.01"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm" />
+                                        <div
+                                            class="flex items-center rounded-md ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600 bg-white">
+                                            <button type="button"
+                                                @click="item.quantity > 1 ? item.quantity-- : item.quantity = 0.01; calculateDiscountAmount(item)"
+                                                class="px-2 py-1.5 text-gray-500 hover:text-indigo-600 focus:outline-none">-</button>
+                                            <input type="number" step="any" v-model.number="item.quantity"
+                                                @input="calculateDiscountAmount(item)"
+                                                class="block w-full border-0 bg-transparent py-1.5 px-0 text-center text-sm text-gray-900 focus:ring-0" />
+                                            <button type="button"
+                                                @click="item.quantity++; calculateDiscountAmount(item)"
+                                                class="px-2 py-1.5 text-gray-500 hover:text-indigo-600 focus:outline-none">+</button>
+                                        </div>
                                     </div>
                                     <div>
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Price</label>
-                                        <input type="number" v-model.number="item.unit_price" min="0" step="0.01"
+                                        <input type="number" v-model.number="item.unit_price" min="0" step="any"
                                             class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm" />
                                     </div>
                                 </div>
@@ -405,12 +415,22 @@
                                 <div class="grid grid-cols-3 gap-2 items-center">
                                     <div v-if="form.meta.display_options.show_discount">
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Disc</label>
-                                        <input type="number" v-model.number="item.discount" min="0" step="0.01"
-                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm" />
+                                        <div class="relative flex items-center">
+                                            <button type="button"
+                                                @click="item.discount_type = item.discount_type === 'percentage' ? 'amount' : 'percentage'; calculateDiscountAmount(item)"
+                                                class="absolute left-1 z-10 flex items-center justify-center w-5 h-5 rounded bg-gray-100 text-gray-500 hover:bg-gray-200 text-xs font-medium transition-colors"
+                                                title="Toggle Discount Type">
+                                                {{ item.discount_type === 'percentage' ? '%' : '₹' }}
+                                            </button>
+                                            <input type="number" v-model.number="item.discount" min="0" step="any"
+                                                :max="item.discount_type === 'percentage' ? 100 : undefined"
+                                                @input="calculateDiscountAmount(item)"
+                                                class="block w-full rounded-md border-0 py-1.5 pl-7 pr-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm text-right" />
+                                        </div>
                                     </div>
                                     <div v-if="form.meta.display_options.show_gst_breakdown">
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Tax %</label>
-                                        <input type="number" v-model.number="item.tax_rate" min="0" step="0.1"
+                                        <input type="number" v-model.number="item.tax_rate" min="0" step="any"
                                             class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm" />
                                     </div>
                                     <div class="col-span-1 text-right">
@@ -493,10 +513,19 @@
                                             class="block w-full rounded border border-transparent bg-transparent py-1 px-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-xs leading-6 transition-colors" />
                                     </td>
                                     <td class="px-1 py-1">
-                                        <input type="number" v-model.number="item.quantity" min="0.01" step="any"
-                                            @input="calculateDiscountAmount(item)"
-                                            class="block w-full rounded border border-transparent bg-transparent py-1 px-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-xs leading-6 text-right transition-colors"
-                                            required />
+                                        <div
+                                            class="flex items-center rounded border border-transparent hover:border-gray-300 focus-within:bg-white focus-within:border-indigo-600 focus-within:ring-1 focus-within:ring-indigo-600 transition-colors bg-transparent">
+                                            <button type="button"
+                                                @click="item.quantity > 1 ? item.quantity-- : item.quantity = 0.01; calculateDiscountAmount(item)"
+                                                class="px-1.5 text-gray-400 hover:text-indigo-600 focus:outline-none select-none font-medium">-</button>
+                                            <input type="number" v-model.number="item.quantity" min="0.01" step="any"
+                                                @input="calculateDiscountAmount(item)"
+                                                class="block w-full border-0 bg-transparent py-1 px-0 text-center text-gray-900 focus:ring-0 text-xs leading-6"
+                                                required />
+                                            <button type="button"
+                                                @click="item.quantity++; calculateDiscountAmount(item)"
+                                                class="px-1.5 text-gray-400 hover:text-indigo-600 focus:outline-none select-none font-medium">+</button>
+                                        </div>
                                     </td>
                                     <td class="px-1 py-1">
                                         <input type="number" v-model.number="item.unit_price" min="0" step="any"
@@ -509,14 +538,14 @@
                                         <div class="relative flex items-center group/disc">
                                             <button type="button"
                                                 @click="item.discount_type = item.discount_type === 'percentage' ? 'amount' : 'percentage'; calculateDiscountAmount(item)"
-                                                class="absolute left-1 z-10 flex items-center justify-center w-6 h-6 rounded bg-transparent text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:bg-gray-100 text-xs font-medium transition-colors"
+                                                class="absolute left-1 z-10 flex items-center justify-center w-5 h-5 rounded bg-transparent text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:bg-gray-100 text-xs font-medium transition-colors"
                                                 title="Toggle Discount Type">
                                                 {{ item.discount_type === 'percentage' ? '%' : '₹' }}
                                             </button>
                                             <input type="number" v-model.number="item.discount" min="0"
                                                 :max="item.discount_type === 'percentage' ? 100 : undefined" step="any"
                                                 @input="calculateDiscountAmount(item)"
-                                                class="block w-full rounded border border-transparent bg-transparent py-1 pl-8 pr-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-xs leading-6 text-right transition-colors" />
+                                                class="block w-full rounded border border-transparent bg-transparent py-1 pl-6 pr-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-xs leading-6 text-right transition-colors" />
                                         </div>
                                     </td>
                                     <td v-if="form.meta.display_options.show_discount" class="px-1 py-1">
