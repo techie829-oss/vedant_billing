@@ -128,7 +128,7 @@ class PurchaseController extends Controller
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
                     'name' => $itemData['name'],
-                    'description' => $itemData['description'] ?? null,
+                    'description' => $itemData['description'] ?? '',
                     'hsn_code' => $itemData['hsn_code'] ?? null,
                     'quantity' => $qty,
                     'unit_price' => $price,

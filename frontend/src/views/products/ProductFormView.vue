@@ -79,10 +79,6 @@
                             <select v-model="form.tax_rate"
                                 class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                 <option :value="0">0% (Exempt)</option>
-                                <option :value="0.1">0.1%</option>
-                                <option :value="0.25">0.25%</option>
-                                <option :value="1.5">1.5%</option>
-                                <option :value="3">3%</option>
                                 <option :value="5">5%</option>
                                 <option :value="12">12%</option>
                                 <option :value="18">18%</option>
@@ -228,8 +224,9 @@ onMounted(async () => {
                 // @ts-ignore
                 form.value = { ...product }
                 // Ensure specific fields are numbers
-                form.value.sale_price = Number(product.sale_price)
-                form.value.purchase_price = Number(product.purchase_price)
+                form.value.sale_price = Number(product.sale_price) || 0
+                form.value.purchase_price = Number(product.purchase_price) || 0
+                form.value.tax_rate = Number(product.tax_rate) || 0
             }
         } catch (e) {
             console.error(e)
