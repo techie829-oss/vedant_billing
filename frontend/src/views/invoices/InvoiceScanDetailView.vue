@@ -425,6 +425,10 @@ async function createPurchaseInvoice() {
             invoice_number: invoiceForm.value.invoice_number || undefined,
             date: invoiceForm.value.date,
             due_date: invoiceForm.value.due_date,
+            eway_bill_no: invoiceForm.value.eway_bill_no || undefined,
+            vehicle_no: invoiceForm.value.vehicle_no || undefined,
+            po_number: invoiceForm.value.po_number || undefined,
+            challan_no: invoiceForm.value.challan_no || undefined,
             items: invoiceItems.value,
         }
 
