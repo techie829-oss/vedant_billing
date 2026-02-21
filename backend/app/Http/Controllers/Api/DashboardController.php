@@ -14,6 +14,14 @@ use Illuminate\Support\Facades\DB;
 class DashboardController extends Controller
 {
     /**
+     * Get system configuration
+     */
+    public function config()
+    {
+        return response()->json(config('all', []));
+    }
+
+    /**
      * Get dashboard metrics.
      */
     public function index(Request $request)

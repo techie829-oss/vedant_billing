@@ -87,6 +87,11 @@
                                             <dt class="text-xs font-medium text-gray-500">Name</dt>
                                             <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.name }}</dd>
                                         </div>
+                                        <div class="sm:col-span-2" v-if="item.temp_product.description">
+                                            <dt class="text-xs font-medium text-gray-500">Details (Extracted)</dt>
+                                            <dd class="mt-1 text-xs text-gray-700">{{ item.temp_product.description }}
+                                            </dd>
+                                        </div>
                                         <div>
                                             <dt class="text-xs font-medium text-gray-500">Quantity</dt>
                                             <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.quantity }}</dd>
@@ -94,6 +99,11 @@
                                         <div>
                                             <dt class="text-xs font-medium text-gray-500">Price</dt>
                                             <dd class="mt-1 text-sm text-gray-900">₹{{ item.temp_product.price }}</dd>
+                                        </div>
+                                        <div v-if="item.temp_product.discount > 0">
+                                            <dt class="text-xs font-medium text-gray-500">Discount</dt>
+                                            <dd class="mt-1 text-sm text-green-600">-₹{{ item.temp_product.discount }}
+                                            </dd>
                                         </div>
                                         <div v-if="item.temp_product.tax_rate">
                                             <dt class="text-xs font-medium text-gray-500">Tax Rate</dt>
@@ -209,7 +219,11 @@
                                 <div v-for="(item, i) in invoiceItems" :key="i"
                                     class="flex justify-between text-gray-600">
                                     <span class="truncate max-w-[60%]">{{ item.name }}</span>
-                                    <span>{{ item.quantity }} × ₹{{ item.unit_price }}</span>
+                                    <span>
+                                        {{ item.quantity }} × ₹{{ item.unit_price }}
+                                        <span v-if="item.discount > 0" class="text-xs text-green-600 ml-1">(-₹{{
+                                            item.discount }})</span>
+                                    </span>
                                 </div>
                             </div>
                             <div
@@ -276,8 +290,10 @@ const canCreateInvoice = computed(() => {
 const invoiceItems = computed(() => {
     return (scanData.value?.temp_products ?? []).map((tp: any) => ({
         name: tp.temp_product.name,
+        product_id: tp.temp_product.matched_product_id ?? null,
         quantity: Number(tp.temp_product.quantity) || 1,
         unit_price: Number(tp.temp_product.price) || 0,
+        discount: Number(tp.temp_product.discount) || 0,
         tax_rate: Number(tp.temp_product.tax_rate) || 0,
         hsn_code: tp.temp_product.hsn_code ?? null,
         description: tp.temp_product.description ?? null,
@@ -286,7 +302,7 @@ const invoiceItems = computed(() => {
 
 const invoiceTotal = computed(() =>
     invoiceItems.value.reduce((sum: number, i: any) => {
-        const base = i.quantity * i.unit_price
+        const base = (i.quantity * i.unit_price) - i.discount
         return sum + base + base * (i.tax_rate / 100)
     }, 0)
 )
@@ -356,6 +372,8 @@ async function createPurchaseInvoice() {
         const payload: any = {
             party_id: invoiceForm.value.party_id || undefined,
             vendor_name: !invoiceForm.value.party_id ? (scanData.value?.vendor || undefined) : undefined,
+            vendor_gstin: !invoiceForm.value.party_id ? (scanData.value?.vendor_gstin || undefined) : undefined,
+            vendor_address: !invoiceForm.value.party_id ? (scanData.value?.vendor_address || undefined) : undefined,
             invoice_number: invoiceForm.value.invoice_number || undefined,
             date: invoiceForm.value.date,
             due_date: invoiceForm.value.due_date,

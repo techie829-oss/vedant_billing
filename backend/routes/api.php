@@ -88,6 +88,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Webhook
     Route::post('/webhooks/razorpay', [\App\Http\Controllers\Api\WebhookController::class, 'handle']);
 
+    // System Configuration
+    Route::get('/config', [\App\Http\Controllers\Api\DashboardController::class, 'config']);
+
     // Dashboard
     Route::get('/dashboard', [\App\Http\Controllers\Api\DashboardController::class, 'index']);
 
@@ -117,4 +120,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/subscriptions/verify-payment', [\App\Http\Controllers\Api\SubscriptionController::class, 'verifyPayment']);
     Route::post('/subscriptions/initiate-payment', [\App\Http\Controllers\Api\SubscriptionController::class, 'initiatePayment']);
 });
-require __DIR__.'/api_debug.php';
+require __DIR__ . '/api_debug.php';

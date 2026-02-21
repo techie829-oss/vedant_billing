@@ -110,6 +110,8 @@ Extract the following information from the invoice text below:
 
 REQUIRED FIELDS:
 - vendor_name: Vendor/supplier name (string)
+- vendor_gstin: Vendor's GSTIN/Tax ID if available (string, nullable)
+- vendor_address: Vendor's full address if available (string, nullable)
 - invoice_number: Invoice number/reference (string)
 - invoice_date: Invoice date in YYYY-MM-DD format
 - items: Array of product line items, each containing:
@@ -118,6 +120,7 @@ REQUIRED FIELDS:
   * quantity: Quantity ordered (numeric)
   * unit: Unit of measurement (kg, pcs, box, etc.) (string, nullable)
   * price: Unit price (numeric)
+  * discount: Discount amount applied to this item (numeric, default 0)
   * hsn_code: HSN/SAC code if available (string, nullable)
   * tax_rate: Tax rate percentage if available (numeric, nullable)
   * description: Any additional product details (string, nullable)
@@ -127,11 +130,16 @@ IMPORTANT:
 - Price should be unit price, not total
 - Quantity should be numeric (convert "2 pcs" to quantity=2, unit="pcs")
 - If unit not specified, leave as null
-- Return price as decimal number without currency symbols
+- Return price and discount as decimal numbers without currency symbols
+- If multiple discounts exist per item (e.g., Discount + SPL Discount), sum them up into the single 'discount' field
+- If CGST and SGST are listed separately, SUM them for the 'tax_rate' (e.g., 20% CGST + 20% SGST = 40)
+- If items have MRP, Batch Number, or Mfg Date, include those details in the 'description' field
 
 Example output:
 {
   "vendor_name": "ABC Suppliers Ltd",
+  "vendor_gstin": "27AADCB2230M1Z2",
+  "vendor_address": "123 Business Road, Mumbai, Maharashtra 400001",
   "invoice_number": "INV-2025-001",
   "invoice_date": "2025-12-27",
   "items": [
@@ -141,6 +149,7 @@ Example output:
       "quantity": 2,
       "unit": "pcs",
       "price": 55000.00,
+      "discount": 1000.00,
       "hsn_code": "8471",
       "tax_rate": 18,
       "description": "14-inch, i5, 16GB RAM"
@@ -151,6 +160,7 @@ Example output:
       "quantity": 5,
       "unit": "pcs",
       "price": 450.00,
+      "discount": 0.00,
       "hsn_code": "8471",
       "tax_rate": 18,
       "description": null

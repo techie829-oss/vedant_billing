@@ -17,6 +17,7 @@ class TempProduct extends Model
         'name',
         'sku',
         'price',
+        'discount',
         'quantity',
         'unit',
         'description',

@@ -207,6 +207,7 @@ class InvoiceOcrService
                     'name' => $item['name'],
                     'sku' => $item['sku'] ?? null,
                     'price' => $item['price'],
+                    'discount' => $item['discount'] ?? 0,
                     'quantity' => $item['quantity'],
                     'unit' => $item['unit'] ?? null,
                     'description' => $item['description'] ?? null,

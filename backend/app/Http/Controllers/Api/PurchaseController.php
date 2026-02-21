@@ -55,14 +55,18 @@ class PurchaseController extends Controller
         $validated = $request->validate([
             'party_id' => 'nullable|exists:parties,id',
             'vendor_name' => 'nullable|string|max:255', // if no party_id, create/find vendor
+            'vendor_gstin' => 'nullable|string|max:50',
+            'vendor_address' => 'nullable|string',
             'invoice_number' => 'nullable|string|max:100',
             'date' => 'required|date',
             'due_date' => 'required|date',
             'notes' => 'nullable|string',
             'items' => 'required|array|min:1',
+            'items.*.product_id' => 'nullable|exists:products,id',
             'items.*.name' => 'required|string',
             'items.*.quantity' => 'required|numeric|min:0.01',
             'items.*.unit_price' => 'required|numeric|min:0',
+            'items.*.discount' => 'nullable|numeric|min:0',
             'items.*.tax_rate' => 'nullable|numeric|min:0',
             'items.*.hsn_code' => 'nullable|string',
             'items.*.description' => 'nullable|string',
@@ -87,6 +91,8 @@ class PurchaseController extends Controller
                         'business_id' => $businessId,
                         'party_type' => 'vendor',
                         'name' => $validated['vendor_name'],
+                        'gstin' => $validated['vendor_gstin'] ?? null,
+                        'billing_address' => $validated['vendor_address'] ?? null,
                         'status' => 'active',
                     ]);
                 }
@@ -116,36 +122,58 @@ class PurchaseController extends Controller
             // Create items and calculate totals
             $subtotal = 0;
             $taxTotal = 0;
+            $discountTotal = 0;
 
             foreach ($validated['items'] as $itemData) {
                 $qty = $itemData['quantity'];
                 $price = $itemData['unit_price'];
+                $discount = $itemData['discount'] ?? 0;
                 $taxRate = $itemData['tax_rate'] ?? 0;
-                $base = $qty * $price;
+
+                $base = ($qty * $price) - $discount;
                 $taxAmt = $base * ($taxRate / 100);
                 $total = $base + $taxAmt;
 
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
+                    'product_id' => $itemData['product_id'] ?? null, // Added
                     'name' => $itemData['name'],
                     'description' => $itemData['description'] ?? '',
                     'hsn_code' => $itemData['hsn_code'] ?? null,
                     'quantity' => $qty,
                     'unit_price' => $price,
-                    'discount' => 0,
+                    'discount' => $discount,
                     'tax_rate' => $taxRate,
                     'tax_amount' => $taxAmt,
                     'total' => $total,
                 ]);
 
-                $subtotal += $base;
+                // Update inventory if mapped to a catalog product
+                if (!empty($itemData['product_id'])) {
+                    $product = \App\Models\Product::find($itemData['product_id']);
+                    if ($product && $product->type === 'goods') {
+                        $product->increment('current_stock', $qty);
+
+                        \App\Models\InventoryTransaction::create([
+                            'product_id' => $product->id,
+                            'type' => 'purchase',
+                            'quantity' => $qty,
+                            'unit_price' => $price,
+                            'notes' => "Purchased via Scan: Invoice #{$invoice->invoice_number}",
+                        ]);
+                    }
+                }
+
+                $subtotal += $base + $discount; // Gross subtotal before discount
+                $discountTotal += $discount;
                 $taxTotal += $taxAmt;
             }
 
             $invoice->update([
                 'subtotal' => $subtotal,
+                'discount_total' => $discountTotal,
                 'tax_total' => $taxTotal,
-                'grand_total' => $subtotal + $taxTotal,
+                'grand_total' => ($subtotal - $discountTotal) + $taxTotal,
             ]);
 
             return response()->json([

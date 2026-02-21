@@ -78,12 +78,11 @@
                         <div class="relative mt-2">
                             <select v-model="form.tax_rate"
                                 class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                <option :value="0">0% (Exempt)</option>
-                                <option :value="5">5%</option>
-                                <option :value="12">12%</option>
-                                <option :value="18">18%</option>
-                                <option :value="28">28%</option>
-                                <option :value="40">40%</option>
+                                <option v-if="!configStore.loading && configStore.data"
+                                    v-for="(label, rate) in configStore.data.gst_rates" :key="rate"
+                                    :value="Number(rate)">
+                                    {{ label }}
+                                </option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                                 <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
@@ -109,12 +108,10 @@
                         <div class="relative mt-2">
                             <select v-model="form.unit"
                                 class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                <option value="pcs">Pieces (pcs)</option>
-                                <option value="box">Box</option>
-                                <option value="kg">Kilogram (kg)</option>
-                                <option value="m">Meter (m)</option>
-                                <option value="l">Liter (l)</option>
-                                <option value="other">Other</option>
+                                <option v-if="!configStore.loading && configStore.data"
+                                    v-for="(label, val) in configStore.data.unit_types" :key="val" :value="val">
+                                    {{ label }}
+                                </option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                                 <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
@@ -191,11 +188,13 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductStore, type Product } from '../../stores/product'
+import { useConfigStore } from '../../stores/config'
 import AppLayout from '../../layouts/AppLayout.vue'
 
 const route = useRoute()
 const router = useRouter()
 const productStore = useProductStore()
+const configStore = useConfigStore()
 
 const isEditing = computed(() => route.params.id !== undefined)
 const loading = ref(false)
@@ -215,6 +214,7 @@ const form = ref<Partial<Product>>({
 })
 
 onMounted(async () => {
+    configStore.fetchConfig()
     window.addEventListener('keydown', handleKeydown)
     if (isEditing.value) {
         loading.value = true

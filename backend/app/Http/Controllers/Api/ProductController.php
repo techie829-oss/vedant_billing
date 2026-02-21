@@ -263,6 +263,8 @@ class ProductController extends Controller
             $response['data'] = [
                 'scan_id' => $scan->id,
                 'vendor' => $scan->vendor_name,
+                'vendor_gstin' => $scan->llm_response['vendor_gstin'] ?? null,
+                'vendor_address' => $scan->llm_response['vendor_address'] ?? null,
                 'invoice_no' => $scan->invoice_number,
                 'date' => $scan->invoice_date,
                 'temp_products' => $tempProducts,
