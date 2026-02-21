@@ -24,90 +24,97 @@
       <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
         <div class="px-4 py-5 sm:p-6">
           <h3 class="text-base font-semibold leading-7 text-gray-900 mb-6">Invoice Details</h3>
-          <div class="grid max-w-3xl grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
 
-            <!-- Vendor -->
-            <div class="sm:col-span-6">
-              <label class="block text-sm font-medium leading-6 text-gray-900">Vendor <span
-                  class="text-red-500">*</span></label>
-              <div class="mt-2">
-                <select v-model="form.party_id" required
-                  class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
-                  <option value="">-- Select Vendor --</option>
-                  <option v-for="v in vendors" :key="v.id" :value="v.id">{{ v.name }}</option>
-                </select>
-                <router-link to="/vendors/create" target="_blank"
-                  class="mt-1 inline-block text-xs text-indigo-600 hover:underline">
-                  + Add new vendor
-                </router-link>
+            <!-- Left Column -->
+            <div class="space-y-6">
+              <!-- Vendor -->
+              <div>
+                <label class="block text-sm font-medium leading-6 text-gray-900">Vendor <span
+                    class="text-red-500">*</span></label>
+                <div class="mt-2">
+                  <select v-model="form.party_id" required
+                    class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
+                    <option value="">-- Select Vendor --</option>
+                    <option v-for="v in vendors" :key="v.id" :value="v.id">{{ v.name }}</option>
+                  </select>
+                  <router-link to="/vendors/create" target="_blank"
+                    class="mt-1 inline-block text-xs text-indigo-600 hover:underline">
+                    + Add new vendor
+                  </router-link>
+                </div>
+              </div>
+
+              <!-- Invoice Number -->
+              <div>
+                <label class="block text-sm font-medium leading-6 text-gray-900">Vendor's Invoice No.</label>
+                <div class="mt-2">
+                  <input type="text" v-model="form.invoice_number"
+                    class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                    placeholder="Auto-generated if blank" />
+                </div>
+              </div>
+
+              <!-- Date -->
+              <div>
+                <label class="block text-sm font-medium leading-6 text-gray-900">Invoice Date <span
+                    class="text-red-500">*</span></label>
+                <div class="mt-2">
+                  <input type="date" v-model="form.date" required
+                    class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+                </div>
+              </div>
+
+              <!-- Due Date -->
+              <div>
+                <label class="block text-sm font-medium leading-6 text-gray-900">Due Date <span
+                    class="text-red-500">*</span></label>
+                <div class="mt-2">
+                  <input type="date" v-model="form.due_date" required
+                    class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+                </div>
               </div>
             </div>
 
-            <!-- Invoice Number -->
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">Vendor's Invoice No.</label>
-              <div class="mt-2">
-                <input type="text" v-model="form.invoice_number"
-                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-                  placeholder="Auto-generated if blank" />
+            <!-- Right Column -->
+            <div class="space-y-6">
+              <!-- E-Way Bill Number -->
+              <div>
+                <label class="block text-sm font-medium leading-6 text-gray-900">E-Way Bill No.</label>
+                <div class="mt-2">
+                  <input type="text" v-model="form.eway_bill_no"
+                    class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+                </div>
+              </div>
+
+              <!-- Vehicle Number -->
+              <div>
+                <label class="block text-sm font-medium leading-6 text-gray-900">Vehicle No.</label>
+                <div class="mt-2">
+                  <input type="text" v-model="form.vehicle_no"
+                    class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+                </div>
+              </div>
+
+              <!-- PO Number -->
+              <div>
+                <label class="block text-sm font-medium leading-6 text-gray-900">PO Number</label>
+                <div class="mt-2">
+                  <input type="text" v-model="form.po_number"
+                    class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+                </div>
+              </div>
+
+              <!-- Challan No. -->
+              <div>
+                <label class="block text-sm font-medium leading-6 text-gray-900">Challan No.</label>
+                <div class="mt-2">
+                  <input type="text" v-model="form.challan_no"
+                    class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+                </div>
               </div>
             </div>
 
-            <!-- Date -->
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">Invoice Date <span
-                  class="text-red-500">*</span></label>
-              <div class="mt-2">
-                <input type="date" v-model="form.date" required
-                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
-              </div>
-            </div>
-
-            <!-- Due Date -->
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">Due Date <span
-                  class="text-red-500">*</span></label>
-              <div class="mt-2">
-                <input type="date" v-model="form.due_date" required
-                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
-              </div>
-            </div>
-
-            <!-- E-Way Bill Number -->
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">E-Way Bill No.</label>
-              <div class="mt-2">
-                <input type="text" v-model="form.eway_bill_no"
-                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
-              </div>
-            </div>
-
-            <!-- Vehicle Number -->
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">Vehicle No.</label>
-              <div class="mt-2">
-                <input type="text" v-model="form.vehicle_no"
-                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
-              </div>
-            </div>
-
-            <!-- PO Number -->
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">PO Number</label>
-              <div class="mt-2">
-                <input type="text" v-model="form.po_number"
-                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
-              </div>
-            </div>
-
-            <!-- Challan No. -->
-            <div class="sm:col-span-3">
-              <label class="block text-sm font-medium leading-6 text-gray-900">Challan No.</label>
-              <div class="mt-2">
-                <input type="text" v-model="form.challan_no"
-                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
-              </div>
-            </div>
           </div>
         </div>
       </div>
