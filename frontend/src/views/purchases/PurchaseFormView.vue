@@ -72,6 +72,42 @@
                   class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
               </div>
             </div>
+
+            <!-- E-Way Bill Number -->
+            <div class="sm:col-span-3">
+              <label class="block text-sm font-medium leading-6 text-gray-900">E-Way Bill No.</label>
+              <div class="mt-2">
+                <input type="text" v-model="form.eway_bill_no"
+                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+              </div>
+            </div>
+
+            <!-- Vehicle Number -->
+            <div class="sm:col-span-3">
+              <label class="block text-sm font-medium leading-6 text-gray-900">Vehicle No.</label>
+              <div class="mt-2">
+                <input type="text" v-model="form.vehicle_no"
+                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+              </div>
+            </div>
+
+            <!-- PO Number -->
+            <div class="sm:col-span-3">
+              <label class="block text-sm font-medium leading-6 text-gray-900">PO Number</label>
+              <div class="mt-2">
+                <input type="text" v-model="form.po_number"
+                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+              </div>
+            </div>
+
+            <!-- Challan No. -->
+            <div class="sm:col-span-3">
+              <label class="block text-sm font-medium leading-6 text-gray-900">Challan No.</label>
+              <div class="mt-2">
+                <input type="text" v-model="form.challan_no"
+                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -88,8 +124,12 @@
             <table class="min-w-full">
               <thead>
                 <tr class="border-b border-gray-200">
-                  <th class="pb-2 text-left text-xs font-medium text-gray-500 uppercase pr-2 w-1/3">Item / Description
+                  <th class="pb-2 text-left text-xs font-medium text-gray-500 uppercase pr-2 min-w-[200px]">Item /
+                    Description
                   </th>
+                  <th class="pb-2 text-left text-xs font-medium text-gray-500 uppercase px-2 w-28">MRP</th>
+                  <th class="pb-2 text-left text-xs font-medium text-gray-500 uppercase px-2 w-32">Batch No</th>
+                  <th class="pb-2 text-left text-xs font-medium text-gray-500 uppercase px-2 w-36">Mfg/Exp Date</th>
                   <th class="pb-2 text-right text-xs font-medium text-gray-500 uppercase px-2 w-20">Qty</th>
                   <th class="pb-2 text-right text-xs font-medium text-gray-500 uppercase px-2 w-28">Rate</th>
                   <th class="pb-2 text-right text-xs font-medium text-gray-500 uppercase px-2 w-20">Tax %</th>
@@ -99,30 +139,47 @@
               </thead>
               <tbody class="divide-y divide-gray-100">
                 <tr v-for="(item, idx) in form.items" :key="idx">
-                  <td class="py-3 pr-2">
-                    <input type="text" v-model="item.name" placeholder="Item name"
+                  <td class="py-3 pr-2 align-top">
+                    <div class="relative w-full">
+                      <ProductAutocomplete :items="products" :model-value="item.product_id ?? null"
+                        :initial-display="item.name || (item.product_id && products.find(p => p.id === item.product_id)?.name) || ''"
+                        @update:model-value="(val: any) => item.product_id = val"
+                        @select="(prod: any) => onProductSelect(item, prod)"
+                        @change="(val: string) => { item.name = val; item.product_id = null; }" />
+                    </div>
+                  </td>
+                  <td class="py-3 px-2 align-top">
+                    <input type="number" step="any" v-model.number="item.mrp" placeholder="MRP"
                       class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 text-sm" />
                   </td>
-                  <td class="py-3 px-2">
+                  <td class="py-3 px-2 align-top">
+                    <input type="text" v-model="item.batch_number" placeholder="Batch"
+                      class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                  </td>
+                  <td class="py-3 px-2 align-top">
+                    <input type="date" v-model="item.expiry_date"
+                      class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                  </td>
+                  <td class="py-3 px-2 align-top">
                     <input type="number" step="any" v-model.number="item.quantity" min="0.01" @input="calcItem(item)"
                       class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
                   </td>
-                  <td class="py-3 px-2">
+                  <td class="py-3 px-2 align-top">
                     <div class="relative">
-                      <span class="absolute inset-y-0 left-2 flex items-center text-gray-400 text-xs">₹</span>
+                      <span class="absolute inset-y-0 left-2 flex items-center text-gray-400 text-xs mt-1.5">₹</span>
                       <input type="number" step="any" v-model.number="item.unit_price" min="0" @input="calcItem(item)"
                         class="block w-full rounded-md border-0 py-1.5 pl-6 pr-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
                     </div>
                   </td>
-                  <td class="py-3 px-2">
+                  <td class="py-3 px-2 align-top">
                     <input type="number" step="any" v-model.number="item.tax_rate" min="0" max="100"
                       @input="calcItem(item)"
                       class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
                   </td>
-                  <td class="py-3 px-2 text-right text-sm font-medium text-gray-900">
+                  <td class="py-3 px-2 text-right text-sm font-medium text-gray-900 align-top pt-5">
                     ₹{{ item.total.toFixed(2) }}
                   </td>
-                  <td class="py-3 pl-2">
+                  <td class="py-3 pl-2 align-top pt-4">
                     <button @click="removeItem(idx)" type="button" class="text-red-400 hover:text-red-600"
                       v-if="form.items.length > 1">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
@@ -139,30 +196,66 @@
 
           <!-- Mobile Items -->
           <div class="sm:hidden space-y-4">
-            <div v-for="(item, idx) in form.items" :key="idx" class="p-3 bg-gray-50 rounded-lg space-y-2">
-              <input type="text" v-model="item.name" placeholder="Item name"
-                class="block w-full rounded-md border-0 py-1.5 px-3 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600" />
-              <div class="grid grid-cols-3 gap-2">
+            <div v-for="(item, idx) in form.items" :key="idx"
+              class="p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200 space-y-4">
+
+              <div class="flex justify-between items-start">
+                <div class="w-full mr-4">
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Item</label>
+                  <ProductAutocomplete :items="products" :model-value="item.product_id ?? null"
+                    :initial-display="item.name || (item.product_id && products.find(p => p.id === item.product_id)?.name) || ''"
+                    @update:model-value="(val: any) => item.product_id = val"
+                    @select="(prod: any) => onProductSelect(item, prod)"
+                    @change="(val: string) => { item.name = val; item.product_id = null; }" />
+                </div>
+                <button @click="removeItem(idx)" v-if="form.items.length > 1" type="button"
+                  class="text-red-500 hover:text-red-700 p-1 mt-5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-3 gap-3">
                 <div>
-                  <label class="text-xs text-gray-500">Qty</label>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">MRP</label>
+                  <input type="number" step="any" v-model.number="item.mrp" placeholder="MRP"
+                    class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm focus:ring-2 focus:ring-indigo-600" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Batch</label>
+                  <input type="text" v-model="item.batch_number" placeholder="Batch"
+                    class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm focus:ring-2 focus:ring-indigo-600" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Date</label>
+                  <input type="date" v-model="item.expiry_date"
+                    class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm focus:ring-2 focus:ring-indigo-600" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Qty</label>
                   <input type="number" step="any" v-model.number="item.quantity" @input="calcItem(item)"
                     class="block w-full rounded-md border-0 py-1.5 px-2 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600" />
                 </div>
                 <div>
-                  <label class="text-xs text-gray-500">Rate (₹)</label>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Rate (₹)</label>
                   <input type="number" step="any" v-model.number="item.unit_price" @input="calcItem(item)"
                     class="block w-full rounded-md border-0 py-1.5 px-2 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600" />
                 </div>
                 <div>
-                  <label class="text-xs text-gray-500">Tax %</label>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Tax %</label>
                   <input type="number" step="any" v-model.number="item.tax_rate" @input="calcItem(item)"
                     class="block w-full rounded-md border-0 py-1.5 px-2 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600" />
                 </div>
               </div>
-              <div class="flex justify-between items-center">
-                <span class="text-sm font-medium text-gray-900">Total: ₹{{ item.total.toFixed(2) }}</span>
-                <button @click="removeItem(idx)" v-if="form.items.length > 1" type="button"
-                  class="text-red-500 text-xs">Remove</button>
+              <div class="flex justify-between items-center bg-white p-3 rounded border border-gray-100 mt-2">
+                <span class="text-xs font-medium text-gray-500 uppercase">Item Total</span>
+                <span class="text-base font-bold text-gray-900">₹{{ item.total.toFixed(2) }}</span>
               </div>
             </div>
           </div>
@@ -215,20 +308,36 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '../../layouts/AppLayout.vue'
 import client from '../../api/client'
+import ProductAutocomplete from '../../components/ProductAutocomplete.vue'
+import { useProductStore } from '../../stores/product'
 
 const router = useRouter()
 const route = useRoute()
+const productStore = useProductStore()
 
 const saving = ref(false)
 const error = ref<string | null>(null)
 const vendors = ref<any[]>([])
+
+const products = computed(() => productStore.products)
 
 const isEditMode = computed(() => !!route.params.id)
 
 const today = new Date().toISOString().split('T')[0]
 const due = new Date(Date.now() + 30 * 864e5).toISOString().split('T')[0]
 
-const makeItem = () => ({ name: '', quantity: 1, unit_price: 0, tax_rate: 0, discount: 0, total: 0 })
+const makeItem = () => ({
+  product_id: null,
+  name: '',
+  quantity: 1,
+  unit_price: 0,
+  mrp: null,
+  batch_number: '',
+  expiry_date: '',
+  tax_rate: 0,
+  discount: 0,
+  total: 0
+})
 
 const form = ref({
   type: 'purchase_invoice',
@@ -237,12 +346,35 @@ const form = ref({
   date: today,
   due_date: due,
   notes: '',
+  eway_bill_no: '',
+  vehicle_no: '',
+  po_number: '',
+  challan_no: '',
   items: [makeItem()]
 })
 
 const calcItem = (item: any) => {
   const base = Math.max(0, item.quantity * item.unit_price - (item.discount || 0))
   item.total = base + base * (item.tax_rate / 100)
+}
+
+const onProductSelect = (item: any, product: any) => {
+  if (!product) return
+  item.product_id = product.id
+  item.name = product.name
+
+  if (product.purchase_price) {
+    let basePrice = Number(product.purchase_price)
+    if (product.is_tax_inclusive && product.tax_rate) {
+      basePrice = basePrice / (1 + (product.tax_rate / 100))
+    }
+    item.unit_price = basePrice
+  }
+
+  if (product.tax_rate) {
+    item.tax_rate = product.tax_rate
+  }
+  calcItem(item)
 }
 
 const subtotal = computed(() => form.value.items.reduce((s: number, i: any) => {
@@ -261,6 +393,10 @@ const addItem = () => form.value.items.push(makeItem())
 const removeItem = (idx: number) => form.value.items.splice(idx, 1)
 
 onMounted(async () => {
+  if (productStore.products.length === 0) {
+    await productStore.fetchProducts()
+  }
+
   // Load vendors
   const res = await client.get('/parties', { params: { type: 'vendor', per_page: 200 } })
   vendors.value = res.data.data ?? res.data
@@ -274,10 +410,19 @@ onMounted(async () => {
     form.value.date = d.date?.split('T')[0] ?? today
     form.value.due_date = d.due_date?.split('T')[0] ?? due
     form.value.notes = d.notes ?? ''
+    form.value.eway_bill_no = d.eway_bill_no ?? ''
+    form.value.vehicle_no = d.vehicle_no ?? ''
+    form.value.po_number = d.po_number ?? ''
+    form.value.challan_no = d.challan_no ?? ''
+
     form.value.items = d.items.map((i: any) => ({
+      product_id: i.product_id,
       name: i.name,
       quantity: Number(i.quantity),
       unit_price: Number(i.unit_price),
+      mrp: i.mrp ? Number(i.mrp) : null,
+      batch_number: i.batch_number ?? '',
+      expiry_date: i.expiry_date ?? '',
       tax_rate: Number(i.tax_rate),
       discount: Number(i.discount),
       total: Number(i.total)
@@ -297,10 +442,18 @@ const save = async () => {
       date: form.value.date,
       due_date: form.value.due_date,
       notes: form.value.notes,
+      eway_bill_no: form.value.eway_bill_no,
+      vehicle_no: form.value.vehicle_no,
+      po_number: form.value.po_number,
+      challan_no: form.value.challan_no,
       items: form.value.items.map((i: any) => ({
+        product_id: i.product_id,
         name: i.name,
         quantity: i.quantity,
         unit_price: i.unit_price,
+        mrp: i.mrp,
+        batch_number: i.batch_number,
+        expiry_date: i.expiry_date,
         tax_rate: i.tax_rate,
         discount: i.discount || 0
       }))
