@@ -161,8 +161,9 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100">
-                <tr v-for="(item, idx) in form.items" :key="idx">
-                  <td class="py-3 pr-2 align-top">
+                <tr v-for="(item, idx) in form.items" :key="idx" class="group hover:bg-gray-50 transition-colors">
+                  <td class="py-2 pr-2 align-top">
+                    <!-- Product autocomplete is a custom component, we leave its internal styling for now, but ensure wrapper is neat -->
                     <div class="relative w-full">
                       <ProductAutocomplete :items="products" :model-value="item.product_id ?? null"
                         :initial-display="item.name || (item.product_id && products.find(p => p.id === item.product_id)?.name) || ''"
@@ -171,54 +172,55 @@
                         @change="(val: string) => { item.name = val; item.product_id = null; }" />
                     </div>
                   </td>
-                  <td class="py-3 px-2 align-top">
-                    <input type="number" step="any" v-model.number="item.mrp" placeholder="MRP"
-                      class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                  <td class="py-2 px-1 align-top">
+                    <input type="number" step="any" v-model.number="item.mrp" placeholder="-"
+                      class="block w-full rounded border border-transparent bg-transparent py-1.5 px-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 sm:text-sm sm:leading-6 transition-colors" />
                   </td>
-                  <td class="py-3 px-2 align-top">
-                    <input type="text" v-model="item.batch_number" placeholder="Batch"
-                      class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                  <td class="py-2 px-1 align-top">
+                    <input type="text" v-model="item.batch_number" placeholder="-"
+                      class="block w-full rounded border border-transparent bg-transparent py-1.5 px-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 sm:text-sm sm:leading-6 transition-colors" />
                   </td>
-                  <td class="py-3 px-2 align-top">
+                  <td class="py-2 px-1 align-top">
                     <input type="date" v-model="item.expiry_date"
-                      class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                      class="block w-full rounded border border-transparent bg-transparent py-1.5 px-2 text-gray-900 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 sm:text-sm sm:leading-6 transition-colors" />
                   </td>
-                  <td class="py-3 px-2 align-top">
+                  <td class="py-2 px-1 align-top">
                     <input type="number" step="any" v-model.number="item.quantity" min="0.01" @input="calcItem(item)"
-                      class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
+                      class="block w-full rounded border border-transparent bg-transparent py-1.5 px-2 text-right text-gray-900 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 sm:text-sm sm:leading-6 transition-colors" />
                   </td>
-                  <td class="py-3 px-2 align-top">
+                  <td class="py-2 px-1 align-top">
                     <div class="relative">
-                      <span class="absolute inset-y-0 left-2 flex items-center text-gray-400 text-xs mt-1.5">₹</span>
+                      <span
+                        class="absolute inset-y-0 left-2 flex items-center text-gray-400 text-xs pointer-events-none">₹</span>
                       <input type="number" step="any" v-model.number="item.unit_price" min="0" @input="calcItem(item)"
-                        class="block w-full rounded-md border-0 py-1.5 pl-6 pr-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
+                        class="block w-full rounded border border-transparent bg-transparent py-1.5 pl-6 pr-2 text-right text-gray-900 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 sm:text-sm sm:leading-6 transition-colors" />
                     </div>
                   </td>
-                  <td class="py-3 px-2 align-top">
+                  <td class="py-2 px-1 align-top">
                     <!-- Discount Input with Type Toggle -->
-                    <div class="relative flex items-center">
+                    <div class="relative flex items-center group/disc">
                       <button type="button"
                         @click="item.discount_type = item.discount_type === 'percentage' ? 'amount' : 'percentage'; calcItem(item)"
-                        class="absolute left-1 z-10 flex items-center justify-center w-6 h-6 rounded-md bg-gray-100 text-gray-500 hover:bg-gray-200 text-xs font-medium transition-colors"
+                        class="absolute left-1 z-10 flex items-center justify-center w-6 h-6 rounded bg-transparent text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:bg-gray-100 text-xs font-medium transition-colors"
                         title="Toggle Discount Type">
                         {{ item.discount_type === 'percentage' ? '%' : '₹' }}
                       </button>
                       <input type="number" step="any" v-model.number="item.discount" min="0"
                         :max="item.discount_type === 'percentage' ? 100 : undefined" @input="calcItem(item)"
-                        class="block w-full rounded-md border-0 py-1.5 pl-8 pr-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
+                        class="block w-full rounded border border-transparent bg-transparent py-1.5 pl-8 pr-2 text-right text-gray-900 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 sm:text-sm sm:leading-6 transition-colors" />
                     </div>
                   </td>
-                  <td class="py-3 px-2 align-top">
+                  <td class="py-2 px-1 align-top">
                     <input type="number" step="any" v-model.number="item.tax_rate" min="0" max="100"
                       @input="calcItem(item)"
-                      class="block w-full rounded-md border-0 py-1.5 px-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 text-right focus:ring-2 focus:ring-indigo-600 text-sm" />
+                      class="block w-full rounded border border-transparent bg-transparent py-1.5 px-1 text-right text-gray-900 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 sm:text-sm sm:leading-6 transition-colors" />
                   </td>
-                  <td class="py-3 px-2 text-right text-sm font-medium text-gray-900 align-top pt-5">
+                  <td class="py-2 px-2 text-right text-sm font-semibold text-gray-900 align-top pt-3">
                     ₹{{ item.total.toFixed(2) }}
                   </td>
-                  <td class="py-3 pl-2 align-top pt-4">
-                    <button @click="removeItem(idx)" type="button" class="text-red-400 hover:text-red-600"
-                      v-if="form.items.length > 1">
+                  <td class="py-2 pl-2 align-top pt-3">
+                    <button @click="removeItem(idx)" type="button"
+                      class="text-gray-300 hover:text-red-600 transition-colors" v-if="form.items.length > 1">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

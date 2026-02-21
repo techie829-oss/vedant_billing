@@ -472,7 +472,8 @@
                                 </tr>
                             </thead>
                             <tbody id="invoice-items-body" class="divide-y divide-gray-200">
-                                <tr v-for="(item, index) in form.items" :key="index">
+                                <tr v-for="(item, index) in form.items" :key="index"
+                                    class="group hover:bg-gray-50 transition-colors">
                                     <td class="px-1 py-1">
                                         <div class="relative w-full min-w-[12rem]">
                                             <ProductAutocomplete :items="products"
@@ -485,37 +486,37 @@
                                     </td>
                                     <td v-if="form.meta.display_options.show_description" class="px-1 py-1">
                                         <input type="text" v-model="item.description" placeholder="Notes"
-                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
+                                            class="block w-full rounded border border-transparent bg-transparent py-1 px-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-xs leading-6 transition-colors" />
                                     </td>
                                     <td v-if="form.meta.display_options.show_hsn" class="px-1 py-1">
                                         <input type="text" v-model="item.hsn_code" placeholder="HSN"
-                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6" />
+                                            class="block w-full rounded border border-transparent bg-transparent py-1 px-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-xs leading-6 transition-colors" />
                                     </td>
                                     <td class="px-1 py-1">
                                         <input type="number" v-model.number="item.quantity" min="0.01" step="any"
                                             @input="calculateDiscountAmount(item)"
-                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6 text-right"
+                                            class="block w-full rounded border border-transparent bg-transparent py-1 px-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-xs leading-6 text-right transition-colors"
                                             required />
                                     </td>
                                     <td class="px-1 py-1">
                                         <input type="number" v-model.number="item.unit_price" min="0" step="any"
                                             @input="calculateDiscountAmount(item)"
-                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6 text-right"
+                                            class="block w-full rounded border border-transparent bg-transparent py-1 px-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-xs leading-6 text-right transition-colors"
                                             required />
                                     </td>
                                     <td v-if="form.meta.display_options.show_discount" class="px-1 py-1">
                                         <!-- Discount Input with Type Toggle -->
-                                        <div class="relative flex items-center">
+                                        <div class="relative flex items-center group/disc">
                                             <button type="button"
                                                 @click="item.discount_type = item.discount_type === 'percentage' ? 'amount' : 'percentage'; calculateDiscountAmount(item)"
-                                                class="absolute left-1 z-10 flex items-center justify-center w-6 h-6 rounded-md bg-gray-100 text-gray-500 hover:bg-gray-200 text-xs font-medium transition-colors"
+                                                class="absolute left-1 z-10 flex items-center justify-center w-6 h-6 rounded bg-transparent text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:bg-gray-100 text-xs font-medium transition-colors"
                                                 title="Toggle Discount Type">
                                                 {{ item.discount_type === 'percentage' ? '%' : '₹' }}
                                             </button>
                                             <input type="number" v-model.number="item.discount" min="0"
                                                 :max="item.discount_type === 'percentage' ? 100 : undefined" step="any"
                                                 @input="calculateDiscountAmount(item)"
-                                                class="block w-full rounded-md border-0 py-1 pl-8 pr-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6 text-right" />
+                                                class="block w-full rounded border border-transparent bg-transparent py-1 pl-8 pr-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-xs leading-6 text-right transition-colors" />
                                         </div>
                                     </td>
                                     <td v-if="form.meta.display_options.show_discount" class="px-1 py-1">
@@ -523,19 +524,20 @@
                                         <input type="text"
                                             :value="formatCurrency((item.unit_price * item.quantity) - (item.discount_type === 'percentage' ? ((item.unit_price * item.quantity) * ((item.discount || 0) / 100)) : (item.discount || 0)))"
                                             disabled
-                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-500 bg-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 text-xs leading-6 text-right" />
+                                            class="block w-full rounded border border-transparent bg-transparent py-1 px-2 text-gray-500 font-medium text-xs leading-6 text-right" />
                                     </td>
                                     <td v-if="form.meta.display_options.show_gst_breakdown" class="px-1 py-1">
                                         <input type="number" v-model.number="item.tax_rate" min="0" step="0.1"
-                                            class="block w-full rounded-md border-0 py-1 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs leading-6 text-right" />
+                                            class="block w-full rounded border border-transparent bg-transparent py-1 px-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-xs leading-6 text-right transition-colors" />
                                     </td>
                                     <td
-                                        class="px-2 py-1 text-right text-sm text-gray-900 font-medium whitespace-nowrap">
+                                        class="px-2 py-1 text-right text-sm text-gray-900 font-semibold whitespace-nowrap pt-2">
                                         {{ formatCurrency(calculateLineTotal(item)) }}
                                     </td>
-                                    <td class="px-2 py-1 text-right">
+                                    <td class="px-2 py-1 text-right pt-2">
                                         <button @click="removeItem(index)" type="button"
-                                            class="text-red-600 hover:text-red-900">
+                                            class="text-gray-300 hover:text-red-600 transition-colors"
+                                            v-if="form.items.length > 1">
                                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd"
                                                     d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
