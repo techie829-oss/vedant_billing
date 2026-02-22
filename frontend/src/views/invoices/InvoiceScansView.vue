@@ -144,7 +144,7 @@
             <ul v-else role="list" class="divide-y divide-gray-200">
                 <li v-for="scan in scans" :key="scan.id"
                     class="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer transition-colors"
-                    :class="{ 'bg-slate-50 opacity-80': (scan.status === 'success' && scan.invoice_id) || scan.is_duplicate }"
+                    :class="{ 'bg-slate-50 opacity-80': scan.status === 'success' && (scan.invoice_id || scan.is_duplicate) && scan.is_fully_mapped }"
                     @click="viewScan(scan)">
                     <div class="flex items-center justify-between">
                         <div class="flex-1 min-w-0">
@@ -376,16 +376,16 @@ function formatDate(dateString: string) {
 
 function getStatusDisplay(scan: any) {
     if (scan.status === 'success') {
+        if (!scan.is_fully_mapped) {
+            return { label: 'Action Needed', class: 'bg-orange-50 text-orange-700 ring-orange-600/20' }
+        }
         if (scan.invoice_id) {
             return { label: 'Processed', class: 'bg-blue-50 text-blue-700 ring-blue-600/20' }
         }
         if (scan.is_duplicate) {
             return { label: 'Duplicate', class: 'bg-gray-100 text-gray-700 ring-gray-600/20' }
         }
-        if (scan.is_fully_mapped) {
-            return { label: 'Ready to Bill', class: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' }
-        }
-        return { label: 'Action Needed', class: 'bg-orange-50 text-orange-700 ring-orange-600/20' }
+        return { label: 'Ready to Bill', class: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' }
     }
     if (scan.status === 'pending') {
         return { label: 'Processing…', class: 'bg-yellow-50 text-yellow-700 ring-yellow-600/20' }
