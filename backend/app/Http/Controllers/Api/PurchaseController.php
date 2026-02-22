@@ -53,6 +53,7 @@ class PurchaseController extends Controller
     public function confirmScan(Request $request)
     {
         $validated = $request->validate([
+            'invoice_scan_id' => 'nullable|exists:invoice_scans,id',
             'party_id' => 'nullable|exists:parties,id',
             'vendor_name' => 'nullable|string|max:255', // if no party_id, create/find vendor
             'vendor_gstin' => 'nullable|string|max:50',
@@ -197,6 +198,14 @@ class PurchaseController extends Controller
                 'tax_total' => $taxTotal,
                 'grand_total' => ($subtotal - $discountTotal) + $taxTotal,
             ]);
+
+            // Update matching invoice scan if provided
+            if (!empty($validated['invoice_scan_id'])) {
+                DB::table('invoice_scans')
+                    ->where('id', $validated['invoice_scan_id'])
+                    ->where('business_id', $businessId)
+                    ->update(['invoice_id' => $invoice->id]);
+            }
 
             return response()->json([
                 'message' => 'Purchase invoice created successfully.',

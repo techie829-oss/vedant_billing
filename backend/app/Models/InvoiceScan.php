@@ -23,6 +23,7 @@ class InvoiceScan extends Model
         'status',
         'error_message',
         'products_count',
+        'invoice_id',
     ];
 
     protected $casts = [

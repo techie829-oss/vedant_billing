@@ -150,12 +150,14 @@
                                 <span
                                     class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                     :class="{
-                                        'bg-green-50 text-green-700 ring-green-600/20': scan.status === 'success',
+                                        'bg-blue-50 text-blue-700 ring-blue-600/20': scan.status === 'success' && scan.invoice_id,
+                                        'bg-green-50 text-green-700 ring-green-600/20': scan.status === 'success' && !scan.invoice_id,
                                         'bg-yellow-50 text-yellow-700 ring-yellow-600/20': scan.status === 'pending',
                                         'bg-red-50 text-red-700 ring-red-600/20': scan.status === 'failed'
                                     }">
-                                    {{ scan.status === 'success' ? 'Completed' : scan.status === 'pending' ?
-                                        'Processing…' : 'Failed' }}
+                                    {{ scan.status === 'success' ? (scan.invoice_id ? 'Processed' : 'Completed') :
+                                        scan.status === 'pending' ?
+                                    'Processing…' : 'Failed' }}
                                     <span v-if="scan.status === 'pending'"
                                         class="ml-1 inline-block w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
                                 </span>

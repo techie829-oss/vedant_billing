@@ -17,6 +17,10 @@
                     </svg>
                     Create Purchase Invoice
                 </button>
+                <router-link v-else-if="scanData?.invoice_id" :to="`/purchases/${scanData.invoice_id}/edit`"
+                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                    View Purchase Invoice
+                </router-link>
                 <button @click="$router.push('/invoice-scans')"
                     class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                     Back to Scans
@@ -418,6 +422,7 @@ async function createPurchaseInvoice() {
     creatingInvoice.value = true
     try {
         const payload: any = {
+            invoice_scan_id: scanId,
             party_id: invoiceForm.value.party_id || undefined,
             vendor_name: !invoiceForm.value.party_id ? (scanData.value?.vendor || undefined) : undefined,
             vendor_gstin: !invoiceForm.value.party_id ? (scanData.value?.vendor_gstin || undefined) : undefined,
@@ -435,6 +440,7 @@ async function createPurchaseInvoice() {
         await client.post('/purchases/confirm-scan', payload)
         showInvoiceModal.value = false
         invoiceCreated.value = true
+        fetchScanDetails() // Refresh to update status
     } catch (e: any) {
         invoiceError.value = e.response?.data?.message || 'Failed to create invoice.'
     } finally {
