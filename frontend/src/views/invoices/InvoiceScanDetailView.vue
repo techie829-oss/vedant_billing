@@ -332,6 +332,7 @@ const invoiceForm = ref({
 // Can create invoice only when status=success and has items
 const canCreateInvoice = computed(() => {
     return !invoiceCreated.value &&
+        !scanData.value?.invoice_id &&
         scanData.value?.temp_products?.length > 0
 })
 

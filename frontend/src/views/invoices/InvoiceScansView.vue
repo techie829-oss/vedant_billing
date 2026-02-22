@@ -142,7 +142,9 @@
             </div>
 
             <ul v-else role="list" class="divide-y divide-gray-200">
-                <li v-for="scan in scans" :key="scan.id" class="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer"
+                <li v-for="scan in scans" :key="scan.id"
+                    class="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                    :class="{ 'bg-slate-50 opacity-80': scan.status === 'success' && scan.invoice_id }"
                     @click="viewScan(scan)">
                     <div class="flex items-center justify-between">
                         <div class="flex-1 min-w-0">
@@ -157,7 +159,7 @@
                                     }">
                                     {{ scan.status === 'success' ? (scan.invoice_id ? 'Processed' : 'Completed') :
                                         scan.status === 'pending' ?
-                                    'Processing…' : 'Failed' }}
+                                            'Processing…' : 'Failed' }}
                                     <span v-if="scan.status === 'pending'"
                                         class="ml-1 inline-block w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
                                 </span>
