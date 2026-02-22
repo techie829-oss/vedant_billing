@@ -144,22 +144,15 @@
             <ul v-else role="list" class="divide-y divide-gray-200">
                 <li v-for="scan in scans" :key="scan.id"
                     class="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer transition-colors"
-                    :class="{ 'bg-slate-50 opacity-80': scan.status === 'success' && scan.invoice_id }"
+                    :class="{ 'bg-slate-50 opacity-80': (scan.status === 'success' && scan.invoice_id) || scan.is_duplicate }"
                     @click="viewScan(scan)">
                     <div class="flex items-center justify-between">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center space-x-3">
                                 <span
                                     class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
-                                    :class="{
-                                        'bg-blue-50 text-blue-700 ring-blue-600/20': scan.status === 'success' && scan.invoice_id,
-                                        'bg-green-50 text-green-700 ring-green-600/20': scan.status === 'success' && !scan.invoice_id,
-                                        'bg-yellow-50 text-yellow-700 ring-yellow-600/20': scan.status === 'pending',
-                                        'bg-red-50 text-red-700 ring-red-600/20': scan.status === 'failed'
-                                    }">
-                                    {{ scan.status === 'success' ? (scan.invoice_id ? 'Processed' : 'Completed') :
-                                        scan.status === 'pending' ?
-                                            'Processing…' : 'Failed' }}
+                                    :class="getStatusDisplay(scan).class">
+                                    {{ getStatusDisplay(scan).label }}
                                     <span v-if="scan.status === 'pending'"
                                         class="ml-1 inline-block w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
                                 </span>
@@ -379,5 +372,24 @@ function viewScan(scan: any) {
 
 function formatDate(dateString: string) {
     return new Date(dateString).toLocaleString()
+}
+
+function getStatusDisplay(scan: any) {
+    if (scan.status === 'success') {
+        if (scan.invoice_id) {
+            return { label: 'Processed', class: 'bg-blue-50 text-blue-700 ring-blue-600/20' }
+        }
+        if (scan.is_duplicate) {
+            return { label: 'Duplicate', class: 'bg-gray-100 text-gray-700 ring-gray-600/20' }
+        }
+        if (scan.is_fully_mapped) {
+            return { label: 'Ready to Bill', class: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' }
+        }
+        return { label: 'Action Needed', class: 'bg-orange-50 text-orange-700 ring-orange-600/20' }
+    }
+    if (scan.status === 'pending') {
+        return { label: 'Processing…', class: 'bg-yellow-50 text-yellow-700 ring-yellow-600/20' }
+    }
+    return { label: 'Failed', class: 'bg-red-50 text-red-700 ring-red-600/20' }
 }
 </script>

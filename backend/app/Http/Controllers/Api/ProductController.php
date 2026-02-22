@@ -287,7 +287,15 @@ class ProductController extends Controller
         $businessId = $request->header('X-Business-ID');
 
         $query = \App\Models\InvoiceScan::where('business_id', $businessId)
-            ->withCount('tempProducts');
+            ->withCount('tempProducts')
+            ->withCount([
+                'tempProducts as unmapped_products_count' => function ($q) {
+                    $q->where(function ($query) {
+                        $query->whereNull('status')
+                            ->orWhere('status', 'pending');
+                    });
+                }
+            ]);
 
         // Filter by status
         if ($request->has('status')) {
@@ -303,6 +311,31 @@ class ProductController extends Controller
         }
 
         $scans = $query->latest()->paginate($request->per_page ?? 20);
+
+        // Append helper flags for frontend
+        $scans->getCollection()->transform(function ($scan) use ($businessId) {
+            $isDuplicate = false;
+
+            // If it's not already linked to an invoice, check if an invoice with this number already exists
+            if ($scan->status === 'success' && !$scan->invoice_id && $scan->invoice_number) {
+                // Remove whitespace and make lowercase for better matching
+                $cleanScanNo = preg_replace('/\s+/', '', strtolower($scan->invoice_number));
+
+                // Get invoices for business
+                $existingInvoice = \App\Models\Invoice::where('business_id', $businessId)
+                    ->where('type', 'purchase_invoice')
+                    ->whereRaw("REPLACE(LOWER(invoice_number), ' ', '') = ?", [$cleanScanNo])
+                    ->exists();
+
+                if ($existingInvoice) {
+                    $isDuplicate = true;
+                }
+            }
+
+            $scan->is_duplicate = $isDuplicate;
+            $scan->is_fully_mapped = ($scan->status === 'success' && $scan->temp_products_count > 0 && $scan->unmapped_products_count === 0);
+            return $scan;
+        });
 
         return response()->json([
             'success' => true,
