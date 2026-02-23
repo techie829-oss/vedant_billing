@@ -155,6 +155,8 @@
                                 <th v-if="displayOpts.show_discount" class="py-2 text-right w-16">Disc</th>
                                 <th class="py-2 text-right w-20">Sell Price</th>
                                 <th v-if="displayOpts.show_gst_breakdown" class="py-2 text-right w-20">Tax</th>
+                                <th v-if="displayOpts.show_gst_breakdown && hasCess" class="py-2 text-right w-16">CESS
+                                </th>
                                 <th class="py-2 text-right pr-2 w-24">Amount</th>
                             </tr>
                         </thead>
@@ -187,6 +189,15 @@
                                     {{ formatCurrency(item.tax_amount) }} <span
                                         class="text-[9px] text-gray-400 block">({{
                                             Number(item.tax_rate) }}%)</span>
+                                </td>
+                                <td v-if="displayOpts.show_gst_breakdown && hasCess"
+                                    class="py-2 text-right text-gray-600 align-top">
+                                    <div v-if="Number(item.cess_amount) > 0">
+                                        {{ formatCurrency(item.cess_amount) }} <span
+                                            class="text-[9px] text-gray-400 block">({{
+                                                Number(item.cess_rate) || 0 }}%)</span>
+                                    </div>
+                                    <div v-else>-</div>
                                 </td>
                                 <td class="py-2 text-right font-bold text-gray-900 pr-2 align-top">{{
                                     formatCurrency(item.total) }}</td>
@@ -267,6 +278,9 @@
                                 <div class="flex justify-between text-gray-600 text-xs"><span>SGST:</span> <span>{{
                                     formatCurrency(taxBreakdown.sgst) }}</span></div>
                             </template>
+                            <div v-if="hasCess" class="flex justify-between text-gray-600 text-xs">
+                                <span>CESS:</span> <span>{{ formatCurrency(invoice.cess_total) }}</span>
+                            </div>
 
                             <div v-if="finalTotals.roundOff !== 0" class="flex justify-between text-gray-600 text-xs">
                                 <span>Round Off:</span>
@@ -323,6 +337,9 @@
                                 <div class="flex justify-between text-gray-600 text-xs"><span>SGST:</span> <span>{{
                                     formatCurrency(taxBreakdown.sgst) }}</span></div>
                             </template>
+                            <div v-if="hasCess" class="flex justify-between text-gray-600 text-xs">
+                                <span>CESS:</span> <span>{{ formatCurrency(invoice.cess_total) }}</span>
+                            </div>
 
                             <div v-if="finalTotals.roundOff !== 0" class="flex justify-between text-gray-600 text-xs">
                                 <span>Round Off:</span>
@@ -483,6 +500,10 @@ const isTaxDocument = computed(() => {
     // Only these types should show Tax Breakdowns and Tax Columns
     const taxTypes = ['invoice', 'tax_invoice', 'credit_note', 'debit_note'];
     return taxTypes.includes(props.invoice.type);
+});
+
+const hasCess = computed(() => {
+    return Number(props.invoice.cess_total || 0) > 0;
 });
 
 const complianceText = computed(() => {

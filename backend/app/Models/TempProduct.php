@@ -24,6 +24,8 @@ class TempProduct extends Model
         'description',
         'hsn_code',
         'tax_rate',
+        'cess_rate',
+        'cess_amount',
         'batch_number',
         'expiry_date',
         'matched_product_id',
@@ -35,6 +37,8 @@ class TempProduct extends Model
         'price' => 'decimal:2',
         'quantity' => 'decimal:2',
         'tax_rate' => 'decimal:2',
+        'cess_rate' => 'decimal:2',
+        'cess_amount' => 'decimal:2',
         'confidence_score' => 'decimal:2',
     ];
 

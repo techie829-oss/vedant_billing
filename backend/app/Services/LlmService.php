@@ -123,7 +123,9 @@ REQUIRED FIELDS:
   * mrp: Maximum Retail Price if listed separately (numeric, nullable)
   * discount: Discount amount applied to this item (numeric, default 0)
   * hsn_code: HSN/SAC code if available (string, nullable)
-  * tax_rate: Tax rate percentage if available (numeric, nullable)
+  * tax_rate: Tax rate percentage (GST) if available (numeric, nullable)
+  * cess_rate: GST Compensation CESS percentage if available (numeric, nullable)
+  * cess_amount: CESS amount paid if available (numeric, nullable)
   * batch_number: Manufacturing batch number (string, nullable)
   * expiry_date: Manufacturing or Expiry date (string, nullable)
   * description: Any additional product details (string, nullable)
@@ -134,8 +136,9 @@ IMPORTANT:
 - Quantity should be numeric. Sometimes quantity is under "Qty" or "NOB" (Number of Bottles). Use NOB if Qty is in cases.
 - `unit` MUST strictly be one of these exact string values: nos, pcs, pair, set, unit, gram, kg, quintal, ton, ml, ltr, mm, cm, mtr, inch, foot, yard, bag, bottle, box, bundle, can, carton, case, coil, crate, drum, jar, package, packet, pallet, reel, roll, sack, sheet, strip, tube, batch, lot, other.
 - If unit is not found or not clear, default to "nos" or "pcs".
-- Return price, mrp and discount as decimal numbers without currency symbols
+- Return price, mrp, discount, cess_rate, and cess_amount as decimal numbers without currency symbols
 - For FMCG/Beverages, `mrp` is often explicitly listed in an "MRP" or "MRP/Bottle" column. Do NOT miss this.
+- `cess_rate` is the compensation CESS applied on top of GST. It is typically a percentage (e.g. 12%). This is entirely distinct from CGST/SGST/IGST. Only extract this if explicitly labeled as CESS.
 - `batch_number` is often listed under "Batch No" and `expiry_date` under "Mfg Date" or "Exp Date". 
 - If multiple discounts exist per item (e.g., Discount + SPL Discount), sum them up into the single 'discount' field
 - If CGST and SGST are listed separately, SUM them for the 'tax_rate' (e.g., 20% CGST + 20% SGST = 40)

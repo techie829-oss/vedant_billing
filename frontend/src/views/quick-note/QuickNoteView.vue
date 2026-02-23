@@ -19,7 +19,7 @@
                                 <span class="w-1 h-1 rounded-full bg-gray-300"></span>
                                 <span class="uppercase tracking-wider">Note #{{ Math.floor(Math.random()
                                     * 1000) + 4000
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
 
@@ -88,7 +88,7 @@
                                         <div class="flex items-center text-gray-800 font-bold">
                                             <span class="text-xl mr-2 text-indigo-600">{{ item.chained_op === '*' ? '×'
                                                 : '÷'
-                                                }}</span>
+                                            }}</span>
                                             <span class="text-lg">{{ item.chained_val }}</span>
                                         </div>
                                     </template>
@@ -108,7 +108,7 @@
                                                 <div v-if="item.name || item.qty > 1"
                                                     class="text-xs text-gray-400 font-medium flex items-center gap-1">
                                                     <span v-if="item.name" class="italic text-gray-500">{{ item.name
-                                                        }}</span>
+                                                    }}</span>
                                                     <span v-if="item.name && item.qty > 1"
                                                         class="text-gray-300">•</span>
                                                     <span v-if="item.qty > 1 || item.price !== item.total"
@@ -127,7 +127,7 @@
                                 <span v-if="mode === 'order_receipt'" class="text-gray-900">{{
                                     formatCurrency(item.total) }}</span>
                                 <span v-else class="text-gray-500">{{ formatCurrency(runningTotals[index] || 0)
-                                    }}</span>
+                                }}</span>
 
                                 <button @click.stop="removeItem(index)"
                                     class="absolute -right-5 top-1/2 -translate-y-1/2 p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -242,13 +242,13 @@
                                     {{ note.type === 'order_receipt' ? 'Order' : 'Hisab' }}
                                 </span>
                                 <span class="text-xs text-gray-400">{{ new Date(note.created_at).toLocaleDateString()
-                                }}</span>
+                                    }}</span>
                             </div>
                             <h3 class="font-bold text-gray-800 text-sm mb-1 line-clamp-1">{{ note.title }}</h3>
                             <div class="flex justify-between items-end">
                                 <span class="font-mono font-bold text-indigo-600">{{
                                     formatCurrency(Number(note.total_amount))
-                                }}</span>
+                                    }}</span>
                                 <button @click.stop="deleteNote(note.id)"
                                     class="text-gray-300 hover:text-red-500 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -293,12 +293,12 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Qty</label>
-                                <input type="number" v-model.number="editingItem.qty"
+                                <input type="number" step="any" v-model.number="editingItem.qty"
                                     class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 font-mono text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Price</label>
-                                <input type="number" v-model.number="editingItem.price"
+                                <input type="number" step="any" v-model.number="editingItem.price"
                                     class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 font-mono text-sm">
                             </div>
                         </div>

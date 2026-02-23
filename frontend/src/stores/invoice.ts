@@ -13,6 +13,8 @@ export interface InvoiceItem {
     unit_price: number
     tax_rate: number
     tax_amount: number
+    cess_rate?: number
+    cess_amount?: number
     discount?: number
     total: number
     name?: string
@@ -28,6 +30,7 @@ export interface Invoice {
     status: 'draft' | 'sent' | 'paid' | 'overdue' | 'void'
     subtotal: number
     tax_total: number
+    cess_total?: number
     discount_total: number
     grand_total: number
     paid_amount: number

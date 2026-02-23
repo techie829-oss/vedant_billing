@@ -70,6 +70,7 @@ class InvoiceController extends Controller
             'items.*.discount' => 'nullable|numeric|min:0',
             'items.*.hsn_code' => 'nullable|string|max:20',
             'items.*.tax_rate' => 'nullable|numeric|min:0',
+            'items.*.cess_rate' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
             'terms' => 'nullable|string',
             'challan_no' => 'nullable|string|max:50',
@@ -153,6 +154,7 @@ class InvoiceController extends Controller
             'items.*.discount_type' => 'nullable|in:amount,percentage',
             'items.*.hsn_code' => 'nullable|string|max:20',
             'items.*.tax_rate' => 'nullable|numeric|min:0',
+            'items.*.cess_rate' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
             'terms' => 'nullable|string',
             'challan_no' => 'nullable|string|max:50',
@@ -218,6 +220,7 @@ class InvoiceController extends Controller
     {
         $subtotal = 0;
         $taxTotal = 0;
+        $cessTotal = 0;
 
         foreach ($itemsData as $itemData) {
             $qty = $itemData['quantity'];
@@ -225,6 +228,7 @@ class InvoiceController extends Controller
             $discount = $itemData['discount'] ?? 0;
             $discountType = $itemData['discount_type'] ?? 'amount';
             $taxRate = $itemData['tax_rate'] ?? 0;
+            $cessRate = $itemData['cess_rate'] ?? 0;
 
             // Calculate tax on discounted amount
             $gross = $qty * $price;
@@ -236,7 +240,8 @@ class InvoiceController extends Controller
             $taxable = $baseAmount > 0 ? $baseAmount : 0;
 
             $taxAmount = $taxable * ($taxRate / 100);
-            $total = $taxable + $taxAmount;
+            $cessAmount = $taxable * ($cessRate / 100);
+            $total = $taxable + $taxAmount + $cessAmount;
 
             InvoiceItem::create([
                 'invoice_id' => $invoice->id,
@@ -250,19 +255,23 @@ class InvoiceController extends Controller
                 'discount_type' => $discountType,
                 'tax_rate' => $taxRate,
                 'tax_amount' => $taxAmount,
+                'cess_rate' => $cessRate,
+                'cess_amount' => $cessAmount,
                 'total' => $total,
             ]);
 
             $subtotal += $taxable;
             $taxTotal += $taxAmount;
+            $cessTotal += $cessAmount;
         }
 
         $invoice->update([
             'subtotal' => $subtotal,
             'tax_total' => $taxTotal,
+            'cess_total' => $cessTotal,
             // 'discount_total' => ?? We should probably sum discounts but schema has it on invoice table?
             // For now, grand_total is net.
-            'grand_total' => $subtotal + $taxTotal,
+            'grand_total' => $subtotal + $taxTotal + $cessTotal,
         ]);
     }
 

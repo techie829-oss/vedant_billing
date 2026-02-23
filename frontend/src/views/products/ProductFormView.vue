@@ -105,6 +105,14 @@
                     </div>
 
                     <div class="sm:col-span-3">
+                        <label class="block text-sm font-medium leading-6 text-gray-900">CESS Rate (%)</label>
+                        <div class="mt-2">
+                            <input type="number" step="any" v-model="form.cess_rate" placeholder="0"
+                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        </div>
+                    </div>
+
+                    <div class="sm:col-span-3">
                         <label class="block text-sm font-medium leading-6 text-gray-900">Purchase Price (₹)</label>
                         <div class="mt-2">
                             <input type="number" step="any" v-model="form.purchase_price"
@@ -215,6 +223,7 @@ const form = ref<Partial<Product>>({
     sale_price: 0,
     purchase_price: 0,
     tax_rate: 18,
+    cess_rate: 0,
     is_tax_inclusive: false,
     unit: 'pcs',
     current_stock: 0,
@@ -237,6 +246,7 @@ onMounted(async () => {
                 form.value.sale_price = Number(product.sale_price) || 0
                 form.value.purchase_price = Number(product.purchase_price) || 0
                 form.value.tax_rate = Number(product.tax_rate) || 0
+                form.value.cess_rate = Number(product.cess_rate) || 0
             }
         } catch (e) {
             console.error(e)

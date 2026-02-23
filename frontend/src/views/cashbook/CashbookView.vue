@@ -140,7 +140,7 @@
                             </td>
                             <td class="px-3 py-4 text-sm text-gray-900">
                                 <div class="font-medium">{{ entry.title || (entry.type === 'IN' ? 'Payment' : 'Expense')
-                                }}</div>
+                                    }}</div>
                                 <div class="text-xs text-gray-500" v-if="entry.description">{{ entry.description }}
                                 </div>
                                 <div class="text-xs text-gray-400 mt-0.5" v-if="entry.payment_method">{{
@@ -183,7 +183,7 @@
                         <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                             <span class="text-gray-500 sm:text-sm">₹</span>
                         </div>
-                        <input type="number" name="amount" id="amount" v-model.number="form.amount"
+                        <input type="number" step="any" name="amount" id="amount" v-model.number="form.amount"
                             class="block w-full rounded-md border-0 py-2 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             placeholder="0.00" aria-describedby="price-currency">
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">

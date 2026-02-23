@@ -128,6 +128,16 @@
                                             <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.tax_rate }}%
                                             </dd>
                                         </div>
+                                        <div v-if="item.temp_product.cess_rate">
+                                            <dt class="text-xs font-medium text-gray-500">Cess Rate</dt>
+                                            <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.cess_rate }}%
+                                            </dd>
+                                        </div>
+                                        <div v-if="item.temp_product.cess_amount">
+                                            <dt class="text-xs font-medium text-gray-500">Cess Amount</dt>
+                                            <dd class="mt-1 text-sm text-gray-900">₹{{ item.temp_product.cess_amount }}
+                                            </dd>
+                                        </div>
                                     </dl>
                                 </div>
 
@@ -346,6 +356,8 @@ const invoiceItems = computed(() => {
         mrp: tp.temp_product.mrp ? Number(tp.temp_product.mrp) : null,
         discount: Number(tp.temp_product.discount) || 0,
         tax_rate: Number(tp.temp_product.tax_rate) || 0,
+        cess_rate: Number(tp.temp_product.cess_rate) || 0,
+        cess_amount: Number(tp.temp_product.cess_amount) || 0,
         hsn_code: tp.temp_product.hsn_code ?? null,
         batch_number: tp.temp_product.batch_number ?? null,
         expiry_date: tp.temp_product.expiry_date ?? null,
@@ -356,7 +368,9 @@ const invoiceItems = computed(() => {
 const invoiceTotal = computed(() =>
     invoiceItems.value.reduce((sum: number, i: any) => {
         const base = (i.quantity * i.unit_price) - i.discount
-        return sum + base + base * (i.tax_rate / 100)
+        const tax = base * (i.tax_rate / 100)
+        const cess = base * (i.cess_rate / 100)
+        return sum + base + tax + cess
     }, 0)
 )
 

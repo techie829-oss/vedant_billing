@@ -21,9 +21,11 @@ class InvoiceItem extends Model
         'unit_price',
         'mrp',
         'tax_rate',
+        'cess_rate',
         'discount',
         'discount_type',
         'tax_amount',
+        'cess_amount',
         'total',
         'batch_number',
         'expiry_date',
@@ -34,7 +36,9 @@ class InvoiceItem extends Model
         'unit_price' => 'decimal:2',
         'discount' => 'decimal:2',
         'tax_rate' => 'decimal:2',
+        'cess_rate' => 'decimal:2',
         'tax_amount' => 'decimal:2',
+        'cess_amount' => 'decimal:2',
         'total' => 'decimal:2',
     ];
 

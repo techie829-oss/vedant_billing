@@ -110,7 +110,7 @@
                                 <template v-else-if="invoice.party?.shipping_address">
                                     <p class="whitespace-pre-line">{{ invoice.party.shipping_address.street }}</p>
                                     <p>{{ invoice.party.shipping_address.city }} {{ invoice.party.shipping_address.zip
-                                        }}</p>
+                                    }}</p>
                                     <p>{{ invoice.party.shipping_address.state }}</p>
                                 </template>
                             </div>
@@ -157,6 +157,8 @@
                                         <th class="py-2 px-3 text-right w-20 border-r border-gray-600">CGST</th>
                                         <th class="py-2 px-3 text-right w-20 border-r border-gray-600">SGST</th>
                                     </template>
+                                    <th v-if="hasCess" class="py-2 px-3 text-right w-20 border-r border-gray-600">CESS
+                                    </th>
                                 </template>
 
                                 <th class="py-2 px-3 text-right w-28">Amount</th>
@@ -207,10 +209,18 @@
                                             </div>
                                         </td>
                                     </template>
+                                    <td v-if="hasCess"
+                                        class="py-3 px-3 text-right border-r border-gray-800 text-[10px]">
+                                        <div v-if="Number(item.cess_amount) > 0">
+                                            <div>{{ Number(item.cess_rate) || 0 }}%</div>
+                                            <div class="font-medium">{{ Number(item.cess_amount).toFixed(2) }}</div>
+                                        </div>
+                                        <div v-else>-</div>
+                                    </td>
                                 </template>
 
                                 <td class="py-3 px-3 text-right font-bold border-gray-800">{{ formatCurrency(item.total)
-                                    }}</td>
+                                }}</td>
                             </tr>
                             <!-- Fill Empty Rows to maintain height if needed, OR just let it flow -->
                         </tbody>
@@ -297,6 +307,10 @@
                                     <span class="text-sm">{{ formatCurrency(taxBreakdown.sgst) }}</span>
                                 </div>
                             </template>
+                            <div v-if="hasCess" class="flex justify-between items-center p-2 border-b border-gray-300">
+                                <span class="text-xs text-gray-600">CESS</span>
+                                <span class="text-sm">{{ formatCurrency(invoice.cess_total) }}</span>
+                            </div>
                         </template>
 
                         <template v-if="finalTotals.roundOff !== 0">
@@ -364,6 +378,10 @@ const totalDiscount = computed(() => {
 const isTaxDocument = computed(() => {
     const taxTypes = ['invoice', 'tax_invoice', 'credit_note', 'debit_note'];
     return taxTypes.includes(props.invoice.type);
+});
+
+const hasCess = computed(() => {
+    return Number(props.invoice.cess_total || 0) > 0;
 });
 
 const complianceText = computed(() => {

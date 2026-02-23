@@ -110,7 +110,7 @@
                                 <div class="p-1">
                                     <span class="block text-[10px] font-bold">Destination</span>
                                     <span>{{ invoice.meta?.destination || invoice.party?.shipping_address?.city || ''
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                             <!-- Row 7: Terms of Delivery (Full Width) -->
@@ -160,8 +160,8 @@
                 </div>
 
                 <!-- TABLE HEADER -->
-                <div
-                    class="border-b border-black bg-gray-50 text-[10px] font-bold uppercase text-center grid grid-cols-[30px_1fr_60px_50px_60px_50px_70px_80px] divide-x divide-black shrink-0">
+                <div class="border-b border-black bg-gray-50 text-[10px] font-bold uppercase text-center grid grid-cols-[30px_1fr_60px_50px_60px_50px_70px_80px] divide-x divide-black shrink-0 relative"
+                    :class="{ 'grid-cols-[30px_1fr_60px_50px_60px_50px_50px_60px_80px]': hasCess }">
                     <div class="py-2">Sr.</div>
                     <div class="py-2">Description of Goods</div>
                     <div class="py-2">HSN/SAC</div>
@@ -169,6 +169,7 @@
                     <div class="py-2">Rate</div>
                     <div class="py-2">Per</div>
                     <div class="py-2">Disc.</div>
+                    <div v-if="hasCess" class="py-2">CESS</div>
                     <div class="py-2">Amount</div>
                 </div>
 
@@ -176,7 +177,8 @@
                 <div class="flex-grow relative text-[11px] border-b border-black">
                     <!-- Current Page Items -->
                     <div v-for="(item, idx) in page.items" :key="idx"
-                        class="grid grid-cols-[30px_1fr_60px_50px_60px_50px_70px_80px] divide-x divide-black border-b border-black h-auto">
+                        class="grid grid-cols-[30px_1fr_60px_50px_60px_50px_70px_80px] divide-x divide-black border-b border-black h-auto"
+                        :class="{ 'grid-cols-[30px_1fr_60px_50px_60px_50px_50px_60px_80px]': hasCess }">
                         <div class="px-1 py-1 text-center align-top">{{ item.globalIndex }}</div>
                         <div class="px-2 py-1 align-top text-left font-bold">
                             {{ item.name }}
@@ -189,12 +191,19 @@
                         <div class="px-1 py-1 text-center align-top">Nos</div>
                         <div class="px-1 py-1 text-right align-top">{{ Number(item.discount) > 0 ?
                             formatNumber(item.discount) : '-' }}</div>
+                        <div v-if="hasCess" class="px-1 py-1 text-right align-top text-[10px]">
+                            <div v-if="Number(item.cess_amount) > 0">
+                                {{ formatNumber(item.cess_amount) }} <span class="text-[8px] text-gray-500 block">({{
+                                    Number(item.cess_rate) || 0 }}%)</span>
+                            </div>
+                            <div v-else>-</div>
+                        </div>
                         <div class="px-1 py-1 text-right align-top font-bold">{{ formatNumber(item.total) }}</div>
                     </div>
 
                     <!-- Filling Empty Space with Vertical Lines (if no more items) -->
-                    <div
-                        class="absolute inset-0 top-0 pointer-events-none grid grid-cols-[30px_1fr_60px_50px_60px_50px_70px_80px] divide-x divide-black -z-10">
+                    <div class="absolute inset-0 top-0 pointer-events-none grid grid-cols-[30px_1fr_60px_50px_60px_50px_70px_80px] divide-x divide-black -z-10"
+                        :class="{ 'grid-cols-[30px_1fr_60px_50px_60px_50px_50px_60px_80px]': hasCess }">
                         <div></div>
                         <div></div>
                         <div></div>
@@ -202,6 +211,7 @@
                         <div></div>
                         <div></div>
                         <div></div>
+                        <div v-if="hasCess"></div>
                         <div></div>
                     </div>
                 </div>
@@ -210,14 +220,15 @@
                 <div class="shrink-0 text-xs">
 
                     <!-- Total Row - must match item grid columns for border continuation -->
-                    <div
-                        class="grid grid-cols-[30px_1fr_60px_50px_60px_50px_70px_80px] border-b border-black divide-x divide-black">
+                    <div class="grid grid-cols-[30px_1fr_60px_50px_60px_50px_70px_80px] border-b border-black divide-x divide-black"
+                        :class="{ 'grid-cols-[30px_1fr_60px_50px_60px_50px_50px_60px_80px]': hasCess }">
                         <div class="px-1 py-1"></div>
                         <div class="px-1 py-1"></div>
                         <div class="px-1 py-1"></div>
                         <div class="px-1 py-1"></div>
                         <div class="px-1 py-1"></div>
                         <div class="px-1 py-1"></div>
+                        <div v-if="hasCess" class="px-1 py-1"></div>
                         <div class="px-1 py-1 text-right font-bold uppercase">Total</div>
                         <div class="text-right px-2 py-1 font-bold">
                             {{ page.isLastPage ? formatNumber(invoice.grand_total) : formatNumber(page.pageTotal) }}
@@ -229,7 +240,7 @@
                         <div class="p-1 px-2 border-b border-black">
                             <span class="font-bold text-[10px]">Amount Chargeable (in words):</span>
                             <span class="capitalize font-bold ml-2">Indian Rupees {{ amountInWords(finalTotals.rounded)
-                            }} Only</span>
+                                }} Only</span>
                         </div>
 
                         <!-- Tax Summary Table -->
@@ -285,6 +296,15 @@
                             </div>
                             <div class="py-1 font-bold">{{ formatNumber(taxBreakdown.cgst + taxBreakdown.sgst +
                                 taxBreakdown.igst) }}</div>
+
+                            <!-- Overall CESS -->
+                            <div v-if="hasCess"
+                                class="col-span-5 py-1 grid grid-cols-[80px_100px_1fr_1fr_100px] border-t border-black divide-x divide-black relative -ml-[1px]">
+                                <div class="col-span-4 text-right pr-2">Total CESS</div>
+                                <div class="font-bold border-l border-black text-center">{{
+                                    formatNumber(invoice.cess_total) }}</div>
+                            </div>
+
                             <!-- Round Off -->
                             <div v-if="finalTotals.roundOff !== 0"
                                 class="col-span-5 border-t border-black py-1 text-right pr-2 grid grid-cols-2">
@@ -381,6 +401,10 @@ const TOTALS_SPACE_ITEMS = 6;
 const isTaxDocument = computed(() => {
     const taxTypes = ['invoice', 'tax_invoice', 'credit_note', 'debit_note'];
     return taxTypes.includes(props.invoice.type);
+});
+
+const hasCess = computed(() => {
+    return Number(props.invoice.cess_total || 0) > 0;
 });
 
 const complianceText = computed(() => {

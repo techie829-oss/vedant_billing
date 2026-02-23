@@ -597,6 +597,8 @@ const taxBreakdown = computed(() => {
     (invoice.value.items || []).forEach((item: any) => {
         const lineTax = Number(item.tax_amount) || 0
         const itemTaxRate = Number(item.tax_rate) || 0
+        const itemCess = Number(item.cess_amount) || 0
+        const itemCessRate = Number(item.cess_rate) || 0
         const hsn = item.hsn_code || item.product?.hsn_code || '-'
         const taxableAmount = Number(item.total) || 0
 
@@ -620,9 +622,11 @@ const taxBreakdown = computed(() => {
                 cgst_rate: isInterState ? 0 : itemTaxRate / 2,
                 sgst_rate: isInterState ? 0 : itemTaxRate / 2,
                 igst_rate: isInterState ? itemTaxRate : 0,
+                cess_rate: itemCessRate,
                 cgst_amount: 0,
                 sgst_amount: 0,
                 igst_amount: 0,
+                cess_amount: 0,
                 total_tax: 0
             }
         }
@@ -636,7 +640,8 @@ const taxBreakdown = computed(() => {
             group.cgst_amount += lineTax / 2
             group.sgst_amount += lineTax / 2
         }
-        group.total_tax += lineTax
+        group.cess_amount += itemCess
+        group.total_tax += (lineTax + itemCess)
     })
 
     const avgTaxRate = itemCount > 0 ? totalTaxRate / itemCount : 0

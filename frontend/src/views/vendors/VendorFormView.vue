@@ -26,7 +26,8 @@
           <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div class="sm:col-span-full">
               <h3 class="text-base font-semibold leading-7 text-gray-900">Basic Information</h3>
-              <p class="mt-1 text-sm leading-6 text-gray-500">Search by GSTIN to auto-fill details or enter manually.</p>
+              <p class="mt-1 text-sm leading-6 text-gray-500">Search by GSTIN to auto-fill details or enter manually.
+              </p>
             </div>
 
             <div class="sm:col-span-4">
@@ -43,7 +44,8 @@
             </div>
 
             <div class="sm:col-span-4">
-              <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Vendor Name <span class="text-red-500">*</span></label>
+              <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Vendor Name <span
+                  class="text-red-500">*</span></label>
               <div class="mt-2">
                 <input type="text" id="name" v-model="form.name" required
                   class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
@@ -155,7 +157,7 @@
               <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <span class="text-gray-500 sm:text-sm">₹</span>
               </div>
-              <input type="number" v-model.number="form.opening_balance"
+              <input type="number" step="any" v-model.number="form.opening_balance"
                 class="block w-full rounded-md border-0 py-2 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                 placeholder="0.00" />
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">

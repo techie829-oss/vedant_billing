@@ -214,6 +214,8 @@ class InvoiceOcrService
                     'description' => $item['description'] ?? null,
                     'hsn_code' => $item['hsn_code'] ?? null,
                     'tax_rate' => $item['tax_rate'] ?? null,
+                    'cess_rate' => $item['cess_rate'] ?? 0,
+                    'cess_amount' => $item['cess_amount'] ?? 0,
                     'batch_number' => $item['batch_number'] ?? null,
                     'expiry_date' => $item['expiry_date'] ?? null,
                     'status' => 'pending',

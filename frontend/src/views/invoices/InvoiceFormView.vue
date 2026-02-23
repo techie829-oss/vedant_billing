@@ -433,6 +433,11 @@
                                         <input type="number" v-model.number="item.tax_rate" min="0" step="any"
                                             class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm" />
                                     </div>
+                                    <div v-if="form.meta.display_options.show_gst_breakdown">
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Cess %</label>
+                                        <input type="number" v-model.number="item.cess_rate" min="0" step="any"
+                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm" />
+                                    </div>
                                     <div class="col-span-1 text-right">
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Total</label>
                                         <span class="text-sm font-bold text-gray-900">{{
@@ -481,6 +486,10 @@
                                     <th v-if="form.meta.display_options.show_gst_breakdown"
                                         class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Tax %
+                                    </th>
+                                    <th v-if="form.meta.display_options.show_gst_breakdown"
+                                        class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Cess %
                                     </th>
                                     <th
                                         class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -559,6 +568,11 @@
                                         <input type="number" v-model.number="item.tax_rate" min="0" step="0.1"
                                             class="block w-full rounded border border-transparent bg-transparent py-1 px-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-xs leading-6 text-right transition-colors" />
                                     </td>
+                                    <td v-if="form.meta.display_options.show_gst_breakdown" class="px-1 py-1">
+                                        <input type="number" v-model.number="item.cess_rate" min="0" step="0.1"
+                                            placeholder="0"
+                                            class="block w-full rounded border border-transparent bg-transparent py-1 px-2 text-gray-900 placeholder:text-gray-400 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-xs leading-6 text-right transition-colors" />
+                                    </td>
                                     <td
                                         class="px-2 py-1 text-right text-sm text-gray-900 font-semibold whitespace-nowrap pt-2">
                                         {{ formatCurrency(calculateLineTotal(item)) }}
@@ -607,6 +621,11 @@
                                     <span>{{ formatCurrency(totals.sgst) }}</span>
                                 </div>
                             </template>
+
+                            <div v-if="totals.cess > 0" class="flex justify-between text-sm text-gray-600">
+                                <span>CESS</span>
+                                <span>{{ formatCurrency(totals.cess) }}</span>
+                            </div>
 
                             <div class="flex justify-between text-base font-semibold text-gray-900 border-t pt-2">
                                 <span>Grand Total</span>
@@ -855,6 +874,8 @@ const addItem = async () => {
         discount_type: 'amount',
         tax_rate: 0,
         tax_amount: 0,
+        cess_rate: 0,
+        cess_amount: 0,
         total: 0
     })
 
@@ -868,17 +889,26 @@ const removeItem = (index: number) => {
     form.value.items.splice(index, 1)
 }
 
-const calculateLineTotal = (item: InvoiceItem) => {
+const calculateLineTotal = (item: InvoiceItem & { discount_type?: 'amount' | 'percentage' }) => {
     const qty = Number(item.quantity) || 0
     const price = Number(item.unit_price) || 0
-    // Only apply discount if the option is enabled
-    const discount = form.value.meta.display_options.show_discount ? (Number(item.discount) || 0) : 0
-    const taxRate = Number(item.tax_rate) || 0
+    const rawDiscount = Number(item.discount) || 0
 
-    const sub = (qty * price) - discount
+    let discountAmt = 0;
+    if (form.value.meta.display_options.show_discount) {
+        discountAmt = item.discount_type === 'percentage'
+            ? (qty * price) * (rawDiscount / 100)
+            : rawDiscount;
+    }
+
+    const taxRate = Number(item.tax_rate) || 0
+    const cessRate = Number(item.cess_rate) || 0
+
+    const sub = (qty * price) - discountAmt
     const taxable = sub > 0 ? sub : 0
     const tax = taxable * (taxRate / 100)
-    return taxable + tax
+    const cess = taxable * (cessRate / 100)
+    return taxable + tax + cess
 }
 
 const calculateDiscountAmount = (item: InvoiceItem & { discount_type?: 'amount' | 'percentage' }) => {
@@ -894,6 +924,7 @@ const totals = computed(() => {
     let cgst = 0
     let sgst = 0
     let igst = 0
+    let cess = 0
 
     const businessState = authStore.activeBusiness?.meta?.state?.toLowerCase()
     const selectedCustomer = customers.value.find(c => c.id === form.value.party_id)
@@ -908,6 +939,7 @@ const totals = computed(() => {
         const price = Number(item.unit_price) || 0
         const rawDiscount = Number(item.discount) || 0
         const taxRate = Number(item.tax_rate) || 0
+        const cessRate = Number(item.cess_rate) || 0
 
         let discountAmt = 0;
         if (form.value.meta.display_options.show_discount) {
@@ -919,8 +951,10 @@ const totals = computed(() => {
         const lineSub = (qty * price) - discountAmt
         const taxable = lineSub > 0 ? lineSub : 0
         const lineTax = taxable * (taxRate / 100)
+        const lineCess = taxable * (cessRate / 100)
 
         subtotal += taxable
+        cess += lineCess
 
         if (isInterState) {
             igst += lineTax
@@ -935,9 +969,10 @@ const totals = computed(() => {
         cgst,
         sgst,
         igst,
+        cess,
         taxType,
         posState,
-        grandTotal: subtotal + cgst + sgst + igst
+        grandTotal: subtotal + cgst + sgst + igst + cess
     }
 })
 
@@ -969,16 +1004,19 @@ const onProductSelect = (item: InvoiceItem, product: any) => {
         item.hsn_code = product.hsn_code || ''
 
         const rate = Number(product.tax_rate) || 0
+        const cessRate = Number(product.cess_rate) || 0
+        const totalTaxRate = rate + cessRate
         const rawPrice = Number(product.sale_price) || 0
 
-        if (product.is_tax_inclusive && rate > 0) {
+        if (product.is_tax_inclusive && totalTaxRate > 0) {
             // Reverse calculate exclusive base price
-            item.unit_price = Number((rawPrice / (1 + (rate / 100))).toFixed(4))
+            item.unit_price = Number((rawPrice / (1 + (totalTaxRate / 100))).toFixed(4))
         } else {
             item.unit_price = rawPrice
         }
 
         item.tax_rate = rate
+        item.cess_rate = cessRate
         if (!item.quantity) item.quantity = 1
 
         // Ensure discount and totals are recalculated

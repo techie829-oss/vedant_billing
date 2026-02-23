@@ -160,6 +160,7 @@
                                 <th class="py-3 text-right font-bold w-20">CGST</th>
                                 <th class="py-3 text-right font-bold w-20">SGST</th>
                             </template>
+                            <th v-if="hasCess" class="py-3 text-right font-bold w-20">CESS</th>
                         </template>
 
                         <th class="py-3 text-right font-bold w-28">Amount</th>
@@ -206,10 +207,17 @@
                                     <div>{{ (Number(item.tax_amount) / 2).toFixed(2) }}</div>
                                 </td>
                             </template>
+                            <td v-if="hasCess" class="py-3 px-1 text-right text-gray-500 align-top">
+                                <template v-if="Number(item.cess_amount) > 0">
+                                    <div class="text-[10px]">{{ Number(item.cess_rate) || 0 }}%</div>
+                                    <div>{{ Number(item.cess_amount).toFixed(2) }}</div>
+                                </template>
+                                <template v-else>-</template>
+                            </td>
                         </template>
 
                         <td class="py-3 px-1 text-right font-bold text-gray-900 align-top">{{ formatCurrency(item.total)
-                            }}</td>
+                        }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -306,6 +314,10 @@
                                     <span>{{ formatCurrency(taxBreakdown.sgst) }}</span>
                                 </div>
                             </template>
+                            <div v-if="hasCess" class="flex justify-between text-gray-500">
+                                <span>CESS</span>
+                                <span>{{ formatCurrency(invoice.cess_total) }}</span>
+                            </div>
                         </div>
 
                         <!-- Round Off -->
@@ -318,7 +330,7 @@
                         <div class="flex justify-between items-center pt-2">
                             <span class="font-bold text-gray-900 text-lg">Total</span>
                             <span class="font-bold text-gray-900 text-lg">{{ formatCurrency(finalTotals.rounded)
-                                }}</span>
+                            }}</span>
                         </div>
                     </div>
 
@@ -378,6 +390,10 @@ const authStore = useAuthStore()
 const isTaxDocument = computed(() => {
     const taxTypes = ['invoice', 'tax_invoice', 'credit_note', 'debit_note'];
     return taxTypes.includes(props.invoice.type);
+});
+
+const hasCess = computed(() => {
+    return Number(props.invoice.cess_total || 0) > 0;
 });
 
 const complianceText = computed(() => {
