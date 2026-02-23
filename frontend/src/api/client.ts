@@ -30,4 +30,26 @@ client.interceptors.request.use((config) => {
     return config
 })
 
+// Response interceptor to handle 401 Unauthorized
+client.interceptors.response.use(
+    (response) => {
+        return response
+    },
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            // Token is invalid/expired. Clear auth data and redirect to login.
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+            localStorage.removeItem('activeBusiness')
+            localStorage.removeItem('userBusinesses')
+
+            // Only redirect if not already on login/register to avoid loops
+            if (!window.location.pathname.startsWith('/login') && !window.location.pathname.startsWith('/register')) {
+                window.location.href = '/login'
+            }
+        }
+        return Promise.reject(error)
+    }
+)
+
 export default client

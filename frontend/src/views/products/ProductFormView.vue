@@ -87,11 +87,12 @@
                         <div class="relative mt-2">
                             <select v-model="form.tax_rate"
                                 class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                <option v-if="!configStore.loading && configStore.data"
-                                    v-for="(label, rate) in configStore.data.gst_rates" :key="rate"
-                                    :value="Number(rate)">
-                                    {{ label }}
-                                </option>
+                                <template v-if="!configStore.loading && configStore.data">
+                                    <option v-for="(label, rate) in configStore.data.gst_rates" :key="rate"
+                                        :value="Number(rate)">
+                                        {{ label }}
+                                    </option>
+                                </template>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                                 <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
@@ -125,10 +126,11 @@
                         <div class="relative mt-2">
                             <select v-model="form.unit"
                                 class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                <option v-if="!configStore.loading && configStore.data"
-                                    v-for="(label, val) in configStore.data.unit_types" :key="val" :value="val">
-                                    {{ label }}
-                                </option>
+                                <template v-if="!configStore.loading && configStore.data">
+                                    <option v-for="(label, val) in configStore.data.unit_types" :key="val" :value="val">
+                                        {{ label }}
+                                    </option>
+                                </template>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                                 <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
@@ -189,7 +191,8 @@
                 {{ loading ? 'Saving...' : 'Save Product' }}
             </button>
             <button type="button" @click="deleteProduct"
-                class="text-sm font-semibold text-red-600 hover:text-red-500">Delete Product</button>
+                class="text-sm font-semibold text-red-600 hover:text-red-500">Delete
+                Product</button>
         </div>
         <div v-else class="mt-6 flex justify-end">
             <button type="button" @click="saveProduct" :disabled="loading"
