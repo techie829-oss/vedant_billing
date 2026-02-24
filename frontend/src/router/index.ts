@@ -40,9 +40,9 @@ const router = createRouter({
         },
         {
             path: '/forgot-password',
-            name: 'dashboard',
-            component: () => import('../views/DashboardView.vue'),
-            meta: { requiresAuth: true, requiresBusiness: true }
+            name: 'forgot-password',
+            component: () => import('../views/auth/ForgotPasswordView.vue'),
+            meta: { guest: true }
         },
         {
             path: '/businesses',
@@ -61,6 +61,10 @@ const router = createRouter({
             name: 'dashboard',
             component: () => import('../views/DashboardView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
+        },
+        {
+            path: '/dashboard',
+            redirect: '/'
         },
         {
             path: '/customers',
