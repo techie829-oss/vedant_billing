@@ -97,10 +97,10 @@
                             <rect width="784" height="404" fill="url(#ca9667ae-9f92-4be7-abcb-9e3d727f2941)" />
                         </svg>
                         <div
-                            class="relative mx-auto w-full max-w-lg rounded-2xl shadow-2xl lg:max-w-none border border-gray-100 overflow-hidden bg-white">
+                            class="relative mx-auto w-full max-w-lg rounded-2xl shadow-2xl lg:max-w-none border border-gray-100 overflow-hidden bg-white p-2 sm:p-4">
                             <!-- Invoice Settings Image passed by User -->
                             <img src="{{ asset('images/invoice-templates.png') }}" alt="Invoice Templates Selection"
-                                class="w-full h-auto object-cover hover:scale-105 transition-transform duration-500">
+                                class="w-full h-auto object-cover rounded-xl hover:scale-105 transition-transform duration-500">
                         </div>
                     </div>
                 </div>
@@ -113,37 +113,11 @@
                 <div class="relative lg:grid lg:grid-cols-2 lg:gap-8 items-center">
                     <div class="mt-10 -mx-4 relative lg:mt-0 lg:order-1" aria-hidden="true">
                         <!-- Abstract Inventory UI Representation -->
-                        <div class="relative mx-auto w-[24rem] rounded-lg shadow-lg lg:max-w-none">
-                            <div class="bg-white rounded-lg shadow-xl overflow-hidden border border-gray-100 p-6">
-                                <div class="flex justify-between items-center mb-6">
-                                    <h4 class="font-bold text-gray-900">Stock Status</h4>
-                                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Live</span>
-                                </div>
-                                <div class="space-y-4">
-                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="h-8 w-8 bg-blue-100 rounded shadow-sm"></div>
-                                            <div class="h-3 w-24 bg-gray-200 rounded"></div>
-                                        </div>
-                                        <div class="h-3 w-12 bg-green-200 rounded"></div>
-                                    </div>
-                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="h-8 w-8 bg-purple-100 rounded shadow-sm"></div>
-                                            <div class="h-3 w-24 bg-gray-200 rounded"></div>
-                                        </div>
-                                        <div class="h-3 w-12 bg-yellow-200 rounded"></div>
-                                    </div>
-                                    <div
-                                        class="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-100">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="h-8 w-8 bg-red-200 rounded shadow-sm"></div>
-                                            <div class="h-3 w-24 bg-gray-400 rounded"></div>
-                                        </div>
-                                        <div class="h-3 w-12 bg-red-300 rounded"></div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div
+                            class="relative mx-auto w-full max-w-lg rounded-2xl shadow-2xl lg:max-w-none border border-gray-100 overflow-hidden bg-white p-2 sm:p-4">
+                            <!-- Add Stock Image passed by User -->
+                            <img src="{{ asset('images/add-stock.png') }}" alt="Add Stock Modal"
+                                class="w-full h-auto object-cover rounded-xl hover:scale-105 transition-transform duration-500">
                         </div>
                     </div>
 
