@@ -1,7 +1,8 @@
 @extends('layouts.web')
 
 @section('title', 'Contact Support - VedantBilling')
-@section('description', 'Need help? Contact VedantBilling support team for queries regarding GST billing software,
+@section('description',
+    'Need help? Contact VedantBilling support team for queries regarding GST billing software,
     pricing, or technical assistance.')
 
 @section('content')
@@ -103,34 +104,71 @@
                                 @enderror
                             </div>
 
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Phone Number -->
+                                <div>
+                                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number <span
+                                            class="text-red-500">*</span></label>
+                                    <div class="mt-1 flex rounded-md shadow-sm">
+                                        <select name="country_code" id="country_code" required
+                                            class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm focus:border-blue-500 focus:ring-blue-500 max-w-[100px]">
+                                            <option value="+91">IN (+91)</option>
+                                            <option value="+1">US (+1)</option>
+                                            <option value="+44">UK (+44)</option>
+                                            <option value="+971">UAE (+971)</option>
+                                            <option value="+61">AUS (+61)</option>
+                                        </select>
+                                        <input type="tel" name="phone" id="phone" required
+                                            class="flex-1 block w-full rounded-none rounded-r-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 border"
+                                            placeholder="90000 00000">
+                                    </div>
+                                    @error('country_code')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
+                                    @error('phone')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- WhatsApp Number -->
+                                <div>
+                                    <label for="whatsapp_number" class="block text-sm font-medium text-gray-700">WhatsApp
+                                        Number</label>
+                                    <div class="mt-1 flex rounded-md shadow-sm">
+                                        <select name="whatsapp_country_code" id="whatsapp_country_code"
+                                            class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm focus:border-blue-500 focus:ring-blue-500 max-w-[100px]">
+                                            <option value="+91">IN (+91)</option>
+                                            <option value="+1">US (+1)</option>
+                                            <option value="+44">UK (+44)</option>
+                                            <option value="+971">UAE (+971)</option>
+                                            <option value="+61">AUS (+61)</option>
+                                        </select>
+                                        <input type="tel" name="whatsapp_number" id="whatsapp_number"
+                                            class="flex-1 block w-full rounded-none rounded-r-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 border"
+                                            placeholder="Same as phone or new">
+                                    </div>
+                                    @error('whatsapp_number')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div>
-                                <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number <span
+                                <label for="message" class="block text-sm font-medium text-gray-700">Message <span
                                         class="text-red-500">*</span></label>
-                                <input type="tel" name="phone" id="phone" required
+                                <textarea name="message" id="message" rows="4" required
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 border"
-                                    placeholder="+91 90000 00000">
-                                @error('phone')
+                                    placeholder="How can we help you?"></textarea>
+                                @error('message')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
-                        </div>
 
-                        <div>
-                            <label for="message" class="block text-sm font-medium text-gray-700">Message <span
-                                    class="text-red-500">*</span></label>
-                            <textarea name="message" id="message" rows="4" required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 border"
-                                placeholder="How can we help you?"></textarea>
-                            @error('message')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                            <button type="submit"
+                                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                                Send Message
+                            </button>
                         </div>
-
-                        <button type="submit"
-                            class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                            Send Message
-                        </button>
-                    </div>
                 </form>
             </div>
         </div>

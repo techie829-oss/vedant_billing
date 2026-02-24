@@ -18,6 +18,10 @@
                             class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Phone
                         </th>
                         <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
+                            WhatsApp
+                        </th>
+                        <th scope="col"
                             class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Message
                         </th>
                         <th scope="col"
@@ -33,7 +37,12 @@
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-text">{{ $lead->name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-text-muted">{{ $lead->email }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-muted">{{ $lead->phone ?? '-' }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-muted">
+                                {{ $lead->country_code }} {{ $lead->phone ?? '-' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-text-muted">
+                                {{ $lead->whatsapp_number ?? '-' }}
+                            </td>
                             <td class="px-6 py-4 text-sm text-text-muted max-w-xs truncate" title="{{ $lead->message }}">
                                 {{ Str::limit($lead->message, 50) }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
