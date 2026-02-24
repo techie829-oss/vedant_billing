@@ -88,15 +88,6 @@
             </div>
 
             <div class="mt-6 space-y-3">
-                <button type="button" @click="handleTestDrive" :disabled="authStore.isLoading"
-                    class="w-full inline-flex justify-center py-3 px-4 border border-indigo-300 rounded-lg shadow-sm bg-indigo-50 text-sm font-medium text-indigo-700 hover:bg-indigo-100 transition-colors duration-200">
-                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    Quick Test Drive
-                </button>
-
                 <a :href="googleAuthUrl"
                     class="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors duration-200">
                     <span class="sr-only">Sign in with Google</span>
@@ -181,13 +172,6 @@ const handleRegister = async () => {
         authStore.error = "Anti-spam check failed. Please refresh and try again."
     } finally {
         authStore.isLoading = false
-    }
-}
-
-const handleTestDrive = async () => {
-    const success = await authStore.testDrive()
-    if (success) {
-        router.push('/businesses')
     }
 }
 </script>
