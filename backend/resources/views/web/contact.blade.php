@@ -110,14 +110,9 @@
                                     <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number <span
                                             class="text-red-500">*</span></label>
                                     <div class="mt-1 flex rounded-md shadow-sm">
-                                        <select name="country_code" id="country_code" required
-                                            class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm focus:border-blue-500 focus:ring-blue-500 max-w-[100px]">
-                                            <option value="+91">IN (+91)</option>
-                                            <option value="+1">US (+1)</option>
-                                            <option value="+44">UK (+44)</option>
-                                            <option value="+971">UAE (+971)</option>
-                                            <option value="+61">AUS (+61)</option>
-                                        </select>
+                                        <input type="text" name="country_code" id="country_code" required
+                                            class="inline-flex items-center px-3 rounded-none rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm focus:border-blue-500 focus:ring-blue-500 w-[60px] sm:w-[80px]"
+                                            placeholder="+91" value="+91">
                                         <input type="tel" name="phone" id="phone" required
                                             class="flex-1 block w-full rounded-none rounded-r-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 border"
                                             placeholder="90000 00000">
@@ -135,14 +130,9 @@
                                     <label for="whatsapp_number" class="block text-sm font-medium text-gray-700">WhatsApp
                                         Number</label>
                                     <div class="mt-1 flex rounded-md shadow-sm">
-                                        <select name="whatsapp_country_code" id="whatsapp_country_code"
-                                            class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm focus:border-blue-500 focus:ring-blue-500 max-w-[100px]">
-                                            <option value="+91">IN (+91)</option>
-                                            <option value="+1">US (+1)</option>
-                                            <option value="+44">UK (+44)</option>
-                                            <option value="+971">UAE (+971)</option>
-                                            <option value="+61">AUS (+61)</option>
-                                        </select>
+                                        <input type="text" name="whatsapp_country_code" id="whatsapp_country_code"
+                                            class="inline-flex items-center px-3 rounded-none rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm focus:border-blue-500 focus:ring-blue-500 w-[60px] sm:w-[80px]"
+                                            placeholder="+91">
                                         <input type="tel" name="whatsapp_number" id="whatsapp_number"
                                             class="flex-1 block w-full rounded-none rounded-r-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 border"
                                             placeholder="Same as phone or new">
