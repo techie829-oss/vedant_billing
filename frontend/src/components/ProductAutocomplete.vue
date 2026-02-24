@@ -6,14 +6,21 @@
             class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-xs sm:text-sm sm:leading-6"
             placeholder="Select or enter product" />
         <div v-if="isOpen && filteredItems.length > 0"
-            class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+            class="absolute z-50 mt-1 max-h-60 w-full min-w-[350px] max-w-[90vw] -left-2 sm:left-0 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
             <div v-for="(item, index) in filteredItems" :key="item.id" @mousedown.prevent="selectItem(item)"
                 class="relative cursor-pointer select-none py-2 pl-3 pr-9"
                 :class="{ 'bg-indigo-600 text-white': index === highlightedIndex, 'text-gray-900': index !== highlightedIndex }"
                 @mouseenter="highlightedIndex = index">
-                <div class="flex justify-between">
-                    <span class="block truncate" :class="{ 'font-semibold': isSelected(item) }">{{ item.name }}</span>
-                    <span class="opacity-75 text-xs self-center">₹{{ item.sale_price }}</span>
+                <div class="flex justify-between items-start">
+                    <div class="flex flex-col pr-2">
+                        <span class="block break-words text-sm" :class="{ 'font-semibold': isSelected(item) }">{{
+                            item.name }}</span>
+                        <span v-if="item.type === 'goods'" class="text-[10px] text-gray-500 mt-0.5 font-medium">
+                            Stock: {{ item.current_stock !== undefined && item.current_stock !== null ?
+                                item.current_stock : 0 }} {{ item.unit || '' }}
+                        </span>
+                    </div>
+                    <span class="opacity-75 text-xs whitespace-nowrap mt-0.5 font-medium">₹{{ item.sale_price }}</span>
                 </div>
             </div>
         </div>

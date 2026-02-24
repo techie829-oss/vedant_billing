@@ -161,7 +161,7 @@
                                         </div>
 
                                         <div class="flex space-x-2">
-                                            <button @click="addNewProduct(item.temp_product.id)"
+                                            <button @click="openNewProductModal(item)"
                                                 class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none">
                                                 Add as New
                                             </button>
@@ -305,6 +305,72 @@
                 </div>
             </div>
         </div>
+
+        <!-- Add As New Product Edit Modal -->
+        <div v-if="showNewProductModal" class="fixed inset-0 z-50 overflow-y-auto">
+            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                    @click="showNewProductModal = false"></div>
+
+                <div class="relative bg-white rounded-xl shadow-xl px-6 pt-6 pb-6 sm:max-w-md sm:w-full z-10 text-left">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Edit Product Details Before Adding</h3>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                            <input type="text" v-model="newProductForm.name"
+                                class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Unit Type</label>
+                                <input type="text" v-model="newProductForm.unit"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Quantity (Initial
+                                    Stock)</label>
+                                <input type="number" step="any" v-model="newProductForm.quantity"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                                <input type="number" step="any" v-model="newProductForm.price"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">GST %</label>
+                                <input type="number" step="any" v-model="newProductForm.tax_rate"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">CESS %</label>
+                                <input type="number" step="any" v-model="newProductForm.cess_rate"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="newProductError"
+                        class="mt-4 text-sm text-red-600 bg-red-50 rounded p-3 border border-red-200">
+                        {{ newProductError }}
+                    </div>
+
+                    <div class="mt-5 flex gap-3 justify-end">
+                        <button @click="showNewProductModal = false" type="button"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button @click="submitNewProduct" :disabled="creatingNewProduct" type="button"
+                            class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-60">
+                            {{ creatingNewProduct ? 'Saving...' : 'Confirm & Save' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </AppLayout>
 </template>
 
@@ -324,6 +390,32 @@ const invoiceCreated = ref(false)
 const creatingInvoice = ref(false)
 const invoiceError = ref<string | null>(null)
 const vendors = ref<any[]>([])
+
+const showNewProductModal = ref(false)
+const creatingNewProduct = ref(false)
+const newProductError = ref<string | null>(null)
+const newProductForm = ref({
+    temp_id: '',
+    name: '',
+    quantity: 1,
+    price: 0,
+    unit: 'pcs',
+    tax_rate: 0,
+    cess_rate: 0
+})
+
+function openNewProductModal(item: any) {
+    newProductForm.value = {
+        temp_id: item.temp_product.id,
+        name: item.temp_product.name || '',
+        quantity: Number(item.temp_product.quantity) || 1,
+        price: Number(item.temp_product.price) || 0,
+        unit: item.temp_product.unit || 'pcs',
+        tax_rate: Number(item.temp_product.tax_rate) || 0,
+        cess_rate: Number(item.temp_product.cess_rate) || 0
+    }
+    showNewProductModal.value = true
+}
 
 const today = new Date().toISOString().split('T')[0]
 const in30 = new Date(Date.now() + 30 * 864e5).toISOString().split('T')[0]
@@ -413,12 +505,26 @@ async function matchProduct(tempId: string, productId: string) {
     }
 }
 
-async function addNewProduct(tempId: string) {
+async function submitNewProduct() {
+    newProductError.value = null
+    creatingNewProduct.value = true
     try {
-        await client.post(`/temp-products/${tempId}/add-new`)
+        await client.post(`/temp-products/${newProductForm.value.temp_id}/add-new`, {
+            name: newProductForm.value.name,
+            quantity: Number(newProductForm.value.quantity),
+            unit: newProductForm.value.unit,
+            price: Number(newProductForm.value.price),
+            tax_rate: Number(newProductForm.value.tax_rate),
+            cess_rate: Number(newProductForm.value.cess_rate),
+            update_inventory: true
+        })
+        showNewProductModal.value = false
         await fetchScanDetails()
     } catch (error: any) {
-        alert(error.response?.data?.message || 'Add failed')
+        console.error('Validation Error payload:', error.response?.data)
+        newProductError.value = error.response?.data?.message || 'Add failed'
+    } finally {
+        creatingNewProduct.value = false
     }
 }
 

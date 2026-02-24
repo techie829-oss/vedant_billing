@@ -374,13 +374,38 @@ class InvoiceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Invoice $invoice)
+    public function destroy(\Illuminate\Http\Request $request, Invoice $invoice)
     {
         Gate::authorize('delete', $invoice);
 
         if (!$invoice->isEditable()) {
             return response()->json(['message' => 'Cannot delete a finalized invoice.'], 403);
         }
+
+        $revertInventory = $request->query('revert_inventory') == '1';
+
+        // Revert inventory if requested and it's a purchase-related item 
+        // Note: For sales invoices, reverting would mean incrementing stock, 
+        // but typically "Purchase" invoices increment stock on creation, so deleting them should decrement.
+        if ($revertInventory && $invoice->type === 'purchase') {
+            foreach ($invoice->items as $item) {
+                if ($item->product_id) {
+                    $product = \App\Models\Product::find($item->product_id);
+                    if ($product && $product->type === 'goods') {
+                        $product->decrement('current_stock', $item->quantity);
+
+                        // Log transaction
+                        \App\Models\InventoryTransaction::create([
+                            'product_id' => $product->id,
+                            'type' => 'adjustment',
+                            'quantity' => -$item->quantity, // Negative because we are removing it
+                            'notes' => "Reverted from deleted scan/invoice #{$invoice->invoice_number}",
+                        ]);
+                    }
+                }
+            }
+        }
+
         $invoice->delete();
         return response()->noContent();
     }

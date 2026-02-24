@@ -20,6 +20,9 @@
                                 </h3>
                                 <div class="mt-2">
                                     <p class="text-sm text-gray-500">{{ message }}</p>
+                                    <div class="mt-4">
+                                        <slot></slot>
+                                    </div>
                                 </div>
                             </div>
                         </div>

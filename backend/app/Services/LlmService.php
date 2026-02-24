@@ -10,8 +10,8 @@ class LlmService
   protected string $provider;
   protected string $ollamaBaseUrl;
   protected string $ollamaModel;
-  protected string $geminiApiKey;
   protected string $geminiModel;
+  protected array $geminiApiKeys;
 
   public function __construct()
   {
@@ -22,7 +22,8 @@ class LlmService
     $this->ollamaModel = env('OLLAMA_MODEL', 'llama3:latest');
 
     // Gemini config
-    $this->geminiApiKey = env('GEMINI_API_KEY', '');
+    $keysString = env('GEMINI_API_KEY', '');
+    $this->geminiApiKeys = array_filter(array_map('trim', explode(',', $keysString)));
     $this->geminiModel = env('GEMINI_MODEL', 'gemini-1.5-flash');
   }
 
@@ -241,60 +242,82 @@ EOT;
   /**
    * Execute request using Google Gemini API
    * Uses Vision API if imagePath is provided, bypassing previous OCR steps
+   * Supports rotating through multiple API keys if quota is exceeded
    */
   protected function callGemini(string $prompt, string $context, ?string $imagePath = null): array
   {
-    try {
-      if (empty($this->geminiApiKey)) {
-        throw new \Exception("GEMINI_API_KEY is not configured in .env");
-      }
-
-      $url = "https://generativelanguage.googleapis.com/v1beta/models/{$this->geminiModel}:generateContent?key={$this->geminiApiKey}";
-
-      $parts = [];
-      $parts[] = ['text' => $prompt];
-
-      // Add image data if provided (native Gemini Vision OCR)
-      if ($imagePath && file_exists($imagePath)) {
-        $mimeType = mime_content_type($imagePath) ?: 'image/jpeg';
-        $base64 = base64_encode(file_get_contents($imagePath));
-        $parts[] = [
-          'inlineData' => [
-            'mimeType' => $mimeType,
-            'data' => $base64
-          ]
-        ];
-        Log::info("Gemini {$context} Request: Included image for native Vision parsing");
-      }
-
-      $response = Http::timeout(120)->withHeaders([
-        'Content-Type' => 'application/json',
-      ])->post($url, [
-            'contents' => [
-              [
-                'parts' => $parts
-              ]
-            ],
-            'generationConfig' => [
-              'responseMimeType' => 'application/json',
-            ]
-          ]);
-
-      if ($response->failed()) {
-        throw new \Exception("Gemini API Error: " . $response->body());
-      }
-
-      $data = $response->json();
-      $content = $data['candidates'][0]['content']['parts'][0]['text'] ?? '{}';
-
-      Log::info("Gemini {$context} Response: " . substr($content, 0, 200) . "...");
-
-      return $this->cleanAndDecodeJson($content);
-
-    } catch (\Exception $e) {
-      Log::error("Gemini {$context} Extraction Failed: " . $e->getMessage());
+    if (empty($this->geminiApiKeys)) {
+      Log::error("GEMINI_API_KEY is not configured in .env");
       return [];
     }
+
+    $lastException = null;
+
+    foreach ($this->geminiApiKeys as $index => $apiKey) {
+      try {
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/{$this->geminiModel}:generateContent?key={$apiKey}";
+
+        $parts = [];
+        $parts[] = ['text' => $prompt];
+
+        // Add image data if provided (native Gemini Vision OCR)
+        if ($imagePath && file_exists($imagePath)) {
+          $mimeType = mime_content_type($imagePath) ?: 'image/jpeg';
+          $base64 = base64_encode(file_get_contents($imagePath));
+          $parts[] = [
+            'inlineData' => [
+              'mimeType' => $mimeType,
+              'data' => $base64
+            ]
+          ];
+          if ($index === 0) {
+            Log::info("Gemini {$context} Request: Included image for native Vision parsing");
+          }
+        }
+
+        $response = Http::timeout(120)->withHeaders([
+          'Content-Type' => 'application/json',
+        ])->post($url, [
+              'contents' => [
+                [
+                  'parts' => $parts
+                ]
+              ],
+              'generationConfig' => [
+                'responseMimeType' => 'application/json',
+              ]
+            ]);
+
+        if ($response->failed()) {
+          $errorBody = $response->body();
+          throw new \Exception("Gemini API Error: " . $errorBody);
+        }
+
+        $data = $response->json();
+        $content = $data['candidates'][0]['content']['parts'][0]['text'] ?? '{}';
+
+        Log::info("Gemini {$context} Response (Key " . ($index + 1) . "): " . substr($content, 0, 200) . "...");
+
+        return $this->cleanAndDecodeJson($content);
+
+      } catch (\Exception $e) {
+        $lastException = $e;
+        $errorMessage = $e->getMessage();
+
+        // If it's a quota or invalid key error, try the next key
+        if (str_contains($errorMessage, 'RESOURCE_EXHAUSTED') || str_contains($errorMessage, 'API_KEY_INVALID') || str_contains($errorMessage, '429')) {
+          Log::warning("Gemini API key " . ($index + 1) . " failed (Quota/Invalid). Rotating to next key if available...");
+          continue; // Try next key
+        }
+
+        // For other errors, break and fail immediately
+        break;
+      }
+    }
+
+    // If we got here, all keys failed
+    Log::error("Gemini {$context} Extraction Failed after trying all keys: " . ($lastException ? $lastException->getMessage() : 'Unknown error'));
+    return [];
   }
 
   /**

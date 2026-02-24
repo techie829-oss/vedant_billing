@@ -204,10 +204,10 @@
                                     searchable />
 
                                 <div class="mt-2 text-right">
-                                    <router-link to="/parties/create?type=customer"
-                                        class="text-sm text-indigo-600 hover:text-indigo-500">
+                                    <button @click="showCustomerModal = true" type="button"
+                                        class="text-sm font-medium text-indigo-600 hover:text-indigo-500 bg-transparent border-0 cursor-pointer">
                                         + Add New Customer
-                                    </router-link>
+                                    </button>
                                 </div>
                             </div>
 
@@ -684,6 +684,69 @@
             </div>
 
         </form>
+        <!-- Quick Add Customer Modal -->
+        <div v-if="showCustomerModal" class="fixed inset-0 z-50 overflow-y-auto">
+            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                    @click="showCustomerModal = false">
+                </div>
+
+                <div class="relative bg-white rounded-xl shadow-xl px-6 pt-6 pb-6 sm:max-w-md sm:w-full z-10 text-left">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Add New Customer</h3>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Customer Name <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" v-model="newCustomerForm.name" required
+                                class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">GSTIN (Optional)</label>
+                            <div class="flex gap-2">
+                                <input type="text" v-model="newCustomerForm.gstin"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                                <button type="button" @click="fetchGstForNewCustomer"
+                                    :disabled="fetchingGst || !newCustomerForm.gstin || newCustomerForm.gstin.length < 15"
+                                    class="rounded-md bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-100 disabled:opacity-50">
+                                    {{ fetchingGst ? '...' : 'Fetch' }}
+                                </button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                <input type="text" v-model="newCustomerForm.phone"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                <input type="email" v-model="newCustomerForm.email"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                            <input type="text" v-model="newCustomerForm.city"
+                                class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                        </div>
+                    </div>
+
+                    <div class="mt-5 flex gap-3 justify-end">
+                        <button @click="showCustomerModal = false" type="button"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button @click="saveNewCustomer" :disabled="savingCustomer || !newCustomerForm.name"
+                            type="button"
+                            class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-60">
+                            {{ savingCustomer ? 'Saving...' : 'Confirm & Save' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </AppLayout>
 </template>
 
@@ -761,6 +824,73 @@ const getDocumentTypeLabel = () => {
 
 const customers = ref<any[]>([])
 const products = ref<Product[]>([])
+
+// Quick Add Customer State
+const showCustomerModal = ref(false)
+const savingCustomer = ref(false)
+const fetchingGst = ref(false)
+const newCustomerForm = ref({
+    name: '',
+    gstin: '',
+    phone: '',
+    email: '',
+    city: ''
+})
+
+const fetchGstForNewCustomer = async () => {
+    if (!newCustomerForm.value.gstin) return
+    fetchingGst.value = true
+    try {
+        const response = await client.get(`/gst-lookup/${newCustomerForm.value.gstin}`)
+        const data = response.data
+        if (data.legal_name) {
+            newCustomerForm.value.name = data.trade_name || data.legal_name
+            const addr = data.address || {}
+            newCustomerForm.value.city = addr.city || ''
+        } else {
+            alert('Could not fetch details for this GSTIN. It might be invalid or the API might be down.')
+        }
+    } catch (error) {
+        alert('Error fetching GST details.')
+        console.error(error)
+    } finally {
+        fetchingGst.value = false
+    }
+}
+
+const saveNewCustomer = async () => {
+    if (!newCustomerForm.value.name) {
+        alert('Customer name is required')
+        return
+    }
+    savingCustomer.value = true
+    try {
+        const payload = {
+            party_type: 'customer',
+            name: newCustomerForm.value.name,
+            gstin: newCustomerForm.value.gstin,
+            phone: newCustomerForm.value.phone,
+            email: newCustomerForm.value.email,
+            billing_address: {
+                city: newCustomerForm.value.city
+            }
+        }
+        const res = await client.post('/parties', payload)
+
+        // Add to list and select it
+        const newCustomer = res.data.data || res.data
+        customers.value.push(newCustomer)
+        form.value.party_id = newCustomer.id
+
+        // Reset and close
+        showCustomerModal.value = false
+        newCustomerForm.value = { name: '', gstin: '', phone: '', email: '', city: '' }
+    } catch (e: any) {
+        alert(e.response?.data?.message || 'Failed to save customer')
+    } finally {
+        savingCustomer.value = false
+    }
+}
 
 // Display Options State
 const showDisplayOptions = ref(true) // Changed to true - visible by default

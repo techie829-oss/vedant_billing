@@ -130,7 +130,8 @@
                   {{ invoice.invoice_number }}
                 </router-link>
               </td>
-              <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">{{ invoice.party?.name || 'Unknown' }}</td>
+              <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">{{ invoice.party?.name || 'Unknown' }}
+              </td>
               <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">{{ formatDate(invoice.date) }}</td>
               <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">{{ formatDate(invoice.due_date) }}</td>
               <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">
@@ -192,6 +193,29 @@
           class="relative ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0 disabled:opacity-50">Next</button>
       </div>
     </div>
+
+    <!-- Confirmation Modal -->
+    <ConfirmationModal :is-open="confirmModal.isOpen" :title="confirmModal.title" :message="confirmModal.message"
+      :confirm-text="confirmModal.confirmText" :processing="confirmModal.processing" @close="closeConfirmModal"
+      @confirm="handleConfirm">
+      <div v-if="confirmModal.showInventoryToggle"
+        class="mt-4 bg-gray-50 border border-gray-200 rounded-lg p-4 flex items-center justify-between">
+        <div class="flex flex-col">
+          <span class="text-sm font-medium text-gray-900">Revert Inventory Stock</span>
+          <span class="text-xs text-gray-500">Remove stock quantities added by this invoice</span>
+        </div>
+        <!-- Toggle Switch -->
+        <button type="button"
+          class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
+          :class="[confirmModal.revertInventory ? 'bg-indigo-600' : 'bg-gray-200']"
+          @click="confirmModal.revertInventory = !confirmModal.revertInventory">
+          <span class="sr-only">Toggle revert inventory</span>
+          <span aria-hidden="true"
+            class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+            :class="[confirmModal.revertInventory ? 'translate-x-5' : 'translate-x-0']" />
+        </button>
+      </div>
+    </ConfirmationModal>
   </AppLayout>
 </template>
 
@@ -201,6 +225,7 @@ import AppLayout from '../../layouts/AppLayout.vue'
 import { useAuthStore } from '../../stores/auth'
 import { useInvoiceStore } from '../../stores/invoice'
 import { storeToRefs } from 'pinia'
+import ConfirmationModal from '../../components/ConfirmationModal.vue'
 
 // No longer using useRoute since this is dedicated to Invoices
 const authStore = useAuthStore()
@@ -258,11 +283,58 @@ const getStatusClass = (status: string) => {
   }
 }
 
-const deleteInv = async (id: string) => {
-  if (confirm(`Are you sure you want to delete this invoice?`)) {
-    await invoiceStore.deleteInvoice(id)
-    refresh()
+// Modal States
+const confirmModal = ref({
+  isOpen: false,
+  title: '',
+  message: '',
+  confirmText: 'Confirm',
+  processing: false,
+  showInventoryToggle: false,
+  revertInventory: false,
+  onConfirm: async () => { }
+})
+
+const showConfirm = (title: string, message: string, onConfirm: () => Promise<void>, confirmText = 'Confirm', showInventoryToggle = false) => {
+  confirmModal.value = {
+    isOpen: true,
+    title,
+    message,
+    confirmText,
+    processing: false,
+    showInventoryToggle,
+    revertInventory: false,
+    onConfirm
   }
+}
+
+const closeConfirmModal = () => {
+  confirmModal.value.isOpen = false
+}
+
+const handleConfirm = async () => {
+  confirmModal.value.processing = true
+  try {
+    await confirmModal.value.onConfirm()
+    closeConfirmModal()
+  } catch (e) {
+    console.error(e)
+  } finally {
+    confirmModal.value.processing = false
+  }
+}
+
+const deleteInv = (id: string) => {
+  showConfirm(
+    'Delete Invoice',
+    'Are you sure you want to delete this invoice? This action cannot be undone.',
+    async () => {
+      await invoiceStore.deleteInvoice(id, confirmModal.value.revertInventory)
+      refresh()
+    },
+    'Delete',
+    true // showInventoryToggle
+  )
 }
 
 onMounted(() => {

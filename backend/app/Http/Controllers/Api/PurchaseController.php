@@ -88,10 +88,12 @@ class PurchaseController extends Controller
             $partyId = $validated['party_id'] ?? null;
 
             if (!$partyId && !empty($validated['vendor_name'])) {
+                $vendorName = trim($validated['vendor_name']);
+
                 // Try to find existing vendor by name
                 $vendor = Party::where('business_id', $businessId)
                     ->where('party_type', 'vendor')
-                    ->whereRaw('LOWER(name) = ?', [strtolower($validated['vendor_name'])])
+                    ->whereRaw('LOWER(name) = ?', [strtolower($vendorName)])
                     ->first();
 
                 if (!$vendor) {
@@ -99,7 +101,7 @@ class PurchaseController extends Controller
                     $vendor = Party::create([
                         'business_id' => $businessId,
                         'party_type' => 'vendor',
-                        'name' => $validated['vendor_name'],
+                        'name' => $vendorName,
                         'gstin' => $validated['vendor_gstin'] ?? null,
                         'billing_address' => $validated['vendor_address'] ?? null,
                         'status' => 'active',
@@ -135,6 +137,7 @@ class PurchaseController extends Controller
             // Create items and calculate totals
             $subtotal = 0;
             $taxTotal = 0;
+            $cessTotal = 0;
             $discountTotal = 0;
 
             foreach ($validated['items'] as $itemData) {
@@ -143,6 +146,7 @@ class PurchaseController extends Controller
                 $discount = $itemData['discount'] ?? 0;
                 $discountType = $itemData['discount_type'] ?? 'amount';
                 $taxRate = $itemData['tax_rate'] ?? 0;
+                $cessRate = $itemData['cess_rate'] ?? 0;
 
                 $gross = $qty * $price;
                 $discountAmt = $discountType === 'percentage'
@@ -151,7 +155,8 @@ class PurchaseController extends Controller
 
                 $base = $gross - $discountAmt;
                 $taxAmt = $base * ($taxRate / 100);
-                $total = $base + $taxAmt;
+                $cessAmt = $base * ($cessRate / 100);
+                $total = $base + $taxAmt + $cessAmt;
 
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
@@ -166,6 +171,8 @@ class PurchaseController extends Controller
                     'discount_type' => $discountType,
                     'tax_rate' => $taxRate,
                     'tax_amount' => $taxAmt,
+                    'cess_rate' => $cessRate,
+                    'cess_amount' => $cessAmt,
                     'total' => $total,
                     'batch_number' => $itemData['batch_number'] ?? null,
                     'expiry_date' => $itemData['expiry_date'] ?? null,
@@ -190,13 +197,15 @@ class PurchaseController extends Controller
                 $subtotal += $base + $discount; // Gross subtotal before discount
                 $discountTotal += $discount;
                 $taxTotal += $taxAmt;
+                $cessTotal += $cessAmt;
             }
 
             $invoice->update([
                 'subtotal' => $subtotal,
                 'discount_total' => $discountTotal,
                 'tax_total' => $taxTotal,
-                'grand_total' => ($subtotal - $discountTotal) + $taxTotal,
+                'cess_total' => $cessTotal,
+                'grand_total' => ($subtotal - $discountTotal) + $taxTotal + $cessTotal,
             ]);
 
             // Update matching invoice scan if provided

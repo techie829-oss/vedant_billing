@@ -240,10 +240,12 @@ export const useInvoiceStore = defineStore('invoice', {
             }
         },
 
-        async deleteInvoice(id: string) {
+        async deleteInvoice(id: string, revertInventory: boolean = false) {
             this.loading = true
             try {
-                await client.delete(`/invoices/${id}`)
+                await client.delete(`/invoices/${id}`, {
+                    params: { revert_inventory: revertInventory ? 1 : 0 }
+                })
                 this.invoices = this.invoices.filter(i => i.id !== id)
             } catch (error: any) {
                 this.error = error.response?.data?.message || 'Failed to delete invoice'

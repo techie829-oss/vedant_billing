@@ -365,7 +365,25 @@
 
     <ConfirmationModal :is-open="confirmModal.isOpen" :title="confirmModal.title" :message="confirmModal.message"
         :confirm-text="confirmModal.confirmText" :processing="confirmModal.processing" @close="closeConfirmModal"
-        @confirm="handleConfirm" />
+        @confirm="handleConfirm">
+        <div v-if="confirmModal.showInventoryToggle"
+            class="mt-4 bg-gray-50 border border-gray-200 rounded-lg p-4 flex items-center justify-between">
+            <div class="flex flex-col">
+                <span class="text-sm font-medium text-gray-900">Revert Inventory Stock</span>
+                <span class="text-xs text-gray-500">Remove stock quantities added by this invoice</span>
+            </div>
+            <!-- Toggle Switch -->
+            <button type="button"
+                class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
+                :class="[confirmModal.revertInventory ? 'bg-indigo-600' : 'bg-gray-200']"
+                @click="confirmModal.revertInventory = !confirmModal.revertInventory">
+                <span class="sr-only">Toggle revert inventory</span>
+                <span aria-hidden="true"
+                    class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                    :class="[confirmModal.revertInventory ? 'translate-x-5' : 'translate-x-0']" />
+            </button>
+        </div>
+    </ConfirmationModal>
 
     <AlertModal :is-open="alertModal.isOpen" :title="alertModal.title" :message="alertModal.message"
         :type="alertModal.type" @close="alertModal.isOpen = false" />
@@ -406,6 +424,8 @@ const confirmModal = ref({
     message: '',
     confirmText: 'Confirm',
     processing: false,
+    showInventoryToggle: false,
+    revertInventory: false,
     onConfirm: async () => { }
 })
 
@@ -425,13 +445,15 @@ const showAlert = (message: string, title = 'Info', type = 'info') => {
     }
 }
 
-const showConfirm = (title: string, message: string, onConfirm: () => Promise<void>, confirmText = 'Confirm') => {
+const showConfirm = (title: string, message: string, onConfirm: () => Promise<void>, confirmText = 'Confirm', showInventoryToggle = false) => {
     confirmModal.value = {
         isOpen: true,
         title,
         message,
         confirmText,
         processing: false,
+        showInventoryToggle,
+        revertInventory: false, // default no
         onConfirm
     }
 }
