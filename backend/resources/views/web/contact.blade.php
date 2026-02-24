@@ -110,17 +110,16 @@
                                     <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number <span
                                             class="text-red-500">*</span></label>
                                     <div
-                                        class="mt-1 flex rounded-md shadow-sm border border-gray-300 focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500 overflow-hidden">
+                                        class="mt-1 flex flex-row items-stretch w-full rounded-md shadow-sm border border-gray-300 focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500 overflow-hidden bg-white">
                                         <span
-                                            class="inline-flex items-center px-3 bg-gray-50 text-gray-500 sm:text-sm border-r border-gray-200">
+                                            class="inline-flex items-center justify-center px-3 bg-gray-50 text-gray-500 sm:text-sm border-r border-gray-200">
                                             +
                                         </span>
                                         <input type="text" name="country_code" id="country_code" required
-                                            class="block w-[50px] sm:w-[60px] border-0 text-gray-900 focus:ring-0 sm:text-sm px-2 py-3 bg-white"
+                                            class="block w-16 min-w-[64px] border-0 border-r border-gray-200 text-gray-900 focus:ring-0 sm:text-sm px-2 py-3 bg-white text-center"
                                             placeholder="91" value="91">
-                                        <div class="w-px bg-gray-300"></div>
                                         <input type="tel" name="phone" id="phone" required
-                                            class="flex-1 block w-full border-0 px-4 py-3 text-gray-900 focus:ring-0 sm:text-sm"
+                                            class="flex-1 block w-full min-w-0 border-0 px-4 py-3 text-gray-900 focus:ring-0 sm:text-sm"
                                             placeholder="90000 00000">
                                     </div>
                                     @error('country_code')
@@ -136,17 +135,16 @@
                                     <label for="whatsapp_number" class="block text-sm font-medium text-gray-700">WhatsApp
                                         Number</label>
                                     <div
-                                        class="mt-1 flex rounded-md shadow-sm border border-gray-300 focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500 overflow-hidden">
+                                        class="mt-1 flex flex-row items-stretch w-full rounded-md shadow-sm border border-gray-300 focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500 overflow-hidden bg-white">
                                         <span
-                                            class="inline-flex items-center px-3 bg-gray-50 text-gray-500 sm:text-sm border-r border-gray-200">
+                                            class="inline-flex items-center justify-center px-3 bg-gray-50 text-gray-500 sm:text-sm border-r border-gray-200">
                                             +
                                         </span>
                                         <input type="text" name="whatsapp_country_code" id="whatsapp_country_code"
-                                            class="block w-[50px] sm:w-[60px] border-0 text-gray-900 focus:ring-0 sm:text-sm px-2 py-3 bg-white"
+                                            class="block w-16 min-w-[64px] border-0 border-r border-gray-200 text-gray-900 focus:ring-0 sm:text-sm px-2 py-3 bg-white text-center"
                                             placeholder="91">
-                                        <div class="w-px border-l border-gray-300"></div>
                                         <input type="tel" name="whatsapp_number" id="whatsapp_number"
-                                            class="flex-1 block w-full border-0 px-4 py-3 text-gray-900 focus:ring-0 sm:text-sm"
+                                            class="flex-1 block w-full min-w-0 border-0 px-4 py-3 text-gray-900 focus:ring-0 sm:text-sm"
                                             placeholder="Same as phone">
                                     </div>
                                     @error('whatsapp_number')
