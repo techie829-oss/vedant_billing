@@ -1,7 +1,8 @@
 @extends('layouts.web')
 
 @section('title', 'Pricing Plans - Affordable GST Billing Software | VedantBilling')
-@section('description', 'Simple, transparent pricing for Indian businesses. Start with our Free Plan or upgrade for
+@section('description',
+    'Simple, transparent pricing for Indian businesses. Start with our Free Plan or upgrade for
     advanced GST features. No hidden fees.')
 @section('keywords', 'billing software pricing, free gst software, invoicing plans, small business software cost')
 
@@ -97,21 +98,60 @@
             <div class="text-center mb-16">
                 <h2 class="text-3xl font-extrabold tracking-tight text-gray-900">Frequently Asked Questions</h2>
             </div>
-            <div class="space-y-8">
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900">Is VedantBilling really free?</h3>
-                    <p class="mt-2 text-gray-500">Yes! Our Starter plan is completely free forever for small businesses.
+            <div class="space-y-4">
+                <details
+                    class="group border border-gray-200 rounded-xl bg-white [&_summary::-webkit-details-marker]:hidden shadow-sm">
+                    <summary
+                        class="flex justify-between items-center font-medium cursor-pointer list-none px-6 py-5 text-gray-900 bg-gray-50 hover:bg-gray-100 transition-colors rounded-xl group-open:rounded-b-none group-open:bg-gray-100">
+                        <span class="text-lg">Is VedantBilling really free?</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" class="h-5 w-5 text-gray-500" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <p
+                        class="px-6 py-5 text-gray-600 bg-white rounded-b-xl border-t border-gray-100 leading-relaxed text-base">
+                        Yes! Our Starter plan is completely free forever for small businesses.
                     </p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900">Can I upgrade later?</h3>
-                    <p class="mt-2 text-gray-500">Absolutely. You can upgrade or downgrade your plan at any time from your
-                        dashboard.</p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900">What payment methods do you accept?</h3>
-                    <p class="mt-2 text-gray-500">We accept all major credit cards, debit cards, and UPI payments.</p>
-                </div>
+                </details>
+
+                <details
+                    class="group border border-gray-200 rounded-xl bg-white [&_summary::-webkit-details-marker]:hidden shadow-sm">
+                    <summary
+                        class="flex justify-between items-center font-medium cursor-pointer list-none px-6 py-5 text-gray-900 bg-gray-50 hover:bg-gray-100 transition-colors rounded-xl group-open:rounded-b-none group-open:bg-gray-100">
+                        <span class="text-lg">Can I upgrade later?</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" class="h-5 w-5 text-gray-500" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <p
+                        class="px-6 py-5 text-gray-600 bg-white rounded-b-xl border-t border-gray-100 leading-relaxed text-base">
+                        Absolutely. You can upgrade or downgrade your plan at any time from your dashboard.
+                    </p>
+                </details>
+
+                <details
+                    class="group border border-gray-200 rounded-xl bg-white [&_summary::-webkit-details-marker]:hidden shadow-sm">
+                    <summary
+                        class="flex justify-between items-center font-medium cursor-pointer list-none px-6 py-5 text-gray-900 bg-gray-50 hover:bg-gray-100 transition-colors rounded-xl group-open:rounded-b-none group-open:bg-gray-100">
+                        <span class="text-lg">What payment methods do you accept?</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" class="h-5 w-5 text-gray-500" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <p
+                        class="px-6 py-5 text-gray-600 bg-white rounded-b-xl border-t border-gray-100 leading-relaxed text-base">
+                        We accept all major credit cards, debit cards, and UPI payments.
+                    </p>
+                </details>
             </div>
         </div>
     </div>

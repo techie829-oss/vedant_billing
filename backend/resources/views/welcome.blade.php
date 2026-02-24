@@ -469,32 +469,101 @@
                 </p>
             </div>
 
-            <div class="space-y-8">
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900">Is VedantBilling GST compliant?</h3>
-                    <p class="mt-2 text-gray-500">Yes. VedantBilling supports CGST, SGST, IGST, HSN codes, GST‑ready
-                        invoice formats and tax summary reports for easy GST filing.</p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900">Can I use VedantBilling for free?</h3>
-                    <p class="mt-2 text-gray-500">Yes. We offer a free plan for small businesses. You can also try paid
-                        plans free for 14 days before upgrading.</p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900">Is my data secure?</h3>
-                    <p class="mt-2 text-gray-500">Yes. Your data is protected with secure login, role‑based access and
-                        separate data storage for each business.</p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900">Can I verify invoices online?</h3>
-                    <p class="mt-2 text-gray-500">Yes. Every invoice includes a secure verification link that allows
-                        customers and auditors to verify invoice authenticity online.</p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-medium text-gray-900">How can I pay for my subscription?</h3>
-                    <p class="mt-2 text-gray-500">You can pay for your VedantBilling subscription using credit cards, debit
-                        cards and UPI through secure online payment integration.</p>
-                </div>
+            <div class="space-y-4">
+                <details
+                    class="group border border-gray-200 rounded-xl bg-white [&_summary::-webkit-details-marker]:hidden shadow-sm">
+                    <summary
+                        class="flex justify-between items-center font-medium cursor-pointer list-none px-6 py-5 text-gray-900 bg-gray-50 hover:bg-gray-100 transition-colors rounded-xl group-open:rounded-b-none group-open:bg-gray-100">
+                        <span class="text-lg">Is VedantBilling GST compliant?</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" class="h-5 w-5 text-gray-500" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <p
+                        class="px-6 py-5 text-gray-600 bg-white rounded-b-xl border-t border-gray-100 leading-relaxed text-base">
+                        Yes. VedantBilling supports CGST, SGST, IGST, HSN codes, GST‑ready
+                        invoice formats and tax summary reports for easy GST filing.
+                    </p>
+                </details>
+
+                <details
+                    class="group border border-gray-200 rounded-xl bg-white [&_summary::-webkit-details-marker]:hidden shadow-sm">
+                    <summary
+                        class="flex justify-between items-center font-medium cursor-pointer list-none px-6 py-5 text-gray-900 bg-gray-50 hover:bg-gray-100 transition-colors rounded-xl group-open:rounded-b-none group-open:bg-gray-100">
+                        <span class="text-lg">Can I use VedantBilling for free?</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" class="h-5 w-5 text-gray-500" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <p
+                        class="px-6 py-5 text-gray-600 bg-white rounded-b-xl border-t border-gray-100 leading-relaxed text-base">
+                        Yes. We offer a free plan for small businesses. You can also try paid
+                        plans free for 14 days before upgrading.
+                    </p>
+                </details>
+
+                <details
+                    class="group border border-gray-200 rounded-xl bg-white [&_summary::-webkit-details-marker]:hidden shadow-sm">
+                    <summary
+                        class="flex justify-between items-center font-medium cursor-pointer list-none px-6 py-5 text-gray-900 bg-gray-50 hover:bg-gray-100 transition-colors rounded-xl group-open:rounded-b-none group-open:bg-gray-100">
+                        <span class="text-lg">Is my data secure?</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" class="h-5 w-5 text-gray-500" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <p
+                        class="px-6 py-5 text-gray-600 bg-white rounded-b-xl border-t border-gray-100 leading-relaxed text-base">
+                        Yes. Your data is protected with secure login, role‑based access and
+                        separate data storage for each business.
+                    </p>
+                </details>
+
+                <details
+                    class="group border border-gray-200 rounded-xl bg-white [&_summary::-webkit-details-marker]:hidden shadow-sm">
+                    <summary
+                        class="flex justify-between items-center font-medium cursor-pointer list-none px-6 py-5 text-gray-900 bg-gray-50 hover:bg-gray-100 transition-colors rounded-xl group-open:rounded-b-none group-open:bg-gray-100">
+                        <span class="text-lg">Can I verify invoices online?</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" class="h-5 w-5 text-gray-500" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <p
+                        class="px-6 py-5 text-gray-600 bg-white rounded-b-xl border-t border-gray-100 leading-relaxed text-base">
+                        Yes. Every invoice includes a secure verification link that allows
+                        customers and auditors to verify invoice authenticity online.
+                    </p>
+                </details>
+
+                <details
+                    class="group border border-gray-200 rounded-xl bg-white [&_summary::-webkit-details-marker]:hidden shadow-sm">
+                    <summary
+                        class="flex justify-between items-center font-medium cursor-pointer list-none px-6 py-5 text-gray-900 bg-gray-50 hover:bg-gray-100 transition-colors rounded-xl group-open:rounded-b-none group-open:bg-gray-100">
+                        <span class="text-lg">How can I pay for my subscription?</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" class="h-5 w-5 text-gray-500" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </span>
+                    </summary>
+                    <p
+                        class="px-6 py-5 text-gray-600 bg-white rounded-b-xl border-t border-gray-100 leading-relaxed text-base">
+                        You can pay for your VedantBilling subscription using credit cards, debit
+                        cards and UPI through secure online payment integration.
+                    </p>
+                </details>
             </div>
         </div>
     </div>
