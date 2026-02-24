@@ -61,7 +61,7 @@
                                 <div class="text-xs text-gray-400">{{ $lead->created_at->format('h:i A') }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <a href="{{ route('leads.show', $lead) }}"
+                                <a href="{{ route('internal.leads.show', $lead) }}"
                                     class="text-blue-600 hover:text-blue-900 transition-colors border border-blue-200 bg-blue-50 px-3 py-1.5 rounded-md hover:bg-blue-100">Manage</a>
                             </td>
                         </tr>

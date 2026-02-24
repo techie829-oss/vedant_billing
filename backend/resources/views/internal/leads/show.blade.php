@@ -3,7 +3,7 @@
 @section('header')
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-gray-900">Manage Lead: {{ $lead->name }}</h1>
-        <a href="{{ route('leads.index') }}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
+        <a href="{{ route('internal.leads.index') }}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
             &larr; Back to Leads
         </a>
     </div>
@@ -84,7 +84,7 @@
         <!-- Management Column -->
         <div class="lg:col-span-1">
             <div class="bg-white shadow border border-gray-200 rounded-lg overflow-hidden sticky top-6">
-                <form action="{{ route('leads.update', $lead) }}" method="POST">
+                <form action="{{ route('internal.leads.update', $lead) }}" method="POST">
                     @csrf
                     @method('PUT')
 

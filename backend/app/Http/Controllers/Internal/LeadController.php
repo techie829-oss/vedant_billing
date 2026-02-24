@@ -61,7 +61,7 @@ class LeadController extends Controller
 
         $lead->update($validated);
 
-        return redirect()->route('leads.show', $lead)
+        return redirect()->route('internal.leads.show', $lead)
             ->with('success', 'Lead updated successfully.');
     }
 
