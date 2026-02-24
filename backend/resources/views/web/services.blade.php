@@ -221,11 +221,22 @@
                     </div>
 
                     <div class="mt-10 -mx-4 relative lg:mt-0" aria-hidden="true">
-                        <div
-                            class="relative mx-auto w-full max-w-lg rounded-2xl shadow-2xl lg:max-w-none border border-gray-100 overflow-hidden bg-white p-2 sm:p-4">
-                            <!-- Edit Purchase Invoice Image passed by User -->
-                            <img src="{{ asset('images/edit-purchase.png') }}" alt="Edit Purchase Invoice Layout"
-                                class="w-full h-auto object-cover rounded-xl hover:scale-105 transition-transform duration-500">
+                        <!-- Abstract Report UI Representation -->
+                        <div class="relative mx-auto w-[24rem] rounded-lg shadow-lg lg:max-w-none">
+                            <div class="bg-white rounded-lg shadow-xl overflow-hidden border border-gray-100 p-6">
+                                <h4 class="font-bold text-gray-900 mb-4">Sales Analytics</h4>
+                                <div class="flex items-end space-x-2 h-40">
+                                    <div class="w-1/6 bg-blue-100 rounded-t h-1/3"></div>
+                                    <div class="w-1/6 bg-blue-200 rounded-t h-1/2"></div>
+                                    <div class="w-1/6 bg-blue-300 rounded-t h-2/3"></div>
+                                    <div class="w-1/6 bg-blue-400 rounded-t h-1/2"></div>
+                                    <div class="w-1/6 bg-blue-500 rounded-t h-3/4"></div>
+                                    <div class="w-1/6 bg-blue-600 rounded-t h-full"></div>
+                                </div>
+                                <div class="mt-4 flex justify-between text-xs text-gray-500">
+                                    <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
