@@ -42,7 +42,8 @@
 
                     <div class="flex items-start">
                         <div class="flex-shrink-0 mt-1">
-                            <a href="https://wa.me/+917007420572" target="_blank" rel="noopener noreferrer"
+                            <a href="https://wa.me/+917007420572?text=Hello%20VedantBilling,%20I%20have%20an%20inquiry%20about%20your%20software."
+                                target="_blank" rel="noopener noreferrer"
                                 class="text-blue-600 hover:text-green-500 transition-colors" title="Chat on WhatsApp">
                                 <!-- WhatsApp Icon -->
                                 <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -54,7 +55,8 @@
                         <div class="ml-3 text-base text-gray-500">
                             <p><a href="tel:+917007420572" class="hover:text-blue-600">+91 70074 20572</a></p>
                             <p class="text-sm mt-1 border-b border-blue-100 inline-block pb-1"><a
-                                    href="https://wa.me/917007420572" target="_blank" rel="noopener noreferrer"
+                                    href="https://wa.me/917007420572?text=Hello%20VedantBilling,%20I%20have%20an%20inquiry%20about%20your%20software."
+                                    target="_blank" rel="noopener noreferrer"
                                     class="text-blue-500 hover:text-green-600 transition-colors">Chat with us on WhatsApp
                                     &rarr;</a></p>
                         </div>
