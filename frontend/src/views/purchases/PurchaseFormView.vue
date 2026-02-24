@@ -28,23 +28,34 @@
           <div class="px-4 py-5 sm:p-6">
             <h3 class="text-base font-semibold leading-7 text-gray-900 mb-6">Invoice Details</h3>
             <!-- Row 1 -->
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <!-- Vendor -->
               <div>
-                <label class="block text-sm font-medium leading-6 text-gray-900">Vendor <span
+                <label class="block text-sm font-medium leading-6 text-gray-900 mb-1">Vendor <span
                     class="text-red-500">*</span></label>
                 <div class="mt-1">
+                  <CustomSelect id="vendor" label="Vendor" v-model="form.party_id" :options="vendors" optionLabel="name"
+                    optionValue="id" placeholder="Search or Select Vendor...">
+                    <template #footer>
+                      <div class="px-3 py-2 border-t border-gray-100 bg-gray-50">
+                        <button @click="showVendorModal = true" type="button"
+                          class="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium text-indigo-600 bg-white border border-indigo-200 rounded-md hover:bg-indigo-50 hover:border-indigo-300 transition-colors shadow-sm">
+                          + Add New Vendor
+                        </button>
+                      </div>
+                    </template>
+                  </CustomSelect>
                 </div>
               </div>
-            </div>
 
-            <!-- Invoice Number -->
-            <div>
-              <label class="block text-sm font-medium leading-6 text-gray-900">Vendor's Invoice No.</label>
-              <div class="mt-1">
-                <input type="text" v-model="form.invoice_number"
-                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-                  placeholder="(Auto-generated)" />
+              <!-- Invoice Number -->
+              <div>
+                <label class="block text-sm font-medium leading-6 text-gray-900 mb-1">Vendor's Invoice No.</label>
+                <div class="mt-1">
+                  <input type="text" v-model="form.invoice_number"
+                    class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                    placeholder="(Optional)" />
+                </div>
               </div>
             </div>
           </div>
@@ -426,6 +437,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '../../layouts/AppLayout.vue'
 import client from '../../api/client'
 import ProductAutocomplete from '../../components/ProductAutocomplete.vue'
+import CustomSelect from '../../components/CustomSelect.vue'
 import { useProductStore } from '../../stores/product'
 
 const router = useRouter()

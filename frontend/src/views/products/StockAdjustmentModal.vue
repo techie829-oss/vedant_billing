@@ -37,32 +37,33 @@
                                         Update inventory for <strong>{{ product?.name }}</strong>.
                                     </p>
 
-                                    <div class="mt-4 space-y-4">
+                                    <div class="mt-5 space-y-5">
                                         <!-- Quantity -->
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700">Quantity</label>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
                                             <input type="number" step="any" v-model.number="form.quantity"
-                                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                                                 placeholder="e.g 10" min="1">
                                         </div>
 
                                         <!-- Buy Price (Only for Purchase) -->
                                         <div v-if="type === 'purchase'">
-                                            <label class="block text-sm font-medium text-gray-700">Buy Price / Unit Cost
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Buy Price / Unit
+                                                Cost
                                                 (Optional)</label>
                                             <input type="number" step="any" v-model.number="form.unit_price"
-                                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                                                 placeholder="e.g 500.00">
-                                            <p class="text-xs text-gray-500 mt-1">Updates the product's purchase price
+                                            <p class="text-xs text-gray-500 mt-1.5">Updates the product's purchase price
                                                 history.</p>
                                         </div>
 
                                         <!-- Supplier (Only for Purchase) -->
                                         <div v-if="type === 'purchase'">
-                                            <label class="block text-sm font-medium text-gray-700">Supplier
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Supplier
                                                 (Optional)</label>
                                             <select v-model="form.party_id"
-                                                class="block w-full rounded-md border-0 py-2 px-3 h-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-white">
+                                                class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white">
                                                 <option :value="null">-- Select Supplier --</option>
                                                 <option v-for="party in parties" :key="party.id" :value="party.id">{{
                                                     party.name }}</option>
@@ -71,10 +72,10 @@
 
                                         <!-- Notes -->
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700">Notes /
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Notes /
                                                 Reference</label>
                                             <input type="text" v-model="form.notes"
-                                                class="block w-full rounded-md border-0 py-2 px-3 h-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                                                 placeholder="e.g. PO-123 or Damaged Goods">
                                         </div>
                                     </div>
