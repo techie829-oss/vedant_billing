@@ -81,18 +81,19 @@
                 <form method="POST" action="{{ route('contact.store') }}">
                     @csrf
                     <div class="space-y-6">
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700">Full Name <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" name="name" id="name" required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 border"
-                                placeholder="John Doe">
-                            @error('name')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
+                        <!-- Row 1: Name and Email -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700">Full Name <span
+                                        class="text-red-500">*</span></label>
+                                <input type="text" name="name" id="name" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 border"
+                                    placeholder="John Doe">
+                                @error('name')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <div>
                                 <label for="email" class="block text-sm font-medium text-gray-700">Email Address <span
                                         class="text-red-500">*</span></label>
@@ -103,7 +104,10 @@
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
+                        </div>
 
+                        <!-- Row 2: Phone and WhatsApp -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Phone Number -->
                             <div>
                                 <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number <span
