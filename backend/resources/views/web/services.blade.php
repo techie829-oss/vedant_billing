@@ -1,25 +1,29 @@
 @extends('layouts.web')
 
 @section('title', 'Features & Services - GST Invoicing & Inventory | VedantBilling')
-@section('description', 'Explore our comprehensive features: GST Invoicing, Inventory Management, Financial Reports, and
+@section('description',
+    'Explore our comprehensive features: GST Invoicing, Inventory Management, Financial Reports, and
     Party Management designed for Indian SMEs.')
 @section('keywords', 'gst filing, inventory tracking, invoice generation, business reports')
 
 @section('content')
     <div class="bg-white">
         <!-- Hero Section -->
-        <div class="relative bg-gray-900 pb-32 overflow-hidden">
-            <div class="absolute inset-0">
-                <img class="w-full h-full object-cover"
-                    src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1932&q=80"
-                    alt="Business background">
-                <div class="absolute inset-0 bg-gray-900 mix-blend-multiply" aria-hidden="true"></div>
+        <div class="relative bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 pb-32 overflow-hidden">
+            <!-- Decorative background elements -->
+            <div class="absolute inset-0 overflow-hidden">
+                <div class="absolute -top-1/2 -left-1/2 w-full h-full bg-blue-500 opacity-20 blur-[120px] rounded-full">
+                </div>
+                <div
+                    class="absolute -bottom-1/2 -right-1/2 w-full h-full bg-purple-500 opacity-20 blur-[120px] rounded-full">
+                </div>
             </div>
             <div class="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
-                <h1 class="text-4xl font-extrabold tracking-tight text-white md:text-5xl lg:text-6xl text-center">
+                <h1
+                    class="text-4xl font-extrabold tracking-tight text-white md:text-5xl lg:text-6xl text-center drop-shadow-lg">
                     Solutions for Modern Businesses
                 </h1>
-                <p class="mt-6 max-w-3xl mx-auto text-xl text-gray-300 text-center">
+                <p class="mt-6 max-w-3xl mx-auto text-xl text-blue-100 text-center font-medium drop-shadow">
                     From GST compliant invoicing to real-time inventory tracking, VedantBilling gives you the tools to
                     manage your entire business in one place.
                 </p>
@@ -92,37 +96,11 @@
                             </defs>
                             <rect width="784" height="404" fill="url(#ca9667ae-9f92-4be7-abcb-9e3d727f2941)" />
                         </svg>
-                        <div class="relative mx-auto w-[24rem] rounded-lg shadow-lg lg:max-w-none">
-                            <!-- Abstract Invoice UI Representation -->
-                            <div class="bg-white rounded-lg shadow-xl overflow-hidden border border-gray-100">
-                                <div
-                                    class="bg-gray-50 px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-                                    <div class="flex space-x-2">
-                                        <div class="h-3 w-3 rounded-full bg-red-400"></div>
-                                        <div class="h-3 w-3 rounded-full bg-yellow-400"></div>
-                                        <div class="h-3 w-3 rounded-full bg-green-400"></div>
-                                    </div>
-                                    <div class="h-2 w-20 bg-gray-200 rounded"></div>
-                                </div>
-                                <div class="p-6 space-y-4">
-                                    <div class="flex justify-between items-start">
-                                        <div class="w-16 h-16 bg-blue-100 rounded-lg"></div>
-                                        <div class="space-y-2 text-right">
-                                            <div class="h-3 w-24 bg-gray-200 rounded ml-auto"></div>
-                                            <div class="h-3 w-16 bg-gray-200 rounded ml-auto"></div>
-                                        </div>
-                                    </div>
-                                    <div class="pt-4 space-y-2">
-                                        <div class="h-2 w-full bg-gray-100 rounded"></div>
-                                        <div class="h-2 w-full bg-gray-100 rounded"></div>
-                                        <div class="h-2 w-5/6 bg-gray-100 rounded"></div>
-                                    </div>
-                                    <div class="pt-4 border-t border-gray-50 flex justify-between">
-                                        <div class="h-3 w-20 bg-gray-200 rounded"></div>
-                                        <div class="h-4 w-24 bg-blue-100 rounded"></div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div
+                            class="relative mx-auto w-full max-w-lg rounded-2xl shadow-2xl lg:max-w-none border border-gray-100 overflow-hidden bg-white">
+                            <!-- Invoice Settings Image passed by User -->
+                            <img src="{{ asset('images/invoice-templates.png') }}" alt="Invoice Templates Selection"
+                                class="w-full h-auto object-cover hover:scale-105 transition-transform duration-500">
                         </div>
                     </div>
                 </div>
@@ -287,6 +265,36 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="bg-blue-600 relative overflow-hidden">
+            <div class="absolute inset-0">
+                <div
+                    class="absolute -top-24 -right-24 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70">
+                </div>
+                <div
+                    class="absolute -bottom-24 -left-24 w-72 h-72 bg-blue-700 rounded-full mix-blend-multiply filter blur-3xl opacity-70">
+                </div>
+            </div>
+            <div
+                class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-20 lg:px-8 lg:flex lg:items-center lg:justify-between relative z-10">
+                <h2 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                    <span class="block">Ready to simplify your billing?</span>
+                    <span class="block text-blue-200 mt-2 text-2xl font-medium">Start your free trial today. No credit card
+                        required.</span>
+                </h2>
+                <div class="mt-8 flex gap-4 lg:mt-0 lg:flex-shrink-0">
+                    <a href="{{ rtrim(env('WEB_URL', 'https://app.vedantbilling.com'), '/') . '/register' }}"
+                        class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-lg font-medium rounded-xl text-blue-600 bg-white hover:bg-blue-50 hover:shadow-lg transition-all shadow-md">
+                        Get started for free
+                    </a>
+                    <a href="{{ route('pricing') }}"
+                        class="inline-flex items-center justify-center px-6 py-3 text-lg font-medium rounded-xl text-white bg-blue-700 hover:bg-blue-800 transition-all border border-blue-500">
+                        View Pricing
+                    </a>
                 </div>
             </div>
         </div>
