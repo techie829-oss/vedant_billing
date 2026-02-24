@@ -14,5 +14,6 @@ class Lead extends Model
         'whatsapp_number',
         'message',
         'status',
+        'notes',
     ];
 }

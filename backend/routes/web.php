@@ -59,6 +59,6 @@ Route::prefix('internal')->name('internal.')->group(function () {
         Route::post('subscriptions/{id}/cancel', [\App\Http\Controllers\Internal\SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
 
         // Lead Management
-        Route::resource('leads', \App\Http\Controllers\Internal\LeadController::class)->only(['index']);
+        Route::resource('leads', \App\Http\Controllers\Internal\LeadController::class)->only(['index', 'show', 'update']);
     });
 });

@@ -38,7 +38,7 @@ class LeadController extends Controller
      */
     public function show(Lead $lead)
     {
-        //
+        return view('internal.leads.show', compact('lead'));
     }
 
     /**
@@ -54,7 +54,15 @@ class LeadController extends Controller
      */
     public function update(Request $request, Lead $lead)
     {
-        //
+        $validated = $request->validate([
+            'status' => 'required|string|in:new,contacted,converted,closed',
+            'notes' => 'nullable|string',
+        ]);
+
+        $lead->update($validated);
+
+        return redirect()->route('leads.show', $lead)
+            ->with('success', 'Lead updated successfully.');
     }
 
     /**

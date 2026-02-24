@@ -30,6 +30,10 @@
                         <th scope="col"
                             class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Date
                         </th>
+                        <th scope="col"
+                            class="px-6 py-3 text-right text-xs font-medium text-text-muted uppercase tracking-wider">
+                            Actions
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -54,10 +58,14 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-text-muted">
                                 {{ $lead->created_at->format('M d, Y h:i A') }}
                             </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="{{ route('leads.show', $lead) }}"
+                                    class="text-blue-600 hover:text-blue-900 transition-colors">Manage</a>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-sm text-text-muted">
+                            <td colspan="7" class="px-6 py-4 text-center text-sm text-text-muted">
                                 No leads found.
                             </td>
                         </tr>
