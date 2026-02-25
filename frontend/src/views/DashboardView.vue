@@ -130,7 +130,7 @@
           </div>
           <div>
             <p class="text-sm font-semibold text-gray-900 group-hover:text-indigo-700">Invoices</p>
-            <p class="text-[11px] text-gray-400 mt-0.5">Manage sales</p>
+            <p class="text-[11px] text-gray-400 mt-0.5">Sales records</p>
           </div>
         </router-link>
 
@@ -146,7 +146,7 @@
           </div>
           <div>
             <p class="text-sm font-semibold text-gray-900 group-hover:text-orange-700">Purchases</p>
-            <p class="text-[11px] text-gray-400 mt-0.5">Manage bills</p>
+            <p class="text-[11px] text-gray-400 mt-0.5">Vendor bills</p>
           </div>
         </router-link>
 
@@ -178,7 +178,7 @@
           </div>
           <div>
             <p class="text-sm font-semibold text-gray-900 group-hover:text-teal-700">Estimates</p>
-            <p class="text-[11px] text-gray-400 mt-0.5">Manage quotes</p>
+            <p class="text-[11px] text-gray-400 mt-0.5">Draft quotes</p>
           </div>
         </router-link>
 
@@ -194,7 +194,7 @@
           </div>
           <div>
             <p class="text-sm font-semibold text-gray-900 group-hover:text-blue-700">Customers</p>
-            <p class="text-[11px] text-gray-400 mt-0.5">Manage parties</p>
+            <p class="text-[11px] text-gray-400 mt-0.5">Client list</p>
           </div>
         </router-link>
 
@@ -210,7 +210,7 @@
           </div>
           <div>
             <p class="text-sm font-semibold text-gray-900 group-hover:text-emerald-700">Cashbook</p>
-            <p class="text-[11px] text-gray-400 mt-0.5">Manage flows</p>
+            <p class="text-[11px] text-gray-400 mt-0.5">Cash flows</p>
           </div>
         </router-link>
 
@@ -272,7 +272,7 @@
         <div>
           <dt class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Total Purchases</dt>
           <dd class="mt-1 text-2xl font-bold text-gray-900 tracking-tight">₹{{ abbreviateNumber(metrics.total_purchases)
-            }}</dd>
+          }}</dd>
           <dd
             class="mt-1.5 text-[11px] text-orange-700 font-medium bg-orange-50 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
