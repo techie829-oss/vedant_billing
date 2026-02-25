@@ -30,8 +30,10 @@ class QuickNoteController extends Controller
     {
         $validated = $request->validate([
             'type' => 'required|in:order_receipt,hisab',
-            'title' => 'nullable|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'customer_name' => 'nullable|string|max:255',
+            'customer_mobile' => 'nullable|string|max:20',
             'content' => 'required|array',
             'total_amount' => 'required|numeric',
         ]);
@@ -43,8 +45,10 @@ class QuickNoteController extends Controller
             'business_id' => $businessId,
             'user_id' => $request->user()->id,
             'type' => $validated['type'],
-            'title' => $validated['title'] ?? 'Note ' . now()->format('d M H:i'),
+            'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
+            'customer_name' => $validated['customer_name'] ?? null,
+            'customer_mobile' => $validated['customer_mobile'] ?? null,
             'content' => $validated['content'],
             'total_amount' => $validated['total_amount'],
         ]);
@@ -77,9 +81,12 @@ class QuickNoteController extends Controller
 
         $validated = $request->validate([
             'type' => 'sometimes|in:order_receipt,hisab',
-            'title' => 'nullable|string|max:255',
-            'content' => 'sometimes|array',
-            'total_amount' => 'sometimes|numeric',
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string',
+            'customer_name' => 'nullable|string|max:255',
+            'customer_mobile' => 'nullable|string|max:20',
+            'content' => 'sometimes|required|array',
+            'total_amount' => 'sometimes|required|numeric',
         ]);
 
         $quickNote->update($validated);

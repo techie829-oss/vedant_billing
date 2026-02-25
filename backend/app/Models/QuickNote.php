@@ -18,6 +18,8 @@ class QuickNote extends Model
         'type',
         'title',
         'description',
+        'customer_name',
+        'customer_mobile',
         'content',
         'total_amount',
     ];

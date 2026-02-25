@@ -9,6 +9,8 @@ export interface QuickNote {
     type: 'order_receipt' | 'hisab'
     title: string
     description?: string
+    customer_name?: string
+    customer_mobile?: string
     content: ParsedItem[]
     total_amount: number
     created_at: string
@@ -34,8 +36,17 @@ export const useQuickNoteStore = defineStore('quickNote', {
         async saveNote(note: Partial<QuickNote>) {
             this.loading = true
             try {
-                const response = await client.post('/quick-notes', note)
-                this.notes.unshift(response.data)
+                let response;
+                if (note.id) {
+                    response = await client.put(`/quick-notes/${note.id}`, note)
+                    const index = this.notes.findIndex(n => n.id === note.id)
+                    if (index !== -1) {
+                        this.notes[index] = response.data
+                    }
+                } else {
+                    response = await client.post('/quick-notes', note)
+                    this.notes.unshift(response.data)
+                }
                 return response.data
             } catch (error) {
                 console.error('Failed to save note', error)
