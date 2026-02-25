@@ -951,7 +951,16 @@ const getShareText = () => {
     const appUrl = import.meta.env.VITE_MAIN_URL || window.location.origin
     const publicLink = `${appUrl}/p/invoices/${invoice.value.id}`
 
-    return `Hello ${invoice.value.party?.name || 'Customer'},\n\nThis is a gentle reminder from ${businessName}. Your Invoice ${invNum} for ₹${amount} is ${date}.\n\nYou can view and download your invoice here:\n${publicLink}\n\nPlease ensure payment is made at the earliest.\n\nThank you.`
+    let paymentSection = ''
+    if (invoice.value.business?.meta?.upi_id && Number(outstandingAmount.value) > 0) {
+        const upiId = invoice.value.business.meta.upi_id
+        const payName = invoice.value.business.name.replace(/\s/g, '+')
+        const amt = Math.round(Number(outstandingAmount.value))
+        const upiUrl = `upi://pay?pa=${upiId}&pn=${payName}&am=${amt}&cu=INR`
+        paymentSection = `\n\nPay instantly via UPI:\n${upiUrl}`
+    }
+
+    return `Hello ${invoice.value.party?.name || 'Customer'},\n\nThis is a gentle reminder from ${businessName}. Your Invoice ${invNum} for ₹${amount} is ${date}.\n\nYou can view and download your invoice here:\n${publicLink}${paymentSection}\n\nPlease ensure payment is made at the earliest.\n\nThank you.`
 }
 
 const shareWhatsApp = () => {
