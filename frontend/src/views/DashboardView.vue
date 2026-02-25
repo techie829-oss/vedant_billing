@@ -27,34 +27,34 @@
       </div>
     </div>
 
-    <!-- Quick Creates / Actions -->
+    <!-- Quick Links -->
     <div class="mb-5">
-      <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Quick Actions</h3>
+      <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Manage Business</h3>
       <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
         
-        <router-link to="/invoices/create"
+        <router-link to="/invoices"
           class="flex items-center gap-3 p-3 bg-white hover:bg-indigo-50 border border-gray-100 hover:border-indigo-200 rounded-xl transition-all group shadow-sm">
           <div class="h-8 w-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
           <div>
-            <p class="text-xs font-bold text-gray-900 group-hover:text-indigo-700">Create Invoice</p>
-            <p class="text-[10px] text-gray-400">New sales bill</p>
+            <p class="text-xs font-bold text-gray-900 group-hover:text-indigo-700">Invoices</p>
+            <p class="text-[10px] text-gray-400">Manage sales</p>
           </div>
         </router-link>
 
-        <router-link to="/purchases/create"
+        <router-link to="/purchases"
           class="flex items-center gap-3 p-3 bg-white hover:bg-orange-50 border border-gray-100 hover:border-orange-200 rounded-xl transition-all group shadow-sm">
           <div class="h-8 w-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
           </div>
           <div>
-            <p class="text-xs font-bold text-gray-900 group-hover:text-orange-700">Add Purchase</p>
-            <p class="text-[10px] text-gray-400">Record vendor bill</p>
+            <p class="text-xs font-bold text-gray-900 group-hover:text-orange-700">Purchases</p>
+            <p class="text-[10px] text-gray-400">Manage vendor bills</p>
           </div>
         </router-link>
 
@@ -67,11 +67,11 @@
           </div>
           <div>
             <p class="text-xs font-bold text-gray-900 group-hover:text-yellow-700">Fast Note</p>
-            <p class="text-[10px] text-gray-400">Kaccha bill / Rough</p>
+            <p class="text-[10px] text-gray-400">Rough estimates</p>
           </div>
         </router-link>
 
-        <router-link to="/quotations/create"
+        <router-link to="/quotations"
           class="flex items-center gap-3 p-3 bg-white hover:bg-teal-50 border border-gray-100 hover:border-teal-200 rounded-xl transition-all group shadow-sm">
           <div class="h-8 w-8 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -79,22 +79,21 @@
             </svg>
           </div>
           <div>
-            <p class="text-xs font-bold text-gray-900 group-hover:text-teal-700">New Estimate</p>
-            <p class="text-[10px] text-gray-400">Send quotation</p>
+            <p class="text-xs font-bold text-gray-900 group-hover:text-teal-700">Estimates</p>
+            <p class="text-[10px] text-gray-400">Manage quotations</p>
           </div>
         </router-link>
 
-        <!-- Use absolute URL or click handler if creating customer requires modal. For now routing to /customers -->
-        <router-link to="/customers/create"
+        <router-link to="/customers"
           class="flex items-center gap-3 p-3 bg-white hover:bg-blue-50 border border-gray-100 hover:border-blue-200 rounded-xl transition-all group shadow-sm">
           <div class="h-8 w-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
           </div>
           <div>
-            <p class="text-xs font-bold text-gray-900 group-hover:text-blue-700">Add Customer</p>
-            <p class="text-[10px] text-gray-400">New party details</p>
+            <p class="text-xs font-bold text-gray-900 group-hover:text-blue-700">Customers</p>
+            <p class="text-[10px] text-gray-400">Manage parties</p>
           </div>
         </router-link>
 
@@ -106,8 +105,8 @@
             </svg>
           </div>
           <div>
-            <p class="text-xs font-bold text-gray-900 group-hover:text-emerald-700">Record Entry</p>
-            <p class="text-[10px] text-gray-400">Cash in/out</p>
+            <p class="text-xs font-bold text-gray-900 group-hover:text-emerald-700">Cashbook</p>
+            <p class="text-[10px] text-gray-400">Manage cash</p>
           </div>
         </router-link>
 
