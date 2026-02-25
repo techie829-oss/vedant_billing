@@ -495,6 +495,77 @@
                     </form>
                 </div>
 
+                <!-- App Appearance -->
+                <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3 pt-10">
+                    <div class="px-4 sm:px-0">
+                        <h2 class="text-base font-semibold leading-7 text-gray-900">App Appearance</h2>
+                        <p class="mt-1 text-sm leading-6 text-gray-600">Customize how the app looks on this device.
+                            These settings are saved locally in your browser.</p>
+                    </div>
+
+                    <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+                        <div class="px-4 py-6 sm:p-8 space-y-8">
+
+                            <!-- Font Scale -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-800 mb-1">UI Zoom / Font
+                                    Size</label>
+                                <p class="text-xs text-gray-500 mb-3">Smaller = more data on screen without scrolling
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    <button v-for="scale in SCALE_OPTIONS" :key="scale" type="button"
+                                        @click="setScale(scale)"
+                                        class="px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all" :class="uiScale === scale
+                                            ? 'border-indigo-600 bg-indigo-50 text-indigo-700 shadow-sm'
+                                            : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'">
+                                        {{ scale === 100 ? `${scale}% (Default)` : `${scale}%` }}
+                                    </button>
+                                </div>
+                                <p class="mt-2 text-xs text-gray-400">Current: <strong>{{ uiScale }}%</strong> — changes
+                                    apply instantly.</p>
+                            </div>
+
+                            <!-- Theme Color -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-800 mb-1">App Theme Color</label>
+                                <p class="text-xs text-gray-500 mb-3">Accent color for sidebar active links, buttons &
+                                    badges</p>
+                                <div class="flex flex-wrap gap-3">
+                                    <button v-for="theme in THEME_OPTIONS" :key="theme.id" type="button"
+                                        @click="setTheme(theme.id)" :title="theme.label"
+                                        class="relative h-9 w-9 rounded-full transition-all ring-offset-2" :class="[
+                                            theme.bg,
+                                            themeColor === theme.id ? 'ring-2 ring-offset-2 scale-110' : 'hover:scale-105'
+                                        ]"
+                                        :style="themeColor === theme.id ? `box-shadow: 0 0 0 3px ${theme.primaryHex}` : ''">
+                                        <svg v-if="themeColor === theme.id" class="h-5 w-5 text-white mx-auto"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <p class="mt-2 text-xs text-gray-400">Current: <strong class="capitalize">{{ themeColor
+                                        }}</strong></p>
+                            </div>
+
+                            <!-- Reset -->
+                            <div class="pt-2 border-t border-gray-100">
+                                <button type="button" @click="resetAppearance"
+                                    class="text-xs text-gray-500 hover:text-red-600 transition-colors flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                    Reset to default (100%, Indigo)
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Data Management -->
                 <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3 pt-10">
                     <div class="px-4 sm:px-0">
@@ -809,6 +880,7 @@ import { useGeneralStore } from '../../stores/general'
 import { storeToRefs } from 'pinia'
 import { fetchPincodeDetails } from '../../services/PincodeService'
 import StateSelect from '../../components/StateSelect.vue'
+import { useAppearance } from '../../composables/useAppearance'
 
 // Layouts for Preview
 import DefaultLayout from '../invoices/layouts/DefaultLayout.vue'
@@ -819,6 +891,7 @@ import ClassicGridLayout from '../invoices/layouts/ClassicGridLayout.vue'
 const authStore = useAuthStore()
 const generalStore = useGeneralStore()
 const { states } = storeToRefs(generalStore)
+const { uiScale, themeColor, SCALE_OPTIONS, THEME_OPTIONS, setScale, setTheme, resetAppearance } = useAppearance()
 
 const loading = ref(true)
 const saving = ref(false)

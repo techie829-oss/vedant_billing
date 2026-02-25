@@ -78,15 +78,15 @@
               </svg>
               View
             </router-link>
-            <a :href="`/invoices/${invoice.id}/print`" target="_blank"
-              class="text-xs font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1">
+            <router-link :to="`/invoices/${invoice.id}`"
+              class="text-xs font-medium text-indigo-600 hover:text-indigo-900 flex items-center gap-1">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
               </svg>
               Print
-            </a>
+            </router-link>
             <router-link v-if="invoice.status === 'draft'" :to="`/invoices/${invoice.id}/edit`"
               class="text-xs font-medium text-indigo-600 hover:text-indigo-900 flex items-center gap-1">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"
@@ -102,80 +102,89 @@
 
       <!-- Desktop Table View -->
       <div class="hidden sm:block overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-300">
-          <thead class="bg-gray-50">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50/80">
             <tr>
-              <th scope="col" class="py-2.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Number</th>
-              <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">Customer</th>
-              <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">Date</th>
-              <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">Due Date</th>
-              <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">Status</th>
-              <th scope="col" class="px-3 py-2.5 text-left text-sm font-semibold text-gray-900">Amount</th>
-              <th scope="col" class="relative py-2.5 pl-3 pr-4 sm:pr-6">
+              <th scope="col"
+                class="py-2 pl-4 pr-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider sm:pl-6">
+                Number</th>
+              <th scope="col" class="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Customer</th>
+              <th scope="col" class="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Date</th>
+              <th scope="col"
+                class="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                Due Date</th>
+              <th scope="col" class="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Status</th>
+              <th scope="col" class="px-3 py-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Amount</th>
+              <th scope="col" class="relative py-2 pl-3 pr-4 sm:pr-6">
                 <span class="sr-only">Actions</span>
               </th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-200 bg-white">
+          <tbody class="divide-y divide-gray-100 bg-white">
             <tr v-if="loading && invoices.length === 0">
-              <td colspan="7" class="text-center py-4 text-gray-500">Loading...</td>
+              <td colspan="7" class="text-center py-4 text-xs text-gray-500">Loading invoices...</td>
             </tr>
             <tr v-else-if="invoices.length === 0">
-              <td colspan="7" class="text-center py-4 text-gray-500">No invoices found.</td>
+              <td colspan="7" class="text-center py-4 text-xs text-gray-500">No invoices found.</td>
             </tr>
-            <tr v-for="invoice in invoices" :key="invoice.id">
-              <td class="whitespace-nowrap py-2.5 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+            <tr v-for="invoice in invoices" :key="invoice.id" class="hover:bg-gray-50/50 transition-colors">
+              <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                 <router-link :to="`/invoices/${invoice.id}`"
                   class="text-indigo-600 hover:text-indigo-900 hover:underline">
                   {{ invoice.invoice_number }}
                 </router-link>
               </td>
-              <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">{{ invoice.party?.name || 'Unknown' }}
+              <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-900">
+                {{ invoice.party?.name || 'Unknown' }}
+                <div v-if="invoice.party?.phone" class="text-xs text-gray-500 font-normal mt-0.5">
+                  {{ invoice.party.phone }}
+                </div>
               </td>
-              <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">{{ formatDate(invoice.date) }}</td>
-              <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">{{ formatDate(invoice.due_date) }}</td>
-              <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">
+              <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{{ formatDate(invoice.date) }}</td>
+              <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-500 hidden lg:table-cell">{{
+                formatDate(invoice.due_date) }}</td>
+              <td class="whitespace-nowrap px-3 py-2 text-sm text-gray-500">
                 <span :class="getStatusClass(invoice.status)"
-                  class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset">
+                  class="inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset">
                   {{ capitalize(invoice.status) }}
                 </span>
               </td>
-              <td class="whitespace-nowrap px-3 py-2.5 text-sm text-gray-500">₹{{ invoice.grand_total }}</td>
-              <td class="relative whitespace-nowrap py-2.5 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                <router-link :to="`/invoices/${invoice.id}`" class="text-gray-600 hover:text-gray-900 mr-4"
-                  title="View">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                </router-link>
-                <a :href="`/invoices/${invoice.id}/print`" target="_blank"
-                  class="text-gray-600 hover:text-gray-900 mr-4" title="Print / PDF">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                  </svg>
-                </a>
-                <router-link :to="`/invoices/${invoice.id}/edit`" v-if="invoice.status === 'draft'"
-                  class="text-indigo-600 hover:text-indigo-900 mr-4" title="Edit">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </router-link>
-                <button @click="deleteInv(invoice.id)" v-if="invoice.status === 'draft'"
-                  class="text-red-600 hover:text-red-900" title="Delete">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
+              <td class="whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-900 text-right">₹{{
+                Number(invoice.grand_total).toFixed(2) }}</td>
+              <td class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                <div class="flex items-center justify-end gap-3">
+                  <router-link :to="`/invoices/${invoice.id}`" class="text-indigo-600 hover:text-indigo-900 group"
+                    title="View">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:scale-110"
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </router-link>
+
+                  <router-link :to="`/invoices/${invoice.id}/edit`" v-if="invoice.status === 'draft'"
+                    class="text-indigo-600 hover:text-indigo-900 group" title="Edit">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:scale-110"
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </router-link>
+                  <button @click="deleteInv(invoice.id)" v-if="invoice.status === 'draft'"
+                    class="text-red-500 hover:text-red-700 group" title="Delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:scale-110"
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>

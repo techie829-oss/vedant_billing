@@ -190,12 +190,7 @@ const router = createRouter({
             component: () => import('../views/invoices/InvoiceFormView.vue'),
             meta: { requiresAuth: true, requiresBusiness: true }
         },
-        {
-            path: '/invoices/:id/print',
-            name: 'invoice-print',
-            component: () => import('../views/invoices/InvoicePrintView.vue'),
-            meta: { requiresAuth: true, requiresBusiness: true }
-        },
+
         // Quotations
         {
             path: '/quotations',

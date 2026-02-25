@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col">
+  <div class="app-ui min-h-screen bg-gray-50 flex flex-col">
     <!-- Offline Banner -->
     <div v-if="!online" class="bg-red-600 text-white text-center py-2 text-sm font-medium sticky top-0 z-50">
       You are currently offline. Some features may not work.
@@ -432,18 +432,10 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
-// import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
-// import {
-//   Bars3Icon,
-//   BellIcon,
-//   XMarkIcon,
-//   BriefcaseIcon,
-//   DocumentDuplicateIcon,
-//   UserGroupIcon
-// } from '@heroicons/vue/24/outline'
-
+import { useAppearance } from '../composables/useAppearance'
 
 const authStore = useAuthStore()
+const { initAppearance } = useAppearance()
 
 const mobileMenuOpen = ref(false)
 const showReportsMenu = ref(false)
@@ -476,6 +468,8 @@ const updateSyncStatus = (e: Event) => {
 }
 
 onMounted(() => {
+  // Apply stored appearance preferences (font scale + theme color)
+  initAppearance()
   window.addEventListener('online', updateOnlineStatus)
   window.addEventListener('offline', updateOnlineStatus)
   window.addEventListener('sync-start', updateSyncStatus)
