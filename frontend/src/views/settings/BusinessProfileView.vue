@@ -409,18 +409,19 @@
                                 <!-- Grid Premium Layout Card -->
                                 <div class="relative border-2 rounded-xl p-4 transition-all" :class="[
                                     form.meta.invoice_layout === 'grid_premium' ? 'border-indigo-600 ring-1 ring-indigo-600 bg-indigo-50/10' : 'border-gray-200',
-                                    !isEnterprise ? 'opacity-75 grayscale bg-gray-50' : 'cursor-pointer hover:border-gray-300'
-                                ]" @click="isEnterprise ? form.meta.invoice_layout = 'grid_premium' : null">
-                                    <div v-if="!isEnterprise" class="absolute top-2 right-2 z-10">
+                                    !authStore.hasFeature('premium_layout_access') ? 'opacity-75 grayscale bg-gray-50' : 'cursor-pointer hover:border-gray-300'
+                                ]"
+                                    @click="authStore.hasFeature('premium_layout_access') ? form.meta.invoice_layout = 'grid_premium' : null">
+                                    <div v-if="!authStore.hasFeature('premium_layout_access')"
+                                        class="absolute top-2 right-2 z-10">
                                         <span
                                             class="bg-gray-900 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 shadow-sm">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                                fill="currentColor" class="w-3 h-3 text-gray-300">
-                                                <path fill-rule="evenodd"
-                                                    d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
-                                                    clip-rule="evenodd" />
+                                            <svg class="w-3 h-3 text-yellow-400" fill="currentColor"
+                                                viewBox="0 0 20 20">
+                                                <path
+                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                             </svg>
-                                            ENTERPRISE
+                                            PRO
                                         </span>
                                     </div>
 
@@ -456,9 +457,23 @@
                                 </div>
 
                                 <!-- Classic Grid Layout Card -->
-                                <div class="relative border-2 rounded-xl p-4 cursor-pointer transition-all hover:border-gray-300"
-                                    :class="form.meta.invoice_layout === 'classic' ? 'border-indigo-600 ring-1 ring-indigo-600 bg-indigo-50/10' : 'border-gray-200'"
-                                    @click="form.meta.invoice_layout = 'classic'">
+                                <div class="relative border-2 rounded-xl p-4 transition-all" :class="[
+                                    form.meta.invoice_layout === 'classic' ? 'border-indigo-600 ring-1 ring-indigo-600 bg-indigo-50/10' : 'border-gray-200',
+                                    !authStore.hasFeature('premium_layout_access') ? 'opacity-75 grayscale bg-gray-50' : 'cursor-pointer hover:border-gray-300'
+                                ]"
+                                    @click="authStore.hasFeature('premium_layout_access') ? form.meta.invoice_layout = 'classic' : null">
+                                    <div v-if="!authStore.hasFeature('premium_layout_access')"
+                                        class="absolute top-2 right-2 z-10">
+                                        <span
+                                            class="bg-gray-900 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 shadow-sm">
+                                            <svg class="w-3 h-3 text-yellow-400" fill="currentColor"
+                                                viewBox="0 0 20 20">
+                                                <path
+                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                            PRO
+                                        </span>
+                                    </div>
 
                                     <div class="flex justify-between items-start mb-4">
                                         <div class="flex items-center gap-2">
@@ -492,9 +507,23 @@
                                 </div>
 
                                 <!-- Half Page Layout Card -->
-                                <div class="relative border-2 rounded-xl p-4 cursor-pointer transition-all hover:border-gray-300"
-                                    :class="form.meta.invoice_layout === 'half_page' ? 'border-indigo-600 ring-1 ring-indigo-600 bg-indigo-50/10' : 'border-gray-200'"
-                                    @click="form.meta.invoice_layout = 'half_page'">
+                                <div class="relative border-2 rounded-xl p-4 transition-all" :class="[
+                                    form.meta.invoice_layout === 'half_page' ? 'border-indigo-600 ring-1 ring-indigo-600 bg-indigo-50/10' : 'border-gray-200',
+                                    !authStore.hasFeature('premium_layout_access') ? 'opacity-75 grayscale bg-gray-50' : 'cursor-pointer hover:border-gray-300'
+                                ]"
+                                    @click="authStore.hasFeature('premium_layout_access') ? form.meta.invoice_layout = 'half_page' : null">
+                                    <div v-if="!authStore.hasFeature('premium_layout_access')"
+                                        class="absolute top-2 right-2 z-10">
+                                        <span
+                                            class="bg-gray-900 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 shadow-sm">
+                                            <svg class="w-3 h-3 text-yellow-400" fill="currentColor"
+                                                viewBox="0 0 20 20">
+                                                <path
+                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                            PRO
+                                        </span>
+                                    </div>
                                     <div class="flex justify-between items-start mb-4">
                                         <div class="flex items-center gap-2">
                                             <div class="h-4 w-4 rounded-full border flex items-center justify-center bg-white"
@@ -595,7 +624,7 @@
                                     </button>
                                 </div>
                                 <p class="mt-2 text-xs text-gray-400">Current: <strong class="capitalize">{{ themeColor
-                                        }}</strong></p>
+                                }}</strong></p>
                             </div>
 
                             <!-- Reset -->
