@@ -119,41 +119,17 @@
                     {{ invoice.type === 'quote' ? 'Email Quote' : 'Email Invoice' }}
                 </button>
 
-                <!-- Remind / Share Button -->
-                <div v-if="invoice.type === 'invoice'" class="relative inline-block text-left">
-                    <button @click="shareMenuOpen = !shareMenuOpen"
-                        class="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 gap-1.5 whitespace-nowrap">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                        </svg>
-                        Remind
-                    </button>
-                    <!-- Share Menu Dropdown -->
-                    <div v-if="shareMenuOpen"
-                        class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div class="py-1">
-                            <button @click="shareWhatsApp"
-                                class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
-                                <svg class="h-4 w-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                        d="M.057 24l1.687-6.163c-3.104-5.391-.039-12.01 6.163-15.038 6.136-2.992 12.871-.161 14.773 6.126 1.902 6.287-1.127 12.718-7.396 14.623L.057 24z" />
-                                </svg>
-                                WhatsApp
-                            </button>
-                            <button @click="shareSMS"
-                                class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
-                                <svg class="h-4 w-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                </svg>
-                                SMS
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <!-- WhatsApp Share Button -->
+                <button @click="shareWhatsApp"
+                    class="inline-flex items-center justify-center rounded-lg bg-[#25D366] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#20bd5a] gap-1.5 whitespace-nowrap">
+                    <svg class="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M.057 24l1.687-6.163c-3.104-5.391-.039-12.01 6.163-15.038 6.136-2.992 12.871-.161 14.773 6.126 1.902 6.287-1.127 12.718-7.396 14.623L.057 24zM7.222 19.382l.462.274c1.474.876 3.14 1.34 4.862 1.34h.003c5.38 0 9.756-4.378 9.758-9.762.002-2.607-1.012-5.06-2.855-6.904-1.841-1.844-4.293-2.86-6.902-2.86-5.385 0-9.761 4.377-9.764 9.76-.002 1.761.468 3.468 1.365 4.981l.3.504-1.077 3.931 4.026-1.054a10.023 10.023 0 01-1.353-2.115v-10.3l1.516.544.757-.001.277.294.045-.06.702-2.031.543.518Zm-2.316-11.8h-2.12v10.3l2.12-2.031V7.581Z" />
+                        <path
+                            d="M17.482 14.288c-.287-.143-1.697-.837-1.96-.933-.263-.095-.455-.143-.646.143-.191.286-.74 1.01-.908 1.218-.168.208-.337.234-.624.091-2.08-.887-3.791-2.072-5.042-4.204-.127-.225 0-.324.238-.56.127-.127.287-.334.43-.5.143-.167.191-.286.287-.477.095-.19.048-.358 0-.501-.048-.143-.646-1.558-.885-2.13-.234-.56-.47-.484-.646-.492-.167-.008-.358-.008-.55-.008s-.502.071-.765.358c-.263.286-1.005.981-1.005 2.392s1.028 2.774 1.171 2.966c.143.19 2.022 3.088 4.896 4.322.684.294 1.217.47 1.632.603.687.218 1.312.187 1.805.114.55-.083 1.697-.694 1.936-1.362.24-.669.24-1.242.168-1.362-.072-.12-.263-.19-.55-.333z" />
+                    </svg>
+                    WhatsApp
+                </button>
 
                 <button v-if="invoice.status === 'draft' && invoice.type !== 'quote'" @click="finalize"
                     class="inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 whitespace-nowrap">
@@ -597,7 +573,7 @@ const layoutComponent = computed(() => {
     const savedLayout = invoice.value?.meta?.invoice_layout
     // 2. Business default (fallback for old invoices)
     const businessLayout = invoice.value?.business?.meta?.invoice_layout
-    
+
     const layout = savedLayout || businessLayout || 'default'
     if (layout === 'professional') return ProfessionalLayout
     if (layout === 'grid_premium') return GridPremiumLayout
@@ -964,7 +940,6 @@ const downloadPdf = async () => {
 }
 
 // Share Logic
-const shareMenuOpen = ref(false)
 
 const getShareText = () => {
     if (!invoice.value) return ''
@@ -980,7 +955,6 @@ const getShareText = () => {
 }
 
 const shareWhatsApp = () => {
-    shareMenuOpen.value = false
     const phone = invoice.value?.party?.phone
     if (!phone) {
         showAlert('Customer phone number is missing.', 'Missing Info', 'warning')
@@ -988,17 +962,6 @@ const shareWhatsApp = () => {
     }
     const text = encodeURIComponent(getShareText())
     window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${text}`, '_blank')
-}
-
-const shareSMS = () => {
-    shareMenuOpen.value = false
-    const phone = invoice.value?.party?.phone
-    if (!phone) {
-        showAlert('Customer phone number is missing.', 'Missing Info', 'warning')
-        return
-    }
-    const text = encodeURIComponent(getShareText())
-    window.location.href = `sms:${phone.replace(/[^0-9]/g, '')}?body=${text}`
 }
 
 const sendingEmail = ref(false)
