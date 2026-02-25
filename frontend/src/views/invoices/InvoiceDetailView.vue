@@ -593,7 +593,12 @@ const convertToInvoice = async () => {
 }
 
 const layoutComponent = computed(() => {
-    const layout = invoice.value?.business?.meta?.invoice_layout || 'default'
+    // 1. Snapshot layout (priority)
+    const savedLayout = invoice.value?.meta?.invoice_layout
+    // 2. Business default (fallback for old invoices)
+    const businessLayout = invoice.value?.business?.meta?.invoice_layout
+    
+    const layout = savedLayout || businessLayout || 'default'
     if (layout === 'professional') return ProfessionalLayout
     if (layout === 'grid_premium') return GridPremiumLayout
     if (layout === 'classic') return ClassicGridLayout

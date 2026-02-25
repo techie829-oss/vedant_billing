@@ -181,7 +181,19 @@ export const useInvoiceStore = defineStore('invoice', {
         async createInvoice(data: Partial<Invoice>) {
             this.loading = true
             try {
-                const response = await client.post('/invoices', data)
+                // Ensure meta contains invoice_layout snapshot
+                const authStore = (await import('./auth')).useAuthStore()
+                const currentLayout = authStore.activeBusiness?.meta?.invoice_layout || 'default'
+
+                const payload = {
+                    ...data,
+                    meta: {
+                        ...(data.meta || {}),
+                        invoice_layout: currentLayout
+                    }
+                }
+
+                const response = await client.post('/invoices', payload)
                 this.invoices.unshift(response.data)
                 // Cache new invoice
                 db.invoices.put(response.data).catch(e => console.error(e))
@@ -223,7 +235,19 @@ export const useInvoiceStore = defineStore('invoice', {
         async updateInvoice(id: string, data: Partial<Invoice>) {
             this.loading = true
             try {
-                const response = await client.put(`/invoices/${id}`, data)
+                // Keep invoice layout snapshot updated if not finalized
+                const authStore = (await import('./auth')).useAuthStore()
+                const currentLayout = authStore.activeBusiness?.meta?.invoice_layout || 'default'
+
+                const payload = {
+                    ...data,
+                    meta: {
+                        ...(data.meta || {}),
+                        invoice_layout: currentLayout
+                    }
+                }
+
+                const response = await client.put(`/invoices/${id}`, payload)
                 const index = this.invoices.findIndex(i => i.id === id)
                 if (index !== -1) {
                     this.invoices[index] = response.data
