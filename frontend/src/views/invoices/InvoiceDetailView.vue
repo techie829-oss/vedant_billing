@@ -399,6 +399,7 @@ import DefaultLayout from './layouts/DefaultLayout.vue'
 import ProfessionalLayout from './layouts/ProfessionalLayout.vue'
 import GridPremiumLayout from './layouts/GridPremiumLayout.vue'
 import ClassicGridLayout from './layouts/ClassicGridLayout.vue'
+import HalfPageLayout from './layouts/HalfPageLayout.vue'
 import client from '../../api/client'
 
 // @ts-ignore
@@ -596,6 +597,7 @@ const layoutComponent = computed(() => {
     if (layout === 'professional') return ProfessionalLayout
     if (layout === 'grid_premium') return GridPremiumLayout
     if (layout === 'classic') return ClassicGridLayout
+    if (layout === 'half_page') return HalfPageLayout
     return DefaultLayout
 })
 

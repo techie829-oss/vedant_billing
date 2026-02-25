@@ -490,6 +490,55 @@
                                         Preview Layout
                                     </button>
                                 </div>
+
+                                <!-- Half Page Layout Card -->
+                                <div class="relative border-2 rounded-xl p-4 cursor-pointer transition-all hover:border-gray-300"
+                                    :class="form.meta.invoice_layout === 'half_page' ? 'border-indigo-600 ring-1 ring-indigo-600 bg-indigo-50/10' : 'border-gray-200'"
+                                    @click="form.meta.invoice_layout = 'half_page'">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex items-center gap-2">
+                                            <div class="h-4 w-4 rounded-full border flex items-center justify-center bg-white"
+                                                :class="form.meta.invoice_layout === 'half_page' ? 'border-indigo-600' : 'border-gray-300'">
+                                                <div v-if="form.meta.invoice_layout === 'half_page'"
+                                                    class="h-2 w-2 rounded-full bg-indigo-600"></div>
+                                            </div>
+                                            <span class="font-bold text-gray-900 text-sm">Half Page</span>
+                                        </div>
+                                        <span
+                                            class="text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full">Paper
+                                            Saver</span>
+                                    </div>
+                                    <!-- Half page sketch -->
+                                    <div class="opacity-50 pointer-events-none select-none border border-gray-300 p-1"
+                                        style="height: 60px; overflow:hidden">
+                                        <div class="flex justify-between items-start mb-0.5">
+                                            <div class="space-y-0.5">
+                                                <div class="h-2 w-20 bg-gray-700 rounded-sm"></div>
+                                                <div class="h-1 w-14 bg-gray-200 rounded-sm"></div>
+                                                <div class="h-1 w-10 bg-gray-200 rounded-sm"></div>
+                                            </div>
+                                            <div class="text-right space-y-0.5">
+                                                <div class="h-1 w-12 bg-gray-100 rounded-sm ml-auto"></div>
+                                                <div class="h-2 w-16 bg-gray-300 rounded-sm ml-auto"></div>
+                                            </div>
+                                        </div>
+                                        <div class="border-t border-gray-200 mt-0.5 pt-0.5 grid grid-cols-4 gap-0.5">
+                                            <div class="h-1 bg-gray-300 col-span-2"></div>
+                                            <div class="h-1 bg-gray-200"></div>
+                                            <div class="h-1 bg-gray-200"></div>
+                                            <div class="h-1 bg-gray-50 col-span-2"></div>
+                                            <div class="h-1 bg-gray-50"></div>
+                                            <div class="h-1 bg-gray-100"></div>
+                                        </div>
+                                    </div>
+                                    <p class="text-[10px] text-gray-500 mt-2 text-center">Full width · Half height · All
+                                        data</p>
+                                    <button type="button" @click.stop="openPreview('half_page')"
+                                        class="mt-4 w-full py-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">
+                                        Preview Layout
+                                    </button>
+                                </div>
+
                             </div>
                         </div>
                     </form>
@@ -901,7 +950,7 @@ const downloadingCsv = ref<string | null>(null)
 const fetchingGst = ref(false)
 
 const showPreviewModal = ref(false)
-const previewLayout = ref<'default' | 'professional' | 'grid_premium' | 'classic'>('default')
+const previewLayout = ref<'default' | 'professional' | 'grid_premium' | 'classic' | 'half_page'>('default')
 
 // Enterprise Logic
 const isEnterprise = computed(() => {
@@ -909,10 +958,13 @@ const isEnterprise = computed(() => {
     return slug === 'enterprise' || slug === 'enterprise_business'
 })
 
+import HalfPageLayout from '../invoices/layouts/HalfPageLayout.vue'
+
 const previewComponent = computed(() => {
     if (previewLayout.value === 'professional') return ProfessionalLayout
     if (previewLayout.value === 'grid_premium') return GridPremiumLayout
     if (previewLayout.value === 'classic') return ClassicGridLayout
+    if (previewLayout.value === 'half_page') return HalfPageLayout
     return DefaultLayout
 })
 
@@ -926,7 +978,7 @@ const previewControls = ref({
     gst_scenario: 'inter' as 'inter' | 'intra' // Default to Inter-State (IGST) as requested
 })
 
-const openPreview = (layout: 'default' | 'professional' | 'grid_premium' | 'classic') => {
+const openPreview = (layout: 'default' | 'professional' | 'grid_premium' | 'classic' | 'half_page') => {
     previewLayout.value = layout
     // Initialize preview controls
     previewControls.value = {
@@ -1036,7 +1088,7 @@ const form = ref({
         default_terms: '',
         account_holder_name: '',
         show_bank_details: false,
-        invoice_layout: 'default' as 'default' | 'professional' | 'grid_premium' | 'classic'
+        invoice_layout: 'default' as 'default' | 'professional' | 'grid_premium' | 'classic' | 'half_page'
     }
 })
 
