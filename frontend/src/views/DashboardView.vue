@@ -27,105 +27,91 @@
       </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="mb-4 grid grid-cols-4 sm:grid-cols-8 gap-2">
-      <router-link to="/quick-note"
-        class="flex flex-col items-center justify-center py-2.5 px-1 bg-yellow-50 rounded-xl border border-yellow-200 hover:bg-yellow-100 transition-all group">
-        <div
-          class="h-7 w-7 rounded-lg bg-yellow-200 text-yellow-700 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-          </svg>
-        </div>
-        <span class="text-[10px] font-semibold text-yellow-900 text-center leading-tight">Fast Note</span>
-      </router-link>
+    <!-- Quick Creates / Actions -->
+    <div class="mb-5">
+      <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Quick Actions</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+        
+        <router-link to="/invoices/create"
+          class="flex items-center gap-3 p-3 bg-white hover:bg-indigo-50 border border-gray-100 hover:border-indigo-200 rounded-xl transition-all group shadow-sm">
+          <div class="h-8 w-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-900 group-hover:text-indigo-700">Create Invoice</p>
+            <p class="text-[10px] text-gray-400">New sales bill</p>
+          </div>
+        </router-link>
 
-      <router-link to="/cashbook"
-        class="flex flex-col items-center justify-center py-2.5 px-1 bg-white rounded-xl border border-gray-100 hover:border-emerald-200 transition-all group">
-        <div
-          class="h-7 w-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <span class="text-[10px] font-medium text-gray-700 text-center leading-tight">Cashbook</span>
-      </router-link>
+        <router-link to="/purchases/create"
+          class="flex items-center gap-3 p-3 bg-white hover:bg-orange-50 border border-gray-100 hover:border-orange-200 rounded-xl transition-all group shadow-sm">
+          <div class="h-8 w-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-900 group-hover:text-orange-700">Add Purchase</p>
+            <p class="text-[10px] text-gray-400">Record vendor bill</p>
+          </div>
+        </router-link>
 
-      <router-link to="/invoices"
-        class="flex flex-col items-center justify-center py-2.5 px-1 bg-white rounded-xl border border-gray-100 hover:border-indigo-200 transition-all group">
-        <div
-          class="h-7 w-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-          <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        </div>
-        <span class="text-[10px] font-medium text-gray-700 text-center leading-tight">Invoice</span>
-      </router-link>
+        <router-link to="/quick-note"
+          class="flex items-center gap-3 p-3 bg-white hover:bg-yellow-50 border border-gray-100 hover:border-yellow-200 rounded-xl transition-all group shadow-sm">
+          <div class="h-8 w-8 rounded-lg bg-yellow-100 text-yellow-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-900 group-hover:text-yellow-700">Fast Note</p>
+            <p class="text-[10px] text-gray-400">Kaccha bill / Rough</p>
+          </div>
+        </router-link>
 
-      <router-link to="/purchases/create"
-        class="flex flex-col items-center justify-center py-2.5 px-1 bg-orange-50 rounded-xl border border-orange-100 hover:border-orange-200 transition-all group">
-        <div
-          class="h-7 w-7 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-        </div>
-        <span class="text-[10px] font-medium text-orange-800 text-center leading-tight">Purchase</span>
-      </router-link>
+        <router-link to="/quotations/create"
+          class="flex items-center gap-3 p-3 bg-white hover:bg-teal-50 border border-gray-100 hover:border-teal-200 rounded-xl transition-all group shadow-sm">
+          <div class="h-8 w-8 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-900 group-hover:text-teal-700">New Estimate</p>
+            <p class="text-[10px] text-gray-400">Send quotation</p>
+          </div>
+        </router-link>
 
-      <router-link to="/invoice-scans"
-        class="flex flex-col items-center justify-center py-2.5 px-1 bg-white rounded-xl border border-gray-100 hover:border-orange-200 transition-all group">
-        <div
-          class="h-7 w-7 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-        </div>
-        <span class="text-[10px] font-medium text-gray-700 text-center leading-tight">Scan</span>
-      </router-link>
+        <!-- Use absolute URL or click handler if creating customer requires modal. For now routing to /customers -->
+        <router-link to="/customers/create"
+          class="flex items-center gap-3 p-3 bg-white hover:bg-blue-50 border border-gray-100 hover:border-blue-200 rounded-xl transition-all group shadow-sm">
+          <div class="h-8 w-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-900 group-hover:text-blue-700">Add Customer</p>
+            <p class="text-[10px] text-gray-400">New party details</p>
+          </div>
+        </router-link>
 
-      <router-link to="/quotations"
-        class="flex flex-col items-center justify-center py-2.5 px-1 bg-white rounded-xl border border-gray-100 hover:border-teal-200 transition-all group">
-        <div
-          class="h-7 w-7 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-          </svg>
-        </div>
-        <span class="text-[10px] font-medium text-gray-700 text-center leading-tight">Estimate</span>
-      </router-link>
+        <router-link to="/cashbook"
+          class="flex items-center gap-3 p-3 bg-white hover:bg-emerald-50 border border-gray-100 hover:border-emerald-200 rounded-xl transition-all group shadow-sm">
+          <div class="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-900 group-hover:text-emerald-700">Record Entry</p>
+            <p class="text-[10px] text-gray-400">Cash in/out</p>
+          </div>
+        </router-link>
 
-      <router-link to="/customers"
-        class="flex flex-col items-center justify-center py-2.5 px-1 bg-white rounded-xl border border-gray-100 hover:border-green-200 transition-all group">
-        <div
-          class="h-7 w-7 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-          <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-          </svg>
-        </div>
-        <span class="text-[10px] font-medium text-gray-700 text-center leading-tight">Customer</span>
-      </router-link>
-
-      <router-link to="/products"
-        class="flex flex-col items-center justify-center py-2.5 px-1 bg-white rounded-xl border border-gray-100 hover:border-orange-200 transition-all group">
-        <div
-          class="h-7 w-7 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-          <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-        </div>
-        <span class="text-[10px] font-medium text-gray-700 text-center leading-tight">Products</span>
-      </router-link>
+      </div>
     </div>
 
     <!-- KPI Stats Row -->
