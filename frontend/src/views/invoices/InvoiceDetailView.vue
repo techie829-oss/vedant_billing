@@ -826,19 +826,7 @@ const finalize = async () => {
         'Are you sure? Once finalized, you cannot edit this invoice.',
         async () => {
             try {
-                // We don't have updateStatus in store yet, let's use check finalizeInvoice or add updateStatus
-                // The store has finalizeInvoice which calls /finalize.
-                // But markAsSent usually implies just changing status if allowed.
-                // Let's check store actions again.
-                // Store has finalizeInvoice. It also has updateInvoice.
-                // Let's use updateInvoice to set status to sent if that's what we want,
-                // OR use finalizeInvoice if that's the intention.
-                // The original code passed 'sent' to updateStatus which didn't exist in store props in lint,
-                // but local `invoiceStore` definition might have had it?
-                // Actually previous code was: await invoiceStore.updateStatus(invoice.value.id, 'sent')
-                // But lint said it didn't exist.
-                // Let's use updateInvoice.
-                await invoiceStore.updateInvoice(invoice.value.id, { status: 'sent' })
+                await invoiceStore.finalizeInvoice(invoice.value.id)
                 loadInvoice()
                 showAlert('Invoice finalized successfully', 'Success', 'success')
             } catch (e: any) {

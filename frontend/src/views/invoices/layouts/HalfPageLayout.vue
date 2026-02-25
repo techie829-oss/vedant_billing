@@ -143,16 +143,7 @@
                         <td class="col-amt td-right item-total">{{ formatCurrency(item.total) }}</td>
                     </tr>
                     <!-- Fill empty rows to maintain table height visually -->
-                    <tr v-for="n in emptyRows(page.items.length)" :key="'e' + n" class="empty-row">
-                        <td></td>
-                        <td></td>
-                        <td v-if="displayOpts.show_hsn"></td>
-                        <td></td>
-                        <td></td>
-                        <td v-if="displayOpts.show_discount"></td>
-                        <td v-if="displayOpts.show_gst_breakdown"></td>
-                        <td></td>
-                    </tr>
+
                 </tbody>
             </table>
 
@@ -283,12 +274,7 @@ const isPrinting = typeof window !== 'undefined' && window.matchMedia?.('print')
 
 const MAX_ITEMS_FIRST = 15;  // First page: 15 items (compact half-page)
 const MAX_ITEMS_STD = 18;    // Subsequent pages: more (no party header)
-const MIN_ROWS = 3;          // Minimum empty rows to always show in table
 
-const emptyRows = (count: number) => {
-    const fill = MIN_ROWS - count;
-    return fill > 0 ? fill : 0;
-}
 
 const copyLabel = computed(() => {
     switch (props.copyType) {
