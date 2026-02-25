@@ -364,19 +364,18 @@
                                 <!-- Professional Layout Card -->
                                 <div class="relative border-2 rounded-xl p-4 transition-all" :class="[
                                     form.meta.invoice_layout === 'professional' ? 'border-indigo-600 ring-1 ring-indigo-600 bg-indigo-50/10' : 'border-gray-200',
-                                    !authStore.hasFeature('premium_layout_access') ? 'opacity-75 grayscale bg-gray-50' : 'cursor-pointer hover:border-gray-300'
-                                ]"
-                                    @click="authStore.hasFeature('premium_layout_access') ? form.meta.invoice_layout = 'professional' : null">
-                                    <div v-if="!authStore.hasFeature('premium_layout_access')"
-                                        class="absolute top-2 right-2 z-10">
+                                    !canUsePremiumLayouts ? 'opacity-75 grayscale bg-gray-50' : 'cursor-pointer hover:border-gray-300'
+                                ]" @click="canUsePremiumLayouts ? form.meta.invoice_layout = 'professional' : null">
+                                    <div v-if="!canUsePremiumLayouts" class="absolute top-2 right-2 z-10">
                                         <span
                                             class="bg-gray-900 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 shadow-sm">
-                                            <svg class="w-3 h-3 text-yellow-400" fill="currentColor"
+                                            <svg class="w-3 h-3 text-purple-400" fill="currentColor"
                                                 viewBox="0 0 20 20">
-                                                <path
-                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+                                                    clip-rule="evenodd" />
                                             </svg>
-                                            PRO
+                                            ENTERPRISE
                                         </span>
                                     </div>
 
@@ -409,19 +408,18 @@
                                 <!-- Grid Premium Layout Card -->
                                 <div class="relative border-2 rounded-xl p-4 transition-all" :class="[
                                     form.meta.invoice_layout === 'grid_premium' ? 'border-indigo-600 ring-1 ring-indigo-600 bg-indigo-50/10' : 'border-gray-200',
-                                    !authStore.hasFeature('premium_layout_access') ? 'opacity-75 grayscale bg-gray-50' : 'cursor-pointer hover:border-gray-300'
-                                ]"
-                                    @click="authStore.hasFeature('premium_layout_access') ? form.meta.invoice_layout = 'grid_premium' : null">
-                                    <div v-if="!authStore.hasFeature('premium_layout_access')"
-                                        class="absolute top-2 right-2 z-10">
+                                    !canUsePremiumLayouts ? 'opacity-75 grayscale bg-gray-50' : 'cursor-pointer hover:border-gray-300'
+                                ]" @click="canUsePremiumLayouts ? form.meta.invoice_layout = 'grid_premium' : null">
+                                    <div v-if="!canUsePremiumLayouts" class="absolute top-2 right-2 z-10">
                                         <span
                                             class="bg-gray-900 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 shadow-sm">
-                                            <svg class="w-3 h-3 text-yellow-400" fill="currentColor"
+                                            <svg class="w-3 h-3 text-purple-400" fill="currentColor"
                                                 viewBox="0 0 20 20">
-                                                <path
-                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+                                                    clip-rule="evenodd" />
                                             </svg>
-                                            PRO
+                                            ENTERPRISE
                                         </span>
                                     </div>
 
@@ -459,19 +457,18 @@
                                 <!-- Classic Grid Layout Card -->
                                 <div class="relative border-2 rounded-xl p-4 transition-all" :class="[
                                     form.meta.invoice_layout === 'classic' ? 'border-indigo-600 ring-1 ring-indigo-600 bg-indigo-50/10' : 'border-gray-200',
-                                    !authStore.hasFeature('premium_layout_access') ? 'opacity-75 grayscale bg-gray-50' : 'cursor-pointer hover:border-gray-300'
-                                ]"
-                                    @click="authStore.hasFeature('premium_layout_access') ? form.meta.invoice_layout = 'classic' : null">
-                                    <div v-if="!authStore.hasFeature('premium_layout_access')"
-                                        class="absolute top-2 right-2 z-10">
+                                    !canUseClassicLayout ? 'opacity-75 grayscale bg-gray-50' : 'cursor-pointer hover:border-gray-300'
+                                ]" @click="canUseClassicLayout ? form.meta.invoice_layout = 'classic' : null">
+                                    <div v-if="!canUseClassicLayout" class="absolute top-2 right-2 z-10">
                                         <span
                                             class="bg-gray-900 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 shadow-sm">
-                                            <svg class="w-3 h-3 text-yellow-400" fill="currentColor"
+                                            <svg class="w-3 h-3 text-orange-400" fill="currentColor"
                                                 viewBox="0 0 20 20">
-                                                <path
-                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+                                                    clip-rule="evenodd" />
                                             </svg>
-                                            PRO
+                                            ENTERPRISE+
                                         </span>
                                     </div>
 
@@ -509,11 +506,9 @@
                                 <!-- Half Page Layout Card -->
                                 <div class="relative border-2 rounded-xl p-4 transition-all" :class="[
                                     form.meta.invoice_layout === 'half_page' ? 'border-indigo-600 ring-1 ring-indigo-600 bg-indigo-50/10' : 'border-gray-200',
-                                    !authStore.hasFeature('premium_layout_access') ? 'opacity-75 grayscale bg-gray-50' : 'cursor-pointer hover:border-gray-300'
-                                ]"
-                                    @click="authStore.hasFeature('premium_layout_access') ? form.meta.invoice_layout = 'half_page' : null">
-                                    <div v-if="!authStore.hasFeature('premium_layout_access')"
-                                        class="absolute top-2 right-2 z-10">
+                                    !canUseHalfPage ? 'opacity-75 grayscale bg-gray-50' : 'cursor-pointer hover:border-gray-300'
+                                ]" @click="canUseHalfPage ? form.meta.invoice_layout = 'half_page' : null">
+                                    <div v-if="!canUseHalfPage" class="absolute top-2 right-2 z-10">
                                         <span
                                             class="bg-gray-900 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 shadow-sm">
                                             <svg class="w-3 h-3 text-yellow-400" fill="currentColor"
@@ -981,11 +976,23 @@ const fetchingGst = ref(false)
 const showPreviewModal = ref(false)
 const previewLayout = ref<'default' | 'professional' | 'grid_premium' | 'classic' | 'half_page'>('default')
 
-// Enterprise Logic
-const isEnterprise = computed(() => {
-    const slug = authStore.currentSubscription?.plan?.slug
-    return slug === 'enterprise' || slug === 'enterprise_business'
-})
+// ── Plan Tier Helpers ──────────────────────────────────────────────
+// Layout access matrix:
+//   Free / Starter        → Default (Simple) only
+//   Pro                   → Default + Half Page (Paper Saver)
+//   Enterprise            → Default + Professional + Grid Premium + Half Page
+//   Enterprise Business   → ALL (+ Classic Grid)
+const planSlug = computed(() => authStore.currentSubscription?.plan?.slug || 'free')
+
+const canUseHalfPage = computed(() =>
+    ['pro', 'enterprise', 'enterprise_business'].includes(planSlug.value)
+)
+const canUsePremiumLayouts = computed(() =>   // Professional + Grid Premium
+    ['enterprise', 'enterprise_business'].includes(planSlug.value)
+)
+const canUseClassicLayout = computed(() =>    // Classic Grid — top tier only
+    planSlug.value === 'enterprise_business'
+)
 
 import HalfPageLayout from '../invoices/layouts/HalfPageLayout.vue'
 

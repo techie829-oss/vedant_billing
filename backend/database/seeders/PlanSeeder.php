@@ -98,7 +98,7 @@ class PlanSeeder extends Seeder
                     'multi_user' => 0,
                     'api_access' => 0,
                     'eway_bill_access' => 1,
-                    'premium_layout_access' => 1,  // All paid plans get premium layouts
+                    'premium_layout_access' => 0,  // Starter: Default only (Pro+ gets premium layouts)
                 ]
             ],
             [
