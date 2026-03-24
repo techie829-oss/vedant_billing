@@ -77,6 +77,7 @@ class InvoiceController extends Controller
             'eway_bill_no' => 'nullable|string|max:50',
             'vehicle_no' => 'nullable|string|max:50',
             'po_number' => 'nullable|string|max:50',
+            'status' => 'sometimes|string|in:draft,sent,paid',
             'meta' => 'nullable|array',
             'invoice_number' => [
                 'nullable',
@@ -100,7 +101,7 @@ class InvoiceController extends Controller
                 'invoice_number' => $invoiceNumber,
                 'date' => $validated['date'],
                 'due_date' => $validated['due_date'],
-                'status' => 'draft',
+                'status' => $validated['status'] ?? 'draft',
                 'notes' => $validated['notes'] ?? null,
                 'terms' => $validated['terms'] ?? null,
                 'challan_no' => $validated['challan_no'] ?? null,
@@ -111,6 +112,10 @@ class InvoiceController extends Controller
             ]);
 
             $this->syncItems($invoice, $validated['items']);
+
+            if ($invoice->status === 'sent') {
+                InvoiceFinalized::dispatch($invoice);
+            }
 
             return response()->json($invoice->load('items'), 201);
         });
@@ -161,6 +166,7 @@ class InvoiceController extends Controller
             'eway_bill_no' => 'nullable|string|max:50',
             'vehicle_no' => 'nullable|string|max:50',
             'po_number' => 'nullable|string|max:50',
+            'status' => 'sometimes|string|in:draft,sent,paid',
             'meta' => 'nullable|array',
             'invoice_number' => [
                 'nullable',
@@ -173,7 +179,8 @@ class InvoiceController extends Controller
         ]);
 
         return DB::transaction(function () use ($validated, $invoice) {
-            // Check if type is changing
+            $oldStatus = $invoice->status;
+
             // Check if type is changing
             if (isset($validated['type']) && $validated['type'] !== $invoice->type) {
                 // Generate new number for new type ONLY if invoice_number is not explicitly provided in this update
@@ -188,6 +195,11 @@ class InvoiceController extends Controller
                 // Replace items approach (Delete all and re-create)
                 $invoice->items()->delete();
                 $this->syncItems($invoice, $validated['items']);
+            }
+
+            // If transitioned to sent, finalize
+            if ($oldStatus === 'draft' && $invoice->status === 'sent') {
+                InvoiceFinalized::dispatch($invoice);
             }
 
             return response()->json($invoice->load('items'));
@@ -221,6 +233,7 @@ class InvoiceController extends Controller
         $subtotal = 0;
         $taxTotal = 0;
         $cessTotal = 0;
+        $discountTotal = 0;
 
         foreach ($itemsData as $itemData) {
             $qty = $itemData['quantity'];
@@ -263,14 +276,14 @@ class InvoiceController extends Controller
             $subtotal += $taxable;
             $taxTotal += $taxAmount;
             $cessTotal += $cessAmount;
+            $discountTotal += $discountAmt;
         }
 
         $invoice->update([
             'subtotal' => $subtotal,
             'tax_total' => $taxTotal,
             'cess_total' => $cessTotal,
-            // 'discount_total' => ?? We should probably sum discounts but schema has it on invoice table?
-            // For now, grand_total is net.
+            'discount_total' => $discountTotal,
             'grand_total' => $subtotal + $taxTotal + $cessTotal,
         ]);
     }
@@ -522,12 +535,20 @@ class InvoiceController extends Controller
     protected function getNextInvoiceNumber(string $type): string
     {
         $prefix = $this->getInvoicePrefix($type);
-        $count = Invoice::withTrashed()->where('type', $type)->count() + 1;
+        $businessId = auth()->user()->currentBusinessId();
+
+        $count = Invoice::withTrashed()
+            ->where('business_id', $businessId)
+            ->where('type', $type)
+            ->count() + 1;
 
         $number = $prefix . str_pad($count, 5, '0', STR_PAD_LEFT);
 
         // Ensure uniqueness by checking if it exists (including soft deleted)
-        while (Invoice::withTrashed()->where('invoice_number', $number)->exists()) {
+        while (Invoice::withTrashed()
+            ->where('business_id', $businessId)
+            ->where('invoice_number', $number)
+            ->exists()) {
             $count++;
             $number = $prefix . str_pad($count, 5, '0', STR_PAD_LEFT);
         }

@@ -40,16 +40,14 @@ class Party extends Model
     protected static function booted(): void
     {
         static::addGlobalScope('business', function ($builder) {
-            $user = request()->user();
-            if ($user && $user->currentBusinessId()) {
-                $builder->where('business_id', $user->currentBusinessId());
+            if (auth()->check() && auth()->user()->currentBusinessId()) {
+                $builder->where('business_id', auth()->user()->currentBusinessId());
             }
         });
 
         static::creating(function ($model) {
-            $user = request()->user();
-            if ($user && $user->currentBusinessId()) {
-                $model->business_id = $user->currentBusinessId();
+            if (auth()->check() && auth()->user()->currentBusinessId()) {
+                $model->business_id = auth()->user()->currentBusinessId();
             }
         });
 

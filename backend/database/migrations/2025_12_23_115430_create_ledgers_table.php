@@ -22,6 +22,8 @@ return new class extends Migration {
             $table->boolean('is_system')->default(false); // If true, cannot be deleted
             $table->jsonb('meta')->nullable();
 
+            $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
 

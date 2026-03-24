@@ -747,6 +747,26 @@
             </div>
         </div>
 
+        <!-- Sticky Bottom Action Bar -->
+        <div class="fixed bottom-0 left-0 right-0 lg:left-64 bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-30 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <span class="text-sm font-medium text-gray-500 hidden sm:block">Total Amount:</span>
+                    <span class="text-lg font-bold text-gray-900">₹{{ Number(form.grand_total).toFixed(2) }}</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button @click="save('draft')" :disabled="saving"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none transition-colors">
+                        {{ saving ? 'Saving...' : 'Save Draft' }}
+                    </button>
+                    <button @click="save('sent')" :disabled="saving"
+                        class="px-6 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none shadow-sm transition-colors">
+                        {{ saving ? 'Saving...' : 'Save & Finalize' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </AppLayout>
 </template>
 

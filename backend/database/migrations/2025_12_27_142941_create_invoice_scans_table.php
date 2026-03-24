@@ -30,6 +30,8 @@ return new class extends Migration {
             $table->text('error_message')->nullable();
             $table->integer('products_count')->default(0);
 
+            $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
 
             $table->index(['business_id', 'created_at']);

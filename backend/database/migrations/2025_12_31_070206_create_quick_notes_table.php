@@ -18,7 +18,11 @@ return new class extends Migration {
             $table->string('title')->nullable();
             $table->json('content');
             $table->decimal('total_amount', 15, 2)->default(0);
+            
+            $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('business_id')->references('id')->on('businesses')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

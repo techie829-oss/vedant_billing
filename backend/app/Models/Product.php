@@ -33,6 +33,7 @@ class Product extends Model
         'sale_price' => 'decimal:2',
         'purchase_price' => 'decimal:2',
         'current_stock' => 'decimal:2',
+        'tax_rate' => 'decimal:2',
         'cess_rate' => 'decimal:2',
         'is_tax_inclusive' => 'boolean',
     ];

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class LedgerEntry extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, \App\Traits\Blameable;
 
     protected $fillable = [
         'business_id',
@@ -18,6 +18,28 @@ class LedgerEntry extends Model
         'amount', // decimal (Rupees)
         'description',
     ];
+
+    protected $casts = [
+        'amount' => 'decimal:2',
+    ];
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope('business', function ($builder) {
+            if (auth()->check() && auth()->user()->currentBusinessId()) {
+                $builder->where('business_id', auth()->user()->currentBusinessId());
+            }
+        });
+
+        static::creating(function ($model) {
+            if (auth()->check() && auth()->user()->currentBusinessId()) {
+                $model->business_id = auth()->user()->currentBusinessId();
+            }
+        });
+    }
 
     public function business()
     {

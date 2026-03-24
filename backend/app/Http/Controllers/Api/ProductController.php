@@ -163,35 +163,30 @@ class ProductController extends Controller
         ]);
 
         return DB::transaction(function () use ($product, $validated) {
+            // 1. Create Transaction
             $transaction = InventoryTransaction::create([
                 'product_id' => $product->id,
                 'type' => $validated['type'],
                 'quantity' => $validated['quantity'],
                 'notes' => $validated['notes'],
+                'business_id' => $product->business_id,
             ]);
 
-            // Update cached stock
-            // Note: If transaction is 'sale' or 'return' (outward), quantity should be negative ideally or handled by type logic.
-            // Simplified logic: The API expects the quantity to be the *change* amount. 
-            // -5 for remove, +5 for add.
-            // Or we can enforce sign based on type? 
-            // Let's assume input 'quantity' is the explicit change vector.
-            // But usually 'purchase' implies +, 'sale' implies -.
-
-            // Let's enforce logic for safety:
+            // 2. Update cached stock with Lock
             $qty = $validated['quantity'];
             if ($validated['type'] === 'sale' && $qty > 0)
                 $qty = -$qty;
             if ($validated['type'] === 'purchase' && $qty < 0)
-                $qty = abs($qty); // Purchase adds stock
+                $qty = abs($qty);
 
-            // Re-save with corrected sign if needed, but for now we just use $qty for increment
+            // Re-save with corrected sign if needed
             if ($qty != $validated['quantity']) {
-                // Creating log with corrected sign
                 $transaction->update(['quantity' => $qty]);
             }
 
-            $product->increment('current_stock', $qty);
+            // LOCK and RE-FETCH to ensure fresh data
+            $freshProduct = Product::where('id', $product->id)->lockForUpdate()->first();
+            $freshProduct->increment('current_stock', $qty);
 
             return response()->json([
                 'success' => true,

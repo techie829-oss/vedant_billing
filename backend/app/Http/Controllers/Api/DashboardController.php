@@ -93,7 +93,10 @@ class DashboardController extends Controller
             });
 
         // Sales Chart (Last 6 Months)
-        $salesChart = Invoice::selectRaw("TO_CHAR(date, 'YYYY-MM') as month, SUM(grand_total) as total")
+        $driver = DB::connection()->getDriverName();
+        $monthRaw = $driver === 'pgsql' ? "TO_CHAR(date, 'YYYY-MM')" : "strftime('%Y-%m', date)";
+
+        $salesChart = Invoice::selectRaw("$monthRaw as month, SUM(grand_total) as total")
             ->whereIn('status', ['paid', 'partial', 'sent', 'overdue'])
             ->whereNotIn('type', ['purchase_invoice'])
             ->where('date', '>=', now()->subMonths(6))
@@ -102,13 +105,13 @@ class DashboardController extends Controller
             ->get();
 
         // Cashflow Chart (Income vs Expense) - Last 6 Months
-        $incomeData = Payment::selectRaw("TO_CHAR(date, 'YYYY-MM') as month, SUM(amount) as total")
+        $incomeData = Payment::selectRaw("$monthRaw as month, SUM(amount) as total")
             ->where('date', '>=', now()->subMonths(6))
             ->groupBy('month')
             ->orderBy('month')
             ->pluck('total', 'month');
 
-        $expenseData = Expense::selectRaw("TO_CHAR(date, 'YYYY-MM') as month, SUM(amount) as total")
+        $expenseData = Expense::selectRaw("$monthRaw as month, SUM(amount) as total")
             ->where('date', '>=', now()->subMonths(6))
             ->groupBy('month')
             ->orderBy('month')

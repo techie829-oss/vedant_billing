@@ -293,6 +293,12 @@ const router = createRouter({
         },
         // Vendors
         {
+            path: '/customers/:id/ledger',
+            name: 'customer-ledger',
+            component: () => import('../views/customers/CustomerLedgerView.vue'),
+            meta: { requiresAuth: true }
+        },
+        {
             path: '/vendors',
             name: 'vendors-list',
             component: () => import('../views/vendors/VendorListView.vue'),

@@ -31,6 +31,8 @@ class PaymentAllocation extends Model
         return $this->belongsTo(Payment::class);
     }
 
-    // Placeholder for Invoice relationship (Phase 5)
-    // public function invoice() { ... }
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
+    }
 }

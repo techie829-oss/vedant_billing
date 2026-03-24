@@ -87,6 +87,15 @@
             </div>
 
             <div class="flex justify-end gap-4 mt-1 pt-1.5 border-t border-gray-100">
+              <router-link :to="`/customers/${customer.id}/ledger`"
+                class="text-xs font-medium text-amber-600 hover:text-amber-900 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                Ledger
+              </router-link>
               <router-link :to="`/customers/${customer.id}/edit`"
                 class="text-xs font-medium text-indigo-600 hover:text-indigo-900 flex items-center gap-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"
@@ -161,6 +170,8 @@
                       </span>
                     </td>
                     <td class="relative whitespace-nowrap py-2.5 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                      <router-link :to="`/customers/${customer.id}/ledger`"
+                        class="text-amber-600 hover:text-amber-900 mr-4">Ledger</router-link>
                       <router-link :to="`/customers/${customer.id}/edit`"
                         class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</router-link>
                       <button @click="deleteCustomer(customer.id)"

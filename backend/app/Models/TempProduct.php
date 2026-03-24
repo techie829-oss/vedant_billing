@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TempProduct extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, \App\Traits\Blameable;
 
     protected $fillable = [
         'business_id',
@@ -41,6 +41,24 @@ class TempProduct extends Model
         'cess_amount' => 'decimal:2',
         'confidence_score' => 'decimal:2',
     ];
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope('business', function ($builder) {
+            if (auth()->check() && auth()->user()->currentBusinessId()) {
+                $builder->where('business_id', auth()->user()->currentBusinessId());
+            }
+        });
+
+        static::creating(function ($model) {
+            if (auth()->check() && auth()->user()->currentBusinessId()) {
+                $model->business_id = auth()->user()->currentBusinessId();
+            }
+        });
+    }
 
     /**
      * Get the business that owns the temp product.

@@ -19,8 +19,8 @@ class CreateLedgerEntriesForInvoice
     {
         $invoice = $event->invoice;
 
-        // Prevent duplicate entries if invoice is already finalized
-        if ($invoice->type === 'quote') {
+        // Skip stock updates for certain non-accounting types
+        if (in_array($invoice->type, ['proforma_invoice', 'delivery_challan', 'quote'])) {
             return;
         }
 
@@ -35,78 +35,97 @@ class CreateLedgerEntriesForInvoice
 
         try {
             DB::transaction(function () use ($invoice) {
-                // Check if ledgers exist
-                $debtorsLedger = Ledger::where('business_id', $invoice->business_id)
-                    ->where('code', 'DEBTORS')
-                    ->first();
+                $businessId = $invoice->business_id;
 
-                if (!$debtorsLedger) {
-                    throw new \Exception("DEBTORS ledger not found for business {$invoice->business_id}");
+                // 1. Resolve Ledgers
+                $debtorsLedger = Ledger::where('business_id', $businessId)->where('code', 'DEBTORS')->first();
+                $creditorsLedger = Ledger::where('business_id', $businessId)->where('code', 'CREDITORS')->first();
+                $salesLedger = Ledger::where('business_id', $businessId)->where('code', 'SALES')->first();
+                $purchaseLedger = Ledger::where('business_id', $businessId)->where('code', 'PURCHASES')->first();
+                $taxLedger = Ledger::where('business_id', $businessId)->where('code', 'GST_PAYABLE')->first();
+
+                if (!$debtorsLedger || !$salesLedger || !$creditorsLedger || !$purchaseLedger) {
+                    throw new \Exception("Core ledgers (Debtors/Creditors/Sales/Purchases) not found for business {$businessId}");
                 }
 
-                $salesLedger = Ledger::where('business_id', $invoice->business_id)
-                    ->where('code', 'SALES')
-                    ->first();
-
-                if (!$salesLedger) {
-                    throw new \Exception("SALES ledger not found for business {$invoice->business_id}");
-                }
-
-                // Create journal entry
+                // 2. Create Journal Entry
                 $journalEntry = JournalEntry::create([
-                    'business_id' => $invoice->business_id,
+                    'business_id' => $businessId,
                     'date' => $invoice->date,
-                    'description' => $invoice->type === 'credit_note'
-                        ? "Credit Note {$invoice->invoice_number} (Ref: " . ($invoice->parent ? $invoice->parent->invoice_number : 'N/A') . ")"
-                        : "Invoice {$invoice->invoice_number}",
+                    'description' => $this->getJournalDescription($invoice),
                     'reference_type' => Invoice::class,
                     'reference_id' => $invoice->id,
+                    'status' => 'posted'
                 ]);
 
-                if ($invoice->type === 'invoice') {
-                    // Invoice Logic
-                    // Debit: Debtors (Asset increases - Customer owes us)
-                    LedgerEntry::create([
-                        'business_id' => $invoice->business_id,
-                        'journal_entry_id' => $journalEntry->id,
-                        'ledger_id' => $debtorsLedger->id,
-                        'type' => 'debit',
-                        'amount' => $invoice->grand_total,
-                    ]);
+                // 3. Mapping Logic
+                if (in_array($invoice->type, ['tax_invoice', 'bill_of_supply', 'invoice'])) {
+                    // SALES TRANSACTION
+                    // Debit: Debtors (Asset +)
+                    $this->entry($businessId, $journalEntry->id, $debtorsLedger->id, 'debit', $invoice->grand_total);
+                    
+                    // Credit: Sales (Revenue +)
+                    $this->entry($businessId, $journalEntry->id, $salesLedger->id, 'credit', $invoice->subtotal);
 
-                    // Credit: Sales (Revenue increases)
-                    LedgerEntry::create([
-                        'business_id' => $invoice->business_id,
-                        'journal_entry_id' => $journalEntry->id,
-                        'ledger_id' => $salesLedger->id,
-                        'type' => 'credit',
-                        'amount' => $invoice->grand_total,
-                    ]);
-                } else {
-                    // Credit Note Logic (Reverse)
-                    // Debit: Sales (Revenue decreases) - Ideally "Sales Return" ledger, but using Sales for now
-                    LedgerEntry::create([
-                        'business_id' => $invoice->business_id,
-                        'journal_entry_id' => $journalEntry->id,
-                        'ledger_id' => $salesLedger->id,
-                        'type' => 'debit',
-                        'amount' => $invoice->grand_total,
-                    ]);
+                    // Credit: Tax (Liability +)
+                    if ($invoice->tax_total > 0) {
+                        $this->entry($businessId, $journalEntry->id, $taxLedger->id ?? $salesLedger->id, 'credit', $invoice->tax_total);
+                    }
+                } 
+                elseif ($invoice->type === 'purchase_invoice') {
+                    // PURCHASE TRANSACTION
+                    // Debit: Purchases (Expense +)
+                    $this->entry($businessId, $journalEntry->id, $purchaseLedger->id, 'debit', $invoice->subtotal);
 
-                    // Credit: Debtors (Asset decreases - Customer credits)
-                    LedgerEntry::create([
-                        'business_id' => $invoice->business_id,
-                        'journal_entry_id' => $journalEntry->id,
-                        'ledger_id' => $debtorsLedger->id,
-                        'type' => 'credit',
-                        'amount' => $invoice->grand_total,
-                    ]);
+                    // Debit: Tax (Asset + / Input Tax Credit)
+                    if ($invoice->tax_total > 0) {
+                        $this->entry($businessId, $journalEntry->id, $taxLedger->id ?? $purchaseLedger->id, 'debit', $invoice->tax_total);
+                    }
+
+                    // Credit: Creditors (Liability +)
+                    $this->entry($businessId, $journalEntry->id, $creditorsLedger->id, 'credit', $invoice->grand_total);
+                } 
+                elseif ($invoice->type === 'credit_note') {
+                    // SALES RETURN
+                    // Debit: Sales (Revenue -)
+                    $this->entry($businessId, $journalEntry->id, $salesLedger->id, 'debit', $invoice->subtotal);
+
+                    // Debit: Tax (Liability -)
+                    if ($invoice->tax_total > 0) {
+                        $this->entry($businessId, $journalEntry->id, $taxLedger->id ?? $salesLedger->id, 'debit', $invoice->tax_total);
+                    }
+
+                    // Credit: Debtors (Asset -)
+                    $this->entry($businessId, $journalEntry->id, $debtorsLedger->id, 'credit', $invoice->grand_total);
                 }
 
-                Log::info("Created ledger entries for {$invoice->type} {$invoice->invoice_number} (ID: {$invoice->id})");
+                Log::info("Created ledger entries for {$invoice->type} {$invoice->invoice_number}");
             });
         } catch (\Exception $e) {
             Log::error("Failed to create ledger entries for invoice {$invoice->id}: " . $e->getMessage());
         }
+    }
+
+    protected function entry($businessId, $journalId, $ledgerId, $type, $amount)
+    {
+        if ($amount <= 0) return;
+        
+        LedgerEntry::create([
+            'business_id' => $businessId,
+            'journal_entry_id' => $journalId,
+            'ledger_id' => $ledgerId,
+            'type' => $type,
+            'amount' => $amount,
+        ]);
+    }
+
+    protected function getJournalDescription(Invoice $invoice): string
+    {
+        $typeName = str_replace('_', ' ', ucfirst($invoice->type));
+        $desc = "{$typeName} {$invoice->invoice_number}";
+        if ($invoice->parent_id && $invoice->parent) {
+            $desc .= " (Ref: {$invoice->parent->invoice_number})";
+        }
+        return $desc;
     }
 }

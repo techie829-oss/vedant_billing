@@ -118,6 +118,8 @@ class PurchaseController extends Controller
             // Generate invoice number
             $invoiceNumber = $validated['invoice_number'] ?? $this->nextPurchaseNumber($businessId);
 
+            $status = $validated['status'] ?? 'draft';
+
             // Create invoice
             $invoice = Invoice::create([
                 'business_id' => $businessId,
@@ -126,7 +128,7 @@ class PurchaseController extends Controller
                 'invoice_number' => $invoiceNumber,
                 'date' => $validated['date'],
                 'due_date' => $validated['due_date'],
-                'status' => 'draft',
+                'status' => $status,
                 'notes' => $validated['notes'] ?? null,
                 'po_number' => $validated['po_number'] ?? null,
                 'eway_bill_no' => $validated['eway_bill_no'] ?? null,
@@ -160,7 +162,7 @@ class PurchaseController extends Controller
 
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
-                    'product_id' => $itemData['product_id'] ?? null, // Added
+                    'product_id' => $itemData['product_id'] ?? null,
                     'name' => $itemData['name'],
                     'description' => $itemData['description'] ?? '',
                     'hsn_code' => $itemData['hsn_code'] ?? null,
@@ -178,24 +180,8 @@ class PurchaseController extends Controller
                     'expiry_date' => $itemData['expiry_date'] ?? null,
                 ]);
 
-                // Update inventory if mapped to a catalog product
-                if (!empty($itemData['product_id'])) {
-                    $product = \App\Models\Product::find($itemData['product_id']);
-                    if ($product && $product->type === 'goods') {
-                        $product->increment('current_stock', $qty);
-
-                        \App\Models\InventoryTransaction::create([
-                            'product_id' => $product->id,
-                            'type' => 'purchase',
-                            'quantity' => $qty,
-                            'unit_price' => $price,
-                            'notes' => "Purchased via Scan: Invoice #{$invoice->invoice_number}",
-                        ]);
-                    }
-                }
-
-                $subtotal += $base + $discount; // Gross subtotal before discount
-                $discountTotal += $discount;
+                $subtotal += $base; 
+                $discountTotal += $discountAmt;
                 $taxTotal += $taxAmt;
                 $cessTotal += $cessAmt;
             }
@@ -205,8 +191,13 @@ class PurchaseController extends Controller
                 'discount_total' => $discountTotal,
                 'tax_total' => $taxTotal,
                 'cess_total' => $cessTotal,
-                'grand_total' => ($subtotal - $discountTotal) + $taxTotal + $cessTotal,
+                'grand_total' => $subtotal + $taxTotal + $cessTotal,
             ]);
+
+            // Dispatch Finalize Event if not draft
+            if ($invoice->status === 'sent' || $invoice->status === 'paid') {
+                \App\Events\InvoiceFinalized::dispatch($invoice);
+            }
 
             // Update matching invoice scan if provided
             if (!empty($validated['invoice_scan_id'])) {
@@ -235,7 +226,10 @@ class PurchaseController extends Controller
 
         $number = 'PUR/' . str_pad($count, 5, '0', STR_PAD_LEFT);
 
-        while (Invoice::withTrashed()->where('invoice_number', $number)->exists()) {
+        while (Invoice::withTrashed()
+            ->where('business_id', $businessId)
+            ->where('invoice_number', $number)
+            ->exists()) {
             $count++;
             $number = 'PUR/' . str_pad($count, 5, '0', STR_PAD_LEFT);
         }

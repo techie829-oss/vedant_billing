@@ -7,6 +7,7 @@ use App\Models\InventoryTransaction;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class InventoryController extends Controller
 {
@@ -15,6 +16,8 @@ class InventoryController extends Controller
      */
     public function index(Request $request)
     {
+        Gate::authorize('viewAny', InventoryTransaction::class);
+
         $query = InventoryTransaction::with(['product', 'party'])
             ->orderBy('created_at', 'desc');
 
@@ -34,6 +37,8 @@ class InventoryController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('create', InventoryTransaction::class);
+
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'type' => 'required|in:purchase,sale,adjustment,return',
@@ -70,7 +75,6 @@ class InventoryController extends Controller
             // If user selects "Stock In", sends +Qty.
             // If user selects "Stock Out", sends -Qty.
 
-            // Create Transaction
             InventoryTransaction::create([
                 'product_id' => $request->product_id,
                 'type' => $request->type,
@@ -81,8 +85,8 @@ class InventoryController extends Controller
                 'business_id' => $product->business_id, // Safety
             ]);
 
-            // Update Product Stock
-            // This is a "denormalized" cache for performance
+            // LOCK and RE-FETCH for atomic increment
+            $product = Product::where('id', $request->product_id)->lockForUpdate()->first();
             $product->increment('current_stock', $quantity);
 
             // Optional: Update Product "Purchase Price" if this is a Purchase

@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Product;
+use App\Models\Payment;
 use App\Models\User;
 use App\Models\BusinessUser;
 
-class ProductPolicy
+class PaymentPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,9 +19,9 @@ class ProductPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Product $product): bool
+    public function view(User $user, Payment $payment): bool
     {
-        return $user->currentBusinessId() === $product->business_id;
+        return $user->currentBusinessId() === $payment->business_id;
     }
 
     /**
@@ -29,19 +29,15 @@ class ProductPolicy
      */
     public function create(User $user): bool
     {
-        $role = $user->businesses()
-            ->where('business_id', $user->currentBusinessId())
-            ->value('business_users.role');
-
-        return in_array($role, [BusinessUser::ROLE_OWNER, BusinessUser::ROLE_ADMIN]);
+        return (bool) $user->currentBusinessId();
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Product $product): bool
+    public function update(User $user, Payment $payment): bool
     {
-        if ($user->currentBusinessId() !== $product->business_id) {
+        if ($user->currentBusinessId() !== $payment->business_id) {
             return false;
         }
 
@@ -54,15 +50,13 @@ class ProductPolicy
 
     /**
      * Determine whether the user can delete the model.
-     * RESTRICTED: Owner & Admin ONLY.
      */
-    public function delete(User $user, Product $product): bool
+    public function delete(User $user, Payment $payment): bool
     {
-        if ($user->currentBusinessId() !== $product->business_id) {
+        if ($user->currentBusinessId() !== $payment->business_id) {
             return false;
         }
 
-        // Check Role
         $role = $user->businesses()
             ->where('business_id', $user->currentBusinessId())
             ->value('business_users.role');

@@ -19,9 +19,28 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Invoice Listeners
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\InvoiceFinalized::class,
+            \App\Listeners\UpdateStockForInvoice::class
+        );
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\InvoiceFinalized::class,
+            \App\Listeners\CreateLedgerEntriesForInvoice::class
+        );
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\InvoiceFinalized::class,
+            \App\Listeners\RecalculatePartyBalance::class
+        );
+
+        // Payment Listeners
         \Illuminate\Support\Facades\Event::listen(
             \App\Events\PaymentReceived::class,
             \App\Listeners\RecordPaymentToLedger::class
+        );
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\PaymentReceived::class,
+            \App\Listeners\RecalculatePartyBalance::class
         );
 
         if (config('app.env') === 'production' && env('FORCE_HTTPS', false)) {

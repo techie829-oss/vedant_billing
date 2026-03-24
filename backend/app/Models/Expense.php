@@ -27,6 +27,24 @@ class Expense extends Model
         'amount' => 'decimal:2',
     ];
 
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope('business', function ($builder) {
+            if (auth()->check() && auth()->user()->currentBusinessId()) {
+                $builder->where('business_id', auth()->user()->currentBusinessId());
+            }
+        });
+
+        static::creating(function ($model) {
+            if (auth()->check() && auth()->user()->currentBusinessId()) {
+                $model->business_id = auth()->user()->currentBusinessId();
+            }
+        });
+    }
+
     public function business()
     {
         return $this->belongsTo(Business::class);

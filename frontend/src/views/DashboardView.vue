@@ -221,21 +221,17 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <!-- Sales Revenue -->
       <div
-        class="bg-white rounded-2xl border border-gray-100 p-4 xl:p-5 flex items-start justify-between hover:shadow-md transition-shadow">
+        class="bg-white rounded-2xl border border-gray-100 p-4 xl:p-5 flex items-start justify-between shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all duration-300 group">
         <div>
-          <dt class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Sales Revenue</dt>
+          <dt class="text-xs font-semibold text-gray-400 uppercase tracking-wide group-hover:text-indigo-500 transition-colors">Sales Revenue</dt>
           <dd class="mt-1 text-2xl font-bold text-gray-900 tracking-tight">₹{{ abbreviateNumber(metrics.revenue) }}</dd>
           <dd
             class="mt-1.5 text-[11px] text-green-700 font-medium bg-green-50 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6">
-              </path>
-            </svg>
+            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
             Received &amp; Pending
           </dd>
         </div>
-        <div class="p-2.5 bg-indigo-50 rounded-xl text-indigo-600 shrink-0">
+        <div class="p-2.5 bg-indigo-50 rounded-xl text-indigo-600 shrink-0 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
           <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -244,9 +240,9 @@
       </div>
       <!-- Outstanding -->
       <div
-        class="bg-white rounded-2xl border border-gray-100 p-4 xl:p-5 flex items-start justify-between hover:shadow-md transition-shadow">
+        class="bg-white rounded-2xl border border-gray-100 p-4 xl:p-5 flex items-start justify-between shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all duration-300 group">
         <div>
-          <dt class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Outstanding</dt>
+          <dt class="text-xs font-semibold text-gray-400 uppercase tracking-wide group-hover:text-amber-500 transition-colors">Outstanding</dt>
           <dd class="mt-1 text-2xl font-bold text-gray-900 tracking-tight">₹{{ abbreviateNumber(metrics.outstanding) }}
           </dd>
           <dd
@@ -259,7 +255,7 @@
             To be collected
           </dd>
         </div>
-        <div class="p-2.5 bg-amber-50 rounded-xl text-amber-600 shrink-0">
+        <div class="p-2.5 bg-amber-50 rounded-xl text-amber-600 shrink-0 group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
           <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -268,9 +264,9 @@
       </div>
       <!-- Total Purchases -->
       <div
-        class="bg-white rounded-2xl border border-gray-100 p-4 xl:p-5 flex items-start justify-between hover:shadow-md transition-shadow">
+        class="bg-white rounded-2xl border border-gray-100 p-4 xl:p-5 flex items-start justify-between shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all duration-300 group">
         <div>
-          <dt class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Total Purchases</dt>
+          <dt class="text-xs font-semibold text-gray-400 uppercase tracking-wide group-hover:text-orange-500 transition-colors">Total Purchases</dt>
           <dd class="mt-1 text-2xl font-bold text-gray-900 tracking-tight">₹{{ abbreviateNumber(metrics.total_purchases)
           }}</dd>
           <dd
@@ -284,7 +280,7 @@
             Bills from vendors
           </dd>
         </div>
-        <div class="p-2.5 bg-orange-50 rounded-xl text-orange-600 shrink-0">
+        <div class="p-2.5 bg-orange-50 rounded-xl text-orange-600 shrink-0 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
           <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -293,9 +289,9 @@
       </div>
       <!-- Payable -->
       <div
-        class="bg-white rounded-2xl border border-gray-100 p-4 xl:p-5 flex items-start justify-between hover:shadow-md transition-shadow">
+        class="bg-white rounded-2xl border border-gray-100 p-4 xl:p-5 flex items-start justify-between shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all duration-300 group">
         <div>
-          <dt class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Payable to Vendors</dt>
+          <dt class="text-xs font-semibold text-gray-400 uppercase tracking-wide group-hover:text-red-500 transition-colors">Payable to Vendors</dt>
           <dd class="mt-1 text-2xl font-bold text-gray-900 tracking-tight">₹{{
             abbreviateNumber(metrics.payable_to_vendors) }}</dd>
           <dd
@@ -308,7 +304,7 @@
             Pending payment
           </dd>
         </div>
-        <div class="p-2.5 bg-red-50 rounded-xl text-red-600 shrink-0">
+        <div class="p-2.5 bg-red-50 rounded-xl text-red-600 shrink-0 group-hover:bg-red-600 group-hover:text-white transition-all duration-300">
           <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -513,47 +509,53 @@ const cashflowHistory = ref<any[]>([])
 const showCreateDropdown = ref(false)
 
 const chartData = computed(() => {
-  if (!cashflowHistory.value.length) return null
-  return {
-    labels: cashflowHistory.value.map((d) => {
-      // Convert '2025-01' to 'Jan'
-      if (!d.month) return ''
-      const parts = d.month.split('-')
-      const y = parts[0] || '2000'
-      const m = parts[1] || '1'
-      const date = new Date(parseInt(y), parseInt(m) - 1, 1)
-      return date.toLocaleString('default', { month: 'short' })
-    }),
-    datasets: [
-      {
-        label: 'Income',
-        backgroundColor: 'rgba(16, 185, 129, 0.2)', // Green
-        borderColor: '#10b981',
-        borderWidth: 2,
-        pointBackgroundColor: '#ffffff',
-        pointBorderColor: '#10b981',
-        pointBorderWidth: 2,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        fill: true,
-        data: cashflowHistory.value.map(d => d.income),
-        tension: 0.4
-      },
-      {
-        label: 'Expense',
-        backgroundColor: 'rgba(239, 68, 68, 0.2)', // Red
-        borderColor: '#ef4444',
-        borderWidth: 2,
-        pointBackgroundColor: '#ffffff',
-        pointBorderColor: '#ef4444',
-        pointBorderWidth: 2,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        fill: true,
-        data: cashflowHistory.value.map(d => d.expense),
-        tension: 0.4
-      }
-    ]
+  if (!cashflowHistory.value || cashflowHistory.value.length === 0) return null
+  
+  try {
+    return {
+      labels: cashflowHistory.value.map((d) => {
+        if (!d.month) return 'Unknown'
+        const parts = d.month.split('-')
+        if (parts.length < 2) return d.month
+        const y = parseInt(parts[0])
+        const m = parseInt(parts[1])
+        const date = new Date(y, m - 1, 1)
+        return date.toLocaleString('default', { month: 'short' })
+      }),
+      datasets: [
+        {
+          label: 'Income',
+          backgroundColor: 'rgba(16, 185, 129, 0.2)',
+          borderColor: '#10b981',
+          borderWidth: 2,
+          pointBackgroundColor: '#ffffff',
+          pointBorderColor: '#10b981',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          fill: true,
+          data: cashflowHistory.value.map(d => Number(d.income || 0)),
+          tension: 0.4
+        },
+        {
+          label: 'Expense',
+          backgroundColor: 'rgba(239, 68, 68, 0.2)',
+          borderColor: '#ef4444',
+          borderWidth: 2,
+          pointBackgroundColor: '#ffffff',
+          pointBorderColor: '#ef4444',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          fill: true,
+          data: cashflowHistory.value.map(d => Number(d.expense || 0)),
+          tension: 0.4
+        }
+      ]
+    }
+  } catch (e) {
+    console.error('Error generating chart data:', e)
+    return null
   }
 })
 

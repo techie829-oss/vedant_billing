@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class InvoiceScan extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, \App\Traits\Blameable;
 
     protected $fillable = [
         'business_id',
@@ -31,6 +31,24 @@ class InvoiceScan extends Model
         'llm_response' => 'array',
         'products_count' => 'integer',
     ];
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope('business', function ($builder) {
+            if (auth()->check() && auth()->user()->currentBusinessId()) {
+                $builder->where('business_id', auth()->user()->currentBusinessId());
+            }
+        });
+
+        static::creating(function ($model) {
+            if (auth()->check() && auth()->user()->currentBusinessId()) {
+                $model->business_id = auth()->user()->currentBusinessId();
+            }
+        });
+    }
 
     /**
      * Get the business that owns the scan.

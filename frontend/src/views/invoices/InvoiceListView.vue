@@ -168,6 +168,14 @@
                     </svg>
                   </router-link>
 
+                  <button @click="finalizeInv(invoice.id)" v-if="invoice.status === 'draft'"
+                    class="text-green-600 hover:text-green-900 group" title="Finalize">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:scale-110"
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </button>
+
                   <router-link :to="`/invoices/${invoice.id}/edit`" v-if="invoice.status === 'draft'"
                     class="text-indigo-600 hover:text-indigo-900 group" title="Edit">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform group-hover:scale-110"
@@ -343,6 +351,22 @@ const deleteInv = (id: string) => {
     },
     'Delete',
     true // showInventoryToggle
+  )
+}
+
+const finalizeInv = (id: string) => {
+  showConfirm(
+    'Finalize Invoice',
+    'Are you sure? Once finalized, you cannot edit this invoice.',
+    async () => {
+      try {
+        await invoiceStore.finalizeInvoice(id)
+        refresh()
+      } catch (e: any) {
+        alert(e.response?.data?.message || 'Failed to finalize invoice')
+      }
+    },
+    'Finalize'
   )
 }
 

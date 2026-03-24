@@ -367,6 +367,8 @@
           <slot></slot>
         </main>
 
+        <NotificationToast />
+
         <!-- Mobile Bottom Navigation -->
         <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 lg:hidden z-50 pb-safe">
           <div class="flex justify-around items-center h-16">
@@ -433,6 +435,7 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useAppearance } from '../composables/useAppearance'
+import NotificationToast from '../components/NotificationToast.vue'
 
 const authStore = useAuthStore()
 const { initAppearance } = useAppearance()

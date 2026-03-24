@@ -49,6 +49,7 @@
               </div>
             </div>
             <div class="flex justify-end gap-4 mt-1 pt-1.5 border-t border-gray-100">
+              <router-link :to="`/customers/${vendor.id}/ledger`" class="text-xs font-medium text-amber-600 hover:text-amber-900">Ledger</router-link>
               <router-link :to="`/vendors/${vendor.id}/edit`" class="text-xs font-medium text-indigo-600 hover:text-indigo-900">Edit</router-link>
               <button @click="deleteVendor(vendor.id)" class="text-xs font-medium text-red-600 hover:text-red-900">Delete</button>
             </div>
@@ -100,6 +101,7 @@
                       </span>
                     </td>
                     <td class="relative whitespace-nowrap py-2.5 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                      <router-link :to="`/customers/${vendor.id}/ledger`" class="text-amber-600 hover:text-amber-900 mr-4">Ledger</router-link>
                       <router-link :to="`/vendors/${vendor.id}/edit`" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</router-link>
                       <button @click="deleteVendor(vendor.id)" class="text-red-600 hover:text-red-900">Delete</button>
                     </td>
