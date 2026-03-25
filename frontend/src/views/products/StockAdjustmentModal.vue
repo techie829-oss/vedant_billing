@@ -174,7 +174,9 @@ const submit = async () => {
         let conversionFactor = 1.00
 
         if (props.product?.secondary_unit && form.value.unit === props.product.secondary_unit) {
-            conversionFactor = Number(props.product.conversion_factor) || 1.00
+            // Reversed: 1 Base = CF * Secondary. 
+            // So 1 Secondary = 1/CF Base.
+            conversionFactor = 1 / (Number(props.product.conversion_factor) || 1.00)
         }
 
         const baseQty = (finalQty || 0) * conversionFactor

@@ -89,7 +89,7 @@
                                 class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                         <p v-if="form.conversion_factor > 0" class="mt-1 text-xs text-gray-500">
-                            Effective Price per {{ form.unit }}: ₹{{ (Number(form.secondary_sale_price || 0) / Number(form.conversion_factor)).toFixed(2) }}
+                            Effective Price per {{ form.secondary_unit }}: ₹{{ (Number(form.sale_price || 0) / Number(form.conversion_factor)).toFixed(2) }}
                         </p>
                     </div>
 
@@ -192,7 +192,10 @@
                             <input type="number" step="any" v-model="form.conversion_factor"
                                 class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
-                        <p class="mt-1 text-xs text-gray-500">How many {{ form.unit || 'Base Units' }} in 1 {{ form.secondary_unit }}? (e.g. 1 Carton = 12 Pieces, then enter 12)</p>
+                        <p class="mt-1 text-xs text-gray-500">
+                            How many {{ configStore.data.unit_types[form.secondary_unit] || form.secondary_unit }} (Secondary) are in 1 {{ configStore.data.unit_types[form.unit] || form.unit || 'Base Unit' }} (Base)?
+                            (e.g. 1 Bag = 10 Packets, then enter 10)
+                        </p>
                     </div>
 
                     <!-- Stock (Only for Goods) -->

@@ -1209,7 +1209,13 @@ const onUnitChange = (item: InvoiceItem & { conversion_factor?: number }) => {
     if (!product) return
 
     if (item.unit === product.secondary_unit) {
-        item.conversion_factor = Number(product.conversion_factor) || 1.00
+        // Reversed: Base is Wholesale (Bag), Secondary is Normal (Packet)
+        // 1 Bag = 10 Packets. So CF = 10.
+        // Price of 1 Packet = Price of 1 Bag / 10.
+        // For stock: Subtracting 1 Packet = Subtracting 0.1 Bags.
+        
+        item.conversion_factor = 1 / (Number(product.conversion_factor) || 1.00)
+        
         // Set Secondary Price if available
         if (product.secondary_sale_price && Number(product.secondary_sale_price) > 0) {
             const rawPrice = Number(product.secondary_sale_price)
@@ -1223,7 +1229,7 @@ const onUnitChange = (item: InvoiceItem & { conversion_factor?: number }) => {
                 item.unit_price = rawPrice
             }
         } else {
-            // Fallback: Piece price * conversion factor
+            // Fallback: Piece price / conversion factor (e.g. Bag Price / 10)
             const basePrice = Number(product.sale_price) || 0
             const rate = Number(item.tax_rate) || 0
             const cessRate = Number(item.cess_rate) || 0
@@ -1234,7 +1240,8 @@ const onUnitChange = (item: InvoiceItem & { conversion_factor?: number }) => {
                 exclusiveBase = basePrice / (1 + (totalTaxRate / 100))
             }
             
-            item.unit_price = Number((exclusiveBase * item.conversion_factor).toFixed(4))
+            // Reversed Logic: Divide by CF (if CF=10, Price = BasePrice / 10)
+            item.unit_price = Number((exclusiveBase / (Number(product.conversion_factor) || 1.00)).toFixed(4))
         }
     } else {
         item.conversion_factor = 1.00
