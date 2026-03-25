@@ -122,7 +122,7 @@
                     </div>
 
                     <div class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Unit</label>
+                        <label class="block text-sm font-medium leading-6 text-gray-900">Base Unit</label>
                         <div class="relative mt-2">
                             <select v-model="form.unit"
                                 class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
@@ -141,6 +141,38 @@
                                 </svg>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="sm:col-span-3">
+                        <label class="block text-sm font-medium leading-6 text-gray-900">Secondary Unit (Optional)</label>
+                        <div class="relative mt-2">
+                            <select v-model="form.secondary_unit"
+                                class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                <option :value="undefined">None</option>
+                                <template v-if="!configStore.loading && configStore.data">
+                                    <option v-for="(label, val) in configStore.data.unit_types" :key="val" :value="val">
+                                        {{ label }}
+                                    </option>
+                                </template>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+                                    aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="form.secondary_unit" class="sm:col-span-3">
+                        <label class="block text-sm font-medium leading-6 text-gray-900">Conversion Factor</label>
+                        <div class="mt-2">
+                            <input type="number" step="any" v-model="form.conversion_factor"
+                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">How many {{ form.unit || 'Base Units' }} in 1 {{ form.secondary_unit }}? (e.g. 1 Carton = 12 Pieces, then enter 12)</p>
                     </div>
 
                     <!-- Stock (Only for Goods) -->
@@ -229,6 +261,8 @@ const form = ref<Partial<Product>>({
     cess_rate: 0,
     is_tax_inclusive: false,
     unit: 'pcs',
+    secondary_unit: undefined,
+    conversion_factor: 1,
     current_stock: 0,
     status: 'active',
     description: '',
@@ -250,6 +284,7 @@ onMounted(async () => {
                 form.value.purchase_price = Number(product.purchase_price) || 0
                 form.value.tax_rate = Number(product.tax_rate) || 0
                 form.value.cess_rate = Number(product.cess_rate) || 0
+                form.value.conversion_factor = Number(product.conversion_factor) || 1
             }
         } catch (e) {
             console.error(e)

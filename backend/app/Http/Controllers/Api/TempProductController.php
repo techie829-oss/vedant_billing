@@ -74,6 +74,8 @@ class TempProductController extends Controller
                 'price' => 'nullable|numeric',
                 'quantity' => 'nullable|numeric',
                 'unit' => 'nullable|string',
+                'secondary_unit' => 'nullable|string',
+                'conversion_factor' => 'nullable|numeric',
                 'hsn_code' => 'nullable|string',
                 'tax_rate' => 'nullable|numeric',
                 'cess_rate' => 'nullable|numeric',
@@ -93,6 +95,8 @@ class TempProductController extends Controller
                 $price = isset($validated['price']) ? $validated['price'] : $tempProduct->price;
                 $quantity = isset($validated['quantity']) ? $validated['quantity'] : ($tempProduct->quantity ?? 0);
                 $unit = isset($validated['unit']) ? $validated['unit'] : ($tempProduct->unit ?? 'pcs');
+                $secondary_unit = isset($validated['secondary_unit']) ? $validated['secondary_unit'] : null;
+                $conversion_factor = isset($validated['conversion_factor']) ? $validated['conversion_factor'] : 1.00;
                 $hsn_code = isset($validated['hsn_code']) ? $validated['hsn_code'] : $tempProduct->hsn_code;
                 $tax_rate = isset($validated['tax_rate']) ? $validated['tax_rate'] : ($tempProduct->tax_rate ?? 0);
                 $cess_rate = isset($validated['cess_rate']) ? $validated['cess_rate'] : ($tempProduct->cess_rate ?? 0);
@@ -107,6 +111,8 @@ class TempProductController extends Controller
                     'sale_price' => $price, // Default to purchase price
                     'current_stock' => 0, // Stock will be added when Purchase Invoice is created
                     'unit' => $unit,
+                    'secondary_unit' => $secondary_unit,
+                    'conversion_factor' => $conversion_factor,
                     'description' => $tempProduct->description,
                     'hsn_code' => $hsn_code,
                     'tax_rate' => $tax_rate,

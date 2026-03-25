@@ -63,6 +63,8 @@ class InventoryController extends Controller
             'unit_price' => 'nullable|numeric|min:0',
             'party_id' => 'nullable|exists:parties,id',
             'notes' => 'nullable|string',
+            'unit' => 'nullable|string|max:20',
+            'conversion_factor' => 'nullable|numeric|min:0',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -70,15 +72,12 @@ class InventoryController extends Controller
 
             $quantity = $request->quantity;
 
-            // Allow frontend to explicitly set sign, OR enforce based on type.
-            // Requirement: "Stock In/Out".
-            // If user selects "Stock In", sends +Qty.
-            // If user selects "Stock Out", sends -Qty.
-
             InventoryTransaction::create([
                 'product_id' => $request->product_id,
                 'type' => $request->type,
                 'quantity' => $quantity,
+                'unit' => $request->unit,
+                'conversion_factor' => $request->conversion_factor ?? 1.00,
                 'unit_price' => $request->unit_price,
                 'party_id' => $request->party_id,
                 'notes' => $request->notes,

@@ -40,25 +40,28 @@ class UpdateStockForInvoice
 
     protected function processStock($invoice, $product, $item)
     {
-        $qty = $item->quantity;
+        $qtyInUnit = $item->quantity;
+        $conversionFactor = $item->conversion_factor ?? 1;
+        $baseQty = $qtyInUnit * $conversionFactor;
+        
         $type = 'adjustment';
         $stockChange = 0;
 
         if (in_array($invoice->type, ['tax_invoice', 'invoice', 'bill_of_supply'])) {
             // SALE: Decrease Stock
-            $stockChange = -$qty;
+            $stockChange = -$baseQty;
             $type = 'sale';
-            $product->decrement('current_stock', $qty);
+            $product->decrement('current_stock', $baseQty);
         } elseif ($invoice->type === 'purchase_invoice') {
             // PURCHASE: Increase Stock
-            $stockChange = $qty;
+            $stockChange = $baseQty;
             $type = 'purchase';
-            $product->increment('current_stock', $qty);
+            $product->increment('current_stock', $baseQty);
         } elseif ($invoice->type === 'credit_note') {
             // RETURN: Increase Stock
-            $stockChange = $qty;
+            $stockChange = $baseQty;
             $type = 'return';
-            $product->increment('current_stock', $qty);
+            $product->increment('current_stock', $baseQty);
         }
 
         if ($stockChange !== 0) {
@@ -67,13 +70,15 @@ class UpdateStockForInvoice
                 'product_id' => $product->id,
                 'type' => $type,
                 'quantity' => $stockChange,
+                'unit' => $item->unit,
+                'conversion_factor' => $conversionFactor,
                 'unit_price' => $item->unit_price,
                 'reference_id' => $invoice->id,
                 'reference_type' => get_class($invoice),
-                'notes' => ucfirst($type) . " for {$invoice->type} #{$invoice->invoice_number}",
+                'notes' => ucfirst($type) . " for {$invoice->type} #{$invoice->invoice_number} ({$qtyInUnit} {$item->unit})",
             ]);
 
-            Log::info("Stock updated for product {$product->id} by {$stockChange} ({$invoice->type}: {$invoice->invoice_number})");
+            Log::info("Stock updated for product {$product->id} by {$stockChange} base units ({$invoice->type}: {$invoice->invoice_number})");
         }
     }
 }

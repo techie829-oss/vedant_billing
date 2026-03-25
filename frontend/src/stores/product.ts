@@ -15,6 +15,8 @@ export interface Product {
     is_tax_inclusive?: boolean
     current_stock?: number
     unit?: string
+    secondary_unit?: string
+    conversion_factor?: number
     description?: string
     status: 'active' | 'inactive'
 }

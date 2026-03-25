@@ -393,16 +393,19 @@
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Qty</label>
                                         <div
                                             class="flex items-center rounded-md ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600 bg-white">
-                                            <button type="button"
-                                                @click="item.quantity > 1 ? item.quantity-- : item.quantity = 0.01; calculateDiscountAmount(item)"
-                                                class="px-2 py-1.5 text-gray-500 hover:text-indigo-600 focus:outline-none">-</button>
                                             <input type="number" step="any" v-model.number="item.quantity"
                                                 @input="calculateDiscountAmount(item)"
-                                                class="block w-full border-0 bg-transparent py-1.5 px-0 text-center text-sm text-gray-900 focus:ring-0" />
-                                            <button type="button"
-                                                @click="item.quantity++; calculateDiscountAmount(item)"
-                                                class="px-2 py-1.5 text-gray-500 hover:text-indigo-600 focus:outline-none">+</button>
+                                                class="block w-full border-0 bg-transparent py-1.5 px-2 text-center text-sm text-gray-900 focus:ring-0" />
                                         </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Unit</label>
+                                        <select v-model="item.unit"
+                                            @change="onUnitChange(item)"
+                                            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm">
+                                            <option :value="getProductBaseUnit(item)">{{ getProductBaseUnit(item) }}</option>
+                                            <option v-if="getProductSecondaryUnit(item)" :value="getProductSecondaryUnit(item)">{{ getProductSecondaryUnit(item) }}</option>
+                                        </select>
                                     </div>
                                     <div>
                                         <label class="block text-xs font-medium text-gray-700 mb-1">Price</label>
@@ -472,6 +475,10 @@
                                         Qty
                                     </th>
                                     <th
+                                        class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Unit
+                                    </th>
+                                    <th
                                         class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Price
                                     </th>
@@ -524,17 +531,19 @@
                                     <td class="px-1 py-1">
                                         <div
                                             class="flex items-center rounded border border-transparent hover:border-gray-300 focus-within:bg-white focus-within:border-indigo-600 focus-within:ring-1 focus-within:ring-indigo-600 transition-colors bg-transparent">
-                                            <button type="button"
-                                                @click="item.quantity > 1 ? item.quantity-- : item.quantity = 0.01; calculateDiscountAmount(item)"
-                                                class="px-1.5 text-gray-400 hover:text-indigo-600 focus:outline-none select-none font-medium">-</button>
                                             <input type="number" v-model.number="item.quantity" min="0.01" step="any"
                                                 @input="calculateDiscountAmount(item)"
-                                                class="block w-full border-0 bg-transparent py-1 px-0 text-center text-gray-900 focus:ring-0 text-xs leading-6"
+                                                class="block w-full border-0 bg-transparent py-1 px-1 text-center text-gray-900 focus:ring-0 text-xs leading-6"
                                                 required />
-                                            <button type="button"
-                                                @click="item.quantity++; calculateDiscountAmount(item)"
-                                                class="px-1.5 text-gray-400 hover:text-indigo-600 focus:outline-none select-none font-medium">+</button>
                                         </div>
+                                    </td>
+                                    <td class="px-1 py-1">
+                                        <select v-model="item.unit"
+                                            @change="onUnitChange(item)"
+                                            class="block w-full rounded border border-transparent bg-transparent py-1 px-1 text-gray-900 hover:border-gray-300 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 text-xs leading-6 transition-colors">
+                                            <option :value="getProductBaseUnit(item)">{{ getProductBaseUnit(item) }}</option>
+                                            <option v-if="getProductSecondaryUnit(item)" :value="getProductSecondaryUnit(item)">{{ getProductSecondaryUnit(item) }}</option>
+                                        </select>
                                     </td>
                                     <td class="px-1 py-1">
                                         <input type="number" v-model.number="item.unit_price" min="0" step="any"
@@ -1019,6 +1028,8 @@ const addItem = async () => {
         description: '',
         hsn_code: '',
         quantity: 1,
+        unit: 'pcs',
+        conversion_factor: 1.00,
         unit_price: 0,
         discount: 0,
         discount_type: 'amount',
@@ -1148,10 +1159,12 @@ const loadProducts = async () => {
     }
 }
 
-const onProductSelect = (item: InvoiceItem, product: any) => {
+const onProductSelect = (item: InvoiceItem & { conversion_factor?: number }, product: any) => {
     if (product) {
         item.name = product.name
         item.hsn_code = product.hsn_code || ''
+        item.unit = product.unit || 'pcs'
+        item.conversion_factor = 1.00 // Default to base unit
 
         const rate = Number(product.tax_rate) || 0
         const cessRate = Number(product.cess_rate) || 0
@@ -1171,6 +1184,31 @@ const onProductSelect = (item: InvoiceItem, product: any) => {
 
         // Ensure discount and totals are recalculated
         calculateDiscountAmount(item)
+    }
+}
+
+const getProductBaseUnit = (item: InvoiceItem) => {
+    if (!item.product_id) return item.unit || 'pcs'
+    const product = products.value.find(p => p.id === item.product_id)
+    return product?.unit || 'pcs'
+}
+
+const getProductSecondaryUnit = (item: InvoiceItem) => {
+    if (!item.product_id) return null
+    const product = products.value.find(p => p.id === item.product_id)
+    return product?.secondary_unit || null
+}
+
+const onUnitChange = (item: InvoiceItem & { conversion_factor?: number }) => {
+    if (!item.product_id) {
+        item.conversion_factor = 1.00
+        return
+    }
+    const product = products.value.find(p => p.id === item.product_id)
+    if (product && item.unit === product.secondary_unit) {
+        item.conversion_factor = Number(product.conversion_factor) || 1.00
+    } else {
+        item.conversion_factor = 1.00
     }
 }
 
@@ -1253,6 +1291,8 @@ const loadInvoice = async () => {
                 items: invoice.items.map((i: any) => ({
                     ...i,
                     name: i.name || (!i.product_id ? i.description : ''),
+                    unit: i.unit || 'pcs',
+                    conversion_factor: i.conversion_factor || 1.00,
                     // Back-calculate percent if missing but discount exists
                     discount_percent: i.discount && i.unit_price && i.quantity ? ((i.discount / (i.quantity * i.unit_price)) * 100) : 0
                 })),

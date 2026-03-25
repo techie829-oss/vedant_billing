@@ -15,15 +15,19 @@ class InventoryTransaction extends Model
         'product_id',
         'type', // purchase, sale, adjustment, return
         'quantity',
+        'unit',
+        'conversion_factor',
         'unit_price',
         'party_id',
         'notes',
         'reference_id',
+        'reference_type',
     ];
 
     protected $casts = [
         'quantity' => 'decimal:2',
         'unit_price' => 'decimal:2',
+        'conversion_factor' => 'decimal:2',
     ];
 
     protected static function booted(): void

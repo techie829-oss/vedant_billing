@@ -21,6 +21,8 @@ class Product extends Model
         'purchase_price',
         'current_stock',
         'unit',
+        'secondary_unit',
+        'conversion_factor',
         'hsn_code',
         'description',
         'tax_rate',
@@ -35,6 +37,7 @@ class Product extends Model
         'current_stock' => 'decimal:2',
         'tax_rate' => 'decimal:2',
         'cess_rate' => 'decimal:2',
+        'conversion_factor' => 'decimal:2',
         'is_tax_inclusive' => 'boolean',
     ];
 

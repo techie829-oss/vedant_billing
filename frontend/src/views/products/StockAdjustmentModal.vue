@@ -38,12 +38,22 @@
                                     </p>
 
                                     <div class="mt-5 space-y-5">
-                                        <!-- Quantity -->
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                                            <input type="number" step="any" v-model.number="form.quantity"
-                                                class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-                                                placeholder="e.g 10" min="1">
+                                        <!-- Quantity and Unit -->
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                                                <input type="number" step="any" v-model.number="form.quantity"
+                                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                                                    placeholder="e.g 10" min="1">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+                                                <select v-model="form.unit"
+                                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm bg-white">
+                                                    <option :value="product?.unit">{{ product?.unit }} (Base)</option>
+                                                    <option v-if="product?.secondary_unit" :value="product?.secondary_unit">{{ product?.secondary_unit }}</option>
+                                                </select>
+                                            </div>
                                         </div>
 
                                         <!-- Buy Price (Only for Purchase) -->
@@ -116,6 +126,7 @@ const parties = ref<any[]>([])
 
 const form = ref({
     quantity: null as number | null,
+    unit: '' as string,
     unit_price: null as number | null,
     party_id: null as string | null,
     notes: ''
@@ -137,6 +148,7 @@ watch(() => props.isOpen, (newVal) => {
         // Reset form
         form.value = {
             quantity: null,
+            unit: props.product?.unit || '',
             unit_price: props.product?.purchase_price || null, // Pre-fill current buy price
             party_id: null,
             notes: ''
@@ -157,31 +169,21 @@ const submit = async () => {
 
     loading.value = true
     try {
-        // Determine type for backend
-        // Props type is 'purchase' (Add) or 'adjustment' (Reduce usually, or specific)
-        // If props.type is 'purchase', we send 'purchase'.
-        // If props.type is 'adjustment' (clicked "Reduce Stock"), we send 'adjustment'? 
-        // Wait, backend needs to know direction. 
-        // Let's assume:
-        // API: /inventory
-        // type: purchase (add), sale (reduce), adjustment (reduce/add check notes), return (reduce/add)
-
-        // For this Modal:
-        // If "Add Stock" -> type: purchase
-        // If "Reduce Stock" -> type: adjustment (with negative qty? No backend expects positive qty usually and type defines logic?)
-        // Let's look at Backend Logic: "$product->increment('current_stock', $quantity);"
-        // Wait, my backend logic was: "$product->increment('current_stock', $quantity);"  ALWAYS INCREMENTS!
-        // I NEED TO FIX BACKEND LOGIC TO HANDLE REDUCTION.
-        // OR Frontend sends negative quantity for reduction.
-
-        // Let's send negative quantity for reduction.
         let finalQty = form.value.quantity
         let finalType = props.type
+        let conversionFactor = 1.00
+
+        if (props.product?.secondary_unit && form.value.unit === props.product.secondary_unit) {
+            conversionFactor = Number(props.product.conversion_factor) || 1.00
+        }
+
+        const baseQty = (finalQty || 0) * conversionFactor
 
         if (props.type === 'adjustment') {
             // Logic for "Reduce Stock" button
-            finalQty = -Math.abs(finalQty)
-            // Backend logic uses increment, so adding negative reduces. Correct.
+            finalQty = -Math.abs(baseQty)
+        } else {
+            finalQty = baseQty
         }
 
         // API Call
@@ -189,6 +191,8 @@ const submit = async () => {
             product_id: props.product.id,
             type: finalType, // purchase or adjustment
             quantity: finalQty,
+            unit: form.value.unit,
+            conversion_factor: conversionFactor,
             unit_price: form.value.unit_price,
             party_id: form.value.party_id,
             notes: form.value.notes

@@ -10,6 +10,8 @@ export interface InvoiceItem {
     description: string
     hsn_code?: string
     quantity: number
+    unit?: string
+    conversion_factor?: number
     unit_price: number
     tax_rate: number
     tax_amount: number

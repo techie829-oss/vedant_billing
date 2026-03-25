@@ -323,14 +323,25 @@
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Unit Type</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Base Unit Type</label>
                                 <input type="text" v-model="newProductForm.unit"
                                     class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Quantity (Initial
-                                    Stock)</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Initial Stock (Base Units)</label>
                                 <input type="number" step="any" v-model="newProductForm.quantity"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Secondary Unit (Opt)</label>
+                                <input type="text" v-model="newProductForm.secondary_unit" placeholder="e.g. Carton"
+                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Conversion Factor</label>
+                                <input type="number" step="any" v-model="newProductForm.conversion_factor"
                                     class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
                             </div>
                         </div>
@@ -400,6 +411,8 @@ const newProductForm = ref({
     quantity: 1,
     price: 0,
     unit: 'pcs',
+    secondary_unit: '',
+    conversion_factor: 1,
     tax_rate: 0,
     cess_rate: 0
 })
@@ -411,6 +424,8 @@ function openNewProductModal(item: any) {
         quantity: Number(item.temp_product.quantity) || 1,
         price: Number(item.temp_product.price) || 0,
         unit: item.temp_product.unit || 'pcs',
+        secondary_unit: '',
+        conversion_factor: 1,
         tax_rate: Number(item.temp_product.tax_rate) || 0,
         cess_rate: Number(item.temp_product.cess_rate) || 0
     }
@@ -444,6 +459,8 @@ const invoiceItems = computed(() => {
         name: tp.temp_product.name,
         product_id: tp.temp_product.matched_product_id ?? null,
         quantity: Number(tp.temp_product.quantity) || 1,
+        unit: tp.temp_product.unit || 'pcs',
+        conversion_factor: 1.00, // Default to 1.00 for scans
         unit_price: Number(tp.temp_product.price) || 0,
         mrp: tp.temp_product.mrp ? Number(tp.temp_product.mrp) : null,
         discount: Number(tp.temp_product.discount) || 0,
@@ -513,6 +530,8 @@ async function submitNewProduct() {
             name: newProductForm.value.name,
             quantity: Number(newProductForm.value.quantity),
             unit: newProductForm.value.unit,
+            secondary_unit: newProductForm.value.secondary_unit || undefined,
+            conversion_factor: Number(newProductForm.value.conversion_factor) || 1,
             price: Number(newProductForm.value.price),
             tax_rate: Number(newProductForm.value.tax_rate),
             cess_rate: Number(newProductForm.value.cess_rate),
