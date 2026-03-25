@@ -14,20 +14,21 @@ return new class extends Migration {
         $driver = DB::getDriverName();
 
         if ($driver === 'pgsql') {
-            // PostgreSQL handles enums as check constraints in Laravel migrations
-            // We need to drop the old check constraint and add a new one.
-            // The constraint name is usually 'invoices_status_check'
-            
+            // Update STATUS Enum/Check
             DB::statement("ALTER TABLE invoices DROP CONSTRAINT IF EXISTS invoices_status_check");
-            
-            // Add new check constraint with more statuses
             DB::statement("ALTER TABLE invoices ADD CONSTRAINT invoices_status_check CHECK (status IN ('draft', 'sent', 'paid', 'partial', 'overdue', 'void', 'cancelled', 'returned'))");
+            
+            // Update TYPE Enum/Check
+            DB::statement("ALTER TABLE invoices DROP CONSTRAINT IF EXISTS invoices_type_check");
+            DB::statement("ALTER TABLE invoices ADD CONSTRAINT invoices_type_check CHECK (type IN ('invoice', 'tax_invoice', 'bill_of_supply', 'purchase_invoice', 'credit_note', 'quote', 'estimate'))");
         } elseif ($driver === 'mysql') {
             DB::statement("ALTER TABLE invoices MODIFY COLUMN status ENUM('draft', 'sent', 'paid', 'partial', 'overdue', 'void', 'cancelled', 'returned') DEFAULT 'draft'");
+            DB::statement("ALTER TABLE invoices MODIFY COLUMN type ENUM('invoice', 'tax_invoice', 'bill_of_supply', 'purchase_invoice', 'credit_note', 'quote', 'estimate') DEFAULT 'invoice'");
         } else {
-            // SQLite or others - might need to recreate table or ignore if it's just a string
+            // SQLite or others
             Schema::table('invoices', function (Blueprint $table) {
                 $table->string('status')->default('draft')->change();
+                $table->string('type')->default('invoice')->change();
             });
         }
     }
@@ -42,8 +43,12 @@ return new class extends Migration {
         if ($driver === 'pgsql') {
             DB::statement("ALTER TABLE invoices DROP CONSTRAINT IF EXISTS invoices_status_check");
             DB::statement("ALTER TABLE invoices ADD CONSTRAINT invoices_status_check CHECK (status IN ('draft', 'sent', 'paid', 'overdue', 'void', 'cancelled'))");
+            
+            DB::statement("ALTER TABLE invoices DROP CONSTRAINT IF EXISTS invoices_type_check");
+            DB::statement("ALTER TABLE invoices ADD CONSTRAINT invoices_type_check CHECK (type IN ('invoice', 'credit_note', 'quote'))");
         } elseif ($driver === 'mysql') {
             DB::statement("ALTER TABLE invoices MODIFY COLUMN status ENUM('draft', 'sent', 'paid', 'overdue', 'void', 'cancelled') DEFAULT 'draft'");
+            DB::statement("ALTER TABLE invoices MODIFY COLUMN type ENUM('invoice', 'credit_note', 'quote') DEFAULT 'invoice'");
         }
     }
 };
