@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Protected Core Business Modules
     Route::middleware('tenant.context')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Api\DashboardController::class, 'index']);
         Route::get('/parties/{party}/ledger', [\App\Http\Controllers\Api\PartyController::class, 'ledger']);
         Route::apiResource('parties', \App\Http\Controllers\Api\PartyController::class);
         Route::apiResource('products', \App\Http\Controllers\Api\ProductController::class);

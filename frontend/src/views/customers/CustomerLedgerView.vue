@@ -94,6 +94,21 @@
                             </td>
                         </tr>
                     </tbody>
+                    <tfoot class="bg-gray-50/50 font-bold border-t-2 border-gray-200">
+                        <tr>
+                            <td colspan="2" class="py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6 text-right uppercase tracking-wider">Grand Total</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-right text-red-600">
+                                ₹{{ totalDebit.toFixed(2) }}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-right text-green-600">
+                                ₹{{ totalCredit.toFixed(2) }}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-right text-gray-900">
+                                ₹{{ Math.abs(Number(closingBalance)).toFixed(2) }}
+                                <span class="text-[10px] font-normal ml-1">{{ closingBalance >= 0 ? 'Dr' : 'Cr' }}</span>
+                            </td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -153,7 +168,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import AppLayout from '../../layouts/AppLayout.vue'
 import client from '../../api/client'
@@ -174,6 +189,14 @@ const paymentForm = ref({
     date: new Date().toISOString().split('T')[0],
     method: 'bank_transfer',
     auto_allocate: true
+})
+
+const totalDebit = computed(() => {
+    return ledger.value.reduce((sum, tx) => sum + Number(tx.debit || 0), 0)
+})
+
+const totalCredit = computed(() => {
+    return ledger.value.reduce((sum, tx) => sum + Number(tx.credit || 0), 0)
 })
 
 const submitPayment = async () => {
