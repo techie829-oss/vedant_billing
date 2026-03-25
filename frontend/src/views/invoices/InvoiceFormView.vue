@@ -761,7 +761,7 @@
             <div class="max-w-7xl mx-auto flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <span class="text-sm font-medium text-gray-500 hidden sm:block">Total Amount:</span>
-                    <span class="text-lg font-bold text-gray-900">₹{{ Number(form.grand_total).toFixed(2) }}</span>
+                    <span class="text-lg font-bold text-gray-900">₹{{ Number(totals.grandTotal).toFixed(2) }}</span>
                 </div>
                 <div class="flex items-center gap-3">
                     <button @click="save('draft')" :disabled="saving"
@@ -857,6 +857,7 @@ const products = ref<Product[]>([])
 // Quick Add Customer State
 const showCustomerModal = ref(false)
 const savingCustomer = ref(false)
+const saving = ref(false)
 const fetchingGst = ref(false)
 const newCustomerForm = ref({
     name: '',
@@ -1393,6 +1394,7 @@ const save = async (status: 'draft' | 'sent') => {
         business_id: authStore.currentBusinessId
     }
 
+    saving.value = true
     try {
         if (isEditMode.value) {
             await invoiceStore.updateInvoice(route.params.id as string, payload as any)
@@ -1405,6 +1407,8 @@ const save = async (status: 'draft' | 'sent') => {
     } catch (e) {
         console.error(e)
         alert('Failed to save invoice')
+    } finally {
+        saving.value = false
     }
 }
 

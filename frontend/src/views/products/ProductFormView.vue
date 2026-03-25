@@ -259,7 +259,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useProductStore, type Product } from '../../stores/product'
+import { useProductStore } from '../../stores/product'
 import { useConfigStore } from '../../stores/config'
 import AppLayout from '../../layouts/AppLayout.vue'
 
@@ -300,17 +300,24 @@ onMounted(async () => {
             const product = await productStore.fetchProduct(route.params.id as string)
             if (product) {
                 form.value = {
-                    ...product,
-                    secondary_unit: product.secondary_unit || undefined
+                    name: product.name || '',
+                    sku: product.sku || '',
+                    type: product.type as 'goods' | 'service' || 'goods',
+                    sale_price: Number(product.sale_price) || 0,
+                    secondary_sale_price: Number(product.secondary_sale_price) || 0,
+                    purchase_price: Number(product.purchase_price) || 0,
+                    secondary_purchase_price: Number(product.secondary_purchase_price) || 0,
+                    tax_rate: Number(product.tax_rate) || 0,
+                    cess_rate: Number(product.cess_rate) || 0,
+                    is_tax_inclusive: !!product.is_tax_inclusive,
+                    unit: product.unit || 'pcs',
+                    secondary_unit: product.secondary_unit || undefined,
+                    conversion_factor: Number(product.conversion_factor) || 1,
+                    current_stock: Number(product.current_stock) || 0,
+                    status: product.status as 'active' | 'inactive' || 'active',
+                    description: product.description || '',
+                    hsn_code: product.hsn_code || ''
                 }
-                // Ensure specific fields are numbers
-                form.value.sale_price = Number(product.sale_price) || 0
-                form.value.secondary_sale_price = Number(product.secondary_sale_price) || 0
-                form.value.purchase_price = Number(product.purchase_price) || 0
-                form.value.secondary_purchase_price = Number(product.secondary_purchase_price) || 0
-                form.value.tax_rate = Number(product.tax_rate) || 0
-                form.value.cess_rate = Number(product.cess_rate) || 0
-                form.value.conversion_factor = Number(product.conversion_factor) || 1
             }
         } catch (e) {
             console.error(e)
