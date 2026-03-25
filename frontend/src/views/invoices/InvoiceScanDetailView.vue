@@ -1,396 +1,233 @@
 <template>
     <AppLayout>
-        <div class="mb-8 flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Catalog Scan Details</h1>
-                <p class="text-sm text-gray-500 mt-1">
-                    Ref: {{ scanData?.invoice_no || 'Unknown' }} | Vendor: {{ scanData?.vendor || 'Unknown' }}
-                </p>
-            </div>
-            <div class="flex space-x-3">
-                <button v-if="canCreateInvoice" @click="showInvoiceModal = true"
-                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Create Purchase Invoice
-                </button>
-                <router-link v-else-if="scanData?.invoice_id" :to="`/purchases/${scanData.invoice_id}/edit`"
-                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                    View Purchase Invoice
-                </router-link>
-                <button @click="$router.push('/invoice-scans')"
-                    class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                    Back to Scans
-                </button>
-            </div>
-        </div>
-
-        <!-- Purchase Invoice Created Banner -->
-        <div v-if="invoiceCreated"
-            class="mb-6 rounded-lg bg-green-50 border border-green-200 p-4 flex items-center justify-between">
-            <div class="flex items-center text-green-800">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                <span class="font-medium">Purchase invoice created successfully!</span>
-            </div>
-            <router-link to="/purchases" class="text-sm font-medium text-green-700 underline hover:text-green-900">
-                View Purchase Invoices →
-            </router-link>
-        </div>
-
-        <div v-if="loading" class="text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-            <p class="mt-2 text-sm text-gray-500">Loading scan details...</p>
-        </div>
-
-        <div v-else-if="scanData" class="space-y-6">
-            <!-- Vendor Information Card -->
-            <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-100">
-                <div class="px-4 py-4 sm:p-5">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Vendor Information</h3>
-                    <div
-                        class="border rounded-lg p-4 bg-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <h4 class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Scanned Vendor
-                                Name</h4>
-                            <p class="text-lg font-bold text-gray-900">{{ scanData.vendor || 'Unknown Vendor' }}</p>
-                            <p class="text-sm text-gray-500 mt-1">Found on the invoice scan</p>
-                        </div>
-                        <div class="w-full sm:w-1/2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Map to existing vendor or
-                                auto-create</label>
-                            <select v-model="invoiceForm.party_id"
-                                class="block w-full rounded-md border-0 py-2.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm font-medium">
-                                <option value="">+ Auto-create new vendor: {{ scanData.vendor || 'Unknown' }}</option>
-                                <option v-for="v in vendors" :key="v.id" :value="v.id">{{ v.name }}</option>
-                            </select>
-                        </div>
+        <div class="p-fluid">
+            <!-- Header Section -->
+            <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+                <div class="flex items-center gap-4">
+                    <Button icon="pi pi-arrow-left" severity="secondary" rounded text @click="router.push('/invoice-scans')" />
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 m-0">Scan Analysis Details</h1>
+                        <p class="text-gray-500 mt-1 uppercase tracking-wider text-xs font-semibold">
+                            Ref: {{ scanData?.invoice_no || 'Unknown' }} | Scanned Vendor: {{ scanData?.vendor || 'Unknown' }}
+                        </p>
                     </div>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <Button v-if="canCreateInvoice" label="Create Purchase Bill" icon="pi pi-file-plus" severity="success" @click="showInvoiceModal = true" />
+                    <Button v-else-if="scanData?.invoice_id" label="View Purchase Bill" icon="pi pi-eye" severity="info" @click="router.push(`/purchases/${scanData.invoice_id}/edit`)" />
+                    <Button label="Back to List" icon="pi pi-list" severity="secondary" outlined @click="router.push('/invoice-scans')" />
                 </div>
             </div>
 
-            <!-- Extracted Products Card -->
-            <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-100">
-                <div class="px-4 py-4 sm:p-5">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Extracted Products</h3>
+            <!-- Banner Message -->
+            <Message v-if="invoiceCreated" severity="success" class="mb-6">
+                Purchase invoice created successfully! 
+                <Button label="View Now" text size="small" @click="router.push('/purchases')" />
+            </Message>
 
-                    <div class="space-y-6">
-                        <div v-for="item in scanData.temp_products" :key="item.temp_product.id"
-                            class="border rounded-lg p-3 sm:p-4 bg-gray-50">
-                            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                                <!-- Scanned Data -->
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-900 mb-2">Scanned Item</h4>
-                                    <dl class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
-                                        <div class="sm:col-span-2">
-                                            <dt class="text-xs font-medium text-gray-500">Name</dt>
-                                            <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.name }}</dd>
-                                        </div>
-                                        <div class="sm:col-span-2" v-if="item.temp_product.description">
-                                            <dt class="text-xs font-medium text-gray-500">Details (Extracted)</dt>
-                                            <dd class="mt-1 text-xs text-gray-700">{{ item.temp_product.description }}
-                                            </dd>
-                                        </div>
-                                        <div>
-                                            <dt class="text-xs font-medium text-gray-500">Quantity</dt>
-                                            <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.quantity }}</dd>
-                                        </div>
-                                        <div>
-                                            <dt class="text-xs font-medium text-gray-500">Price</dt>
-                                            <dd class="mt-1 text-sm text-gray-900">₹{{ item.temp_product.price }}</dd>
-                                        </div>
-                                        <div v-if="item.temp_product.mrp">
-                                            <dt class="text-xs font-medium text-gray-500">MRP</dt>
-                                            <dd class="mt-1 text-sm text-gray-900">₹{{ item.temp_product.mrp }}</dd>
-                                        </div>
-                                        <div v-if="item.temp_product.batch_number">
-                                            <dt class="text-xs font-medium text-gray-500">Batch No.</dt>
-                                            <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.batch_number }}
-                                            </dd>
-                                        </div>
-                                        <div v-if="item.temp_product.expiry_date">
-                                            <dt class="text-xs font-medium text-gray-500">Mfg/Exp Date</dt>
-                                            <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.expiry_date }}
-                                            </dd>
-                                        </div>
-                                        <div v-if="item.temp_product.discount > 0">
-                                            <dt class="text-xs font-medium text-gray-500">Discount</dt>
-                                            <dd class="mt-1 text-sm text-green-600">-₹{{ item.temp_product.discount }}
-                                            </dd>
-                                        </div>
-                                        <div v-if="item.temp_product.tax_rate">
-                                            <dt class="text-xs font-medium text-gray-500">Tax Rate</dt>
-                                            <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.tax_rate }}%
-                                            </dd>
-                                        </div>
-                                        <div v-if="item.temp_product.cess_rate">
-                                            <dt class="text-xs font-medium text-gray-500">Cess Rate</dt>
-                                            <dd class="mt-1 text-sm text-gray-900">{{ item.temp_product.cess_rate }}%
-                                            </dd>
-                                        </div>
-                                        <div v-if="item.temp_product.cess_amount">
-                                            <dt class="text-xs font-medium text-gray-500">Cess Amount</dt>
-                                            <dd class="mt-1 text-sm text-gray-900">₹{{ item.temp_product.cess_amount }}
-                                            </dd>
-                                        </div>
-                                    </dl>
+            <!-- Loading State -->
+            <div v-if="loading" class="flex flex-col items-center justify-center py-20">
+                <ProgressSpinner style="width: 50px; height: 50px" />
+                <p class="mt-4 text-gray-500">Processing scan results...</p>
+            </div>
+
+            <div v-else-if="scanData" class="space-y-8">
+                <!-- Vendor Mapping Card -->
+                <Card class="border-none shadow-sm">
+                    <template #title>Vendor Identification</template>
+                    <template #content>
+                        <div class="flex flex-col md:flex-row items-center gap-8 bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                            <div class="flex-1">
+                                <span class="text-xs font-bold text-gray-400 uppercase">Scanned Entity Name</span>
+                                <div class="text-2xl font-black text-gray-900 mt-1">{{ scanData.vendor || 'Unknown' }}</div>
+                                <div class="flex items-center gap-2 mt-2" v-if="scanData.vendor_gstin">
+                                    <Tag :value="scanData.vendor_gstin" severity="secondary" rounded />
+                                    <span class="text-xs text-gray-500">Extracted GSTIN</span>
                                 </div>
+                            </div>
+                            <div class="w-full md:w-96 space-y-2">
+                                <label class="font-semibold text-sm">Map to Existing Ledger</label>
+                                <Select v-model="invoiceForm.party_id" :options="vendors" optionLabel="name" optionValue="id" filter 
+                                    placeholder="+ Auto-create new vendor entry" showClear />
+                                <small class="text-gray-400">Linking ensures accurate account statements.</small>
+                            </div>
+                        </div>
+                    </template>
+                </Card>
 
-                                <!-- Catalog Actions / Matches -->
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-900 mb-2">Add to Catalog</h4>
-
-                                    <div v-if="item.temp_product.status === 'pending'" class="space-y-3">
-                                        <div v-if="item.suggested_matches && item.suggested_matches.length > 0"
-                                            class="mb-3">
-                                            <p class="text-xs text-gray-500 mb-2">Suggested Match:</p>
-                                            <div v-for="match in item.suggested_matches" :key="match.product_id"
-                                                class="flex items-center justify-between bg-white p-2 rounded border mb-2">
-                                                <span class="text-sm text-gray-700">{{ match.name }} ({{
-                                                    Math.round(match.confidence * 100) }}%)</span>
-                                                <button @click="matchProduct(item.temp_product.id, match.product_id)"
-                                                    class="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded hover:bg-indigo-100">
-                                                    Match
-                                                </button>
+                <!-- Extracted Products Card -->
+                <Card class="border-none shadow-sm overflow-hidden">
+                    <template #title>
+                        <div class="flex items-center justify-between">
+                            <span>Extracted Products & Pricing</span>
+                            <Tag :value="scanData.temp_products?.length + ' Items'" severity="info" />
+                        </div>
+                    </template>
+                    <template #content>
+                        <div class="space-y-4">
+                            <div v-for="item in scanData.temp_products" :key="item.temp_product.id" 
+                                class="p-4 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-md transition-all">
+                                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                                    <!-- Scanned Info -->
+                                    <div class="md:col-span-5">
+                                        <div class="flex flex-col gap-1">
+                                            <span class="font-bold text-gray-900">{{ item.temp_product.name }}</span>
+                                            <span class="text-xs text-gray-500" v-if="item.temp_product.description">{{ item.temp_product.description }}</span>
+                                            <div class="flex flex-wrap gap-2 mt-2">
+                                                <Tag :value="item.temp_product.quantity + ' ' + (item.temp_product.unit || 'pcs')" severity="secondary" size="small" />
+                                                <Tag :value="'₹' + item.temp_product.price" severity="info" size="small" />
+                                                <Tag v-if="item.temp_product.tax_rate" :value="item.temp_product.tax_rate + '% GST'" severity="warn" size="small" />
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="flex space-x-2">
-                                            <button @click="openNewProductModal(item)"
-                                                class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none">
-                                                Add as New
-                                            </button>
-                                            <button @click="rejectProduct(item.temp_product.id)"
-                                                class="flex-1 inline-flex justify-center items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
-                                                Reject
-                                            </button>
+                                    <!-- Status & Mapping -->
+                                    <div class="md:col-span-4 border-l pl-6 border-gray-200">
+                                        <div v-if="item.temp_product.status === 'pending'" class="space-y-3">
+                                            <div v-if="item.suggested_matches?.length > 0" class="flex flex-col gap-2">
+                                                <span class="text-[10px] font-bold text-gray-400 uppercase">AI Suggestions</span>
+                                                <div v-for="match in item.suggested_matches" :key="match.product_id" 
+                                                    class="flex items-center justify-between p-2 bg-white rounded-lg border text-sm">
+                                                    <span class="truncate w-32 font-medium">{{ match.name }}</span>
+                                                    <Button label="Match" size="small" text @click="matchProduct(item.temp_product.id, match.product_id)" />
+                                                </div>
+                                            </div>
+                                            <div v-else class="text-center py-2">
+                                                <span class="text-xs text-gray-400 italic">No exact catalog matches found.</span>
+                                            </div>
+                                        </div>
+                                        <div v-else class="flex items-center gap-2">
+                                            <i :class="getStatusIcon(item.temp_product.status)" class="text-xl"></i>
+                                            <span class="font-bold uppercase tracking-widest text-xs" :class="getStatusClass(item.temp_product.status)">
+                                                {{ item.temp_product.status }}
+                                            </span>
                                         </div>
                                     </div>
 
-                                    <div v-else class="flex items-center h-full">
-                                        <span v-if="item.temp_product.status === 'matched'"
-                                            class="text-green-600 font-medium flex items-center">
-                                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M5 13l4 4L19 7"></path>
-                                            </svg>
-                                            Matched
-                                        </span>
-                                        <span v-else-if="item.temp_product.status === 'added'"
-                                            class="text-blue-600 font-medium flex items-center">
-                                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                            </svg>
-                                            Added as New
-                                        </span>
-                                        <span v-else-if="item.temp_product.status === 'rejected'"
-                                            class="text-red-600 font-medium flex items-center">
-                                            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M6 18L18 6M6 6l12 12"></path>
-                                            </svg>
-                                            Rejected
-                                        </span>
+                                    <!-- Actions -->
+                                    <div class="md:col-span-3 flex justify-end gap-2">
+                                        <template v-if="item.temp_product.status === 'pending'">
+                                            <Button label="Add New" icon="pi pi-plus" severity="success" outlined size="small" @click="openNewProductModal(item)" />
+                                            <Button icon="pi pi-trash" severity="danger" text size="small" @click="rejectProduct(item.temp_product.id)" />
+                                        </template>
+                                        <Button v-else label="Undo" icon="pi pi-undo" severity="secondary" text size="small" @click="undoMatch(item.temp_product.id)" />
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </template>
+                </Card>
             </div>
         </div>
 
-        <!-- Create Purchase Invoice Modal -->
-        <div v-if="showInvoiceModal" class="fixed inset-0 z-50 overflow-y-auto">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:items-center sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-                    @click="showInvoiceModal = false"></div>
-
-                <div class="relative bg-white rounded-xl shadow-xl px-6 pt-6 pb-6 sm:max-w-lg sm:w-full z-10">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Create Purchase Invoice</h3>
-
-                    <div class="space-y-4">
-                        <!-- Invoice Number -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Vendor's Invoice No.</label>
-                            <input type="text" v-model="invoiceForm.invoice_number"
-                                class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                        </div>
-
-                        <!-- Dates -->
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Invoice Date</label>
-                                <input type="date" v-model="invoiceForm.date"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
-                                <input type="date" v-model="invoiceForm.due_date"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                            </div>
-                        </div>
-
-                        <!-- Logistics Details -->
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">E-Way Bill No.</label>
-                                <input type="text" v-model="invoiceForm.eway_bill_no" placeholder="Optional"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Vehicle No.</label>
-                                <input type="text" v-model="invoiceForm.vehicle_no" placeholder="Optional"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">PO Number</label>
-                                <input type="text" v-model="invoiceForm.po_number" placeholder="Optional"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Challan No.</label>
-                                <input type="text" v-model="invoiceForm.challan_no" placeholder="Optional"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                            </div>
-                        </div>
-
-                        <!-- Items summary -->
-                        <div class="bg-gray-50 rounded-lg p-3 text-sm">
-                            <p class="font-medium text-gray-700 mb-2">Items from scan ({{ invoiceItems.length }})</p>
-                            <div class="space-y-1 max-h-36 overflow-y-auto">
-                                <div v-for="(item, i) in invoiceItems" :key="i"
-                                    class="flex justify-between text-gray-600">
-                                    <span class="truncate max-w-[60%]">{{ item.name }}</span>
-                                    <span>
-                                        {{ item.quantity }} × ₹{{ item.unit_price }}
-                                        <span v-if="item.discount > 0" class="text-xs text-green-600 ml-1">(-₹{{
-                                            item.discount }})</span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div
-                                class="border-t border-gray-200 mt-2 pt-2 flex justify-between font-semibold text-gray-900">
-                                <span>Total</span>
-                                <span>₹{{ invoiceTotal.toFixed(2) }}</span>
-                            </div>
-                        </div>
-
-                        <div v-if="invoiceError" class="text-sm text-red-600 bg-red-50 rounded p-2">{{ invoiceError }}
-                        </div>
+        <!-- Create Invoice Dialog -->
+        <Dialog v-model:visible="showInvoiceModal" header="Confirm Purchase Bill Details" :modal="true" :style="{ width: '500px' }">
+            <div class="flex flex-col gap-4 pt-2">
+                <div class="flex flex-col gap-2">
+                    <label class="font-semibold text-sm">Vendor Bill Number</label>
+                    <InputText v-model="invoiceForm.invoice_number" placeholder="Reference from scan" />
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-2">
+                        <label class="font-semibold text-sm">Bill Date</label>
+                        <DatePicker v-model="invoiceForm.date" dateFormat="yy-mm-dd" showIcon />
                     </div>
-
-                    <div class="mt-5 flex gap-3 justify-end">
-                        <button @click="showInvoiceModal = false" type="button"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
-                            Cancel
-                        </button>
-                        <button @click="createPurchaseInvoice" :disabled="creatingInvoice" type="button"
-                            class="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 disabled:opacity-60">
-                            {{ creatingInvoice ? 'Creating...' : 'Create Invoice' }}
-                        </button>
+                    <div class="flex flex-col gap-2">
+                        <label class="font-semibold text-sm">Due Date</label>
+                        <DatePicker v-model="invoiceForm.due_date" dateFormat="yy-mm-dd" showIcon />
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Add As New Product Edit Modal -->
-        <div v-if="showNewProductModal" class="fixed inset-0 z-50 overflow-y-auto">
-            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-                    @click="showNewProductModal = false"></div>
-
-                <div class="relative bg-white rounded-xl shadow-xl px-6 pt-6 pb-6 sm:max-w-md sm:w-full z-10 text-left">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Edit Product Details Before Adding</h3>
-
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                            <input type="text" v-model="newProductForm.name"
-                                class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Base Unit Type</label>
-                                <input type="text" v-model="newProductForm.unit"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Initial Stock (Base Units)</label>
-                                <input type="number" step="any" v-model="newProductForm.quantity"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Secondary Unit (Opt)</label>
-                                <input type="text" v-model="newProductForm.secondary_unit" placeholder="e.g. Carton"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Conversion Factor</label>
-                                <input type="number" step="any" v-model="newProductForm.conversion_factor"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-3 gap-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Price</label>
-                                <input type="number" step="any" v-model="newProductForm.price"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">GST %</label>
-                                <input type="number" step="any" v-model="newProductForm.tax_rate"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">CESS %</label>
-                                <input type="number" step="any" v-model="newProductForm.cess_rate"
-                                    class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm" />
-                            </div>
-                        </div>
+                
+                <Divider align="left"><span class="text-xs font-bold text-gray-400">Logistics (Optional)</span></Divider>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs uppercase text-gray-500">E-Way Bill</label>
+                        <InputText v-model="invoiceForm.eway_bill_no" size="small" />
                     </div>
-
-                    <div v-if="newProductError"
-                        class="mt-4 text-sm text-red-600 bg-red-50 rounded p-3 border border-red-200">
-                        {{ newProductError }}
-                    </div>
-
-                    <div class="mt-5 flex gap-3 justify-end">
-                        <button @click="showNewProductModal = false" type="button"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
-                            Cancel
-                        </button>
-                        <button @click="submitNewProduct" :disabled="creatingNewProduct" type="button"
-                            class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-60">
-                            {{ creatingNewProduct ? 'Saving...' : 'Confirm & Save' }}
-                        </button>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs uppercase text-gray-500">Vehicle No.</label>
+                        <InputText v-model="invoiceForm.vehicle_no" size="small" />
                     </div>
                 </div>
+
+                <div class="bg-primary-50 p-4 rounded-xl border border-primary-100 flex justify-between items-center mt-2">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold text-primary uppercase">Estimated Total</span>
+                        <span class="font-black text-primary-900">{{ invoiceItems.length }} extracted items</span>
+                    </div>
+                    <div class="text-2xl font-black text-primary">₹{{ invoiceTotal.toFixed(2) }}</div>
+                </div>
+
+                <Message v-if="invoiceError" severity="error" size="small">{{ invoiceError }}</Message>
             </div>
-        </div>
+            <template #footer>
+                <Button label="Cancel" text severity="secondary" @click="showInvoiceModal = false" />
+                <Button label="Generate Purchase Bill" icon="pi pi-check" severity="success" :loading="creatingInvoice" @click="createPurchaseInvoice" />
+            </template>
+        </Dialog>
+
+        <!-- New Product Edit Dialog -->
+        <Dialog v-model:visible="showNewProductModal" header="Edit Item Before Catalog Entry" :modal="true" :style="{ width: '450px' }">
+            <div class="flex flex-col gap-4 pt-2">
+                <div class="flex flex-col gap-2">
+                    <label class="font-semibold text-sm">Product Name</label>
+                    <InputText v-model="newProductForm.name" />
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-2">
+                        <label class="font-semibold text-sm">Base Unit</label>
+                        <InputText v-model="newProductForm.unit" />
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="font-semibold text-sm">Initial Stock</label>
+                        <InputNumber v-model="newProductForm.quantity" :minFractionDigits="2" />
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="flex flex-col gap-2">
+                        <label class="font-semibold text-sm">Price</label>
+                        <InputNumber v-model="newProductForm.price" mode="currency" currency="INR" locale="en-IN" />
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="font-semibold text-sm">GST %</label>
+                        <InputNumber v-model="newProductForm.tax_rate" suffix="%" />
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="font-semibold text-sm">CESS %</label>
+                        <InputNumber v-model="newProductForm.cess_rate" suffix="%" />
+                    </div>
+                </div>
+                <Message v-if="newProductError" severity="error" size="small">{{ newProductError }}</Message>
+            </div>
+            <template #footer>
+                <Button label="Cancel" text severity="secondary" @click="showNewProductModal = false" />
+                <Button label="Confirm & Add" icon="pi pi-check" :loading="creatingNewProduct" @click="submitNewProduct" />
+            </template>
+        </Dialog>
     </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted, computed, reactive } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '../../layouts/AppLayout.vue'
 import client from '../../api/client'
 
+// PrimeVue
+import Card from 'primevue/card'
+import Button from 'primevue/button'
+import Tag from 'primevue/tag'
+import Select from 'primevue/select'
+import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import DatePicker from 'primevue/datepicker'
+import Dialog from 'primevue/dialog'
+import Message from 'primevue/message'
+import Divider from 'primevue/divider'
+import ProgressSpinner from 'primevue/progressspinner'
+
+const router = useRouter()
 const route = useRoute()
 const scanId = route.params.id as string
 
@@ -405,20 +242,17 @@ const vendors = ref<any[]>([])
 const showNewProductModal = ref(false)
 const creatingNewProduct = ref(false)
 const newProductError = ref<string | null>(null)
-const newProductForm = ref({
-    temp_id: '',
-    name: '',
-    quantity: 1,
-    price: 0,
-    unit: 'pcs',
-    secondary_unit: '',
-    conversion_factor: 1,
-    tax_rate: 0,
-    cess_rate: 0
+const newProductForm = reactive({
+    temp_id: '', name: '', quantity: 1, price: 0, unit: 'pcs', secondary_unit: '', conversion_factor: 1, tax_rate: 0, cess_rate: 0
+})
+
+const invoiceForm = reactive({
+    party_id: '', invoice_number: '', date: new Date(), due_date: new Date(Date.now() + 30 * 864e5),
+    po_number: '', eway_bill_no: '', vehicle_no: '', challan_no: '',
 })
 
 function openNewProductModal(item: any) {
-    newProductForm.value = {
+    Object.assign(newProductForm, {
         temp_id: item.temp_product.id,
         name: item.temp_product.name || '',
         quantity: Number(item.temp_product.quantity) || 1,
@@ -428,45 +262,24 @@ function openNewProductModal(item: any) {
         conversion_factor: 1,
         tax_rate: Number(item.temp_product.tax_rate) || 0,
         cess_rate: Number(item.temp_product.cess_rate) || 0
-    }
+    })
     showNewProductModal.value = true
 }
 
-const today = new Date().toISOString().split('T')[0]
-const in30 = new Date(Date.now() + 30 * 864e5).toISOString().split('T')[0]
+const canCreateInvoice = computed(() => !invoiceCreated.value && !scanData.value?.invoice_id && scanData.value?.temp_products?.length > 0)
 
-const invoiceForm = ref({
-    party_id: '',
-    invoice_number: '',
-    date: today,
-    due_date: in30,
-    po_number: '',
-    eway_bill_no: '',
-    vehicle_no: '',
-    challan_no: '',
-})
-
-// Can create invoice only when status=success and has items
-const canCreateInvoice = computed(() => {
-    return !invoiceCreated.value &&
-        !scanData.value?.invoice_id &&
-        scanData.value?.temp_products?.length > 0
-})
-
-// Items derived from temp_products
 const invoiceItems = computed(() => {
     return (scanData.value?.temp_products ?? []).map((tp: any) => ({
         name: tp.temp_product.name,
         product_id: tp.temp_product.matched_product_id ?? null,
         quantity: Number(tp.temp_product.quantity) || 1,
         unit: tp.temp_product.unit || 'pcs',
-        conversion_factor: 1.00, // Default to 1.00 for scans
+        conversion_factor: 1.00,
         unit_price: Number(tp.temp_product.price) || 0,
         mrp: tp.temp_product.mrp ? Number(tp.temp_product.mrp) : null,
         discount: Number(tp.temp_product.discount) || 0,
         tax_rate: Number(tp.temp_product.tax_rate) || 0,
         cess_rate: Number(tp.temp_product.cess_rate) || 0,
-        cess_amount: Number(tp.temp_product.cess_amount) || 0,
         hsn_code: tp.temp_product.hsn_code ?? null,
         batch_number: tp.temp_product.batch_number ?? null,
         expiry_date: tp.temp_product.expiry_date ?? null,
@@ -474,117 +287,74 @@ const invoiceItems = computed(() => {
     }))
 })
 
-const invoiceTotal = computed(() =>
-    invoiceItems.value.reduce((sum: number, i: any) => {
-        const base = (i.quantity * i.unit_price) - i.discount
-        const tax = base * (i.tax_rate / 100)
-        const cess = base * (i.cess_rate / 100)
-        return sum + base + tax + cess
-    }, 0)
-)
+const invoiceTotal = computed(() => invoiceItems.value.reduce((sum: number, i: any) => {
+    const base = (i.quantity * i.unit_price) - i.discount
+    const tax = base * (i.tax_rate / 100)
+    const cess = base * (i.cess_rate / 100)
+    return sum + base + tax + cess
+}, 0))
 
-onMounted(async () => {
-    await fetchScanDetails()
-    // Load vendors for modal dropdown
-    try {
-        const res = await client.get('/parties', { params: { type: 'vendor', per_page: 200 } })
-        vendors.value = res.data.data ?? res.data
-    } catch (e) { }
-})
-
-async function fetchScanDetails() {
+const fetchScanDetails = async () => {
     loading.value = true
     try {
-        const response = await client.get(`/invoice-scans/${scanId}`)
-        if (response.data.success && response.data.data) {
-            scanData.value = response.data.data
-            // Pre-fill invoice form with scan data
-            if (scanData.value.date) {
-                invoiceForm.value.date = scanData.value.date.split('T')[0] ?? today
-            }
-            invoiceForm.value.invoice_number = scanData.value.invoice_no ?? ''
-        } else {
-            alert('Could not load scan details')
-        }
-    } catch (error) {
-        console.error('Error fetching details:', error)
-    } finally {
-        loading.value = false
-    }
+        const res = await client.get(`/invoice-scans/${scanId}`)
+        scanData.value = res.data.data
+        if (scanData.value.date) invoiceForm.date = new Date(scanData.value.date)
+        invoiceForm.invoice_number = scanData.value.invoice_no || ''
+    } finally { loading.value = false }
 }
 
 async function matchProduct(tempId: string, productId: string) {
-    try {
-        await client.post(`/temp-products/${tempId}/match`, { product_id: productId })
-        await fetchScanDetails()
-    } catch (error: any) {
-        alert(error.response?.data?.message || 'Match failed')
-    }
+    await client.post(`/temp-products/${tempId}/match`, { product_id: productId })
+    await fetchScanDetails()
+}
+
+async function undoMatch(tempId: string) {
+    await client.post(`/temp-products/${tempId}/undo-match`)
+    await fetchScanDetails()
 }
 
 async function submitNewProduct() {
     newProductError.value = null
     creatingNewProduct.value = true
     try {
-        await client.post(`/temp-products/${newProductForm.value.temp_id}/add-new`, {
-            name: newProductForm.value.name,
-            quantity: Number(newProductForm.value.quantity),
-            unit: newProductForm.value.unit,
-            secondary_unit: newProductForm.value.secondary_unit || undefined,
-            conversion_factor: Number(newProductForm.value.conversion_factor) || 1,
-            price: Number(newProductForm.value.price),
-            tax_rate: Number(newProductForm.value.tax_rate),
-            cess_rate: Number(newProductForm.value.cess_rate),
-            update_inventory: true
-        })
+        await client.post(`/temp-products/${newProductForm.temp_id}/add-new`, { ...newProductForm, update_inventory: true })
         showNewProductModal.value = false
         await fetchScanDetails()
-    } catch (error: any) {
-        console.error('Validation Error payload:', error.response?.data)
-        newProductError.value = error.response?.data?.message || 'Add failed'
-    } finally {
-        creatingNewProduct.value = false
-    }
+    } catch (e: any) { newProductError.value = e.response?.data?.message || 'Add failed' } 
+    finally { creatingNewProduct.value = false }
 }
 
 async function rejectProduct(tempId: string) {
-    if (!confirm('Are you sure you want to reject this item?')) return
-    try {
-        await client.delete(`/temp-products/${tempId}`)
-        await fetchScanDetails()
-    } catch (error: any) {
-        alert(error.response?.data?.message || 'Reject failed')
-    }
+    if (!confirm('Reject this item?')) return
+    await client.delete(`/temp-products/${tempId}`)
+    await fetchScanDetails()
 }
 
 async function createPurchaseInvoice() {
     invoiceError.value = null
     creatingInvoice.value = true
     try {
-        const payload: any = {
+        const payload = {
+            ...invoiceForm,
             invoice_scan_id: scanId,
-            party_id: invoiceForm.value.party_id || undefined,
-            vendor_name: !invoiceForm.value.party_id ? (scanData.value?.vendor || undefined) : undefined,
-            vendor_gstin: !invoiceForm.value.party_id ? (scanData.value?.vendor_gstin || undefined) : undefined,
-            vendor_address: !invoiceForm.value.party_id ? (scanData.value?.vendor_address || undefined) : undefined,
-            invoice_number: invoiceForm.value.invoice_number || undefined,
-            date: invoiceForm.value.date,
-            due_date: invoiceForm.value.due_date,
-            eway_bill_no: invoiceForm.value.eway_bill_no || undefined,
-            vehicle_no: invoiceForm.value.vehicle_no || undefined,
-            po_number: invoiceForm.value.po_number || undefined,
-            challan_no: invoiceForm.value.challan_no || undefined,
+            date: invoiceForm.date.toISOString().split('T')[0],
+            due_date: invoiceForm.due_date.toISOString().split('T')[0],
             items: invoiceItems.value,
         }
-
         await client.post('/purchases/confirm-scan', payload)
         showInvoiceModal.value = false
         invoiceCreated.value = true
-        fetchScanDetails() // Refresh to update status
-    } catch (e: any) {
-        invoiceError.value = e.response?.data?.message || 'Failed to create invoice.'
-    } finally {
-        creatingInvoice.value = false
-    }
+        fetchScanDetails()
+    } catch (e: any) { invoiceError.value = e.response?.data?.message || 'Failed to create invoice.' } 
+    finally { creatingInvoice.value = false }
 }
+
+const getStatusIcon = (s: string) => s === 'matched' ? 'pi pi-check-circle' : (s === 'added' ? 'pi pi-plus-circle' : 'pi pi-times-circle')
+const getStatusClass = (s: string) => s === 'matched' ? 'text-green-600' : (s === 'added' ? 'text-blue-600' : 'text-red-600')
+
+onMounted(async () => {
+    fetchScanDetails()
+    client.get('/parties', { params: { type: 'vendor', per_page: 200 } }).then(res => vendors.value = res.data.data ?? res.data)
+})
 </script>
