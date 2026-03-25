@@ -1,117 +1,81 @@
 <template>
-    <div class="space-y-6">
-        <div class="bg-white shadow sm:rounded-lg">
-            <div
-                class="px-6 py-5 border-b border-gray-200 sm:px-6 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-50 gap-4">
-                <div class="flex items-center space-x-4 w-full sm:w-auto">
-                    <div class="relative flex items-start">
-                        <div class="flex h-6 items-center">
-                            <input id="low-stock" type="checkbox" v-model="filters.low_stock_only" @change="loadReport"
-                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                        </div>
-                        <div class="ml-3 text-sm leading-6">
-                            <label for="low-stock" class="font-medium text-gray-900">Low Stock Only</label>
+    <div class="space-y-6 p-fluid">
+        <!-- Filters & Summary Card -->
+        <Card class="border-none shadow-sm overflow-hidden">
+            <template #content>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                    <div class="md:col-span-4 flex items-center gap-2">
+                        <Checkbox v-model="filters.low_stock_only" :binary="true" id="low_stock" @change="loadReport" />
+                        <label for="low_stock" class="font-semibold text-sm cursor-pointer">Show Low Stock Items Only</label>
+                    </div>
+                    <div class="md:col-span-8 flex justify-end">
+                        <div class="bg-primary-50 p-4 rounded-xl border border-primary-100 flex flex-col items-end">
+                            <span class="text-xs font-bold text-primary uppercase">Inventory Valuation</span>
+                            <span class="text-3xl font-black text-primary-900">{{ formatCurrency(summary.total_valuation) }}</span>
                         </div>
                     </div>
                 </div>
-                <div
-                    class="text-sm text-gray-500 bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm w-full sm:w-auto text-center sm:text-left">
-                    Valuation: <span class="font-bold text-gray-900 text-lg ml-2">{{
-                        formatCurrency(summary.total_valuation) }}</span>
-                </div>
-            </div>
+            </template>
+        </Card>
 
-            <!-- Data List -->
-            <div>
-                <!-- Mobile Card View -->
-                <div class="sm:hidden space-y-4 px-4 pb-4">
-                    <div v-if="loading && !products.length" class="text-center py-4 text-gray-500">Loading...</div>
-                    <div v-for="product in products" :key="product.id"
-                        class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-                        <div class="flex justify-between items-start mb-2">
-                            <div>
-                                <div class="font-bold text-gray-900">{{ product.name }}</div>
-                                <div class="text-xs text-gray-500">{{ product.sku || '' }}</div>
-                            </div>
-                            <div class="text-right">
-                                <div class="text-sm font-bold"
-                                    :class="Number(product.current_stock) <= 5 ? 'text-red-600' : 'text-green-600'">
-                                    {{ product.current_stock }} {{ product.unit }}
-                                </div>
-                                <div class="text-xs text-gray-500">Stock</div>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center text-sm border-t border-gray-100 pt-2 mt-2">
-                            <div>
-                                <span class="text-gray-500 text-xs">Buy:</span> {{
-                                    formatCurrency(product.purchase_price) }}
-                            </div>
-                            <div>
-                                <span class="text-gray-500 text-xs">Sell:</span> {{ formatCurrency(product.sale_price)
-                                }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Stock Data Table -->
+        <Card class="border-none shadow-sm">
+            <template #content>
+                <DataTable :value="products" :loading="loading" dataKey="id" 
+                    :paginator="true" :rows="10" 
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    :rowsPerPageOptions="[10, 25, 50, 100]"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} items"
+                    responsiveLayout="stack" breakpoint="960px">
+                    
+                    <template #empty>No stock data available.</template>
 
-                <!-- Desktop Table View -->
-                <div class="hidden sm:block overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Product</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    SKU</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Purchase Price</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Sales Price</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Current Stock</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <tr v-if="loading && !products.length">
-                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">Loading...</td>
-                            </tr>
-                            <tr v-for="product in products" :key="product.id">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ product.name }}</div>
-                                    <div class="text-xs text-gray-500">{{ product.hsn_code ? `HSN: ${product.hsn_code}`
-                                        : '' }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ product.sku || '-' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                                    {{ formatCurrency(product.purchase_price) }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                                    {{ formatCurrency(product.sale_price) }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-right"
-                                    :class="Number(product.current_stock) <= 5 ? 'text-red-600' : 'text-green-600'">
-                                    {{ product.current_stock }} {{ product.unit }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+                    <Column field="name" header="Product" sortable>
+                        <template #body="{ data }">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-gray-900">{{ data.name }}</span>
+                                <span class="text-xs text-gray-500" v-if="data.hsn_code">HSN: {{ data.hsn_code }}</span>
+                            </div>
+                        </template>
+                    </Column>
+
+                    <Column field="sku" header="SKU" sortable style="width: 150px"></Column>
+
+                    <Column field="purchase_price" header="Purchase Price" sortable style="text-align: right; width: 150px">
+                        <template #body="{ data }">₹{{ Number(data.purchase_price).toFixed(2) }}</template>
+                    </Column>
+
+                    <Column field="sale_price" header="Sale Price" sortable style="text-align: right; width: 150px">
+                        <template #body="{ data }">₹{{ Number(data.sale_price).toFixed(2) }}</template>
+                    </Column>
+
+                    <Column field="current_stock" header="Current Stock" sortable style="text-align: right; width: 180px">
+                        <template #body="{ data }">
+                            <div class="flex flex-col items-end gap-1">
+                                <span class="text-lg font-black" :class="Number(data.current_stock) <= 5 ? 'text-red-600' : 'text-green-600'">
+                                    {{ data.current_stock }}
+                                </span>
+                                <Tag :value="data.unit" severity="secondary" size="small" class="text-[10px]" />
+                            </div>
+                        </template>
+                    </Column>
+                </DataTable>
+            </template>
+        </Card>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { useReportStore } from '../../stores/report'
 import { storeToRefs } from 'pinia'
+
+// PrimeVue
+import Card from 'primevue/card'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Checkbox from 'primevue/checkbox'
+import Tag from 'primevue/tag'
 
 const reportStore = useReportStore()
 const { loading } = storeToRefs(reportStore)
@@ -123,7 +87,7 @@ const summary = ref({
     total_valuation: 0
 })
 
-const filters = ref({
+const filters = reactive({
     low_stock_only: false
 })
 
@@ -133,7 +97,7 @@ const formatCurrency = (val: number) => {
 
 const loadReport = async () => {
     try {
-        const res = await reportStore.fetchStockReport(filters.value)
+        const res = await reportStore.fetchStockReport(filters)
         products.value = res.data
         summary.value = {
             total_items: res.total_items,

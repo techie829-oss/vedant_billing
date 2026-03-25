@@ -1,104 +1,99 @@
 <template>
     <AppLayout>
-        <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Inventory History</h1>
-                <p class="text-sm text-gray-500 mt-1">Track stock movements and purchase history.</p>
-            </div>
-            <div class="mt-4 sm:mt-0">
-                <button @click="$router.push('/products')"
-                    class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition-colors">
-                    Back to Products
-                </button>
-            </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="bg-white shadow rounded-lg mb-6 p-4">
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div class="p-fluid">
+            <!-- Header Section -->
+            <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
                 <div>
-                    <label class="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Type</label>
-                    <select v-model="filters.type"
-                        class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                        <option value="">All Types</option>
-                        <option value="purchase">Purchase (Stock In)</option>
-                        <option value="sale">Sale (Stock Out)</option>
-                        <option value="adjustment">Adjustment</option>
-                        <option value="return">Return</option>
-                    </select>
+                    <h1 class="text-3xl font-bold text-gray-900 m-0">Inventory History</h1>
+                    <p class="text-gray-500 mt-1">Audit trail of all stock movements and purchase transactions.</p>
+                </div>
+                <div>
+                    <Button label="Back to Catalog" icon="pi pi-arrow-left" severity="secondary" outlined @click="$router.push('/products')" />
                 </div>
             </div>
-        </div>
 
-        <!-- Table -->
-        <div class="bg-white shadow overflow-hidden rounded-lg">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date
-                        </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Product</th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type
-                        </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Qty
-                        </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Unit
-                            Price</th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ref /
-                            Party</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-if="loading">
-                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">Loading history...</td>
-                    </tr>
-                    <tr v-else-if="transactions.length === 0">
-                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">No transactions found.</td>
-                    </tr>
-                    <tr v-for="t in transactions" :key="t.id">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ new Date(t.created_at).toLocaleDateString() }}
-                            <span class="text-xs text-gray-400 block">{{ new Date(t.created_at).toLocaleTimeString()
-                                }}</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {{ t.product?.name || 'Unknown Product' }}
-                            <span class="text-xs text-gray-400 block">{{ t.product?.sku }}</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize"
-                                :class="{
-                                    'bg-green-100 text-green-800': t.type === 'purchase',
-                                    'bg-red-100 text-red-800': t.type === 'sale',
-                                    'bg-yellow-100 text-yellow-800': t.type === 'adjustment',
-                                    'bg-gray-100 text-gray-800': t.type === 'return',
-                                }">
-                                {{ t.type }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-bold">
-                            {{ t.type === 'sale' || (t.type === 'adjustment' && t.quantity < 0) ? '' : '+' }}{{
-                                Number(t.quantity) }} </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
-                            {{ t.unit_price ? '₹' + Number(t.unit_price).toFixed(2) : '-' }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <div v-if="t.party" class="text-indigo-600 font-medium">{{ t.party.name }}</div>
-                            <div v-else class="text-gray-400">-</div>
+            <!-- Filters & Data Table -->
+            <div class="grid grid-cols-12 gap-6">
+                <!-- Sidebar Filters -->
+                <div class="col-span-12 lg:col-span-3">
+                    <Card class="border-none shadow-sm">
+                        <template #title>Filter Activity</template>
+                        <template #content>
+                            <div class="flex flex-col gap-2">
+                                <label class="font-semibold text-xs uppercase text-gray-500">Movement Type</label>
+                                <Select v-model="filters.type" :options="typeOptions" optionLabel="label" optionValue="value" placeholder="All Movements" showClear />
+                            </div>
+                        </template>
+                    </Card>
+                </div>
 
-                            <div v-if="t.notes" class="text-xs text-gray-400 italic mt-0.5">{{ t.notes }}</div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <!-- Pagination could go here -->
+                <!-- Main Data Table -->
+                <div class="col-span-12 lg:col-span-9">
+                    <Card class="border-none shadow-sm overflow-hidden">
+                        <template #content>
+                            <DataTable :value="transactions" :loading="loading" dataKey="id" 
+                                :paginator="true" :rows="15" 
+                                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                                :rowsPerPageOptions="[15, 30, 50]"
+                                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} movements"
+                                responsiveLayout="stack" breakpoint="960px">
+                                
+                                <template #empty>No inventory movements found matching your filters.</template>
+
+                                <Column field="created_at" header="Date / Time" sortable style="width: 180px">
+                                    <template #body="{ data }">
+                                        <div class="flex flex-col">
+                                            <span class="font-medium text-gray-900">{{ formatDate(data.created_at) }}</span>
+                                            <span class="text-[10px] text-gray-400 uppercase">{{ formatTime(data.created_at) }}</span>
+                                        </div>
+                                    </template>
+                                </Column>
+
+                                <Column field="product.name" header="Product" sortable>
+                                    <template #body="{ data }">
+                                        <div class="flex flex-col">
+                                            <span class="font-bold text-gray-900">{{ data.product?.name || 'Unknown' }}</span>
+                                            <span class="text-xs text-gray-500" v-if="data.product?.sku">{{ data.product.sku }}</span>
+                                        </div>
+                                    </template>
+                                </Column>
+
+                                <Column field="type" header="Type" sortable style="width: 120px">
+                                    <template #body="{ data }">
+                                        <Tag :value="data.type.toUpperCase()" :severity="getTypeSeverity(data.type)" />
+                                    </template>
+                                </Column>
+
+                                <Column field="quantity" header="Quantity" sortable style="text-align: right; width: 120px">
+                                    <template #body="{ data }">
+                                        <span class="text-lg font-black" :class="data.quantity > 0 ? 'text-green-600' : 'text-red-600'">
+                                            {{ data.quantity > 0 ? '+' : '' }}{{ Number(data.quantity) }}
+                                        </span>
+                                    </template>
+                                </Column>
+
+                                <Column field="unit_price" header="Value" sortable style="text-align: right; width: 120px">
+                                    <template #body="{ data }">
+                                        <span class="text-sm font-semibold text-gray-600">
+                                            {{ data.unit_price ? '₹' + Number(data.unit_price).toFixed(2) : '-' }}
+                                        </span>
+                                    </template>
+                                </Column>
+
+                                <Column header="Reference / Party">
+                                    <template #body="{ data }">
+                                        <div class="flex flex-col">
+                                            <span class="font-medium text-primary" v-if="data.party">{{ data.party.name }}</span>
+                                            <span class="text-xs text-gray-500 italic" v-if="data.notes">{{ data.notes }}</span>
+                                            <span v-if="!data.party && !data.notes" class="text-gray-300">-</span>
+                                        </div>
+                                    </template>
+                                </Column>
+                            </DataTable>
+                        </template>
+                    </Card>
+                </div>
+            </div>
         </div>
     </AppLayout>
 </template>
@@ -108,18 +103,30 @@ import { ref, onMounted, watch } from 'vue'
 import AppLayout from '../../layouts/AppLayout.vue'
 import client from '../../api/client'
 
+// PrimeVue
+import Card from 'primevue/card'
+import Button from 'primevue/button'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Tag from 'primevue/tag'
+import Select from 'primevue/select'
+
 const transactions = ref<any[]>([])
 const loading = ref(false)
-const filters = ref({
-    type: ''
-})
+const filters = ref({ type: '' })
+
+const typeOptions = [
+    { label: 'Purchase (Stock In)', value: 'purchase' },
+    { label: 'Sale (Stock Out)', value: 'sale' },
+    { label: 'Adjustment', value: 'adjustment' },
+    { label: 'Return', value: 'return' }
+]
 
 const fetchHistory = async () => {
     loading.value = true
     try {
         const params: any = {}
         if (filters.value.type) params.type = filters.value.type
-
         const res = await client.get('/inventory', { params })
         transactions.value = res.data.data
     } catch (e) {
@@ -129,11 +136,20 @@ const fetchHistory = async () => {
     }
 }
 
-watch(() => filters.value.type, () => {
-    fetchHistory()
-})
+watch(() => filters.value.type, fetchHistory)
 
-onMounted(() => {
-    fetchHistory()
-})
+const formatDate = (d: string) => new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+const formatTime = (d: string) => new Date(d).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+
+const getTypeSeverity = (type: string) => {
+    switch (type) {
+        case 'purchase': return 'success'
+        case 'sale': return 'danger'
+        case 'adjustment': return 'warn'
+        case 'return': return 'info'
+        default: return 'secondary'
+    }
+}
+
+onMounted(fetchHistory)
 </script>

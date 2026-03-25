@@ -1,188 +1,157 @@
 <template>
   <AppLayout>
-    <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900">
-          {{ isEditMode ? 'Edit Vendor' : 'Add New Vendor' }}
-        </h1>
-        <p class="mt-1 text-sm text-gray-500">
-          {{ isEditMode ? 'Update vendor information.' : 'Add a new supplier or vendor for purchase invoices.' }}
-        </p>
-      </div>
-      <div class="mt-4 flex sm:mt-0 sm:ml-4">
-        <button @click="$router.back()" type="button"
-          class="inline-flex items-center rounded-lg bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Cancel</button>
-        <button @click="saveVendor" :disabled="loading" type="button"
-          class="ml-3 inline-flex items-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">
-          {{ loading ? 'Saving...' : 'Save Vendor' }}
-        </button>
-      </div>
-    </div>
-
-    <form @submit.prevent="saveVendor" class="space-y-6">
-      <!-- Basic Info -->
-      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <div class="px-4 py-5 sm:p-6">
-          <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div class="sm:col-span-full">
-              <h3 class="text-base font-semibold leading-7 text-gray-900">Basic Information</h3>
-              <p class="mt-1 text-sm leading-6 text-gray-500">Search by GSTIN to auto-fill details or enter manually.
-              </p>
-            </div>
-
-            <div class="sm:col-span-4">
-              <label for="gstin" class="block text-sm font-medium leading-6 text-gray-900">GSTIN / Tax ID</label>
-              <div class="flex gap-2 mt-2">
-                <input type="text" id="gstin" v-model="form.gstin"
-                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-                  placeholder="27AAAC..." />
-                <button type="button" @click="fetchGst" :disabled="fetchingGst || !form.gstin || form.gstin.length < 15"
-                  class="rounded-md bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-100 disabled:opacity-50">
-                  {{ fetchingGst ? 'Fetching...' : 'Fetch' }}
-                </button>
-              </div>
-            </div>
-
-            <div class="sm:col-span-4">
-              <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Vendor Name <span
-                  class="text-red-500">*</span></label>
-              <div class="mt-2">
-                <input type="text" id="name" v-model="form.name" required
-                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-                  placeholder="e.g. ABC Suppliers Ltd" />
-              </div>
-            </div>
-
-            <div class="sm:col-span-2">
-              <label for="status" class="block text-sm font-medium leading-6 text-gray-900">Status</label>
-              <div class="mt-2">
-                <select id="status" v-model="form.status"
-                  class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm">
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-              </div>
-            </div>
+    <div class="p-fluid">
+      <!-- Header Section -->
+      <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+        <div class="flex items-center gap-4">
+          <Button icon="pi pi-arrow-left" severity="secondary" rounded text @click="router.back()" />
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900 m-0">
+              {{ isEditMode ? 'Edit Vendor' : 'Add New Vendor' }}
+            </h1>
+            <p class="text-gray-500 mt-1">
+              {{ isEditMode ? 'Update vendor information and settings.' : 'Add a new supplier or vendor for your business.' }}
+            </p>
           </div>
+        </div>
+        <div class="flex gap-2">
+          <Button label="Cancel" severity="secondary" outlined @click="router.back()" />
+          <Button :label="isEditMode ? 'Update Vendor' : 'Save Vendor'" icon="pi pi-check" :loading="loading" @click="saveVendor" />
         </div>
       </div>
 
-      <!-- Contact -->
-      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <div class="px-4 py-5 sm:p-6">
-          <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div class="sm:col-span-full">
-              <h3 class="text-base font-semibold leading-7 text-gray-900">Contact & Tax</h3>
-            </div>
-            <div class="sm:col-span-3">
-              <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email Address</label>
-              <div class="mt-2">
-                <input type="email" id="email" v-model="form.email"
-                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-                  placeholder="contact@vendor.com" />
-              </div>
-            </div>
-            <div class="sm:col-span-3">
-              <label for="phone" class="block text-sm font-medium leading-6 text-gray-900">Phone</label>
-              <div class="mt-2">
-                <input type="text" id="phone" v-model="form.phone"
-                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
-              </div>
-            </div>
-            <div class="sm:col-span-3">
-              <label for="pan" class="block text-sm font-medium leading-6 text-gray-900">PAN Number</label>
-              <div class="mt-2">
-                <input type="text" id="pan" v-model="form.pan"
-                  class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-                  placeholder="ABCDE1234F" />
-              </div>
-            </div>
+      <div class="grid grid-cols-12 gap-6">
+        <!-- Left Column: Primary Details -->
+        <div class="col-span-12 lg:col-span-8 space-y-6">
+          
+          <!-- Basic Information -->
+          <Card class="border-none shadow-sm">
+            <template #title>Basic Information</template>
+            <template #content>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="col-span-1 md:col-span-2 flex flex-col gap-2">
+                  <label class="font-semibold text-sm">GSTIN / Tax ID</label>
+                  <div class="p-inputgroup">
+                    <InputText v-model="form.gstin" placeholder="e.g., 27AAAC..." />
+                    <Button icon="pi pi-search" severity="secondary" @click="fetchGst" :loading="fetchingGst" :disabled="!form.gstin || form.gstin.length < 15" />
+                  </div>
+                  <small class="text-gray-500 italic">Auto-fill details using GSTIN</small>
+                </div>
 
-            <!-- Billing Address -->
-            <div class="sm:col-span-full border-t border-gray-100 pt-6 mt-2">
-              <h4 class="text-sm font-medium leading-6 text-gray-900 mb-4">Billing Address</h4>
-              <div class="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
-                <div class="sm:col-span-6">
-                  <label class="block text-sm font-medium leading-6 text-gray-900">Street Address</label>
-                  <div class="mt-2">
-                    <textarea rows="2" v-model="form.billing_address.street"
-                      class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"></textarea>
-                  </div>
+                <div class="col-span-1 md:col-span-2 flex flex-col gap-2">
+                  <label for="name" class="font-semibold text-sm">Vendor Name <span class="text-red-500">*</span></label>
+                  <InputText id="name" v-model="form.name" required placeholder="e.g., ABC Suppliers Ltd" />
                 </div>
-                <div class="sm:col-span-2">
-                  <label class="block text-sm font-medium leading-6 text-gray-900">City</label>
-                  <div class="mt-2">
-                    <input type="text" v-model="form.billing_address.city"
-                      class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
-                  </div>
+
+                <div class="flex flex-col gap-2">
+                  <label class="font-semibold text-sm">PAN Number</label>
+                  <InputText v-model="form.pan" placeholder="ABCDE1234F" />
                 </div>
-                <div class="sm:col-span-2">
-                  <label class="block text-sm font-medium leading-6 text-gray-900">State</label>
-                  <div class="mt-2">
+
+                <div class="flex flex-col gap-2">
+                  <label class="font-semibold text-sm">Status</label>
+                  <Select v-model="form.status" :options="statusOptions" optionLabel="label" optionValue="value" />
+                </div>
+              </div>
+            </template>
+          </Card>
+
+          <!-- Contact Details -->
+          <Card class="border-none shadow-sm">
+            <template #title>Contact Information</template>
+            <template #content>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex flex-col gap-2">
+                  <label class="font-semibold text-sm">Email Address</label>
+                  <InputText v-model="form.email" type="email" placeholder="contact@vendor.com" />
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label class="font-semibold text-sm">Phone Number</label>
+                  <InputText v-model="form.phone" placeholder="e.g., +91 98765 43210" />
+                </div>
+              </div>
+            </template>
+          </Card>
+
+          <!-- Billing Address -->
+          <Card class="border-none shadow-sm">
+            <template #title>Address Details</template>
+            <template #content>
+              <div class="flex flex-col gap-3">
+                <div class="flex flex-col gap-2">
+                  <label class="text-xs font-semibold text-gray-500 uppercase">Street Address</label>
+                  <Textarea v-model="form.billing_address.street" rows="2" autoResize />
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div class="flex flex-col gap-2">
+                    <label class="text-xs font-semibold text-gray-500 uppercase">ZIP/PIN Code</label>
+                    <InputText v-model="form.billing_address.zip" maxlength="6" />
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <label class="text-xs font-semibold text-gray-500 uppercase">City</label>
+                    <InputText v-model="form.billing_address.city" />
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <label class="text-xs font-semibold text-gray-500 uppercase">State</label>
                     <StateSelect v-model="form.billing_address.state" />
                   </div>
                 </div>
-                <div class="sm:col-span-2">
-                  <label class="block text-sm font-medium leading-6 text-gray-900">PIN Code</label>
-                  <div class="mt-2">
-                    <input type="text" v-model="form.billing_address.zip"
-                      class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm" />
-                  </div>
+              </div>
+            </template>
+          </Card>
+        </div>
+
+        <!-- Right Column: Finance & Notes -->
+        <div class="col-span-12 lg:col-span-4 space-y-6">
+          <!-- Financials -->
+          <Card class="border-none shadow-sm bg-orange-50">
+            <template #title>Financial Details</template>
+            <template #content>
+              <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-2">
+                  <label class="font-semibold text-sm">Opening Balance</label>
+                  <InputNumber v-model="form.opening_balance" mode="currency" currency="INR" locale="en-IN" :minFractionDigits="2" />
+                  <small class="text-gray-500">Negative: Amount owed to vendor (Cr), Positive: Receivable (Dr)</small>
                 </div>
               </div>
-            </div>
-          </div>
+            </template>
+          </Card>
+
+          <!-- Internal Notes -->
+          <Card class="border-none shadow-sm">
+            <template #title>Internal Notes</template>
+            <template #content>
+              <Textarea v-model="form.notes" rows="5" autoResize placeholder="Terms, product categories, or notes..." />
+            </template>
+          </Card>
+
+          <!-- Error Message -->
+          <Message v-if="error" severity="error" closable @close="error = null">{{ error }}</Message>
         </div>
       </div>
-
-      <!-- Notes -->
-      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <div class="px-4 py-5 sm:p-6">
-          <h3 class="text-base font-semibold leading-7 text-gray-900">Notes</h3>
-          <div class="mt-4">
-            <textarea rows="3" v-model="form.notes"
-              class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-              placeholder="Internal notes about this vendor..."></textarea>
-          </div>
-        </div>
-      </div>
-
-      <!-- Financial -->
-      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <div class="px-4 py-5 sm:p-6">
-          <h3 class="text-base font-semibold leading-7 text-gray-900 mb-4">Financial Details</h3>
-          <div class="max-w-xs">
-            <label class="block text-sm font-medium leading-6 text-gray-900">Opening Balance</label>
-            <div class="relative mt-2 rounded-md shadow-sm">
-              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <span class="text-gray-500 sm:text-sm">₹</span>
-              </div>
-              <input type="number" step="any" v-model.number="form.opening_balance"
-                class="block w-full rounded-md border-0 py-2 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-                placeholder="0.00" />
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                <span class="text-gray-500 sm:text-sm">INR</span>
-              </div>
-            </div>
-            <p class="mt-1 text-xs text-gray-500">Negative = amount owed to vendor.</p>
-          </div>
-        </div>
-      </div>
-
-      <div v-if="error" class="rounded-md bg-red-50 p-4 text-sm text-red-700">{{ error }}</div>
-    </form>
+    </div>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePartyStore } from '../../stores/party'
 import { useGeneralStore } from '../../stores/general'
 import { storeToRefs } from 'pinia'
 import AppLayout from '../../layouts/AppLayout.vue'
+import { fetchPincodeDetails } from '../../services/PincodeService'
 import StateSelect from '../../components/StateSelect.vue'
 import client from '../../api/client'
+
+// PrimeVue Components
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import Select from 'primevue/select'
+import Textarea from 'primevue/textarea'
+import Message from 'primevue/message'
 
 const router = useRouter()
 const route = useRoute()
@@ -208,6 +177,11 @@ const form = ref({
   status: 'active'
 })
 
+const statusOptions = [
+  { label: 'Active', value: 'active' },
+  { label: 'Inactive', value: 'inactive' }
+]
+
 const isEditMode = computed(() => route.params.id !== undefined)
 
 onMounted(async () => {
@@ -227,14 +201,26 @@ onMounted(async () => {
           notes: party.notes || '',
           billing_address: party.billing_address || { street: '', city: '', state: '', zip: '' },
           shipping_address: party.shipping_address || { street: '', city: '', state: '', zip: '' },
-          opening_balance: party.opening_balance,
-          status: party.status
+          opening_balance: Number(party.opening_balance) || 0,
+          status: party.status || 'active'
         }
       }
     } catch (e) {
       error.value = 'Failed to load vendor details.'
     } finally {
       loading.value = false
+    }
+  }
+})
+
+// Pincode Logic
+watch(() => form.value.billing_address.zip, async (newZip) => {
+  if (newZip && newZip.length === 6) {
+    const details = await fetchPincodeDetails(newZip)
+    if (details) {
+      form.value.billing_address.city = details.city
+      const matchedState = states.value.find(s => s.name.toLowerCase() === details.state.toLowerCase())
+      form.value.billing_address.state = matchedState ? matchedState.name : details.state
     }
   }
 })
@@ -247,13 +233,15 @@ const fetchGst = async () => {
     const data = response.data
     form.value.name = data.trade_name || data.legal_name || ''
     if (form.value.gstin.length === 15) form.value.pan = form.value.gstin.substring(2, 12)
+    
     const raw = data.raw || data
-    if (data.city) form.value.billing_address.city = data.city
-    if (data.pincode) form.value.billing_address.zip = data.pincode
-    const stateName = data.state || raw.state
+    if (data.city || raw.city) form.value.billing_address.city = data.city || raw.city
+    if (data.pincode || raw.pincode || raw.pncd) form.value.billing_address.zip = data.pincode || raw.pincode || raw.pncd
+    
+    const stateName = data.state || raw.state || raw.stcd
     if (stateName) {
-      const matched = states.value.find((s: any) => s.name.toLowerCase() === stateName.toLowerCase())
-      form.value.billing_address.state = matched ? matched.name : stateName
+      const matchedState = states.value.find(s => s.name.toLowerCase() === stateName.toLowerCase()) || states.value.find(s => s.code == stateName)
+      form.value.billing_address.state = matchedState ? matchedState.name : stateName
     }
   } catch (e: any) {
     alert('Failed to fetch GST details: ' + (e.response?.data?.message || e.message))
@@ -263,14 +251,12 @@ const fetchGst = async () => {
 }
 
 const saveVendor = async () => {
+  if (!form.value.name) return error.value = 'Vendor name is required.'
   loading.value = true
   error.value = null
   try {
-    if (isEditMode.value) {
-      await partyStore.updateParty(route.params.id as string, form.value as any)
-    } else {
-      await partyStore.createParty(form.value as any)
-    }
+    if (isEditMode.value) await partyStore.updateParty(route.params.id as string, form.value as any)
+    else await partyStore.createParty(form.value as any)
     router.push('/vendors')
   } catch (e: any) {
     error.value = e.response?.data?.message || 'An error occurred while saving.'

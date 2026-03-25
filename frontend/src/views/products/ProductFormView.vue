@@ -1,261 +1,150 @@
 <template>
     <AppLayout>
-
-        <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">{{ isEditing ? 'Edit Product' : 'Add New Product' }}</h1>
-                <p class="mt-1 text-sm text-gray-500">
-                    {{ isEditing ? 'Update product details and stock information.' : 'Create a new product or service in your catalog.' }}
-                </p>
+        <div class="p-fluid">
+            <!-- Header Section -->
+            <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 m-0">
+                        {{ isEditing ? 'Edit Product' : 'Add New Product' }}
+                    </h1>
+                    <p class="text-gray-500 mt-1">
+                        {{ isEditing ? 'Manage product details and stock.' : 'Create a new catalog item.' }}
+                    </p>
+                </div>
+                <div class="flex gap-2">
+                    <Button label="Back to Catalog" icon="pi pi-arrow-left" severity="secondary" outlined 
+                        @click="router.push('/products')" />
+                    <Button v-if="!isEditing" label="Save Product" icon="pi pi-check" :loading="loading"
+                        @click="saveProduct" />
+                </div>
             </div>
-            <div class="mt-4 sm:mt-0">
-                <button @click="router.push('/products')"
-                    class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50">
-                    Back to Catalog
-                </button>
-            </div>
-        </div>
 
-        <div class="bg-white shadow rounded-xl border border-gray-200 overflow-hidden">
-            <div class="p-6 sm:p-8">
-                <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                    <!-- Basic Info -->
-                    <div class="sm:col-span-4">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Product/Service Name</label>
-                        <div class="mt-2">
-                            <input type="text" v-model="form.name"
-                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                placeholder="e.g. Wireless Mouse">
-                        </div>
-                    </div>
-
-                    <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Type</label>
-                        <div class="relative mt-2">
-                            <select v-model="form.type"
-                                class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                <option value="goods">Goods (Inventory Tracked)</option>
-                                <option value="service">Service (No Inventory)</option>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                                    aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                        clip-rule="evenodd" />
-                                </svg>
+            <div class="grid grid-cols-12 gap-6">
+                <!-- Left Column: Primary Details -->
+                <div class="col-span-12 lg:col-span-8 space-y-6">
+                    <Card>
+                        <template #title>Basic Information</template>
+                        <template #content>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="col-span-1 md:col-span-2 flex flex-col gap-2">
+                                    <label for="name" class="font-semibold text-sm">Product Name</label>
+                                    <InputText id="name" v-model="form.name" placeholder="e.g., Wireless Mouse" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label for="sku" class="font-semibold text-sm">SKU / Item Code</label>
+                                    <InputText id="sku" v-model="form.sku" placeholder="Optional" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label for="type" class="font-semibold text-sm">Type</label>
+                                    <Select id="type" v-model="form.type" :options="typeOptions" optionLabel="label" optionValue="value" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label for="hsn" class="font-semibold text-sm">HSN / SAC Code</label>
+                                    <InputText id="hsn" v-model="form.hsn_code" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label for="status" class="font-semibold text-sm">Status</label>
+                                    <Select id="status" v-model="form.status" :options="statusOptions" optionLabel="label" optionValue="value" />
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        </template>
+                    </Card>
 
-                    <div class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">SKU / Item Code</label>
-                        <div class="mt-2">
-                            <input type="text" v-model="form.sku"
-                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        </div>
-                    </div>
+                    <Card>
+                        <template #title>Pricing & Tax</template>
+                        <template #content>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="flex flex-col gap-2">
+                                    <label class="font-semibold text-sm">Sale Price ({{ form.unit }})</label>
+                                    <InputNumber v-model="form.sale_price" mode="currency" currency="INR" locale="en-IN" :minFractionDigits="2" />
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <Checkbox v-model="form.is_tax_inclusive" binary id="tax_incl" />
+                                        <label for="tax_incl" class="text-xs">This price includes GST</label>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="font-semibold text-sm">Tax Rate</label>
+                                    <Select v-model="form.tax_rate" :options="gstOptions" optionLabel="label" optionValue="value" placeholder="Select GST" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="font-semibold text-sm">Purchase Price ({{ form.unit }})</label>
+                                    <InputNumber v-model="form.purchase_price" mode="currency" currency="INR" locale="en-IN" :minFractionDigits="2" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="font-semibold text-sm">CESS Rate (%)</label>
+                                    <InputNumber v-model="form.cess_rate" suffix="%" :minFractionDigits="2" />
+                                </div>
+                            </div>
+                        </template>
+                    </Card>
 
-                    <div class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">HSN / SAC Code</label>
-                        <div class="mt-2">
-                            <input type="text" v-model="form.hsn_code"
-                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        </div>
-                    </div>
-
-                    <!-- Pricing -->
-                    <div class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Sales Price ({{ form.unit || 'Base Unit' }})</label>
-                        <div class="mt-2">
-                            <input type="number" step="any" v-model="form.sale_price"
-                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        </div>
-                        <div class="mt-2 flex items-center h-5">
-                            <input id="is_tax_inclusive" name="is_tax_inclusive" type="checkbox"
-                                v-model="form.is_tax_inclusive"
-                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                            <label for="is_tax_inclusive"
-                                class="ml-2 block text-sm font-medium leading-6 text-gray-900">
-                                This price includes GST
-                            </label>
-                        </div>
-                    </div>
-
-                    <div v-if="form.secondary_unit" class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Sales Price ({{ form.secondary_unit }})</label>
-                        <div class="mt-2">
-                            <input type="number" step="any" v-model="form.secondary_sale_price"
-                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        </div>
-                        <p v-if="form.conversion_factor > 0" class="mt-1 text-xs text-gray-500">
-                            Effective Price per {{ form.secondary_unit }}: ₹{{ (Number(form.sale_price || 0) / Number(form.conversion_factor)).toFixed(2) }}
-                        </p>
-                    </div>
-
-                    <div class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Tax Rate (%)</label>
-                        <div class="relative mt-2">
-                            <select v-model="form.tax_rate"
-                                class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                <template v-if="!configStore.loading && configStore.data">
-                                    <option v-for="(label, rate) in configStore.data.gst_rates" :key="rate"
-                                        :value="Number(rate)">
-                                        {{ label }}
-                                    </option>
+                    <Card>
+                        <template #title>Units & Conversion</template>
+                        <template #content>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="flex flex-col gap-2">
+                                    <label class="font-semibold text-sm">Base Unit (Wholesale)</label>
+                                    <Select v-model="form.unit" :options="unitOptions" optionLabel="label" optionValue="value" filter />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="font-semibold text-sm">Secondary Unit (Retail)</label>
+                                    <Select v-model="form.secondary_unit" :options="unitOptions" optionLabel="label" optionValue="value" filter showClear placeholder="None" />
+                                </div>
+                                
+                                <template v-if="form.secondary_unit">
+                                    <div class="flex flex-col gap-2">
+                                        <label class="font-semibold text-sm">Conversion Factor</label>
+                                        <InputNumber v-model="form.conversion_factor" :minFractionDigits="2" />
+                                        <small class="text-gray-500">
+                                            1 {{ configStore.data?.unit_types[form.unit] || form.unit }} = 
+                                            {{ form.conversion_factor }} {{ configStore.data?.unit_types[form.secondary_unit] || form.secondary_unit }}
+                                        </small>
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <label class="font-semibold text-sm">Secondary Sale Price</label>
+                                        <InputNumber v-model="form.secondary_sale_price" mode="currency" currency="INR" locale="en-IN" :minFractionDigits="2" />
+                                        <small class="text-gray-500">
+                                            Effective: ₹{{ (Number(form.sale_price || 0) / Number(form.conversion_factor || 1)).toFixed(2) }} per {{ form.secondary_unit }}
+                                        </small>
+                                    </div>
                                 </template>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                                    aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                        clip-rule="evenodd" />
-                                </svg>
                             </div>
-                        </div>
-                    </div>
+                        </template>
+                    </Card>
+                </div>
 
-                    <div class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">CESS Rate (%)</label>
-                        <div class="mt-2">
-                            <input type="number" step="any" v-model="form.cess_rate" placeholder="0"
-                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        </div>
-                    </div>
-
-                    <div class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Purchase Price ({{ form.unit || 'Base' }})</label>
-                        <div class="mt-2">
-                            <input type="number" step="any" v-model="form.purchase_price"
-                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        </div>
-                    </div>
-
-                    <div v-if="form.secondary_unit" class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Purchase Price ({{ form.secondary_unit }})</label>
-                        <div class="mt-2">
-                            <input type="number" step="any" v-model="form.secondary_purchase_price"
-                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        </div>
-                    </div>
-
-                    <!-- Unit Info -->
-                    <div class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Base Unit</label>
-                        <div class="relative mt-2">
-                            <select v-model="form.unit"
-                                class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                <template v-if="!configStore.loading && configStore.data">
-                                    <option v-for="(label, val) in configStore.data.unit_types" :key="val" :value="val">
-                                        {{ label }}
-                                    </option>
-                                </template>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                                    aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                        clip-rule="evenodd" />
-                                </svg>
+                <!-- Right Column: Secondary Details -->
+                <div class="col-span-12 lg:col-span-4 space-y-6">
+                    <Card v-if="form.type === 'goods'">
+                        <template #title>Inventory</template>
+                        <template #content>
+                            <div class="flex flex-col gap-4">
+                                <div class="flex flex-col gap-2">
+                                    <label for="stock" class="font-semibold text-sm">Current/Opening Stock</label>
+                                    <InputNumber id="stock" v-model="form.current_stock" :minFractionDigits="2" />
+                                    <Message v-if="isEditing" severity="secondary" size="small" variant="simple">Manual edits log as adjustments.</Message>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        </template>
+                    </Card>
 
-                    <div class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Secondary Unit (Optional)</label>
-                        <div class="relative mt-2">
-                            <select v-model="form.secondary_unit"
-                                class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                <option :value="undefined">None</option>
-                                <template v-if="!configStore.loading && configStore.data">
-                                    <option v-for="(label, val) in configStore.data.unit_types" :key="val" :value="val">
-                                        {{ label }}
-                                    </option>
-                                </template>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                                    aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                        clip-rule="evenodd" />
-                                </svg>
+                    <Card>
+                        <template #title>Description</template>
+                        <template #content>
+                            <div class="flex flex-col gap-2">
+                                <Textarea v-model="form.description" rows="5" autoResize placeholder="Internal notes or product description..." />
                             </div>
-                        </div>
-                    </div>
+                        </template>
+                    </Card>
 
-                    <div v-if="form.secondary_unit" class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Conversion Factor</label>
-                        <div class="mt-2">
-                            <input type="number" step="any" v-model="form.conversion_factor"
-                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        </div>
-                        <p class="mt-1 text-xs text-gray-500">
-                            How many {{ configStore.data.unit_types[form.secondary_unit] || form.secondary_unit }} (Secondary) are in 1 {{ configStore.data.unit_types[form.unit] || form.unit || 'Base Unit' }} (Base)?
-                            (e.g. 1 Bag = 10 Packets, then enter 10)
-                        </p>
+                    <!-- Action Buttons for Editing -->
+                    <div v-if="isEditing" class="flex flex-col gap-2 pt-4">
+                        <Button label="Save Changes" icon="pi pi-save" :loading="loading" @click="saveProduct" class="w-full" />
+                        <Button label="Delete Product" icon="pi pi-trash" severity="danger" text @click="deleteProduct" class="w-full" />
                     </div>
-
-                    <!-- Stock (Only for Goods) -->
-                    <div v-if="form.type === 'goods'" class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Opening/Current
-                            Stock</label>
-                        <div class="mt-2">
-                            <input type="number" step="any" v-model="form.current_stock"
-                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        </div>
-                        <p class="mt-1 text-xs text-gray-500">Initial stock balance.</p>
-                    </div>
-
-                    <div class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Status</label>
-                        <div class="relative mt-2">
-                            <select v-model="form.status"
-                                class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                                    aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-span-full">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Description</label>
-                        <div class="mt-2">
-                            <textarea v-model="form.description" rows="3"
-                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
-
-        <div v-if="isEditing" class="mt-6 flex justify-end">
-            <button type="button" @click="saveProduct" :disabled="loading"
-                class="mr-3 inline-flex items-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50">
-                {{ loading ? 'Saving...' : 'Save Product' }}
-            </button>
-            <button type="button" @click="deleteProduct"
-                class="text-sm font-semibold text-red-600 hover:text-red-500">Delete
-                Product</button>
-        </div>
-        <div v-else class="mt-6 flex justify-end">
-            <button type="button" @click="saveProduct" :disabled="loading"
-                class="inline-flex items-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50">
-                {{ loading ? 'Saving...' : 'Save Product' }}
-            </button>
-        </div>
-
     </AppLayout>
 </template>
 
@@ -265,6 +154,14 @@ import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '../../stores/product'
 import { useConfigStore } from '../../stores/config'
 import AppLayout from '../../layouts/AppLayout.vue'
+import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import Select from 'primevue/select'
+import Checkbox from 'primevue/checkbox'
+import Textarea from 'primevue/textarea'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import Message from 'primevue/message'
 
 const route = useRoute()
 const router = useRouter()
@@ -273,6 +170,32 @@ const configStore = useConfigStore()
 
 const isEditing = computed(() => !!route.params.id)
 const loading = ref(false)
+
+const unitOptions = computed(() => {
+    if (!configStore.data?.unit_types) return []
+    return Object.entries(configStore.data.unit_types).map(([value, label]) => ({
+        label: label as string,
+        value: value
+    }))
+})
+
+const gstOptions = computed(() => {
+    if (!configStore.data?.gst_rates) return []
+    return Object.entries(configStore.data.gst_rates).map(([rate, label]) => ({
+        label: label as string,
+        value: Number(rate)
+    }))
+})
+
+const typeOptions = [
+    { label: 'Goods (Inventory Tracked)', value: 'goods' },
+    { label: 'Service (No Inventory)', value: 'service' }
+]
+
+const statusOptions = [
+    { label: 'Active', value: 'active' },
+    { label: 'Inactive', value: 'inactive' }
+]
 
 const form = ref({
     name: '',

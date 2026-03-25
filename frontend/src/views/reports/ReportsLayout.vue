@@ -1,45 +1,66 @@
 <template>
     <AppLayout>
-        <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <h1 class="text-2xl font-bold text-gray-900">Reports</h1>
-        </div>
+        <div class="p-fluid">
+            <!-- Header -->
+            <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 m-0">Business Reports</h1>
+                    <p class="text-gray-500 mt-1">Analyze your sales, stock, and financial performance.</p>
+                </div>
+            </div>
 
-        <!-- Tabs -->
-        <div class="border-b border-gray-200 mb-8 overflow-x-auto">
-            <nav class="-mb-px flex space-x-8 min-w-max pb-1" aria-label="Tabs">
-                <router-link to="/reports/sales" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
-                    :class="[route.path.includes('sales') ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700']">
-                    Sales Report
-                </router-link>
-                <router-link to="/reports/outstanding"
-                    class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
-                    :class="[route.path.includes('outstanding') ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700']">
-                    Outstanding (Debtors)
-                </router-link>
-                <router-link to="/reports/stock" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
-                    :class="[route.path.includes('stock') ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700']">
-                    Stock Summary
-                </router-link>
-                <router-link to="/reports/profit-loss"
-                    class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
-                    :class="[route.path.includes('profit-loss') ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700']">
-                    Profit & Loss
-                </router-link>
-                <router-link to="/reports/tax" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
-                    :class="[route.path.includes('tax') ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700']">
-                    Tax Reports (GST)
-                </router-link>
-            </nav>
-        </div>
+            <!-- Tabs Navigation -->
+            <Card class="border-none shadow-sm mb-6">
+                <template #content>
+                    <Tabs :value="activeTab">
+                        <TabList>
+                            <Tab v-for="tab in tabItems" :key="tab.route" :value="tab.route" @click="router.push(tab.route)">
+                                <i :class="tab.icon" class="mr-2"></i>
+                                <span>{{ tab.label }}</span>
+                            </Tab>
+                        </TabList>
+                    </Tabs>
+                </template>
+            </Card>
 
-        <!-- Report Content -->
-        <router-view></router-view>
+            <!-- Report Content -->
+            <div class="report-content">
+                <router-view></router-view>
+            </div>
+        </div>
     </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import AppLayout from '../../layouts/AppLayout.vue'
 
+// PrimeVue Components
+import Card from 'primevue/card'
+import Tabs from 'primevue/tabs'
+import TabList from 'primevue/tablist'
+import Tab from 'primevue/tab'
+
 const route = useRoute()
+const router = useRouter()
+
+const tabItems = [
+    { label: 'Sales Report', icon: 'pi pi-shopping-cart', route: '/reports/sales' },
+    { label: 'Outstanding', icon: 'pi pi-users', route: '/reports/outstanding' },
+    { label: 'Stock Summary', icon: 'pi pi-box', route: '/reports/stock' },
+    { label: 'Profit & Loss', icon: 'pi pi-chart-line', route: '/reports/profit-loss' },
+    { label: 'Tax (GST)', icon: 'pi pi-percentage', route: '/reports/tax' }
+]
+
+const activeTab = computed(() => {
+    const matched = tabItems.find(tab => route.path.startsWith(tab.route))
+    return matched ? matched.route : '/reports/sales'
+})
 </script>
+
+<style scoped>
+:deep(.p-tablist-tab-list) {
+    border-bottom: none;
+}
+</style>
