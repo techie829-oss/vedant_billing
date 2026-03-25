@@ -22,6 +22,10 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
+    Route::get('/config', function () {
+        return response()->json(config('all'));
+    });
+
     Route::apiResource('businesses', \App\Http\Controllers\Api\BusinessController::class);
     Route::apiResource('businesses.members', \App\Http\Controllers\Api\BusinessMemberController::class)->parameters(['members' => 'user']);
     Route::post('/businesses/{business}/members/{user}/reset-password', [\App\Http\Controllers\Api\BusinessMemberController::class, 'resetPassword']);
