@@ -3,29 +3,29 @@
 
         <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">{{ isEditing ? 'Edit Product' : 'Add New Product' }}
-                </h1>
+                <h1 class="text-2xl font-bold text-gray-900">{{ isEditing ? 'Edit Product' : 'Add New Product' }}</h1>
+                <p class="mt-1 text-sm text-gray-500">
+                    {{ isEditing ? 'Update product details and stock information.' : 'Create a new product or service in your catalog.' }}
+                </p>
             </div>
-            <div class="mt-4 flex sm:mt-0 sm:ml-4">
-                <button type="button" @click="router.back()"
-                    class="inline-flex items-center rounded-lg bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Cancel</button>
-                <button type="button" @click="saveProduct" :disabled="loading"
-                    class="ml-3 inline-flex items-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50">
-                    {{ loading ? 'Saving...' : 'Save Product' }}
+            <div class="mt-4 sm:mt-0">
+                <button @click="router.push('/products')"
+                    class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50">
+                    Back to Catalog
                 </button>
             </div>
         </div>
 
-        <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-            <div class="px-4 py-5 sm:p-6">
+        <div class="bg-white shadow rounded-xl border border-gray-200 overflow-hidden">
+            <div class="p-6 sm:p-8">
                 <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-
                     <!-- Basic Info -->
                     <div class="sm:col-span-4">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Product Name</label>
+                        <label class="block text-sm font-medium leading-6 text-gray-900">Product/Service Name</label>
                         <div class="mt-2">
                             <input type="text" v-model="form.name"
-                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                placeholder="e.g. Wireless Mouse">
                         </div>
                     </div>
 
@@ -34,8 +34,8 @@
                         <div class="relative mt-2">
                             <select v-model="form.type"
                                 class="block w-full appearance-none rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                <option value="goods">Goods (Inventory)</option>
-                                <option value="service">Service</option>
+                                <option value="goods">Goods (Inventory Tracked)</option>
+                                <option value="service">Service (No Inventory)</option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                                 <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
@@ -66,7 +66,7 @@
 
                     <!-- Pricing -->
                     <div class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Sales Price (₹)</label>
+                        <label class="block text-sm font-medium leading-6 text-gray-900">Sales Price ({{ form.unit || 'Base Unit' }})</label>
                         <div class="mt-2">
                             <input type="number" step="any" v-model="form.sale_price"
                                 class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
@@ -80,6 +80,17 @@
                                 This price includes GST
                             </label>
                         </div>
+                    </div>
+
+                    <div v-if="form.secondary_unit" class="sm:col-span-3">
+                        <label class="block text-sm font-medium leading-6 text-gray-900">Sales Price ({{ form.secondary_unit }})</label>
+                        <div class="mt-2">
+                            <input type="number" step="any" v-model="form.secondary_sale_price"
+                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        </div>
+                        <p v-if="form.conversion_factor > 0" class="mt-1 text-xs text-gray-500">
+                            Effective Price per {{ form.unit }}: ₹{{ (Number(form.secondary_sale_price || 0) / Number(form.conversion_factor)).toFixed(2) }}
+                        </p>
                     </div>
 
                     <div class="sm:col-span-3">
@@ -114,13 +125,22 @@
                     </div>
 
                     <div class="sm:col-span-3">
-                        <label class="block text-sm font-medium leading-6 text-gray-900">Purchase Price (₹)</label>
+                        <label class="block text-sm font-medium leading-6 text-gray-900">Purchase Price ({{ form.unit || 'Base' }})</label>
                         <div class="mt-2">
                             <input type="number" step="any" v-model="form.purchase_price"
                                 class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         </div>
                     </div>
 
+                    <div v-if="form.secondary_unit" class="sm:col-span-3">
+                        <label class="block text-sm font-medium leading-6 text-gray-900">Purchase Price ({{ form.secondary_unit }})</label>
+                        <div class="mt-2">
+                            <input type="number" step="any" v-model="form.secondary_purchase_price"
+                                class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        </div>
+                    </div>
+
+                    <!-- Unit Info -->
                     <div class="sm:col-span-3">
                         <label class="block text-sm font-medium leading-6 text-gray-900">Base Unit</label>
                         <div class="relative mt-2">
@@ -248,40 +268,46 @@ const router = useRouter()
 const productStore = useProductStore()
 const configStore = useConfigStore()
 
-const isEditing = computed(() => route.params.id !== undefined)
+const isEditing = computed(() => !!route.params.id)
 const loading = ref(false)
 
-const form = ref<Partial<Product>>({
+const form = ref({
     name: '',
     sku: '',
-    type: 'goods',
+    type: 'goods' as 'goods' | 'service',
     sale_price: 0,
+    secondary_sale_price: 0,
     purchase_price: 0,
+    secondary_purchase_price: 0,
     tax_rate: 18,
     cess_rate: 0,
     is_tax_inclusive: false,
     unit: 'pcs',
-    secondary_unit: undefined,
+    secondary_unit: undefined as string | undefined,
     conversion_factor: 1,
     current_stock: 0,
-    status: 'active',
+    status: 'active' as 'active' | 'inactive',
     description: '',
     hsn_code: ''
 })
 
 onMounted(async () => {
     configStore.fetchConfig()
-    window.addEventListener('keydown', handleKeydown)
+
     if (isEditing.value) {
         loading.value = true
         try {
             const product = await productStore.fetchProduct(route.params.id as string)
             if (product) {
-                // @ts-ignore
-                form.value = { ...product }
+                form.value = {
+                    ...product,
+                    secondary_unit: product.secondary_unit || undefined
+                }
                 // Ensure specific fields are numbers
                 form.value.sale_price = Number(product.sale_price) || 0
+                form.value.secondary_sale_price = Number(product.secondary_sale_price) || 0
                 form.value.purchase_price = Number(product.purchase_price) || 0
+                form.value.secondary_purchase_price = Number(product.secondary_purchase_price) || 0
                 form.value.tax_rate = Number(product.tax_rate) || 0
                 form.value.cess_rate = Number(product.cess_rate) || 0
                 form.value.conversion_factor = Number(product.conversion_factor) || 1
@@ -294,6 +320,8 @@ onMounted(async () => {
             loading.value = false
         }
     }
+
+    window.addEventListener('keydown', handleKeydown)
 })
 
 onUnmounted(() => {
@@ -307,9 +335,11 @@ function handleKeydown(e: KeyboardEvent) {
     }
 }
 
-const saveProduct = async () => {
-    if (!form.value.name) return alert('Name is required')
-    if (!form.value.sale_price) return alert('Sales Price is required')
+async function saveProduct() {
+    if (!form.value.name) {
+        alert('Please enter a product name')
+        return
+    }
 
     loading.value = true
     try {
@@ -319,16 +349,15 @@ const saveProduct = async () => {
             await productStore.createProduct(form.value)
         }
         router.push('/products')
-    } catch (e: any) {
+    } catch (e) {
         console.error(e)
-        const msg = e.response?.data?.message || 'Failed to save product'
-        alert(msg)
+        alert('Failed to save product')
     } finally {
         loading.value = false
     }
 }
 
-const deleteProduct = async () => {
+async function deleteProduct() {
     if (!confirm('Are you sure you want to delete this product?')) return
 
     loading.value = true

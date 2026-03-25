@@ -1205,11 +1205,51 @@ const onUnitChange = (item: InvoiceItem & { conversion_factor?: number }) => {
         return
     }
     const product = products.value.find(p => p.id === item.product_id)
-    if (product && item.unit === product.secondary_unit) {
+    if (!product) return
+
+    if (item.unit === product.secondary_unit) {
         item.conversion_factor = Number(product.conversion_factor) || 1.00
+        // Set Secondary Price if available
+        if (product.secondary_sale_price && Number(product.secondary_sale_price) > 0) {
+            const rawPrice = Number(product.secondary_sale_price)
+            const rate = Number(item.tax_rate) || 0
+            const cessRate = Number(item.cess_rate) || 0
+            const totalTaxRate = rate + cessRate
+
+            if (product.is_tax_inclusive && totalTaxRate > 0) {
+                item.unit_price = Number((rawPrice / (1 + (totalTaxRate / 100))).toFixed(4))
+            } else {
+                item.unit_price = rawPrice
+            }
+        } else {
+            // Fallback: Piece price * conversion factor
+            const basePrice = Number(product.sale_price) || 0
+            const rate = Number(item.tax_rate) || 0
+            const cessRate = Number(item.cess_rate) || 0
+            const totalTaxRate = rate + cessRate
+            
+            let exclusiveBase = basePrice
+            if (product.is_tax_inclusive && totalTaxRate > 0) {
+                exclusiveBase = basePrice / (1 + (totalTaxRate / 100))
+            }
+            
+            item.unit_price = Number((exclusiveBase * item.conversion_factor).toFixed(4))
+        }
     } else {
         item.conversion_factor = 1.00
+        // Set Base Price
+        const rawPrice = Number(product.sale_price) || 0
+        const rate = Number(item.tax_rate) || 0
+        const cessRate = Number(item.cess_rate) || 0
+        const totalTaxRate = rate + cessRate
+
+        if (product.is_tax_inclusive && totalTaxRate > 0) {
+            item.unit_price = Number((rawPrice / (1 + (totalTaxRate / 100))).toFixed(4))
+        } else {
+            item.unit_price = rawPrice
+        }
     }
+    calculateDiscountAmount(item)
 }
 
 const loadInvoice = async () => {

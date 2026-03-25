@@ -18,7 +18,9 @@ class Product extends Model
         'hsn_code',
         'type', // goods, service
         'sale_price',
+        'secondary_sale_price',
         'purchase_price',
+        'secondary_purchase_price',
         'current_stock',
         'unit',
         'secondary_unit',
@@ -33,7 +35,9 @@ class Product extends Model
 
     protected $casts = [
         'sale_price' => 'decimal:2',
+        'secondary_sale_price' => 'decimal:2',
         'purchase_price' => 'decimal:2',
+        'secondary_purchase_price' => 'decimal:2',
         'current_stock' => 'decimal:2',
         'tax_rate' => 'decimal:2',
         'cess_rate' => 'decimal:2',

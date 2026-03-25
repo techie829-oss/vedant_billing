@@ -9,7 +9,9 @@ export interface Product {
     hsn_code?: string
     type: 'goods' | 'service'
     sale_price: number
+    secondary_sale_price?: number
     purchase_price?: number
+    secondary_purchase_price?: number
     tax_rate?: number
     cess_rate?: number
     is_tax_inclusive?: boolean
