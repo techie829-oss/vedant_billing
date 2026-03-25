@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen bg-gray-50 flex flex-col">
+    <div class="app-ui min-h-screen bg-gray-50 flex flex-col">
         <!-- PrimeVue Toast for global notifications -->
         <Toast />
         
@@ -64,7 +64,7 @@
                     <Button icon="pi pi-bars" text severity="secondary" @click="mobileMenuOpen = true" />
                 </header>
 
-                <main class="flex-1 p-4 lg:p-8">
+                <main class="flex-1 p-4 lg:p-8 pb-24 lg:pb-8">
                     <slot></slot>
                 </main>
             </div>

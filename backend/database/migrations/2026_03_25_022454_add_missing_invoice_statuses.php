@@ -20,10 +20,10 @@ return new class extends Migration {
             
             // Update TYPE Enum/Check
             DB::statement("ALTER TABLE invoices DROP CONSTRAINT IF EXISTS invoices_type_check");
-            DB::statement("ALTER TABLE invoices ADD CONSTRAINT invoices_type_check CHECK (type IN ('invoice', 'tax_invoice', 'bill_of_supply', 'purchase_invoice', 'credit_note', 'quote', 'estimate'))");
+            DB::statement("ALTER TABLE invoices ADD CONSTRAINT invoices_type_check CHECK (type IN ('invoice', 'tax_invoice', 'bill_of_supply', 'purchase_invoice', 'proforma_invoice', 'delivery_challan', 'credit_note', 'debit_note', 'quote', 'estimate'))");
         } elseif ($driver === 'mysql') {
             DB::statement("ALTER TABLE invoices MODIFY COLUMN status ENUM('draft', 'sent', 'paid', 'partial', 'overdue', 'void', 'cancelled', 'returned') DEFAULT 'draft'");
-            DB::statement("ALTER TABLE invoices MODIFY COLUMN type ENUM('invoice', 'tax_invoice', 'bill_of_supply', 'purchase_invoice', 'credit_note', 'quote', 'estimate') DEFAULT 'invoice'");
+            DB::statement("ALTER TABLE invoices MODIFY COLUMN type ENUM('invoice', 'tax_invoice', 'bill_of_supply', 'purchase_invoice', 'proforma_invoice', 'delivery_challan', 'credit_note', 'debit_note', 'quote', 'estimate') DEFAULT 'invoice'");
         } else {
             // SQLite or others
             Schema::table('invoices', function (Blueprint $table) {
@@ -45,10 +45,10 @@ return new class extends Migration {
             DB::statement("ALTER TABLE invoices ADD CONSTRAINT invoices_status_check CHECK (status IN ('draft', 'sent', 'paid', 'overdue', 'void', 'cancelled'))");
             
             DB::statement("ALTER TABLE invoices DROP CONSTRAINT IF EXISTS invoices_type_check");
-            DB::statement("ALTER TABLE invoices ADD CONSTRAINT invoices_type_check CHECK (type IN ('invoice', 'credit_note', 'quote'))");
+            DB::statement("ALTER TABLE invoices ADD CONSTRAINT invoices_type_check CHECK (type IN ('invoice', 'tax_invoice', 'bill_of_supply', 'purchase_invoice', 'proforma_invoice', 'delivery_challan', 'credit_note', 'debit_note', 'quote', 'estimate'))");
         } elseif ($driver === 'mysql') {
             DB::statement("ALTER TABLE invoices MODIFY COLUMN status ENUM('draft', 'sent', 'paid', 'overdue', 'void', 'cancelled') DEFAULT 'draft'");
-            DB::statement("ALTER TABLE invoices MODIFY COLUMN type ENUM('invoice', 'credit_note', 'quote') DEFAULT 'invoice'");
+            DB::statement("ALTER TABLE invoices MODIFY COLUMN type ENUM('invoice', 'tax_invoice', 'bill_of_supply', 'purchase_invoice', 'proforma_invoice', 'delivery_challan', 'credit_note', 'debit_note', 'quote', 'estimate') DEFAULT 'invoice'");
         }
     }
 };

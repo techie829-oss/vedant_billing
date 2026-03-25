@@ -13,6 +13,22 @@
                 </div>
             </div>
 
+            <!-- Quick Links -->
+            <div class="mb-8">
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 px-1">Quick Access</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div v-for="link in quickLinks" :key="link.label" 
+                        class="flex flex-col items-center justify-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md hover:border-primary-200 transition-all cursor-pointer group"
+                        @click="router.push(link.route)">
+                        <div :class="['h-12 w-12 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300', link.bgClass, link.iconClass]">
+                            <i :class="[link.icon, 'text-xl']"></i>
+                        </div>
+                        <span class="text-sm font-bold text-gray-900 group-hover:text-primary">{{ link.label }}</span>
+                        <span class="text-[10px] text-gray-400 mt-1">{{ link.subtext }}</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- KPI Stats Row -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <Card v-for="stat in kpiStats" :key="stat.label" class="shadow-sm border-none overflow-hidden hover:shadow-md transition-shadow">
@@ -274,6 +290,15 @@ const kpiStats = computed(() => [
         subtext: 'Pending payment'
     }
 ])
+
+const quickLinks = [
+    { label: 'Invoices', subtext: 'Sales records', icon: 'pi pi-file', route: '/invoices', bgClass: 'bg-indigo-50', iconClass: 'text-indigo-600' },
+    { label: 'Purchases', subtext: 'Vendor bills', icon: 'pi pi-shopping-cart', route: '/purchases', bgClass: 'bg-orange-50', iconClass: 'text-orange-600' },
+    { label: 'Fast Note', subtext: 'Rough bills', icon: 'pi pi-pencil', route: '/quick-note', bgClass: 'bg-yellow-50', iconClass: 'text-yellow-600' },
+    { label: 'Estimates', subtext: 'Draft quotes', icon: 'pi pi-file-edit', route: '/quotations', bgClass: 'bg-teal-50', iconClass: 'text-teal-600' },
+    { label: 'Customers', subtext: 'Client list', icon: 'pi pi-users', route: '/customers', bgClass: 'bg-blue-50', iconClass: 'text-blue-600' },
+    { label: 'Cashbook', subtext: 'Cash flows', icon: 'pi pi-wallet', route: '/cashbook', bgClass: 'bg-emerald-50', iconClass: 'text-emerald-600' }
+]
 
 const chartData = computed(() => {
   if (!cashflowHistory.value || cashflowHistory.value.length === 0) return null

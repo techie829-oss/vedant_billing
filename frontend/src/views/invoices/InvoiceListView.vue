@@ -27,10 +27,10 @@
             
             <template #header>
               <div class="flex flex-wrap justify-between items-center gap-3">
-                <span class="p-input-icon-left w-full md:w-80">
-                  <i class="pi pi-search" />
-                  <InputText v-model="filters['global'].value" placeholder="Search invoices or customers..." />
-                </span>
+                <IconField class="w-full md:w-80">
+                  <InputIcon class="pi pi-search" />
+                  <InputText v-model="filters['global'].value" placeholder="Search invoices or customers..." class="w-full" />
+                </IconField>
                 <div class="flex gap-2">
                     <Select v-model="statusFilter" :options="statusOptions" optionLabel="label" optionValue="value" 
                         placeholder="All Statuses" class="w-full md:w-44" showClear />
@@ -141,6 +141,8 @@ import Tag from 'primevue/tag'
 import Select from 'primevue/select'
 import Dialog from 'primevue/dialog'
 import Checkbox from 'primevue/checkbox'
+import IconField from 'primevue/iconfield'
+import InputIcon from 'primevue/inputicon'
 import { FilterMatchMode } from '@primevue/core/api'
 
 const router = useRouter()

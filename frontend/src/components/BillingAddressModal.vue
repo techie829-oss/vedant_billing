@@ -1,69 +1,43 @@
 <template>
-    <div v-if="isOpen" class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="$emit('close')"></div>
-        <div class="fixed inset-0 z-10 overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <div
-                    class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                        <div class="sm:flex sm:items-start">
-                            <div
-                                class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
-                                <svg class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-                                </svg>
-                            </div>
-                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
-                                <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Billing
-                                    Address Required</h3>
-                                <div class="mt-2 text-sm text-gray-500">
-                                    <p>Please update your business address to proceed with the subscription and invoice
-                                        generation.</p>
-                                </div>
+    <Dialog :visible="isOpen" @update:visible="$emit('close')" header="Billing Address Required" modal :style="{ width: '450px' }" class="p-fluid">
+        <div class="flex flex-col gap-6 py-2">
+            <div class="flex items-start gap-4 p-3 bg-indigo-50 rounded-xl border border-indigo-100 text-indigo-700">
+                <i class="pi pi-building text-2xl mt-1"></i>
+                <p class="text-sm font-medium leading-relaxed">
+                    Please update your business address to proceed with the subscription and invoice generation.
+                </p>
+            </div>
 
-                                <div class="mt-6 space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Address</label>
-                                        <textarea v-model="form.address" rows="2"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"></textarea>
-                                    </div>
+            <div class="flex flex-col gap-2">
+                <label class="font-bold text-sm text-gray-700">Detailed Address</label>
+                <Textarea v-model="form.address" rows="3" autoResize placeholder="Building, Street, Area..." />
+            </div>
 
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700">Pincode</label>
-                                            <input type="text" v-model="form.meta.pincode"
-                                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-                                                placeholder="000000" />
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700">City</label>
-                                            <input type="text" v-model="form.meta.city"
-                                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2" />
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">State</label>
-                                        <StateSelect v-model="form.meta.state" class="mt-1 block w-full" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                        <button type="button" @click="save" :disabled="saving || !isValid"
-                            class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto disabled:opacity-50">
-                            {{ saving ? 'Saving...' : 'Update & Continue' }}
-                        </button>
-                        <button type="button" @click="$emit('close')"
-                            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col gap-2">
+                    <label class="font-bold text-sm text-gray-700">Pincode</label>
+                    <div class="p-inputgroup">
+                        <InputText v-model="form.meta.pincode" placeholder="000000" maxlength="6" />
+                        <Button icon="pi pi-search" severity="secondary" @click="lookupPincode" />
                     </div>
                 </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-bold text-sm text-gray-700">City</label>
+                    <InputText v-model="form.meta.city" placeholder="City Name" />
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label class="font-bold text-sm text-gray-700">State</label>
+                <StateSelect v-model="form.meta.state" />
             </div>
         </div>
-    </div>
+
+        <template #footer>
+            <Button label="Cancel" icon="pi pi-times" text severity="secondary" @click="$emit('close')" :disabled="saving" />
+            <Button label="Update & Continue" icon="pi pi-check" @click="save" :loading="saving" :disabled="!isValid" />
+        </template>
+    </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -71,7 +45,13 @@ import { ref, watch, computed } from 'vue'
 import client from '../api/client'
 import StateSelect from './StateSelect.vue'
 import { fetchPincodeDetails } from '../services/PincodeService'
-import { useAuthStore } from '../stores/auth' // To update global state
+import { useAuthStore } from '../stores/auth'
+
+// PrimeVue
+import Dialog from 'primevue/dialog'
+import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
+import Textarea from 'primevue/textarea'
 
 const props = defineProps<{
     isOpen: boolean
@@ -105,15 +85,19 @@ watch(() => props.isOpen, (newVal) => {
     }
 })
 
-// Pincode lookup
-watch(() => form.value.meta.pincode, async (newVal) => {
-    if (newVal && newVal.length === 6) {
-        const details = await fetchPincodeDetails(newVal)
+const lookupPincode = async () => {
+    if (form.value.meta.pincode.length === 6) {
+        const details = await fetchPincodeDetails(form.value.meta.pincode)
         if (details) {
             form.value.meta.city = details.city
             form.value.meta.state = details.state
         }
     }
+}
+
+// Auto lookup on typing
+watch(() => form.value.meta.pincode, (newVal) => {
+    if (newVal?.length === 6) lookupPincode()
 })
 
 const isValid = computed(() => {
@@ -124,17 +108,6 @@ const save = async () => {
     if (!props.business?.id) return
     saving.value = true
     try {
-        // We update only the fields we collected, merging with existing business data structure if handled by backend
-        // Or we send a partial update. Assuming backend handles partial or we need to be careful?
-        // In BusinessProfileView it sends the whole form. 
-        // Ideally we should fetch fresh business data first or trust props.business is reasonably fresh.
-
-        // Construct payload. Note: The backend likely expects a structure similar to BusinessProfileView
-        // which puts generic fields at root and meta fields in meta column.
-        // However, to be safe, we might just want to PATCH. 
-        // Let's assume standard PUT for now, but we need to ensure we don't wipe other data.
-        // Actually, let's fetch the full business first to be safe, update it, and send it back.
-
         const { data: fullBusiness } = await client.get(`/businesses/${props.business.id}`)
 
         const updatedPayload = {
@@ -150,9 +123,7 @@ const save = async () => {
 
         const response = await client.put(`/businesses/${props.business.id}`, updatedPayload)
 
-        // Update store
         if (authStore.activeBusiness?.id === props.business.id) {
-            // Preserve pivot data from current business before updating
             const currentPivot = authStore.activeBusiness?.pivot;
             const updatedBusiness = {
                 ...response.data,

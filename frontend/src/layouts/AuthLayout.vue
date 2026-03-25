@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4 relative overflow-hidden">
+  <div class="app-ui min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4 relative overflow-hidden">
     <!-- Abstract Background (PrimeVue style) -->
     <div class="absolute inset-0 z-0 pointer-events-none">
         <div class="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary-100/30 rounded-full blur-[120px]"></div>

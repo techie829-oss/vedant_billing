@@ -35,10 +35,10 @@
                         
                         <template #header>
                             <div class="flex justify-between items-center">
-                                <span class="p-input-icon-left">
-                                    <i class="pi pi-search" />
+                                <IconField>
+                                    <InputIcon class="pi pi-search" />
                                     <InputText v-model="filters['global'].value" placeholder="Search products..." class="w-full md:w-80" />
-                                </span>
+                                </IconField>
                             </div>
                         </template>
 
@@ -186,6 +186,8 @@ import Dialog from 'primevue/dialog'
 import ProgressSpinner from 'primevue/progressspinner'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
+import IconField from 'primevue/iconfield'
+import InputIcon from 'primevue/inputicon'
 import { FilterMatchMode } from '@primevue/core/api'
 
 const router = useRouter()
