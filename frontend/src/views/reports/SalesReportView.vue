@@ -1,5 +1,5 @@
 <template>
-    <div class="space-y-6 p-fluid">
+    <div class="space-y-6">
         <!-- Filters Card -->
         <Card class="border-none shadow-sm overflow-hidden">
             <template #content>
