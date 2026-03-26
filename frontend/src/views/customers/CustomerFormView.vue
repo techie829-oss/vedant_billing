@@ -1,53 +1,58 @@
 <template>
   <AppLayout>
-    <div class="max-w-7xl mx-auto p-fluid">
+    <div class="p-fluid">
       <!-- Header Section -->
-      <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+      <div class="flex flex-wrap items-center justify-between mb-8 gap-4">
         <div class="flex items-center gap-4">
           <Button icon="pi pi-arrow-left" severity="secondary" rounded text @click="router.back()" />
           <div>
             <h1 class="text-3xl font-bold text-gray-900 m-0">
               {{ isEditMode ? 'Edit Customer' : 'Add New Customer' }}
             </h1>
-            <p class="text-gray-500 mt-1">{{ headerDescription }}</p>
+            <p class="text-gray-500 mt-1 font-medium">{{ headerDescription }}</p>
           </div>
         </div>
-        <div class="flex gap-2">
-          <Button label="Cancel" severity="secondary" outlined @click="router.back()" />
-          <Button :label="isEditMode ? 'Update Customer' : 'Save Customer'" icon="pi pi-check" :loading="loading" @click="saveCustomer" />
+        <div class="flex gap-3">
+          <Button label="Cancel" severity="secondary" outlined @click="router.back()" class="px-6" />
+          <Button :label="isEditMode ? 'Update Customer' : 'Save Customer'" icon="pi pi-check" :loading="loading" @click="saveCustomer" class="px-6" />
         </div>
       </div>
 
-      <div class="grid grid-cols-12 gap-6">
+      <div class="grid grid-cols-12 gap-8">
         <!-- Left Column: Primary Details -->
-        <div class="col-span-12 lg:col-span-8 space-y-6">
+        <div class="col-span-12 lg:col-span-8 space-y-8">
           
           <!-- Basic Information -->
-          <Card class="border-none shadow-sm">
-            <template #title>Basic Information</template>
+          <Card class="border-none shadow-sm overflow-hidden">
+            <template #title>
+                <div class="flex items-center gap-2">
+                    <i class="pi pi-user text-primary"></i>
+                    <span>Basic Information</span>
+                </div>
+            </template>
             <template #content>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="col-span-1 md:col-span-2 flex flex-col gap-2">
-                  <label class="font-semibold text-sm">GSTIN / Tax ID</label>
+                  <label class="font-bold text-sm text-gray-700">GSTIN / Tax ID</label>
                   <InputGroup>
                     <InputText v-model="form.gstin" placeholder="e.g., 27AAAC..." />
                     <Button icon="pi pi-search" severity="secondary" @click="fetchGst" :loading="fetchingGst" :disabled="!form.gstin || form.gstin.length < 15" />
                   </InputGroup>
-                  <small class="text-gray-500 italic">Auto-fill details using GSTIN</small>
+                  <small class="text-gray-400 italic">Auto-fill details from GST portal</small>
                 </div>
 
                 <div class="col-span-1 md:col-span-2 flex flex-col gap-2">
-                  <label for="name" class="font-semibold text-sm">Display Name <span class="text-red-500">*</span></label>
+                  <label for="name" class="font-bold text-sm text-gray-700">Display Name <span class="text-red-500">*</span></label>
                   <InputText id="name" v-model="form.name" required placeholder="e.g., Acme Corp" />
                 </div>
 
                 <div class="flex flex-col gap-2">
-                  <label class="font-semibold text-sm">PAN Number</label>
+                  <label class="font-bold text-sm text-gray-700">PAN Number</label>
                   <InputText v-model="form.pan" placeholder="ABCDE1234F" />
                 </div>
 
                 <div class="flex flex-col gap-2">
-                  <label class="font-semibold text-sm">Status</label>
+                  <label class="font-bold text-sm text-gray-700">Status</label>
                   <Select v-model="form.status" :options="statusOptions" optionLabel="label" optionValue="value" />
                 </div>
               </div>
@@ -55,45 +60,61 @@
           </Card>
 
           <!-- Contact Details -->
-          <Card class="border-none shadow-sm">
-            <template #title>Contact Information</template>
+          <Card class="border-none shadow-sm overflow-hidden">
+            <template #title>
+                <div class="flex items-center gap-2">
+                    <i class="pi pi-phone text-primary"></i>
+                    <span>Contact Information</span>
+                </div>
+            </template>
             <template #content>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="flex flex-col gap-2">
-                  <label class="font-semibold text-sm">Email Address</label>
-                  <InputText v-model="form.email" type="email" placeholder="contact@example.com" />
+                  <label class="font-bold text-sm text-gray-700">Email Address</label>
+                  <IconField>
+                    <InputIcon class="pi pi-envelope" />
+                    <InputText v-model="form.email" type="email" placeholder="contact@example.com" />
+                  </IconField>
                 </div>
                 <div class="flex flex-col gap-2">
-                  <label class="font-semibold text-sm">Phone Number</label>
-                  <InputText v-model="form.phone" placeholder="e.g., +91 98765 43210" />
+                  <label class="font-bold text-sm text-gray-700">Phone Number</label>
+                  <IconField>
+                    <InputIcon class="pi pi-phone" />
+                    <InputText v-model="form.phone" placeholder="e.g., +91 98765 43210" />
+                  </IconField>
                 </div>
               </div>
             </template>
           </Card>
 
           <!-- Addresses -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Billing Address -->
-            <Card class="border-none shadow-sm">
-              <template #title>Billing Address</template>
+            <Card class="border-none shadow-sm overflow-hidden h-full">
+              <template #title>
+                <div class="flex items-center gap-2">
+                    <i class="pi pi-map-marker text-primary"></i>
+                    <span>Billing Address</span>
+                </div>
+              </template>
               <template #content>
-                <div class="flex flex-col gap-3">
+                <div class="flex flex-col gap-4">
                   <div class="flex flex-col gap-2">
-                    <label class="text-xs font-semibold text-gray-500 uppercase">Street</label>
-                    <Textarea v-model="form.billing_address.street" rows="2" autoResize />
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Street Address</label>
+                    <Textarea v-model="form.billing_address.street" rows="3" autoResize />
                   </div>
-                  <div class="grid grid-cols-2 gap-3">
+                  <div class="grid grid-cols-2 gap-4">
                     <div class="flex flex-col gap-2">
-                      <label class="text-xs font-semibold text-gray-500 uppercase">ZIP/PIN</label>
+                      <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Pincode</label>
                       <InputText v-model="form.billing_address.zip" maxlength="6" />
                     </div>
                     <div class="flex flex-col gap-2">
-                      <label class="text-xs font-semibold text-gray-500 uppercase">City</label>
+                      <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">City</label>
                       <InputText v-model="form.billing_address.city" />
                     </div>
                   </div>
                   <div class="flex flex-col gap-2">
-                    <label class="text-xs font-semibold text-gray-500 uppercase">State</label>
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">State</label>
                     <StateSelect v-model="form.billing_address.state" />
                   </div>
                 </div>
@@ -101,40 +122,43 @@
             </Card>
 
             <!-- Shipping Address -->
-            <Card class="border-none shadow-sm">
+            <Card class="border-none shadow-sm overflow-hidden h-full">
               <template #title>
                 <div class="flex items-center justify-between">
-                  <span>Shipping Address</span>
+                  <div class="flex items-center gap-2">
+                    <i class="pi pi-truck text-primary"></i>
+                    <span>Shipping Address</span>
+                  </div>
                   <div class="flex items-center gap-2">
                     <Checkbox v-model="sameAsBilling" binary id="same_addr" />
-                    <label for="same_addr" class="text-xs font-normal cursor-pointer">Same as Billing</label>
+                    <label for="same_addr" class="text-xs font-bold text-gray-500 cursor-pointer">Same</label>
                   </div>
                 </div>
               </template>
               <template #content>
-                <div v-show="!sameAsBilling" class="flex flex-col gap-3">
+                <div v-show="!sameAsBilling" class="flex flex-col gap-4">
                   <div class="flex flex-col gap-2">
-                    <label class="text-xs font-semibold text-gray-500 uppercase">Street</label>
-                    <Textarea v-model="form.shipping_address.street" rows="2" autoResize />
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Street Address</label>
+                    <Textarea v-model="form.shipping_address.street" rows="3" autoResize />
                   </div>
-                  <div class="grid grid-cols-2 gap-3">
+                  <div class="grid grid-cols-2 gap-4">
                     <div class="flex flex-col gap-2">
-                      <label class="text-xs font-semibold text-gray-500 uppercase">ZIP/PIN</label>
+                      <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Pincode</label>
                       <InputText v-model="form.shipping_address.zip" maxlength="6" />
                     </div>
                     <div class="flex flex-col gap-2">
-                      <label class="text-xs font-semibold text-gray-500 uppercase">City</label>
+                      <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">City</label>
                       <InputText v-model="form.shipping_address.city" />
                     </div>
                   </div>
                   <div class="flex flex-col gap-2">
-                    <label class="text-xs font-semibold text-gray-500 uppercase">State</label>
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">State</label>
                     <StateSelect v-model="form.shipping_address.state" />
                   </div>
                 </div>
-                <div v-show="sameAsBilling" class="flex flex-col items-center justify-center py-12 text-gray-400">
-                  <i class="pi pi-copy text-3xl mb-2"></i>
-                  <p class="text-sm">Using billing address for shipping.</p>
+                <div v-show="sameAsBilling" class="flex flex-col items-center justify-center py-20 text-gray-300">
+                  <i class="pi pi-sync text-5xl mb-4 opacity-20"></i>
+                  <p class="text-sm font-bold opacity-50 uppercase tracking-widest">Linked to Billing</p>
                 </div>
               </template>
             </Card>
@@ -142,31 +166,46 @@
         </div>
 
         <!-- Right Column: Finance & Notes -->
-        <div class="col-span-12 lg:col-span-4 space-y-6">
+        <div class="col-span-12 lg:col-span-4 space-y-8">
           <!-- Financials -->
-          <Card class="border-none shadow-sm bg-primary-50">
-            <template #title>Financial Details</template>
+          <Card class="border-none shadow-sm bg-primary-50 overflow-hidden">
+            <template #title>
+                <div class="flex items-center gap-2">
+                    <i class="pi pi-wallet text-primary"></i>
+                    <span>Financial Details</span>
+                </div>
+            </template>
             <template #content>
               <div class="flex flex-col gap-4">
                 <div class="flex flex-col gap-2">
-                  <label class="font-semibold text-sm">Opening Balance</label>
-                  <InputNumber v-model="form.opening_balance" mode="currency" currency="INR" locale="en-IN" :minFractionDigits="2" />
-                  <small class="text-gray-500">Positive: Receivable (Dr), Negative: Payable (Cr)</small>
+                  <label class="font-bold text-sm text-gray-700">Opening Balance</label>
+                  <InputNumber v-model="form.opening_balance" mode="currency" currency="INR" locale="en-IN" :minFractionDigits="2" class="bg-white" />
+                  <div class="mt-2 p-3 bg-white/50 rounded-lg border border-primary-100">
+                    <p class="text-[10px] text-primary-700 leading-relaxed">
+                        <i class="pi pi-info-circle mr-1"></i>
+                        Positive amount means you need to <strong>receive</strong> (Debit). Negative means you need to <strong>pay</strong> (Credit).
+                    </p>
+                  </div>
                 </div>
               </div>
             </template>
           </Card>
 
           <!-- Internal Notes -->
-          <Card class="border-none shadow-sm">
-            <template #title>Internal Notes</template>
+          <Card class="border-none shadow-sm overflow-hidden">
+            <template #title>
+                <div class="flex items-center gap-2">
+                    <i class="pi pi-pencil text-primary"></i>
+                    <span>Internal Notes</span>
+                </div>
+            </template>
             <template #content>
-              <Textarea v-model="form.notes" rows="5" autoResize placeholder="Internal notes or special instructions..." />
+              <Textarea v-model="form.notes" rows="8" autoResize placeholder="Internal notes, payment history notes, or special instructions..." />
             </template>
           </Card>
 
           <!-- Error Message -->
-          <Message v-if="error" severity="error" closable @close="error = null">{{ error }}</Message>
+          <Message v-if="error" severity="error" closable @close="error = null" class="shadow-sm">{{ error }}</Message>
         </div>
       </div>
     </div>
