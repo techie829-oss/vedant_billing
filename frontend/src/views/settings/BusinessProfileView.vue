@@ -1,6 +1,6 @@
 <template>
     <AppLayout>
-        <div class="p-fluid">
+        <div class="max-w-6xl mx-auto p-fluid">
             <!-- Loading State -->
             <div v-if="loading" class="flex flex-col items-center justify-center py-20">
                 <ProgressSpinner style="width: 50px; height: 50px" />
