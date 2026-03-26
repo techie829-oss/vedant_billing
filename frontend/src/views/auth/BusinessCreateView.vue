@@ -8,10 +8,10 @@
 
             <div class="flex flex-col gap-2">
                 <label for="gstin" class="font-semibold text-sm">GSTIN / Tax ID</label>
-                <div class="p-inputgroup">
+                <InputGroup>
                     <InputText id="gstin" v-model="form.gstin" placeholder="Ex. 27AAAC..." maxlength="15" @input="handleGstinInput" />
                     <Button icon="pi pi-search" severity="secondary" @click="fetchGstDetails" :loading="isFetching" />
-                </div>
+                </InputGroup>
                 <small class="text-gray-500">Auto-fill details using GSTIN</small>
                 <small v-if="gstError" class="text-red-500">{{ gstError }}</small>
             </div>
@@ -49,6 +49,7 @@ import AuthLayout from '../../layouts/AuthLayout.vue'
 
 // PrimeVue
 import InputText from 'primevue/inputtext'
+import InputGroup from 'primevue/inputgroup'
 import Select from 'primevue/select'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'

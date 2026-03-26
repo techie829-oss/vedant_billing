@@ -74,10 +74,10 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div class="flex flex-col gap-2">
                                     <label class="font-semibold text-sm">Customer</label>
-                                    <div class="flex gap-2">
+                                    <InputGroup>
                                         <Select v-model="form.party_id" :options="customers" optionLabel="name" optionValue="id" filter placeholder="Select Customer" class="flex-1" />
                                         <Button icon="pi pi-user-plus" severity="secondary" outlined @click="showCustomerModal = true" />
-                                    </div>
+                                    </InputGroup>
                                 </div>
                                 <div class="flex flex-col gap-2">
                                     <label class="font-semibold text-sm">Invoice Number</label>
@@ -297,11 +297,12 @@
                 </div>
                 <div class="flex flex-col gap-2">
                     <label class="font-semibold">GSTIN</label>
-                    <div class="p-inputgroup">
-                        <InputText v-model="newCustomerForm.gstin" />
+                    <InputGroup>
+                        <InputText v-model="newCustomerForm.gstin" placeholder="27AAAC..." />
                         <Button icon="pi pi-search" severity="secondary" @click="fetchGstForNewCustomer" :loading="fetchingGst" />
-                    </div>
+                    </InputGroup>
                 </div>
+
                 <div class="grid grid-cols-2 gap-3">
                     <div class="flex flex-col gap-2">
                         <label class="font-semibold">Phone</label>

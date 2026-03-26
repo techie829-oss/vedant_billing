@@ -1,6 +1,6 @@
 <template>
     <AppLayout>
-        <div class="max-w-7xl mx-auto">
+        <div class="space-y-6">
             <!-- Header -->
             <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
                 <div>

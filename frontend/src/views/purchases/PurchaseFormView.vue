@@ -28,10 +28,11 @@
               <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="flex flex-col gap-2">
                   <label class="font-semibold text-sm">Vendor / Supplier</label>
-                  <div class="flex gap-2">
-                    <Select v-model="form.party_id" :options="vendors" optionLabel="name" optionValue="id" filter placeholder="Select Vendor" class="flex-1" />
-                    <Button icon="pi pi-user-plus" severity="secondary" outlined @click="showVendorModal = true" />
-                  </div>
+                  <InputGroup>
+                      <Select v-model="form.party_id" :options="vendors" optionLabel="name" optionValue="id" filter placeholder="Select Vendor" class="flex-1" />
+                      <Button icon="pi pi-user-plus" severity="secondary" outlined @click="showVendorModal = true" />
+                  </InputGroup>
+
                 </div>
                 <div class="flex flex-col gap-2">
                   <label class="font-semibold text-sm">Vendor's Bill No.</label>
@@ -189,12 +190,13 @@
           <InputText v-model="newVendorForm.name" />
         </div>
         <div class="flex flex-col gap-2">
-          <label class="font-semibold text-sm">GSTIN</label>
-          <div class="p-inputgroup">
-            <InputText v-model="newVendorForm.gstin" />
-            <Button icon="pi pi-search" severity="secondary" @click="fetchGstForNewVendor" :loading="fetchingGst" />
-          </div>
+            <label class="font-semibold">GSTIN</label>
+            <InputGroup>
+                <InputText v-model="newVendorForm.gstin" placeholder="27AAAC..." />
+                <Button icon="pi pi-search" severity="secondary" @click="fetchGstForNewVendor" :loading="fetchingGst" />
+            </InputGroup>
         </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div class="flex flex-col gap-2">
             <label class="font-semibold text-sm">Phone</label>
@@ -237,6 +239,7 @@ import Select from 'primevue/select'
 import Textarea from 'primevue/textarea'
 import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
+import InputGroup from 'primevue/inputgroup'
 
 const router = useRouter()
 const route = useRoute()

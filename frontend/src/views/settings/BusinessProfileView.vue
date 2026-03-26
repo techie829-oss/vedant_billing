@@ -78,10 +78,10 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div class="col-span-1 md:col-span-2 flex flex-col gap-2">
                                             <label class="font-semibold text-sm">GSTIN / Tax ID</label>
-                                            <div class="p-inputgroup">
+                                            <InputGroup>
                                                 <InputText v-model="form.gstin" placeholder="Ex. 27AAAC..." />
                                                 <Button icon="pi pi-search" severity="secondary" @click="fetchGst" :loading="fetchingGst" />
-                                            </div>
+                                            </InputGroup>
                                         </div>
                                         <div class="flex flex-col gap-2">
                                             <label class="font-semibold text-sm">Business Name *</label>
@@ -283,6 +283,7 @@ import StateSelect from '../../components/StateSelect.vue'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
+import InputGroup from 'primevue/inputgroup'
 import Textarea from 'primevue/textarea'
 import Checkbox from 'primevue/checkbox'
 import ColorPicker from 'primevue/colorpicker'

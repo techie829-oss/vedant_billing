@@ -25,14 +25,14 @@
                                             class="text-3xl font-black border-none bg-transparent p-0 focus:ring-0 placeholder:text-gray-200" />
                                         
                                         <div class="flex flex-col md:flex-row gap-3">
-                                            <div class="p-inputgroup flex-1">
-                                                <span class="p-inputgroup-addon bg-transparent border-none pl-0 text-gray-400"><i class="pi pi-user"></i></span>
+                                            <InputGroup class="flex-1">
+                                                <InputGroupAddon class="bg-transparent border-none pl-0 text-gray-400"><i class="pi pi-user"></i></InputGroupAddon>
                                                 <InputText v-model="customerName" placeholder="Customer Name" class="border-none border-b border-gray-100 rounded-none focus:border-primary" />
-                                            </div>
-                                            <div class="p-inputgroup flex-1">
-                                                <span class="p-inputgroup-addon bg-transparent border-none pl-0 text-gray-400"><i class="pi pi-mobile"></i></span>
+                                            </InputGroup>
+                                            <InputGroup class="flex-1">
+                                                <InputGroupAddon class="bg-transparent border-none pl-0 text-gray-400"><i class="pi pi-mobile"></i></InputGroupAddon>
                                                 <InputText v-model="customerMobile" placeholder="Phone" class="border-none border-b border-gray-100 rounded-none focus:border-primary" />
-                                            </div>
+                                            </InputGroup>
                                         </div>
                                     </div>
 
@@ -144,10 +144,10 @@
                         <template #title>
                             <div class="flex items-center justify-between">
                                 <span>Recent Notes</span>
-                                <span class="p-input-icon-left w-40">
-                                    <i class="pi pi-search" />
+                                <IconField class="w-40">
+                                    <InputIcon class="pi pi-search" />
                                     <InputText v-model="searchQuery" placeholder="Search..." size="small" />
-                                </span>
+                                </IconField>
                             </div>
                         </template>
                         <template #content>
@@ -252,6 +252,10 @@ import SelectButton from 'primevue/selectbutton'
 import Tag from 'primevue/tag'
 import Dialog from 'primevue/dialog'
 import ProgressSpinner from 'primevue/progressspinner'
+import InputGroup from 'primevue/inputgroup'
+import InputGroupAddon from 'primevue/inputgroupaddon'
+import IconField from 'primevue/iconfield'
+import InputIcon from 'primevue/inputicon'
 
 const router = useRouter()
 const quickNoteStore = useQuickNoteStore()

@@ -31,10 +31,10 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="col-span-1 md:col-span-2 flex flex-col gap-2">
                   <label class="font-semibold text-sm">GSTIN / Tax ID</label>
-                  <div class="p-inputgroup">
+                  <InputGroup>
                     <InputText v-model="form.gstin" placeholder="e.g., 27AAAC..." />
                     <Button icon="pi pi-search" severity="secondary" @click="fetchGst" :loading="fetchingGst" :disabled="!form.gstin || form.gstin.length < 15" />
-                  </div>
+                  </InputGroup>
                   <small class="text-gray-500 italic">Auto-fill details using GSTIN</small>
                 </div>
 
@@ -152,6 +152,7 @@ import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
 import Textarea from 'primevue/textarea'
 import Message from 'primevue/message'
+import InputGroup from 'primevue/inputgroup'
 
 const router = useRouter()
 const route = useRoute()

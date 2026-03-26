@@ -26,18 +26,17 @@
             :globalFilterFields="['invoice_number', 'party.name']">
             
             <template #header>
-              <div class="flex flex-wrap justify-between items-center gap-3">
-                <span class="p-input-icon-left w-full md:w-80">
-                  <i class="pi pi-search" />
-                  <InputText v-model="filters['global'].value" placeholder="Search bills or vendors..." />
-                </span>
-                <div class="flex gap-2">
-                    <Select v-model="statusFilter" :options="statusOptions" optionLabel="label" optionValue="value" 
-                        placeholder="All Statuses" class="w-full md:w-44" showClear />
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <IconField class="w-full md:w-80">
+                        <InputIcon class="pi pi-search" />
+                        <InputText v-model="filters['global'].value" placeholder="Search bills or vendors..." class="w-full" />
+                    </IconField>
+                    <div class="flex gap-2">
+                        <Select v-model="statusFilter" :options="statusOptions" optionLabel="label" optionValue="value" 
+                            placeholder="All Statuses" class="w-full md:w-44" showClear />
+                    </div>
                 </div>
-              </div>
             </template>
-
             <template #empty>No purchase invoices found.</template>
 
             <Column field="invoice_number" header="Bill Number" sortable>
@@ -118,6 +117,8 @@ import Tag from 'primevue/tag'
 import Select from 'primevue/select'
 import Card from 'primevue/card'
 import Dialog from 'primevue/dialog'
+import IconField from 'primevue/iconfield'
+import InputIcon from 'primevue/inputicon'
 
 const router = useRouter()
 const authStore = useAuthStore()

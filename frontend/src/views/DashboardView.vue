@@ -1,6 +1,6 @@
 <template>
     <AppLayout>
-        <div class="max-w-7xl mx-auto">
+        <div class="space-y-8">
             <!-- Header -->
             <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
                 <div>
@@ -30,19 +30,19 @@
             </div>
 
             <!-- KPI Stats Row -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
                 <Card v-for="stat in kpiStats" :key="stat.label" class="shadow-sm border-none overflow-hidden hover:shadow-md transition-shadow">
                     <template #content>
                         <div class="flex justify-between items-start">
                             <div>
-                                <span class="block text-gray-500 font-semibold mb-2 text-xs uppercase tracking-wider">{{ stat.label }}</span>
-                                <div class="text-2xl font-bold text-gray-900">₹{{ abbreviateNumber(stat.value) }}</div>
+                                <span class="block text-gray-500 font-semibold mb-2 text-[10px] uppercase tracking-wider">{{ stat.label }}</span>
+                                <div class="text-xl font-bold text-gray-900">₹{{ abbreviateNumber(stat.value) }}</div>
                                 <div class="mt-2">
-                                    <Tag :value="stat.subtext" :severity="stat.severity" size="small" rounded />
+                                    <Tag :value="stat.subtext" :severity="stat.severity" size="small" rounded class="text-[9px]" />
                                 </div>
                             </div>
-                            <div :class="['p-3 rounded-xl', stat.bgClass, stat.iconClass]">
-                                <i :class="[stat.icon, 'text-2xl']"></i>
+                            <div :class="['p-2 rounded-lg', stat.bgClass, stat.iconClass]">
+                                <i :class="[stat.icon, 'text-xl']"></i>
                             </div>
                         </div>
                     </template>
@@ -51,54 +51,105 @@
 
             <!-- Main Content Grid -->
             <div class="grid grid-cols-12 gap-6">
-                <!-- Left Column: Chart -->
-                <div class="col-span-12 lg:col-span-8">
-                    <Card class="h-full border-none shadow-sm">
+                <!-- Chart Area -->
+                <div class="col-span-12 lg:col-span-9">
+                    <Card class="border-none shadow-sm h-full">
                         <template #title>
                             <div class="flex items-center justify-between">
-                                <span class="text-lg font-bold">Cashflow (Income vs Expense)</span>
+                                <div class="flex flex-col">
+                                    <span class="text-lg font-bold">Financial Cashflow</span>
+                                    <span class="text-xs text-gray-400 font-medium">Monthly payments vs expenses</span>
+                                </div>
                                 <Select v-model="selectedPeriod" :options="periodOptions" optionLabel="label" optionValue="value" class="w-40" size="small" />
                             </div>
                         </template>
                         <template #content>
-                            <div class="h-80 w-full">
-                                <Line v-if="chartData" :data="chartData" :options="chartOptions" />
-                                <div v-else class="h-full flex flex-col items-center justify-center text-gray-400">
-                                    <ProgressSpinner style="width: 40px; height: 40px" />
-                                    <p class="mt-2 text-sm">Loading analytics...</p>
-                                </div>
+                            <div class="h-[400px] w-full pt-4">
+                                <Line :data="chartData" :options="chartOptions" />
                             </div>
                         </template>
                     </Card>
                 </div>
 
-                <!-- Right Column: Alerts & Side Lists -->
-                <div class="col-span-12 lg:col-span-4 space-y-6">
+                <!-- Side Info -->
+                <div class="col-span-12 lg:col-span-3 space-y-6">
+                    <!-- Business Health -->
+                    <Card class="border-none shadow-sm bg-primary-900 text-white overflow-hidden relative">
+                        <template #content>
+                            <div class="relative z-10">
+                                <span class="text-[10px] font-bold uppercase opacity-60">Total Active Stock</span>
+                                <div class="text-3xl font-black mt-1">{{ metrics.products }}</div>
+                                <p class="text-xs mt-2 opacity-80">Manage your inventory items</p>
+                                <Button label="Inventory" icon="pi pi-box" size="small" severity="secondary" class="mt-4 w-full" @click="router.push('/products')" />
+                            </div>
+                            <i class="pi pi-box absolute -right-4 -bottom-4 text-8xl opacity-10 rotate-12"></i>
+                        </template>
+                    </Card>
+
                     <!-- Low Stock Alert -->
                     <Card v-if="lowStockProducts.length > 0" class="border-none shadow-sm overflow-hidden bg-red-50/30">
                         <template #title>
                             <div class="flex items-center gap-2 text-red-700">
                                 <i class="pi pi-exclamation-triangle"></i>
-                                <span class="text-lg font-bold">Low Stock Alert</span>
+                                <span class="text-sm font-bold">Critical Stock</span>
                             </div>
                         </template>
                         <template #content>
-                            <div class="flex flex-col gap-3">
-                                <div v-for="product in lowStockProducts.slice(0, 5)" :key="product.id" class="flex justify-between items-center p-2 bg-white rounded-lg border border-red-100">
-                                    <div class="flex flex-col">
-                                        <span class="font-bold text-sm text-gray-900 truncate w-32">{{ product.name }}</span>
-                                        <span class="text-xs text-gray-400">{{ product.unit }}</span>
+                            <div class="flex flex-col gap-2">
+                                <div v-for="product in lowStockProducts.slice(0, 3)" :key="product.id" class="flex justify-between items-center p-2 bg-white rounded-lg border border-red-100">
+                                    <div class="flex flex-col min-w-0">
+                                        <span class="font-bold text-[11px] text-gray-900 truncate w-24">{{ product.name }}</span>
+                                        <span class="text-[9px] text-gray-400">{{ product.unit }}</span>
                                     </div>
-                                    <Tag :value="Number(product.current_stock) + ' Left'" severity="danger" />
+                                    <Tag :value="Number(product.current_stock)" severity="danger" class="text-[10px]" />
                                 </div>
-                                <Button label="View Inventory" severity="danger" text size="small" icon="pi pi-arrow-right" iconPos="right" @click="router.push('/products')" />
+                                <Button label="Restock All" severity="danger" text size="small" class="mt-2 text-xs" @click="router.push('/products')" />
                             </div>
                         </template>
                     </Card>
+                </div>
+            </div>
 
-                    <!-- Counts Grid -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <Card class="text-center border-none shadow-sm hover:bg-blue-50/50 transition-colors">
+            <!-- Secondary Grid: Recent Lists -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Recent Purchase Invoices -->
+                <Card class="border-none shadow-sm">
+                    <template #title>
+                        <div class="flex items-center justify-between">
+                            <span class="text-base font-bold">Recent Purchases</span>
+                            <Button label="View All" icon="pi pi-arrow-right" iconPos="right" text size="small" @click="router.push('/purchases')" />
+                        </div>
+                    </template>
+                    <template #content>
+                        <div class="flex flex-col gap-1">
+                            <div v-if="recentPurchases.length > 0" class="divide-y divide-gray-50">
+                                <div v-for="inv in recentPurchases.slice(0, 5)" :key="inv.id" 
+                                    class="py-3 flex items-center justify-between hover:bg-gray-50 cursor-pointer transition-colors px-1"
+                                    @click="router.push(`/purchases/${inv.id}/edit`)">
+                                    <div class="flex items-center gap-3">
+                                        <Avatar :label="inv.vendor_name.substring(0, 1).toUpperCase()" shape="circle" class="bg-orange-100 text-orange-600 font-bold" />
+                                        <div class="flex flex-col">
+                                            <span class="font-bold text-xs text-gray-900 truncate w-32">{{ inv.vendor_name }}</span>
+                                            <span class="text-[10px] text-gray-500">{{ inv.invoice_number }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-right flex flex-col items-end gap-1">
+                                        <span class="font-bold text-xs text-gray-900">₹{{ Number(inv.amount).toLocaleString('en-IN') }}</span>
+                                        <Tag :value="inv.status" :severity="getStatusSeverity(inv.status)" class="text-[9px] scale-90" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else class="text-center py-6 text-gray-400 italic text-xs">
+                                No purchase bills yet.
+                            </div>
+                        </div>
+                    </template>
+                </Card>
+
+                <!-- Counts Summary -->
+                <div class="flex flex-col gap-6">
+                    <div class="grid grid-cols-2 gap-4 h-full">
+                        <Card class="text-center border-none shadow-sm hover:bg-blue-50/50 transition-colors flex items-center justify-center">
                             <template #content>
                                 <div class="p-3 bg-blue-100 text-blue-600 rounded-xl inline-flex mb-2">
                                     <i class="pi pi-users text-xl"></i>
@@ -107,7 +158,7 @@
                                 <div class="text-xs text-gray-500 font-semibold uppercase">Customers</div>
                             </template>
                         </Card>
-                        <Card class="text-center border-none shadow-sm hover:bg-orange-50/50 transition-colors">
+                        <Card class="text-center border-none shadow-sm hover:bg-orange-50/50 transition-colors flex items-center justify-center">
                             <template #content>
                                 <div class="p-3 bg-orange-100 text-orange-600 rounded-xl inline-flex mb-2">
                                     <i class="pi pi-building text-xl"></i>
@@ -117,42 +168,23 @@
                             </template>
                         </Card>
                     </div>
-
-                    <!-- Recent Purchase Invoices -->
-                    <Card class="border-none shadow-sm">
-                        <template #title>
-                            <div class="flex items-center justify-between">
-                                <span class="text-lg font-bold">Recent Purchase Bills</span>
-                                <Button label="All" icon="pi pi-arrow-right" iconPos="right" text size="small" @click="router.push('/purchases')" />
-                            </div>
-                        </template>
-                        <template #content>
-                            <div class="flex flex-col gap-1">
-                                <div v-if="recentPurchases.length > 0" class="divide-y">
-                                    <div v-for="inv in recentPurchases.slice(0, 5)" :key="inv.id" 
-                                        class="py-3 flex items-center justify-between hover:bg-gray-50 cursor-pointer transition-colors px-1"
-                                        @click="router.push(`/purchases/${inv.id}/edit`)">
-                                        <div class="flex items-center gap-3">
-                                            <Avatar :label="inv.vendor_name.substring(0, 1).toUpperCase()" shape="circle" class="bg-orange-100 text-orange-600 font-bold" />
-                                            <div class="flex flex-col">
-                                                <span class="font-bold text-sm text-gray-900 truncate w-24">{{ inv.vendor_name }}</span>
-                                                <span class="text-xs text-gray-500">{{ inv.invoice_number }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="text-right flex flex-col items-end gap-1">
-                                            <span class="font-bold text-sm">₹{{ abbreviateNumber(Number(inv.amount)) }}</span>
-                                            <Tag :value="inv.status" :severity="getStatusSeverity(inv.status)" size="small" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div v-else class="text-center py-6 text-gray-400 italic">
-                                    No purchase bills yet.
-                                </div>
-                            </div>
-                        </template>
-                    </Card>
                 </div>
+
+                <!-- Additional Info/Quick Action -->
+                <Card class="border-none shadow-sm bg-indigo-50 border-indigo-100 flex flex-col justify-center">
+                    <template #content>
+                        <div class="flex flex-col items-center text-center p-4">
+                            <div class="h-16 w-16 bg-white text-indigo-600 rounded-full flex items-center justify-center shadow-sm mb-4">
+                                <i class="pi pi-plus text-3xl"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-indigo-900 mb-2">Start a New Task</h3>
+                            <p class="text-sm text-indigo-700 mb-6">Quickly create an invoice or quotation for your client.</p>
+                            <Button label="Create Invoice" icon="pi pi-file-plus" class="w-full" @click="router.push('/invoices/create')" />
+                        </div>
+                    </template>
+                </Card>
             </div>
+
         </div>
     </AppLayout>
 </template>
@@ -252,44 +284,68 @@ const lowStockProducts = ref<any[]>([])
 const recentPurchases = ref<any[]>([])
 const cashflowHistory = ref<any[]>([])
 
-const kpiStats = computed(() => [
-    { 
-        label: 'Sales Revenue', 
-        value: metrics.value.revenue, 
-        icon: 'pi pi-dollar', 
-        bgClass: 'bg-indigo-50', 
-        iconClass: 'text-indigo-600',
-        severity: 'success',
-        subtext: 'Received & Pending'
-    },
-    { 
-        label: 'Outstanding', 
-        value: metrics.value.outstanding, 
-        icon: 'pi pi-clock', 
-        bgClass: 'bg-amber-50', 
-        iconClass: 'text-amber-600',
-        severity: 'warn',
-        subtext: 'To be collected'
-    },
-    { 
-        label: 'Total Purchases', 
-        value: metrics.value.total_purchases, 
-        icon: 'pi pi-shopping-cart', 
-        bgClass: 'bg-orange-50', 
-        iconClass: 'text-orange-600',
-        severity: 'info',
-        subtext: 'Vendor bills'
-    },
-    { 
-        label: 'Payable to Vendors', 
-        value: metrics.value.payable_to_vendors, 
-        icon: 'pi pi-wallet', 
-        bgClass: 'bg-red-50', 
-        iconClass: 'text-red-600',
-        severity: 'danger',
-        subtext: 'Pending payment'
+const kpiStats = computed(() => {
+    // Calculate simple growth if possible
+    let growthText = 'Stable'
+    let growthSeverity = 'info'
+    if (cashflowHistory.value.length >= 2) {
+        const last = cashflowHistory.value[cashflowHistory.value.length - 1]?.income || 0
+        const prev = cashflowHistory.value[cashflowHistory.value.length - 2]?.income || 0
+        if (prev > 0) {
+            const pct = ((last - prev) / prev) * 100
+            growthText = `${pct > 0 ? '+' : ''}${pct.toFixed(0)}% from last month`
+            growthSeverity = pct >= 0 ? 'success' : 'warn'
+        }
     }
-])
+
+    return [
+        { 
+            label: 'Sales Revenue', 
+            value: metrics.value.revenue, 
+            icon: 'pi pi-dollar', 
+            bgClass: 'bg-indigo-50', 
+            iconClass: 'text-indigo-600',
+            severity: growthSeverity,
+            subtext: growthText
+        },
+        { 
+            label: 'Outstanding', 
+            value: metrics.value.outstanding, 
+            icon: 'pi pi-clock', 
+            bgClass: 'bg-amber-50', 
+            iconClass: 'text-amber-600',
+            severity: 'warn',
+            subtext: 'Pending collection'
+        },
+        { 
+            label: 'Expenses', 
+            value: metrics.value.total_expenses, 
+            icon: 'pi pi-receipt', 
+            bgClass: 'bg-red-50', 
+            iconClass: 'text-red-600',
+            severity: 'danger',
+            subtext: 'Operational costs'
+        },
+        { 
+            label: 'Purchases', 
+            value: metrics.value.total_purchases, 
+            icon: 'pi pi-shopping-cart', 
+            bgClass: 'bg-orange-50', 
+            iconClass: 'text-orange-600',
+            severity: 'info',
+            subtext: 'Vendor inventory'
+        },
+        { 
+            label: 'Payables', 
+            value: metrics.value.payable_to_vendors, 
+            icon: 'pi pi-wallet', 
+            bgClass: 'bg-teal-50', 
+            iconClass: 'text-teal-600',
+            severity: 'secondary',
+            subtext: 'Due to suppliers'
+        }
+    ]
+})
 
 const quickLinks = [
     { label: 'Invoices', subtext: 'Sales records', icon: 'pi pi-file', route: '/invoices', bgClass: 'bg-indigo-50', iconClass: 'text-indigo-600' },
@@ -301,62 +357,104 @@ const quickLinks = [
 ]
 
 const chartData = computed(() => {
-  if (!cashflowHistory.value || cashflowHistory.value.length === 0) return null
+  // Generate last 6 months labels
+  const labels = []
+  const incomeValues = []
+  const expenseValues = []
+  
+  const now = new Date()
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const monthKey = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0')
+    const monthLabel = d.toLocaleString('default', { month: 'short', year: '2-digit' })
+    
+    labels.push(monthLabel)
+    
+    const record = cashflowHistory.value.find(r => r.month === monthKey)
+    incomeValues.push(record ? Number(record.income || 0) : 0)
+    expenseValues.push(record ? Number(record.expense || 0) : 0)
+  }
+
   return {
-    labels: cashflowHistory.value.map((d) => {
-      const parts = d.month.split('-')
-      const date = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, 1)
-      return date.toLocaleString('default', { month: 'short' })
-    }),
+    labels,
     datasets: [
       {
-        label: 'Income',
+        label: 'Income (Payments Received)',
         backgroundColor: 'rgba(16, 185, 129, 0.1)',
         borderColor: '#10b981',
         borderWidth: 3,
         pointBackgroundColor: '#ffffff',
         pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
         fill: true,
-        data: cashflowHistory.value.map(d => Number(d.income || 0)),
+        data: incomeValues,
         tension: 0.4
       },
       {
-        label: 'Expense',
+        label: 'Expense (Bills Paid)',
         backgroundColor: 'rgba(239, 68, 68, 0.1)',
         borderColor: '#ef4444',
         borderWidth: 3,
         pointBackgroundColor: '#ffffff',
         pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
         fill: true,
-        data: cashflowHistory.value.map(d => Number(d.expense || 0)),
+        data: expenseValues,
         tension: 0.4
       }
     ]
   }
 })
 
-const chartOptions = {
+const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
+  interaction: {
+    intersect: false,
+    mode: 'index'
+  },
   plugins: {
-    legend: { position: 'top' as const },
+    legend: { 
+        position: 'top' as const,
+        align: 'end' as const,
+        labels: {
+            boxWidth: 10,
+            usePointStyle: true,
+            pointStyle: 'circle',
+            font: { weight: '600' }
+        }
+    },
     tooltip: {
+      padding: 12,
       backgroundColor: '#1f2937',
+      titleFont: { size: 14, weight: 'bold' },
+      bodyFont: { size: 13 },
       callbacks: {
-        label: (context: any) => ' ₹' + context.parsed.y.toLocaleString('en-IN')
+        label: (context: any) => ` ${context.dataset.label.split(' (')[0]}: ₹${context.parsed.y.toLocaleString('en-IN')}`
       }
     }
   },
   scales: {
     y: {
       beginAtZero: true,
+      grid: {
+        color: '#f3f4f6'
+      },
       ticks: {
+        font: { size: 11 },
         callback: (value: any) => '₹' + abbreviateNumber(value)
       }
     },
-    x: { grid: { display: false } }
+    x: { 
+      grid: { display: false },
+      ticks: {
+        font: { size: 11, weight: '600' }
+      }
+    }
   }
-}
+}))
 
 const getStatusSeverity = (status: string) => {
     switch (status) {

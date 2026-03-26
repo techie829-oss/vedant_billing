@@ -27,10 +27,10 @@
             
             <template #header>
               <div class="flex flex-wrap justify-between items-center gap-3">
-                <span class="p-input-icon-left w-full md:w-80">
-                  <i class="pi pi-search" />
-                  <InputText v-model="filters['global'].value" placeholder="Search vendors..." />
-                </span>
+                <IconField class="w-full md:w-80">
+                  <InputIcon class="pi pi-search" />
+                  <InputText v-model="filters['global'].value" placeholder="Search vendors..." class="w-full" />
+                </IconField>
               </div>
             </template>
 
@@ -130,6 +130,8 @@ import Card from 'primevue/card'
 import Tag from 'primevue/tag'
 import Avatar from 'primevue/avatar'
 import Dialog from 'primevue/dialog'
+import IconField from 'primevue/iconfield'
+import InputIcon from 'primevue/inputicon'
 
 const router = useRouter()
 const partyStore = usePartyStore()
